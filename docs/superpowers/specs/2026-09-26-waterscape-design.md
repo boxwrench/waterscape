@@ -1,8 +1,9 @@
-# Follow the Water — design
+# Waterscape — design
 
 Date: 2026-09-26 · Status: approved in conversation, pending spec review
-Working title: "Follow the Water". The final project and repository name are not chosen yet;
-the GitHub repository is created once they are.
+Project name: **Waterscape** (repository `boxwrench/waterscape`), an umbrella for further
+water features. The first experience is the "follow the water" journey described here;
+"Water held by the hills" remains the tagline.
 
 ## Purpose
 
