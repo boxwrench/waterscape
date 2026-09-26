@@ -65,8 +65,10 @@ the bundle alone.
 
 ### Renderer changes
 
-- The terrain grid comes from the bundle: `TERRAIN_W/H/X0/Z0/CELL` become kernel
-  parameters instead of `#define`s (the startup consistency check is then unnecessary).
+- The terrain grid comes from the bundle: `TERRAIN_W/H/X0/Z0/CELL` stop being `#define`s
+  and travel in two header texels at the start of the terrain buffer, so no shader
+  signature changes and the grid cannot drift from its data (the startup consistency
+  check is then unnecessary).
 - `biome` parameter selects landscape shading. Launch biome: Diablo Range oak woodland and
   grass (today's). Hetch Hetchy needs a Sierra granite and conifer biome (step 4).
 - Water level as a parameter (see below).
