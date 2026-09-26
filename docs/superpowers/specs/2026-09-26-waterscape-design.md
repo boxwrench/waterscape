@@ -2,8 +2,8 @@
 
 Date: 2026-09-26 · Status: approved in conversation, pending spec review
 Project name: **Waterscape** (repository `boxwrench/waterscape`), an umbrella for further
-water features. The first experience is the "follow the water" journey described here;
-"Water held by the hills" remains the tagline.
+water features. The first experience is the "follow the water" journey described here.
+Tagline (provisional): "Hydrology, simulated."
 
 ## Purpose
 
