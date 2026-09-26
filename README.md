@@ -24,7 +24,7 @@ Open **http://localhost:5173**.
 - Choose **Overlook** for the Calaveras Road composition or **Shoreline** for the shallow-water view.
 - Switch between the March-inspired **Spring green** palette and **Summer gold**.
 - Drag or use arrow keys to look. WASD flies, E rises and Q descends.
-- Scroll changes travel speed; Shift provides a temporary 6× boost.
+- Scroll changes travel speed; Shift provides a temporary 6× boost. Speed also scales with height above the ground (1× below 25 m, 20× at 500 m), so climbing with E is the fast way across the basin.
 - Click nearby water to create ripples. Space pauses and H hides the controls.
 - Adjust wave energy, basin depth, exposure, resolution, diagnostics and lens glare.
 - PNG exports the current frame. `?t=5` starts at a fixed wave time.

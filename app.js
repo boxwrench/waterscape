@@ -20,6 +20,12 @@ function viewpoint(name) {
 function terrainClearance(x, z) {
   return terrain.ground(x, z) + 2.5;
 }
+// Flight speed scales with height above the ground, like a map fly-through: precise when
+// skimming the grass, kilometres in seconds once you climb. 1× below 25 m, 20× at 500 m.
+function altitudeFactor() {
+  const above = state.y - terrain.ground(state.x, state.z);
+  return Math.min(80, Math.max(1, above / 25));
+}
 // Same camera ray as ray() in src/clearwater.cu, so picking matches the image.
 function viewRay(sx, sy, aspect, yaw, pitch) {
   const cy = Math.cos(yaw),
@@ -201,7 +207,7 @@ canvas.addEventListener(
       e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? innerHeight : 1);
     state.speed = Math.max(
       0.1,
-      Math.min(200, state.speed * Math.exp(-delta * 0.002)),
+      Math.min(1000, state.speed * Math.exp(-delta * 0.002)),
     );
   },
   { passive: false },
@@ -438,7 +444,8 @@ async function frame(now) {
     if (!locked && !document.hidden) {
       await resize();
       const start = performance.now(),
-        boost = keys.has("ShiftLeft") || keys.has("ShiftRight") ? 6 : 1,
+        boost =
+          (keys.has("ShiftLeft") || keys.has("ShiftRight") ? 6 : 1) * altitudeFactor(),
         speed = state.speed * boost * dt;
       state.yaw +=
         ((keys.has("ArrowRight") ? 1 : 0) - (keys.has("ArrowLeft") ? 1 : 0)) *
@@ -491,7 +498,7 @@ async function frame(now) {
         : "PAUSED";
       if (state.frames % 15 === 0) {
         $("metrics").textContent =
-          `${Math.round(1 / dt)} FPS · ${width} × ${height} · SPEED ${(state.speed * boost).toFixed(1)} m/s · ${formatElevation(terrain.elevation(state.y))}`;
+          `${Math.round(1 / dt)} FPS · ${width} × ${height} · SPEED ${state.speed * boost < 100 ? (state.speed * boost).toFixed(1) : Math.round(state.speed * boost).toLocaleString()} m/s · ${formatElevation(terrain.elevation(state.y))}`;
         survey();
       }
     }
