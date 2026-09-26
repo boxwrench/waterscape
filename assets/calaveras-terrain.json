@@ -1,0 +1,48 @@
+{
+  "source": "USGS National Map 3D Elevation Program (3DEP), public domain",
+  "service": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer",
+  "bbox_lonlat": [
+    -121.875,
+    37.435,
+    -121.77,
+    37.53
+  ],
+  "crs": "EPSG:32610",
+  "verticalDatum": "NAVD88 metres (3DEP)",
+  "encoding": "gzip; 3 planar uint16 channels; rows delta-coded from the row above",
+  "width": 900,
+  "height": 1050,
+  "cell": [
+    10.461628489238986,
+    10.461628489238874
+  ],
+  "waterLevel": 223.6999969482422,
+  "originUTM": [
+    604503.0584113639,
+    4147958.1740467143
+  ],
+  "gridOrigin": [
+    -5097.127632806194,
+    -6581.154758233111
+  ],
+  "channels": {
+    "height": {
+      "offset": -250.0,
+      "scale": 0.05
+    },
+    "shoreDistance": {
+      "offset": -4000.0,
+      "scale": 0.25
+    },
+    "valley": {
+      "offset": 0,
+      "scale": 1.5273704789833822e-05
+    }
+  },
+  "landmarks": {
+    "handoffReference": [
+      -404.2,
+      -645.6
+    ]
+  }
+}

@@ -187,6 +187,45 @@ input[type="checkbox"] {
   padding: 8px;
   flex: 1;
 }
+.survey {
+  position: fixed;
+  top: 100px;
+  right: 38px;
+  width: 250px;
+  padding: 16px 18px 14px;
+  background: linear-gradient(130deg, #183f469e, #15363f61);
+  backdrop-filter: blur(22px);
+  border: 1px solid #ffffff26;
+  border-radius: 3px;
+}
+.survey .eyebrow {
+  margin-bottom: 8px;
+}
+.survey dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  margin: 0;
+  font-size: 11px;
+}
+.survey dt {
+  color: #b7cfcc;
+}
+.survey dd {
+  margin: 0;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: #e9ffef;
+}
+.survey .source {
+  font-size: 9px;
+  line-height: 1.5;
+  color: #b9d1cd;
+  margin: 10px 0 0;
+}
+.survey a {
+  color: #dff5e6;
+}
 .engine {
   display: flex;
   justify-content: space-between;
@@ -218,6 +257,20 @@ footer {
   letter-spacing: 1.1px;
   color: #d9e8e6;
   text-shadow: 0 1px 8px #16303b;
+  pointer-events: none;
+}
+.credit {
+  pointer-events: none;
+}
+@media (max-height: 780px) {
+  header {
+    top: 20px;
+  }
+  #panel {
+    top: 82px;
+    transform: scale(.82);
+    transform-origin: top left;
+  }
 }
 footer b {
   padding: 0 8px;
@@ -260,6 +313,7 @@ footer b {
   white-space: pre-wrap;
 }
 .clean #panel,
+.clean .survey,
 .clean header,
 .clean footer,
 .clean .credit {
@@ -289,6 +343,12 @@ footer b {
   }
   footer > span:first-child {
     display: none;
+  }
+  .survey {
+    top: auto;
+    right: 20px;
+    bottom: 90px;
+    width: 210px;
   }
   .credit {
     left: 20px;

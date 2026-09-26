@@ -12,7 +12,7 @@ async function moduleGraph(file){
  }
 }
 await moduleGraph(path.join(root,'app.js'));
-for(const file of [...modules,...['index.html','style.css','src/clearwater.cu','assets/seabed.jpg','LICENSE','THIRD_PARTY_NOTICES.md','vendor/cuda-webshader/LICENSE'].map(f=>path.join(root,f))]){
+for(const file of [...modules,...['index.html','style.css','src/clearwater.cu','assets/seabed.jpg','assets/calaveras-terrain.bin.gz','assets/calaveras-terrain.json','LICENSE','THIRD_PARTY_NOTICES.md','vendor/cuda-webshader/LICENSE'].map(f=>path.join(root,f))]){
  const relative=path.relative(root,file);if(relative.startsWith('..'))throw Error('Asset outside project');
  await mkdir(path.dirname(path.join(out,relative)),{recursive:true});await cp(file,path.join(out,relative));
 }

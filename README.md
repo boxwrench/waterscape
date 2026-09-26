@@ -1,91 +1,84 @@
-# Clearwater — CUDA infinite water
+# Calaveras Reservoir — CUDA/WebGPU water study
 
-A CUDA reimplementation of [Aurélien / Lumaris's Clearwater](https://github.com/Aureliengmz/clearwater), extended with three FFT ocean scales and unrestricted camera travel.
+A local, interactive study of Calaveras Reservoir at **37°28′42.5″N, 121°49′21.5″W**, built from [SamG-Coder's CUDA Clearwater reimplementation](https://github.com/SamG-Coder/clearwater) and the original [Clearwater](https://github.com/Aureliengmz/clearwater) optical design.
 
-**[Launch the live demo](https://samg-coder.github.io/clearwater/)** · [Native Windows version](Native/README.md)
+The terrain is the real ground: a ~9 × 11 km crop of [USGS 3D Elevation Program](https://www.usgs.gov/3d-elevation-program) lidar (public domain) at ~10 m, with the reservoir outline taken from the lidar's flattened water surface. Oak woodland follows the real drainages, grass moves with travelling wind gusts, and the three-scale FFT water, interactive ripples, caustics and CUDA-authored post-processing are unchanged. The interface reads out camera, ground and cursor elevation above sea level, and the camera's latitude/longitude, from the same data.
 
-The live demo runs directly in a WebGPU-capable browser; no installation is needed.
+![Calaveras Reservoir](previews/calaveras-ui.png)
 
-![Clearwater CUDA](previews/clearwater-ui.png)
+All simulation and image formation lives in [`src/clearwater.cu`](src/clearwater.cu). The browser executes it through [cuda-webshader](https://github.com/SamG-Coder/cuda-webshader): CUDA source → generated WGSL → WebGPU. JavaScript handles controls, resources, dispatch and presentation. There is no WebGL, Three.js, handwritten WGSL, CPU wave simulation or CPU FFT.
 
-All simulation and image formation lives in [`src/clearwater.cu`](src/clearwater.cu). The browser executes it through [SamG-Coder/cuda-webshader](https://github.com/SamG-Coder/cuda-webshader): CUDA source → generated WGSL → WebGPU. JavaScript handles DOM controls, asset decoding, resources, dispatch and presentation. The active application has no WebGL, Three.js, handwritten WGSL, CPU wave simulation or CPU FFT.
+## Run locally
 
-## Run
+Requires Node.js 20+ and a WebGPU-capable browser.
 
-The browser version and the Windows native application share `src/clearwater.cu`. For the native build with a separate control window, see [`Native/README.md`](Native/README.md).
-
-Requires Node.js 20+ and a browser with WebGPU enabled. Serve over localhost or HTTPS.
+On Windows, double-click **`START.bat`**. It starts the local server and opens the experience. To run it manually:
 
 ```powershell
 npm ci
 npm start
 ```
 
-Open **http://localhost:5173**. For another port: `$env:PORT='5186'; npm start`.
+Open **http://localhost:5173**.
 
-- Drag or use arrow keys to look: right/left and up/down follow your input direction.
-- WASD flies relative to the camera; W follows the direction you are looking, including pitch. E rises and Q descends, with a minimum camera height of 0.65 m.
-- Scroll up to increase travel speed, down to decrease it (0.1–200 m/s). Hold either Shift for a temporary 6× boost. Current speed appears in the footer.
-- Click nearby water to generate ripples.
-- Space pauses; H hides controls; Reset view returns to the starting point.
-- Clearwater and Open water presets set wave energy, depth and camera position.
-- Depth, exposure, resolution, caustic/normal diagnostics, lens glare and continuous drift are adjustable.
-- PNG saves the rendered image. `?t=5` opens at a fixed wave time.
+- Choose **Overlook** for the Calaveras Road composition or **Shoreline** for the shallow-water view.
+- Switch between the March-inspired **Spring green** palette and **Summer gold**.
+- Drag or use arrow keys to look. WASD flies, E rises and Q descends.
+- Scroll changes travel speed; Shift provides a temporary 6× boost.
+- Click nearby water to create ripples. Space pauses and H hides the controls.
+- Adjust wave energy, basin depth, exposure, resolution, diagnostics and lens glare.
+- PNG exports the current frame. `?t=5` starts at a fixed wave time.
 
 ## CUDA pipeline
 
 | Stage | Implementation |
 |---|---|
 | Spectrum | Seeded Gaussian complex coefficients, directional spectral bumps and GPU RMS slope normalization |
-| Wave evolution | Gravity/capillary dispersion with finite-depth tanh(k·depth) |
-| Infinite surface | Three independently seeded 256² periodic cascades spanning 4.6 m, 37 m and 293 m, sampled in world space |
-| FFT | 16 Stockham butterfly passes per 2D transform, two packed complex fields; height and analytic slopes |
-| Interaction | 256² camera-relative ripple field, 16 m wide, fixed 120 Hz wave equation and integer-cell recentering |
-| Caustics | 1024² refracted rays, three refractive indices, bilinear fixed-point atomic splats into a 512² RGB field |
-| Water optics | Height-field intersection, Fresnel reflection, Snell refraction, Beer–Lambert extinction, underwater scattering, pebble/sand seabed and sun highlights |
-| Lens | CUDA aperture rasterization, wavelength-dependent diffraction PSF, forward FFT / multiplication / inverse FFT convolution, padded image to avoid wrapping ghosts |
-| Output | Bloom and filmic tone curve in CUDA; direct GPU buffer-to-canvas copy |
+| Reservoir surface | Three independently seeded 256² cascades spanning 4.6 m, 37 m and 293 m, clipped by an irregular shoreline |
+| Terrain | Ray-traced procedural near bank plus a world-oriented ridge layer for stable distant hills and reflections |
+| Materials | Spring/summer grass, exposed shoreline, sediment, clustered oak shading and distance haze |
+| Interaction | 256² camera-relative ripple field, 16 m wide, fixed 120 Hz wave equation |
+| Caustics | 1024² refracted rays, three refractive indices, fixed-point splats into a 512² RGB field |
+| Water optics | Fresnel reflection, Snell refraction, Beer–Lambert extinction, underwater scattering and pebble/sediment seabed |
+| Lens/output | Diffraction, bloom, filmic tone curve and direct GPU-buffer-to-canvas copy |
 
-The normal frame loop performs **zero GPU-to-CPU readbacks**. Explicit inspection and PNG export read data back on request. The full compiler/runtime module graph is vendored; no CDN is needed.
+The normal frame loop performs **zero GPU-to-CPU readbacks**. Explicit inspection and PNG export read data back on request. The compiler/runtime graph is vendored; no runtime CDN is needed.
 
-## Validation
+## Verification
+
+In one terminal:
+
+```powershell
+$env:PORT='5186'
+npm start
+```
+
+In another:
 
 ```powershell
 npm run check
-# Start the server on port 5186 in another terminal, then:
 npm test
 ```
 
-`npm test` launches installed Microsoft Edge through Playwright with WebGPU. The validation port is 5186. Latest evidence is in [`previews/verification.json`](previews/verification.json).
-
-- All 20 CUDA entries compile through the vendored CUDA frontend.
-- The native application built with CUDA Toolkit 13.3 and passed its GPU smoke test on an RTX 5080: FFT error **2.47e-7**, ripple generation, 6x Shift boost, separate windows, resizing, diagnostic views and finite values at 10 km. See [`previews/native-smoke.json`](previews/native-smoke.json). Full manual control-window QA remains incomplete.
-- GPU 2D FFT compared against five analytic Fourier modes across both axes, all three cascades and both complex fields: maximum absolute error **3.89e-7**.
-- Forward/inverse round trip error: **2.99e-7**.
-- RGB caustic mean energy: **0.9922** (small fixed-point splat truncation loss).
-- Lens point-spread function normalized to unity within **2.4e-7**.
-- Finite wave state, HDR and diffraction buffers; click-generated ripples; WASD travel; finite state after travel to `(10000, -10000)` metres.
-- Pause/reset, window resize, resolution selection, caustic/normal views and glare switching exercised.
-- No browser console errors, page errors, failed HTTP requests or WebGPU validation errors in the recorded run.
-- Visual captures inspected for shallow water and open water on an NVIDIA Blackwell adapter in Edge. Other hardware/browser combinations have not been tested.
+The suite compiles all 20 CUDA entries and launches Microsoft Edge through Playwright. It checks FFT correctness, optical energy, finite buffers, zero render-loop readbacks, ripple interaction, viewpoint/reset behavior, seasonal controls, resizing, diagnostics, PNG export and reservoir classification. Latest evidence is in [`previews/verification.json`](previews/verification.json).
 
 ## Scope and tradeoffs
 
-“Infinite” means there is no finite mesh edge or camera travel boundary. The wave fields remain periodic, as FFT oceans are; combining three scales reduces obvious repetition. It is not an infinitely large stored simulation. World coordinates and GPU math use 32-bit floats, so precision eventually deteriorates at extreme travel distances; 10 km coordinates are covered by the test.
+Landforms, shoreline and elevations come from USGS 3DEP lidar; everything finer than the ~10 m grid (grass, oaks, bank detail, sub-grid relief) is procedural. Lidar flattens water, so the reservoir bed is modelled as banks falling at about 1:3 to the interface's basin depth. The water level is the level at the time of the lidar survey (≈224 m). Outside the ~9 × 11 km crop, the land falls away under painted, hazy far ridges.
 
-This is a linear spectral height-field ocean. It does not simulate overturning breakers, spray, volumetric water or an underwater camera. Shallow caustics are driven by the short-wave cascade at the selected mean depth, with local ripple curvature added during shading; the long-wave cascades are not included in the photon map. The caustic map and seabed remain periodic. Distant headlands are a procedural sky silhouette, not traversable terrain.
+`python scripts/build-terrain.py` regenerates `assets/calaveras-terrain.bin.gz` and its `.json` metadata from the USGS service (needs numpy, scipy, Pillow). The shader's `TERRAIN_*` constants are checked against that metadata at startup. `--native` also writes the uncompressed `.bin` the native host loads.
 
-The optical design is reimplemented, not a pixel-identical port: the lens uses three representative wavelengths, and compute filtering replaces WebGL derivatives and texture mipmaps. The unused original WebGL application, old media/tools and unused vendor helpers have been removed; they remain available in Git history. The browser targets CUDA WebShader, while `Native/main.cu` directly includes the same kernels for native CUDA execution.
+The water is bounded visually while its FFT fields remain periodic underneath. This is a linear spectral height field, not volumetric water; it does not model sediment transport or changing reservoir levels. The distant hills are a directional landscape layer, while nearby banks use the traversable height field. Caustics and the pebble bed are intentionally strongest in the Shoreline view.
 
-## Actions and Pages
-
-Published site: **[samg-coder.github.io/clearwater](https://samg-coder.github.io/clearwater/)**.
-
-`npm run build` stages the browser entry, all 37 required JavaScript modules, shared CUDA source, seabed asset and licenses into `dist/`, with relative URLs and `.nojekyll` for Pages. Actions runs browser checks and Pages deployment only: pull requests are checked and built, and pushes to `main` deploy the site. Build the native application locally using `Native/build.ps1`; native CUDA builds do not run on Actions.
+The browser and optional native Windows host share `src/clearwater.cu`. The native host remains a developer-oriented compatibility target and requires Windows, CUDA Toolkit 13.x, Visual Studio C++ Build Tools and an NVIDIA GPU.
 
 ## Provenance
 
-- Original Clearwater: [Aureliengmz/clearwater](https://github.com/Aureliengmz/clearwater), commit `4bc826134321043a25df3c2b6fed16fb7b9241e8`, MIT, copyright 2026 Lumaris. Original license retained at [`LICENSE`](LICENSE).
+- Original Clearwater: [Aureliengmz/clearwater](https://github.com/Aureliengmz/clearwater), commit `4bc826134321043a25df3c2b6fed16fb7b9241e8`, MIT, copyright 2026 Lumaris.
+- CUDA reimplementation: [SamG-Coder/clearwater](https://github.com/SamG-Coder/clearwater), MIT.
 - Pebble image: extracted without modification from the original embedded asset into `assets/seabed.jpg`.
-- CUDA WebShader: vendored compiler and runtime from local `D:\cuda-webshader`, commit `9011955806cee30636ba24ae34b22d218e84196f`, MIT; license at [`vendor/cuda-webshader/LICENSE`](vendor/cuda-webshader/LICENSE).
-- Original design references: Tessendorf (FFT water), Evan Wallace (refracted-grid caustics), Inigo Quilez (texture repetition), Olano & Baker (LEAN mapping).
+- CUDA WebShader: vendored compiler and runtime, MIT; license at `vendor/cuda-webshader/LICENSE`.
+- Terrain: USGS National Map 3D Elevation Program (3DEP), public domain, fetched from the [3DEPElevation ImageServer](https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer) by `scripts/build-terrain.py`.
+- Original design references: Tessendorf (FFT water), Evan Wallace (refracted-grid caustics), Inigo Quilez (texture repetition), Olano & Baker (LEAN Mapping).
+
+The original license is retained in [`LICENSE`](LICENSE), with additional notices in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).

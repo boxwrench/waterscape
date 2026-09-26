@@ -1,14 +1,55 @@
 import { GpuRuntime } from "./vendor/cuda-webshader/runtime/runtime.js";
+import { checkShaderGrid, formatElevation, formatLatLon, loadTerrain } from "./terrain.js";
 const $ = (id) => document.getElementById(id),
   canvas = $("water"),
   q = new URLSearchParams(location.search);
+// Viewpoints on the real (USGS 3DEP lidar) terrain, chosen by a line-of-sight search for
+// ground that sees the most open water; y is set from the ground on load.
+// Local metres: x east, z south, origin on the reservoir. yaw 0 looks north.
+const VIEWPOINTS = {
+  overlook: { x: -1500, z: -3000, above: 3, yaw: 2.69, pitch: -0.12, speed: 40 },
+  ridge: { x: -1600, z: 900, above: 3, yaw: 1.29, pitch: -0.15, speed: 40 },
+  shore: { x: -740, z: 300, above: 1.6, yaw: 1.571, pitch: -0.04, speed: 4 },
+};
+let terrain = null;
+function viewpoint(name) {
+  const { x, z, above, yaw, pitch, speed } = VIEWPOINTS[name];
+  return { x, z, y: terrain.ground(x, z) + above, yaw, pitch, speed };
+}
+// The shader adds up to ~1.4 m of sub-grid relief on top of the lidar surface.
+function terrainClearance(x, z) {
+  return terrain.ground(x, z) + 2.5;
+}
+// Same camera ray as ray() in src/clearwater.cu, so picking matches the image.
+function viewRay(sx, sy, aspect, yaw, pitch) {
+  const cy = Math.cos(yaw),
+    syaw = Math.sin(yaw),
+    cp = Math.cos(pitch),
+    sp = Math.sin(pitch),
+    f = 0.62487,
+    d = [
+      syaw * cp + sx * aspect * f * cy - sy * f * syaw * sp,
+      sp + sy * f * cp,
+      -cy * cp + sx * aspect * f * syaw + sy * f * cy * sp,
+    ],
+    l = Math.hypot(...d);
+  return d.map((v) => v / l);
+}
+window.calaverasModel = {
+  get terrain() {
+    return terrain;
+  },
+  viewpoints: VIEWPOINTS,
+  viewpoint,
+};
 const state = {
   x: 0,
+  y: 0,
   z: 0,
-  y: 1.55,
   yaw: 0,
-  pitch: -0.4,
-  speed: 2.2,
+  pitch: 0,
+  speed: 40,
+  viewpoint: "overlook",
   time: q.has("t") ? Number(q.get("t")) : 0,
   playing: !q.has("t"),
   frames: 0,
@@ -20,6 +61,8 @@ const diag = (window.clearwaterDiagnostics = {
   frames: 0,
   cascades: [4.6, 37, 293],
   fftSize: 256,
+  location: "Calaveras Reservoir",
+  coordinates: [37.478472, -121.822639],
 });
 let rt,
   ctx,
@@ -34,6 +77,7 @@ let rt,
   photons,
   caustics,
   pebbles,
+  terrainCells,
   hdr,
   bloom,
   pixels,
@@ -73,7 +117,7 @@ addEventListener("resize", () => (resizePending = true));
 function play(value) {
   state.playing = value;
   $("pause").textContent = value ? "Ⅱ Pause" : "▶ Resume";
-  $("status").textContent = value ? "LIVE / INFINITE SURFACE" : "PAUSED";
+  $("status").textContent = value ? "LIVE / CALAVERAS BASIN" : "PAUSED";
 }
 $("pause").onclick = () => play(!state.playing);
 $("toggle").onclick = () => {
@@ -82,27 +126,52 @@ $("toggle").onclick = () => {
     ? "Show controls ↙"
     : "Hide controls ↗";
 };
-$("reset").onclick = () =>
-  Object.assign(state, {
-    x: 0,
-    z: 0,
-    y: 1.55,
-    yaw: 0,
-    pitch: -0.4,
-    speed: 2.2,
-  });
+$("reset").onclick = () => Object.assign(state, viewpoint(state.viewpoint));
 for (const button of document.querySelectorAll("[data-preset]"))
   button.onclick = () => {
-    const open = button.dataset.preset === "swell";
-    $("energy").value = open ? 2.4 : 1;
-    $("depth").value = open ? 12 : 1.6;
-    state.y = open ? 3 : 1.55;
-    state.pitch = open ? -0.19 : -0.4;
+    const name = button.dataset.preset;
+    state.viewpoint = name;
+    Object.assign(state, viewpoint(name));
+    $("energy").value = name === "shore" ? 0.30 : 0.38;
+    $("depth").value = 18;
     document
       .querySelectorAll("[data-preset]")
       .forEach((b) => b.classList.toggle("active", b === button));
     labels();
   };
+// Elevation readouts from the lidar surface: camera, ground below, and whatever the cursor
+// is over (picked along the same ray the renderer casts for that pixel).
+let hover = null;
+canvas.addEventListener("pointermove", (e) => (hover = e));
+canvas.addEventListener("pointerleave", () => (hover = null));
+function survey() {
+  const ground = terrain.ground(state.x, state.z);
+  $("elevCamera").textContent =
+    `${formatElevation(terrain.elevation(state.y))} · ${Math.round(state.y - ground)} m up`;
+  $("elevGround").textContent =
+    terrain.shoreDistance(state.x, state.z) < 0
+      ? "Over water"
+      : formatElevation(terrain.elevation(ground));
+  $("elevPosition").textContent = formatLatLon(terrain.latLon(state.x, state.z));
+  let cursor = "Point at the land";
+  if (hover && !drag) {
+    const rect = canvas.getBoundingClientRect(),
+      sx = (2 * (hover.clientX - rect.left)) / rect.width - 1,
+      sy = 1 - (2 * (hover.clientY - rect.top)) / rect.height,
+      [dx, dy, dz] = viewRay(sx, sy, width / height, state.yaw, state.pitch),
+      hit = terrain.pick(state.x, state.y, state.z, dx, dy, dz);
+    if (hit) {
+      const away =
+        hit.distance < 1000
+          ? `${Math.round(hit.distance)} m away`
+          : `${(hit.distance / 1000).toFixed(1)} km away`;
+      cursor = hit.water
+        ? `Water surface · ${away}`
+        : `${formatElevation(terrain.elevation(hit.y))} · ${away}`;
+    } else cursor = "Sky";
+  }
+  $("elevCursor").textContent = cursor;
+}
 let drag = null;
 canvas.onpointerdown = (e) => {
   drag = { x: e.clientX, y: e.clientY, startX: e.clientX, startY: e.clientY };
@@ -290,7 +359,7 @@ function render() {
     .dispatch(k.filter_caustics.bind({ photons, caustics }), [64, 64, 1]);
   batch.dispatch(
     k.render_water.bind(
-      { surface, rip: ripNormals, caustics, pebbles, hdr },
+      { surface, rip: ripNormals, caustics, pebbles, terrain: terrainCells, hdr },
       {
         width,
         height,
@@ -304,6 +373,7 @@ function render() {
         depth: +$("depth").value,
         time: state.time,
         view: +$("view").value,
+        season: +$("season").value,
       },
     ),
     grid,
@@ -401,7 +471,7 @@ async function frame(now) {
         (-Math.cos(state.yaw) * Math.cos(state.pitch) * forward +
           Math.sin(state.yaw) * side);
       state.y = Math.max(
-        0.65,
+        terrainClearance(state.x, state.z),
         state.y + speed * (Math.sin(state.pitch) * forward + up),
       );
       if (state.playing) state.time += dt;
@@ -417,11 +487,13 @@ async function frame(now) {
       diag.readbackBytes = rt.stats.readbackBytes;
       $("loading").hidden = true;
       $("status").textContent = state.playing
-        ? "LIVE / INFINITE SURFACE"
+        ? "LIVE / CALAVERAS BASIN"
         : "PAUSED";
-      if (state.frames % 15 === 0)
+      if (state.frames % 15 === 0) {
         $("metrics").textContent =
-          `${Math.round(1 / dt)} FPS · ${width} × ${height} · SPEED ${(state.speed * boost).toFixed(1)} m/s · ${Math.round(state.x)}, ${Math.round(state.z)} m`;
+          `${Math.round(1 / dt)} FPS · ${width} × ${height} · SPEED ${(state.speed * boost).toFixed(1)} m/s · ${formatElevation(terrain.elevation(state.y))}`;
+        survey();
+      }
     }
     requestAnimationFrame(frame);
   } catch (e) {
@@ -581,7 +653,7 @@ $("capture").onclick = () =>
       const url = URL.createObjectURL(blob),
         a = document.createElement("a");
       a.href = url;
-      a.download = "Clearwater.png";
+      a.download = "Calaveras-Reservoir.png";
       a.click();
       setTimeout(() => URL.revokeObjectURL(url), 2000);
     });
@@ -590,6 +662,13 @@ try {
   rt = await GpuRuntime.create({ onError: fail });
   ctx = canvas.getContext("webgpu");
   const source = await (await fetch("./src/clearwater.cu")).text();
+  $("loadText").textContent = "Loading USGS lidar terrain…";
+  terrain = await loadTerrain();
+  checkShaderGrid(source, terrain);
+  terrainCells = rt.createBuffer(terrain.cells);
+  Object.assign(state, viewpoint(state.viewpoint));
+  $("waterLevel").textContent = formatElevation(terrain.waterLevel);
+  $("dataLink").href = terrain.meta.service;
   for (const name of [...source.matchAll(/__global__ void (\w+)/g)].map(
     (m) => m[1],
   )) {

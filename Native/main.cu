@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
+#include <cstdint>
 #include <filesystem>
 #include <fstream>
 #include <sstream>
@@ -47,7 +48,7 @@ struct App {
  ComPtr<ID3D11Device> device;ComPtr<ID3D11DeviceContext> context;ComPtr<IDXGISwapChain> swap;
  ComPtr<ID3D11Texture2D> texture;cudaGraphicsResource* shared=nullptr;
  Buffer<float2> seed;Buffer<float> rows,scales;
- Buffer<float4> fft[2],surface,rip[2],ripNormals,caustics,pebbles,hdr,bloom[2],lens[2],lensKernel;
+ Buffer<float4> fft[2],surface,rip[2],ripNormals,caustics,pebbles,terrain,hdr,bloom[2],lens[2],lensKernel;
  Buffer<unsigned> photons,pixels;
  const dim3 block{8,8,1},wavesGrid{32,32,3},ripGrid{32,32,1};
  ~App(){cudaDeviceSynchronize();if(shared)cudaGraphicsUnregisterResource(shared);if(font)DeleteObject(font);if(heading)DeleteObject(heading);if(background)DeleteObject(background);}
@@ -66,11 +67,23 @@ struct App {
   ComPtr<IWICBitmapDecoder> decoder;hr(wic->CreateDecoderFromFilename(assetPath.c_str(),nullptr,GENERIC_READ,WICDecodeMetadataCacheOnLoad,decoder.GetAddressOf()));ComPtr<IWICBitmapFrameDecode> frame;hr(decoder->GetFrame(0,frame.GetAddressOf()));UINT w,h;hr(frame->GetSize(&w,&h));if(w!=1024||h!=1024)throw std::runtime_error("Seabed asset must be 1024 x 1024.");
   ComPtr<IWICFormatConverter> convert;hr(wic->CreateFormatConverter(convert.GetAddressOf()));hr(convert->Initialize(frame.Get(),GUID_WICPixelFormat32bppRGBA,WICBitmapDitherTypeNone,nullptr,0,WICBitmapPaletteTypeCustom));std::vector<unsigned char> bytes(w*h*4);hr(convert->CopyPixels(nullptr,w*4,(UINT)bytes.size(),bytes.data()));std::vector<float4> linear(w*h);for(size_t i=0;i<linear.size();i++)linear[i]=make_float4(std::pow(bytes[i*4]/255.f,2.2f),std::pow(bytes[i*4+1]/255.f,2.2f),std::pow(bytes[i*4+2]/255.f,2.2f),1);pebbles.alloc(linear.size());check(cudaMemcpy(pebbles.p,linear.data(),linear.size()*sizeof(float4),cudaMemcpyHostToDevice));
  }
+ // Real terrain (USGS 3DEP): the uncompressed twin of assets/calaveras-terrain.bin.gz, written by
+ // `python scripts/build-terrain.py --native`. Planar uint16 channels, rows delta-coded; the
+ // scales/offsets match assets/calaveras-terrain.json.
+ void decodeTerrain(){
+  const int w=900,h=1050;const size_t n=(size_t)w*h;fs::path path;
+  for(auto candidate:{executableDir/L"assets/calaveras-terrain.bin",executableDir/L"../../assets/calaveras-terrain.bin",fs::current_path()/L"assets/calaveras-terrain.bin"})if(fs::exists(candidate)){path=candidate;break;}
+  if(path.empty())throw std::runtime_error("Missing assets/calaveras-terrain.bin: run python scripts/build-terrain.py --native");
+  std::ifstream in(path,std::ios::binary);std::vector<uint16_t> words(3*n);in.read((char*)words.data(),words.size()*2);if((size_t)in.gcount()!=words.size()*2)throw std::runtime_error("Terrain asset has an unexpected size.");
+  const float scale[3]={.05f,.25f,1.f/65472},offset[3]={-250.f,-4000.f,0.f};std::vector<float4> cells(n,make_float4(0,0,0,0));std::vector<uint16_t> row(w);
+  for(int c=0;c<3;c++){std::fill(row.begin(),row.end(),0);for(int r=0;r<h;r++)for(int i=0;i<w;i++){row[i]=uint16_t(row[i]+words[c*n+(size_t)r*w+i]);float v=row[i]*scale[c]+offset[c];float4& cell=cells[(size_t)r*w+i];if(c==0)cell.x=v;else if(c==1)cell.y=v;else cell.z=v;}}
+  terrain.alloc(n);check(cudaMemcpy(terrain.p,cells.data(),n*sizeof(float4),cudaMemcpyHostToDevice));
+ }
  void transform(float4* a,float4* b,float sign){for(int axis=0;axis<2;axis++)for(int p=1;p<256;p*=2){fft_pass<<<wavesGrid,block>>>(a,b,p,axis,sign);std::swap(a,b);}}
  void initGpu(){
   seed.alloc(3*65536);rows.alloc(768);scales.alloc(3);surface.alloc(3*65536);ripNormals.alloc(65536);photons.alloc(512*512*3);caustics.alloc(512*512);lensKernel.alloc(3*65536);
   for(int i=0;i<2;i++){fft[i].alloc(3*65536);rip[i].alloc(65536);lens[i].alloc(3*65536);}
-  decodeAsset();seed_spectrum<<<wavesGrid,block>>>(seed.p,7);spectrum_rows<<<12,64>>>(seed.p,rows.p);spectrum_norm<<<1,64>>>(rows.p,scales.p);
+  decodeAsset();decodeTerrain();seed_spectrum<<<wavesGrid,block>>>(seed.p,7);spectrum_rows<<<12,64>>>(seed.p,rows.p);spectrum_norm<<<1,64>>>(rows.p,scales.p);
   lens_aperture<<<wavesGrid,block>>>(lens[0].p);transform(lens[0].p,lens[1].p,-1);lens_power<<<wavesGrid,block>>>(lens[0].p,lens[1].p);lens_rows<<<12,64>>>(lens[1].p,rows.p);lens_normalize<<<wavesGrid,block>>>(lens[1].p,rows.p,lens[0].p);transform(lens[0].p,lens[1].p,-1);check(cudaMemcpy(lensKernel.p,lens[0].p,3*65536*sizeof(float4),cudaMemcpyDeviceToDevice));check(cudaGetLastError());check(cudaDeviceSynchronize());
  }
  void resize(){
@@ -97,7 +110,7 @@ struct App {
  }
  void draw(){
   dim3 grid(width/8,height/8,1);clear_caustics<<<dim3(64,64,1),block>>>(photons.p);trace_caustics<<<dim3(128,128,1),block>>>(surface.p,photons.p,depth);filter_caustics<<<dim3(64,64,1),block>>>(photons.p,caustics.p);
-  render_water<<<grid,block>>>(surface.p,ripNormals.p,caustics.p,pebbles.p,hdr.p,width,height,cam.x,cam.z,cam.y,cam.yaw,cam.pitch,cx,cz,depth,time,view);
+  render_water<<<grid,block>>>(surface.p,ripNormals.p,caustics.p,pebbles.p,terrain.p,hdr.p,width,height,cam.x,cam.z,cam.y,cam.yaw,cam.pitch,cx,cz,depth,time,view,0);
   if(glare){glare_source<<<wavesGrid,block>>>(hdr.p,lens[0].p,width,height);transform(lens[0].p,lens[1].p,-1);glare_multiply<<<wavesGrid,block>>>(lens[0].p,lensKernel.p,lens[1].p);transform(lens[1].p,lens[0].p,1);}
   bloom_pass<<<grid,block>>>(hdr.p,bloom[0].p,width,height,0);bloom_pass<<<grid,block>>>(bloom[0].p,bloom[1].p,width,height,1);present<<<grid,block>>>(hdr.p,bloom[1].p,lens[1].p,pixels.p,width,height,exposure,glare?1:0);check(cudaGetLastError());
   check(cudaGraphicsMapResources(1,&shared));cudaArray_t array;check(cudaGraphicsSubResourceGetMappedArray(&array,shared,0,0));check(cudaMemcpy2DToArray(array,0,0,pixels.p,width*4,width*4,height,cudaMemcpyDeviceToDevice));check(cudaGraphicsUnmapResources(1,&shared));ComPtr<ID3D11Texture2D> back;hr(swap->GetBuffer(0,IID_PPV_ARGS(back.GetAddressOf())));context->CopyResource(back.Get(),texture.Get());hr(swap->Present(1,0));

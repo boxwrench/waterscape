@@ -48,6 +48,10 @@ __device__ float fbm(float x, float z) {
   return .55f * noise(x, z) + .28f * noise(x * 2.03f + 17.1f, z * 2.03f + 17.1f) +
          .12f * noise(x * 4.12f, z * 4.12f) + .05f * noise(x * 8.36f, z * 8.36f);
 }
+// One sun for sky, terrain, water and caustics. Late afternoon from the west-southwest
+// (+z is south): the overlook, looking north, gets raking side light that reveals the
+// ridges and drainages, and the sun stays where it can be at 37 degrees north.
+__device__ float3 sunDir() { return v3(-.860f, .450f, .240f); }
 __device__ int wrap(int x, int n) { return (x % n + n) % n; }
 __device__ float lengthL(int c) { return c == 0 ? 4.6f : (c == 1 ? 37.0f : 293.0f); }
 __device__ float4 sample4(const float4 *data, float x, float z, int n, int offset) {
@@ -236,7 +240,7 @@ __global__ void trace_caustics(const float4 *surface, unsigned *photons, float d
     return;
   float wx = ((float)x + .5f) * 4.6f / 1024, wz = ((float)z + .5f) * 4.6f / 1024;
   float4 a = sample4(surface, wx * 256 / 4.6f, wz * 256 / 4.6f, 256, 0);
-  float3 n = norm(v3(-a.y, 1, -a.z)), sun = v3(.08959f, .51504f, -.85247f);
+  float3 n = norm(v3(-a.y, 1, -a.z)), sun = sunDir();
   for (int c = 0; c < 3; c++) {
     float ior = c == 0 ? 1.3315f : (c == 1 ? 1.3335f : 1.3365f);
     float3 d = refract3(mul(sun, -1), n, 1 / ior);
@@ -276,27 +280,349 @@ __device__ float fresnel(float ci) {
         rp = (1.3335f * ci - ct) / (1.3335f * ci + ct);
   return .5f * (rs * rs + rp * rp);
 }
-__device__ float3 sky(float3 d) {
-  float3 sun = v3(.08959f, .51504f, -.85247f);
+__device__ float3 skyHorizon(int season) {
+  return season == 0 ? v3(.34f, .50f, .72f) : v3(.40f, .50f, .64f);
+}
+// Aerial perspective shared by land and water so both recede into the same air.
+__device__ float3 aerial(float3 col, float distance, int season) {
+  float haze = 1.0f - expf(-distance * .00016f);
+  return mix3(col, mul(skyHorizon(season), 1.05f), haze * .82f);
+}
+__device__ float3 sky(float3 d, int season) {
+  float3 sun = sunDir();
   float mu = fmaxf(0, dot3(d, sun)), e = d.y;
-  float3 col = mix3(v3(.66f, .78f, .9f), v3(.11f, .27f, .62f), powf(sat(e), .42f));
+  float3 col = mix3(skyHorizon(season), v3(.06f, .20f, .52f), powf(sat(e), .45f));
   col = add(
       col, mul(v3(1, .86f, .66f), .22f * powf(mu, 6) + .3f * powf(mu, 64) + 1.6f * powf(mu, 2400)));
-  float a = atan2f(d.z, d.x), ridge = .04f + .016f * sinf(a * 2 + .7f) +
-                                      .011f * sinf(a * 5 + 2.1f) + .006f * sinf(a * 11 + .3f) +
-                                      .003f * sinf(a * 23 + 1.7f) +
-                                      .0045f * (noise(a * 260, 0) - .5f);
-  float tex = fbm(a * 420, e * 420),
-        cliff = smooth(.42f, .18f, e / fmaxf(ridge, .001f) + .25f * (tex - .5f)) *
-                smooth(.35f, .75f, noise(a * 18, 1));
-  float3 land = mix3(mul(v3(.045f, .070f, .042f), .6f + .8f * tex),
-                     mul(v3(.30f, .28f, .23f), .55f + .7f * tex), cliff);
-  land = mix3(land, v3(.6072f, .7176f, .828f), .48f);
-  return mix3(col, land, smooth(ridge + .0009f, ridge - .0009f, e));
+  // Distant, hazy ridgelines behind the traced terrain: two layers at different depths.
+  float a = atan2f(d.z, d.x);
+  float far = .050f + .018f * sinf(a * 2.0f + .8f) + .012f * sinf(a * 5.0f - .5f) +
+              .006f * sinf(a * 11.0f + 2.2f) + .003f * (noise(a * 90.0f, 3.0f) - .5f);
+  float nearR = .030f + .014f * sinf(a * 3.0f - 1.3f) + .008f * sinf(a * 8.0f + .4f) +
+                .004f * (fbm(a * 40.0f, 1.0f) - .5f);
+  float3 hills = mix3(v3(.13f, .20f, .10f), v3(.24f, .20f, .10f), season == 0 ? 0.0f : 1.0f);
+  float3 farCol = mix3(hills, skyHorizon(season), .72f),
+         nearCol = mix3(hills, skyHorizon(season), .52f);
+  col = mix3(col, farCol, smooth(far + .0015f, far - .0015f, e));
+  return mix3(col, nearCol, smooth(nearR + .0015f, nearR - .0015f, e));
 }
-__device__ float floorDepth(float x, float z, float depth) {
-  return depth + .12f * (noise(x * .22f, z * .22f) - .5f) +
-         .06f * (noise(x * .9f + 7, z * .9f + 7) - .5f);
+// Real terrain: USGS 3DEP lidar elevation packed by scripts/build-terrain.py (metadata in
+// assets/calaveras-terrain.json). Local metres: x east, z south, y up from the reservoir
+// surface. Each cell is (height, signed shoreline distance, valley-ness, 0); the host checks
+// these constants against the JSON before rendering.
+#define TERRAIN_W 900
+#define TERRAIN_H 1050
+#define TERRAIN_X0 -5097.1276f
+#define TERRAIN_Z0 -6581.1548f
+#define TERRAIN_CELL 10.4616285f
+__device__ float4 terrainSample(const float4 *T, float x, float z) {
+  float u = fminf(fmaxf((x - TERRAIN_X0) / TERRAIN_CELL, 0.0f), (float)TERRAIN_W - 1.001f),
+        v = fminf(fmaxf((z - TERRAIN_Z0) / TERRAIN_CELL, 0.0f), (float)TERRAIN_H - 1.001f);
+  int iu = (int)u, iv = (int)v, i = iv * TERRAIN_W + iu;
+  float fu = u - (float)iu, fv = v - (float)iv;
+  return mix4(mix4(T[i], T[i + 1], fu), mix4(T[i + TERRAIN_W], T[i + TERRAIN_W + 1], fu), fv);
+}
+// Metres to the shoreline: negative over the reservoir, positive on land.
+__device__ float shoreDistance(const float4 *T, float x, float z) {
+  return terrainSample(T, x, z).y;
+}
+// Lidar flattens water, so the bed is modelled: the banks keep dropping at about 1:3 until
+// the basin floor. `depth` is the interface's basin depth.
+__device__ float bedDepth(float offshore, float depth) {
+  return fminf(depth, .08f + .35f * offshore);
+}
+__device__ float terrainHeight(const float4 *T, float x, float z) {
+  float4 s = terrainSample(T, x, z);
+  if (s.y < 0)
+    return -bedDepth(-s.y, 40.0f);
+  // Sub-grid relief the 10 m lidar grid cannot hold, faded out at the waterline.
+  float detail = 2.2f * (fbm(x * .045f + 5.0f, z * .045f) - .5f) +
+                 .5f * (noise(x * .21f, z * .21f) - .5f);
+  // Past the edge of the survey the clamped lookup would smear the last row into a plateau;
+  // let the land fall away under the haze so the painted far ridges take over instead.
+  float outside = fmaxf(fmaxf(TERRAIN_X0 - x, x - (TERRAIN_X0 + (TERRAIN_W - 1) * TERRAIN_CELL)),
+                        fmaxf(TERRAIN_Z0 - z, z - (TERRAIN_Z0 + (TERRAIN_H - 1) * TERRAIN_CELL)));
+  return s.x + detail * smooth(0.0f, 25.0f, s.y) - .25f * fmaxf(0.0f, outside);
+}
+__device__ float terrainTrace(const float4 *T, float3 ro, float3 rd, int steps,
+                              float maxDistance) {
+  float t = 1.0f, prevStep = 1.0f;
+  for (int i = 0; i < 128; i++) {
+    if (i >= steps || t >= maxDistance)
+      break;
+    float3 p = add(ro, mul(rd, t));
+    float shore = shoreDistance(T, p.x, p.z);
+    if (shore < -4.0f) {
+      // Over open water nothing above the surface is land: the water pass owns it, and the
+      // shoreline distance is a safe horizontal (so also 3D) step to the nearest bank.
+      if (p.y < 0)
+        return -1.0f;
+      prevStep = fmaxf(2.0f, -shore);
+      t += prevStep;
+      continue;
+    }
+    float delta = p.y - terrainHeight(T, p.x, p.z);
+    if (delta < .0015f * t + .05f) {
+      // Bisect between the last clear sample and this one.
+      float lo = t - prevStep, hi = t;
+      for (int k = 0; k < 5; k++) {
+        float mid = .5f * (lo + hi);
+        float3 q = add(ro, mul(rd, mid));
+        if (q.y - terrainHeight(T, q.x, q.z) < 0)
+          hi = mid;
+        else
+          lo = mid;
+      }
+      return hi;
+    }
+    // Minimum step grows with distance (as the pixel footprint does) so grazing rays reach
+    // the far ridges; the bisection above hides the coarser sampling.
+    prevStep = fmaxf(.6f + .004f * t, fminf(12.0f + .02f * t, delta * .5f));
+    t += prevStep;
+  }
+  // Out of steps while heading down: a few flat-ground Newton steps land it on the hills
+  // instead of letting it fall through to the painted backdrop.
+  if (rd.y < -.01f && t < maxDistance) {
+    for (int k = 0; k < 4; k++) {
+      float3 p = add(ro, mul(rd, t));
+      t += (p.y - terrainHeight(T, p.x, p.z)) / -rd.y;
+    }
+    float3 p = add(ro, mul(rd, t));
+    if (shoreDistance(T, p.x, p.z) > 0)
+      return t;
+  }
+  return -1.0f;
+}
+__device__ float3 terrainNormal(const float4 *T, float x, float z, float distance) {
+  float e = fmaxf(3.0f, distance * .003f);
+  return norm(v3(terrainHeight(T, x - e, z) - terrainHeight(T, x + e, z), 2.0f * e,
+                 terrainHeight(T, x, z - e) - terrainHeight(T, x, z + e)));
+}
+// Soft sun visibility: march toward the sun and keep the tightest clearance ratio.
+__device__ float terrainShadow(const float4 *T, float3 p, int steps) {
+  float3 sun = sunDir();
+  float vis = 1.0f, t = 6.0f;
+  for (int i = 0; i < 16; i++) {
+    if (i >= steps)
+      break;
+    float3 q = add(p, mul(sun, t));
+    float h = q.y - terrainHeight(T, q.x, q.z);
+    vis = fminf(vis, 8.0f * h / t);
+    if (vis < 0)
+      break;
+    t += fmaxf(8.0f, h * .7f);
+  }
+  return smooth(0, 1, vis);
+}
+// Oak crowns scattered one candidate per 9 m cell (Voronoi-style), kept when the cell's
+// hash falls under the local density. Each crown is a lumpy sphere sitting on a short trunk;
+// (x, z) is sampled on a horizontal slice h metres above the ground. Returns (coverage,
+// crown normal xyz): coverage is an antialiased 0..1 cross-section, the normal is the sphere's.
+// Valley and blue oaks spread wider than they are tall: crowns are ellipsoids this flat.
+#define OAK_FLAT .65f
+__device__ float4 oakCrowns(float x, float z, float h, float density, float footprint) {
+  const float cell = 9.0f;
+  float gx = floorf(x / cell), gz = floorf(z / cell);
+  float bestDome = -1.0f, cover = 0.0f, nx = 0.0f, ny = 1.0f, nz = 0.0f;
+  for (int j = -1; j <= 1; j++)
+    for (int i = -1; i <= 1; i++) {
+      float cx = gx + (float)i, cz = gz + (float)j;
+      if (hash(cx, cz) > density)
+        continue;
+      float tx = (cx + .15f + .70f * hash(cx + 71.0f, cz - 19.0f)) * cell,
+            tz = (cz + .15f + .70f * hash(cx - 33.0f, cz + 57.0f)) * cell,
+            rad = 3.4f + 3.2f * hash(cx + 11.0f, cz + 5.0f);
+      // Lumpy silhouette so crowns are not perfect discs.
+      float dx = x - tx, dz = z - tz;
+      rad *= .88f + .24f * noise(atan2f(dz, dx) * 1.3f + cx, cz);
+      float dy = (h - (1.6f + OAK_FLAT * rad)) / (OAK_FLAT * rad), slice2 = 1.0f - dy * dy;
+      if (slice2 <= 0.0f)
+        continue;
+      float sr = rad * sqrtf(slice2);
+      float d2 = (dx * dx + dz * dz) / (sr * sr);
+      if (d2 >= 1.0f)
+        continue;
+      float dome = sqrtf(1.0f - d2);
+      cover = fmaxf(cover, sat((1.0f - sqrtf(d2)) * sr / (1.5f * footprint + .35f)));
+      if (dome > bestDome) {
+        bestDome = dome;
+        nx = dx / rad;
+        nz = dz / rad;
+        ny = (dy + dome * sqrtf(slice2)) / OAK_FLAT;
+      }
+    }
+  float3 n = norm(v3(nx, ny, nz));
+  return make_float4(cover, n.x, n.y, n.z);
+}
+// Near oaks: exact ray-sphere tests against the crowns the view ray passes over on its way
+// to the ground hit p, walking back along the ray while it is within crown height of the
+// local ground plane. Returns (coverage, crown normal xyz); *hitBack is how far before p.
+__device__ float4 oakRayHit(float3 p, float3 rd, float3 n, float density, float footprint,
+                            float *hitBack) {
+  const float cell = 9.0f;
+  float facing = fmaxf(-dot3(rd, n), .02f);
+  float span = fminf(60.0f, 12.0f * n.y / facing);
+  int samples = min(20, (int)(span / 4.5f) + 2);
+  float best = -1.0f, cover = 0.0f;
+  float3 bestN = v3(0, 1, 0);
+  for (int k = 0; k < 20; k++) {
+    if (k >= samples)
+      break;
+    float sb = span * (float)k / (float)(samples - 1);
+    float gx = floorf((p.x - rd.x * sb) / cell), gz = floorf((p.z - rd.z * sb) / cell);
+    for (int j = -1; j <= 1; j++)
+      for (int i = -1; i <= 1; i++) {
+        float cx = gx + (float)i, cz = gz + (float)j;
+        if (hash(cx, cz) > density)
+          continue;
+        float tx = (cx + .15f + .70f * hash(cx + 71.0f, cz - 19.0f)) * cell,
+              tz = (cz + .15f + .70f * hash(cx - 33.0f, cz + 57.0f)) * cell,
+              rad = 3.4f + 3.2f * hash(cx + 11.0f, cz + 5.0f);
+        float groundY = p.y - (n.x * (tx - p.x) + n.z * (tz - p.z)) / n.y;
+        // Ray-ellipsoid: squash y so the crown becomes a sphere of radius rad.
+        float3 w = sub(p, v3(tx, groundY + 1.6f + OAK_FLAT * rad, tz));
+        w.y /= OAK_FLAT;
+        float3 d = v3(rd.x, rd.y / OAK_FLAT, rd.z);
+        float a = dot3(d, d), b = dot3(d, w) / a, miss2 = dot3(w, w) / a - b * b,
+              r2 = rad * rad / a;
+        if (miss2 >= r2)
+          continue;
+        float back = b + sqrtf(r2 - miss2);
+        if (back <= 0.0f || back <= best)
+          continue;
+        best = back;
+        cover = sat((sqrtf(r2) - sqrtf(miss2)) * sqrtf(a) / (1.5f * footprint + .25f));
+        float3 hit = sub(w, mul(d, back));
+        bestN = norm(v3(hit.x, hit.y / OAK_FLAT, hit.z));
+      }
+  }
+  *hitBack = fmaxf(best, 0.0f);
+  return make_float4(cover, bestN.x, bestN.y, bestN.z);
+}
+__device__ float3 terrainShade(const float4 *T, float3 p, float3 rd, float distance, int season,
+                               int shadowSteps, float time) {
+  float3 sun = sunDir(), n = terrainNormal(T, p.x, p.z, distance);
+  float footprint = distance * .0015f;
+  float4 cell = terrainSample(T, p.x, p.z);
+  // Lidar curvature: 1 in ravine bottoms, 0 on spurs and ridge crests.
+  float shore = cell.y, spur = 1.0f - cell.z;
+  float tex = fbm(p.x * .024f, p.z * .024f);
+  // Spring grass is a saturated yellow-green; summer cures to straw.
+  float3 spring = mix3(v3(.13f, .30f, .030f), v3(.30f, .46f, .060f), tex);
+  float3 summer = mix3(v3(.30f, .21f, .075f), v3(.50f, .37f, .15f), tex);
+  float3 grass = mix3(spring, summer, season == 0 ? 0.0f : 1.0f);
+  // Wind in the grass. Instanced-blade grass bends each blade by a scrolling wind texture;
+  // seen from a distance that shows up as gusts rolling across the hill as lighter bands,
+  // because bent blades turn their paler, glossier sides up. A raymarcher can shade that
+  // directly: a gust field travelling downwind brightens and desaturates the sward, and
+  // close up, blade-aligned streaks sway with the same field.
+  float along = p.x * .94f + p.z * .34f, across = p.z * .94f - p.x * .34f;
+  float gust = fbm(along * .010f - time * .075f, across * .022f);
+  float flutter = noise(along * .06f - time * .45f, across * .11f);
+  float bend = sat(smooth(.40f, .72f, gust) + .45f * (flutter - .5f));
+  float3 bent = add(mul(grass, 1.28f), season == 0 ? v3(.035f, .045f, .012f) : v3(.05f, .04f, .02f));
+  grass = mix3(grass, bent, bend * (.55f + .35f * fabsf(rd.x * .94f + rd.z * .34f)));
+  float sway = .7f * bend * sinf(time * 2.4f + along * .35f + gust * 9.0f);
+  float blades = noise(across * 9.0f + sway, along * 2.4f) * .5f +
+                 noise(across * 23.0f + 1.6f * sway, along * 5.5f + 3.0f) * .5f;
+  float tuft = noise(p.x * .35f, p.z * .35f);
+  grass = mul(grass, lerp(.80f + .24f * tuft + .20f * blades, 1.0f,
+                          smooth(.02f, .10f, footprint)));
+  // Where oaks grow (Sunol/Calaveras): open grass with lone oaks on sunny south-facing
+  // slopes and spur tops; dense woodland in ravines, on north-facing and on steep slopes,
+  // plus broad grove patches so whole hillsides can be wooded.
+  float valley = 1.0f - smooth(.22f, .60f, spur);
+  float northFacing = smooth(.0f, -.40f, n.z);
+  float steep = smooth(.18f, .45f, 1.0f - n.y);
+  float grove = smooth(.46f, .64f, fbm(p.x * .0065f + 13.0f, p.z * .0065f - 4.0f));
+  float density = sat(.05f + .85f * valley + .55f * northFacing + .25f * steep + .75f * grove -
+                      .70f * smooth(.62f, .88f, spur)) *
+                  smooth(10.0f, 35.0f, shore);
+  // Individual crowns while they are a few pixels wide, then their average cover.
+  float farBlend = smooth(1.6f, 3.2f, footprint);
+  // Crowns stand up off the ground: near ones get exact ray-sphere hits; mid-distance ones
+  // use slice parallax (step back along the view ray to where it was h metres above the
+  // local ground plane, top slice first, so the first crown hit hides the ground behind).
+  float4 crown = make_float4(0, 0, 1, 0);
+  float crownX = p.x, crownZ = p.z;
+  float facing = -dot3(rd, n);
+  // The ground-plane extrapolation only holds while the slope faces the camera.
+  if (distance < 260.0f && shadowSteps > 0 && facing > .18f) {
+    float back;
+    crown = oakRayHit(p, rd, n, density, footprint, &back);
+    crownX = p.x - rd.x * back;
+    crownZ = p.z - rd.z * back;
+  } else if (distance < 260.0f) {
+    // Near slope seen edge-on: parallax would smear crowns into ribbons; draw their tops.
+    float4 c = oakCrowns(p.x, p.z, 7.0f, density, footprint);
+    crown = c;
+  } else if (farBlend < 1.0f && facing > .02f) {
+    for (int k = 0; k < 3; k++) {
+      float h = 10.5f - 3.5f * (float)k, back = h * n.y / facing;
+      if (back > 45.0f)
+        continue;
+      float qx = p.x - rd.x * back, qz = p.z - rd.z * back;
+      float4 c = oakCrowns(qx, qz, h, density, footprint);
+      if (c.x > crown.x) {
+        crown = c;
+        crownX = qx;
+        crownZ = qz;
+      }
+      if (crown.x > .98f)
+        break;
+    }
+  }
+  float canopy = lerp(crown.x, fminf(1.0f, density * .9f), farBlend);
+  float3 crownN = norm(mix3(v3(crown.y, crown.z, crown.w), n, farBlend));
+  // Cast shadows: a crown ~7 m up shades the ground away from the sun.
+  float castShadow = 0.0f;
+  if (farBlend < 1.0f && canopy < .99f && shadowSteps > 0) {
+    float along = 7.0f / fmaxf(sun.y, .15f);
+    float4 caster = oakCrowns(p.x + sun.x * along, p.z + sun.z * along, 7.0f, density, footprint);
+    castShadow = caster.x * (1.0f - farBlend);
+  }
+  castShadow = fmaxf(castShadow, farBlend * density * .45f * (1.0f - canopy));
+  // Grey-green sage and coyote brush on steep, open, sunny ground.
+  float sage = smooth(.60f, .72f, noise(p.x * .045f + 3.0f, p.z * .045f)) * steep *
+               (1.0f - density);
+  float3 oak = season == 0 ? v3(.030f, .085f, .030f) : v3(.040f, .075f, .032f);
+  // Drawdown ring: pale bare bank just above the waterline, darker where recently wet.
+  float ring = 1.0f - smooth(3.0f, 6.0f, p.y);
+  float wet = 1.0f - smooth(.2f, .9f, p.y);
+  float3 bank = mix3(v3(.34f, .30f, .22f), v3(.48f, .43f, .33f), tex);
+  float3 ground = mix3(grass, v3(.15f, .19f, .12f), sage * .8f);
+  ground = mix3(ground, bank, ring);
+  ground = mix3(ground, mul(bank, .45f), wet);
+  // Lighting: sun with terrain shadows, sky dome, warm bounce.
+  float shadow = shadowSteps > 0 ? terrainShadow(T, add(p, mul(n, .6f)), shadowSteps) : 1.0f;
+  float3 sunC = mul(v3(1.30f, 1.18f, 1.00f), 1.55f), skyC = v3(.36f, .46f, .62f),
+         bounce = v3(.20f, .16f, .08f);
+  float groundSun = fmaxf(0, dot3(n, sun)) * shadow * (1.0f - .85f * castShadow);
+  float3 groundLit = prod(ground, add(mul(sunC, groundSun),
+                                      add(mul(skyC, .38f + .30f * n.y),
+                                          mul(bounce, .25f * (1.0f - n.y)))));
+  // Crowns: lit on the sun side, deep inside the foliage on the other.
+  float clumps = .70f + .60f * noise(crownX * 1.1f, crownZ * 1.1f);
+  float crownSun = fmaxf(0, dot3(crownN, sun)) * shadow * lerp(clumps, 1.0f, farBlend);
+  float3 crownLit = prod(oak, add(mul(sunC, .15f + .85f * crownSun),
+                                  mul(skyC, .45f + .25f * crownN.y)));
+  float3 lit = mix3(groundLit, crownLit, canopy * (1.0f - ring));
+  return aerial(lit, distance, season);
+}
+// Reflected / environment lookup: terrain if the ray hits it, otherwise the sky.
+__device__ float3 environment(const float4 *T, float3 ro, float3 rd, int steps, int season,
+                              float time) {
+  float t = terrainTrace(T, ro, rd, steps, 16000.0f);
+  if (t > 0)
+    return terrainShade(T, add(ro, mul(rd, t)), rd, t, season, 0, time);
+  return sky(rd, season);
+}
+__device__ float floorDepth(const float4 *T, float x, float z, float depth) {
+  // Floor meets the surface at the waterline so the bank shows through shallow water.
+  float offshore = fmaxf(0, -shoreDistance(T, x, z));
+  float fade = smooth(0.0f, 12.0f, offshore);
+  return bedDepth(offshore, depth) + .18f * (noise(x * .12f, z * .12f) - .5f) * fade +
+         .08f * (noise(x * .55f + 7, z * .55f + 7) - .5f) * fade;
 }
 __device__ float3 stone(const float4 *peb, float x, float z, float footprint) {
   float k = noise(x * .85f, z * .85f) * 8, ia = floorf(k), f = frac(k), u = x / .78f * 1024,
@@ -308,9 +634,9 @@ __device__ float3 stone(const float4 *peb, float x, float z, float footprint) {
   return mix3(col, v3(.20f, .18f, .14f), smooth(.015f, .16f, footprint));
 }
 __global__ void render_water(const float4 *surface, const float4 *rip, const float4 *caustics,
-                             const float4 *pebbles, float4 *hdr, int width, int height, float camX,
-                             float camZ, float camY, float yaw, float pitch, float centerX,
-                             float centerZ, float depth, float time, int view) {
+                             const float4 *pebbles, const float4 *terrain, float4 *hdr, int width,
+                             int height, float camX, float camZ, float camY, float yaw, float pitch, float centerX,
+                             float centerZ, float depth, float time, int view, int season) {
   int ix = (int)(blockIdx.x * blockDim.x + threadIdx.x),
       iy = (int)(blockIdx.y * blockDim.y + threadIdx.y);
   if (ix >= width || iy >= height)
@@ -318,7 +644,11 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
   float sx = 2 * ((float)ix + .5f) / (float)width - 1,
         sy = 1 - 2 * ((float)iy + .5f) / (float)height;
   float3 rd = ray(sx, sy, (float)width / (float)height, yaw, pitch),
-         sun = v3(.08959f, .51504f, -.85247f), SUN = v3(6, 5.4f, 4.44f), col = sky(rd);
+         ro = v3(camX, camY, camZ), sun = sunDir(),
+         SUN = v3(6, 5.4f, 4.44f), col = sky(rd, season);
+  float landT = terrainTrace(terrain, ro, rd, 128, 16000.0f);
+  if (landT > 0)
+    col = terrainShade(terrain, add(ro, mul(rd, landT)), rd, landT, season, 10, time);
   if (rd.y < .0015f) {
     float3 wd = norm(v3(rd.x, fminf(rd.y, -.0015f), rd.z));
     float t = -camY / wd.y;
@@ -329,6 +659,8 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
     }
     float3 P = v3(camX + wd.x * t, camY + wd.y * t, camZ + wd.z * t);
     a = water(surface, rip, P.x, P.z, centerX, centerZ, t);
+    bool onReservoir = shoreDistance(terrain, P.x, P.z) < -.5f && (landT < 0 || t < landT);
+    if (onReservoir) {
     float3 n = norm(v3(-a.y, 1, -a.z)), v = mul(wd, -1);
     float nv = dot3(n, v);
     if (nv < .02f) {
@@ -336,9 +668,12 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
       nv = dot3(n, v);
     }
     float F = fresnel(nv);
-    float3 rr = sub(wd, mul(n, 2 * dot3(wd, n)));
+    float3 nr = norm(mix3(n, v3(0, 1, 0), .75f * smooth(40.0f, 700.0f, t)));
+    float3 rr = sub(wd, mul(nr, 2 * dot3(wd, nr)));
     rr.y = fabsf(rr.y);
-    float3 reflection = mul(sky(rr), 1.25f), h = norm(add(v, sun));
+    // Reservoirs read by what they mirror: trace the reflected ray against the hills.
+    float3 reflection = environment(terrain, add(P, v3(0, .3f, 0)), rr, 24, season, time),
+           h = norm(add(v, sun));
     float nh = fmaxf(0, dot3(n, h)), nl = fmaxf(0, dot3(n, sun)),
           a2 = .00012f + 1.2f * a.w + .000025f * t, c2 = fmaxf(nh * nh, .0001f),
           tan2 = (1 - c2) / c2, D = expf(-tan2 / a2) / (3.14159265f * a2 * c2 * c2),
@@ -346,10 +681,10 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
                        .00001f);
     float3 spec = mul(SUN, fminf(12000, D * Vis * fresnel(dot3(h, v)) * nl));
     float3 tr = refract3(wd, n, 1 / 1.3335f);
-    float dist = (-floorDepth(P.x, P.z, depth) - P.y) / tr.y;
+    float dist = (-floorDepth(terrain, P.x, P.z, depth) - P.y) / tr.y;
     float3 FP = add(P, mul(tr, dist));
     for (int i = 0; i < 2; i++) {
-      dist = (-floorDepth(FP.x, FP.z, depth) - P.y) / tr.y;
+      dist = (-floorDepth(terrain, FP.x, FP.z, depth) - P.y) / tr.y;
       FP = add(P, mul(tr, dist));
     }
     dist = fmaxf(0, dist);
@@ -373,7 +708,8 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
                         centerX, centerZ);
     caus = mul(caus, fminf(3, fmaxf(.45f, 1 / (1 + .12f * dh * R.w))));
     caus = mix3(caus, v3(1, 1, 1), smooth(.01f, .12f, footprint));
-    float3 sig = v3(.428f, .126f, .156f);
+    // Turbid reservoir water (a few metres of visibility): red and blue go first.
+    float3 sig = v3(.62f, .28f, .30f);
     float Ts = 1 - fresnel(sun.y);
     float3 Esun = prod(prod(mul(SUN, Ts * (-sunT.y)), exp3(mul(sig, -dh / (-sunT.y)))), caus),
            Esky =
@@ -385,17 +721,16 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
         add(prod(mul(SUN, Ts * (ph + .02f)), exp3(mul(sig, -dh * .5f / (-sunT.y)))),
             prod(v3(.0341f, .0385f, .0429f), exp3(mul(v3(.4f, .074f, .088f), -dh * .6f))));
     float3 Lin =
-        mul(prod(prod(v3(.028f / .428f, .052f / .126f, .068f / .156f), Lmid), sub(v3(1, 1, 1), Tv)),
+        mul(prod(prod(v3(.022f / .62f, .070f / .30f, .105f / .40f), Lmid), sub(v3(1, 1, 1), Tv)),
             3.2f);
     float3 under = add(prod(Lfloor, Tv), Lin);
     col = add(add(mul(reflection, F), mul(under, 1 - F)), spec);
-    float haze = (1 - expf(-t * .004f)) * .8f;
-    col = mix3(col, v3(.57f, .6745f, .779f), haze);
-    col = mix3(col, sky(rd), smooth(-.0005f, .0015f, rd.y));
+    col = aerial(col, t, season);
     if (view == 1)
       col = mul(caus, .4f);
     if (view == 2)
       col = add(mul(n, .5f), v3(.5f, .5f, .5f));
+    }
   }
   float mu = dot3(rd, sun);
   col = add(col, mul(SUN, 18 * smooth(.99996f, .999985f, mu)));
