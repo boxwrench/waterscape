@@ -7,13 +7,14 @@ const modules=new Set();
 async function moduleGraph(file){
  file=path.resolve(file);if(modules.has(file))return;modules.add(file);
  const source=await readFile(file,'utf8');
- for(const match of source.matchAll(/(?:from\s*|import\s*\()\s*['"]([^'"]+)['"]/g)){
+ // Specifiers never contain spaces or commas (keeps words like 'from' in string lists out).
+ for(const match of source.matchAll(/(?:from\s*|import\s*\()\s*['"]([^'"\s,]+)['"]/g)){
   if(!match[1].startsWith('.'))throw Error(`External browser import: ${match[1]}`);
   await moduleGraph(path.resolve(path.dirname(file),match[1]));
  }
 }
 for(const entry of ['renderer/explore.js','site/journey.js'])await moduleGraph(path.join(root,entry));
-for(const file of [...modules,...['journey.json','site/journey.css','index.html','renderer/explore.html','renderer/explore.css','renderer/clearwater.cu','renderer/assets/seabed.jpg','LICENSE','THIRD_PARTY_NOTICES.md','vendor/cuda-webshader/LICENSE'].map(f=>path.join(root,f))]){
+for(const file of [...modules,...['journey.json','site/journey.css','index.html','renderer/explore.html','renderer/explore.css','renderer/clearwater.cu','renderer/assets/seabed.jpg','LICENSE','THIRD_PARTY_NOTICES.md','vendor/cuda-webshader/LICENSE','vendor/three/LICENSE'].map(f=>path.join(root,f))]){
  const relative=path.relative(root,file);if(relative.startsWith('..'))throw Error('Asset outside project');
  await mkdir(path.dirname(path.join(out,relative)),{recursive:true});await cp(file,path.join(out,relative));
 }
