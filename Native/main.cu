@@ -68,12 +68,12 @@ struct App {
   ComPtr<IWICFormatConverter> convert;hr(wic->CreateFormatConverter(convert.GetAddressOf()));hr(convert->Initialize(frame.Get(),GUID_WICPixelFormat32bppRGBA,WICBitmapDitherTypeNone,nullptr,0,WICBitmapPaletteTypeCustom));std::vector<unsigned char> bytes(w*h*4);hr(convert->CopyPixels(nullptr,w*4,(UINT)bytes.size(),bytes.data()));std::vector<float4> linear(w*h);for(size_t i=0;i<linear.size();i++)linear[i]=make_float4(std::pow(bytes[i*4]/255.f,2.2f),std::pow(bytes[i*4+1]/255.f,2.2f),std::pow(bytes[i*4+2]/255.f,2.2f),1);pebbles.alloc(linear.size());check(cudaMemcpy(pebbles.p,linear.data(),linear.size()*sizeof(float4),cudaMemcpyHostToDevice));
  }
  // Real terrain (USGS 3DEP): the uncompressed twin of data/calaveras/terrain.bin.gz, written by
- // `python pipeline/build_bundle.py calaveras --native`. Planar uint16 channels, rows delta-coded; the
+ // `python pipeline/build.py calaveras --native`. Planar uint16 channels, rows delta-coded; the
  // scales/offsets match data/calaveras/terrain.json.
  void decodeTerrain(){
   const int w=900,h=1050;const size_t n=(size_t)w*h;fs::path path;
   for(auto candidate:{executableDir/L"data/calaveras/terrain.bin",executableDir/L"../../data/calaveras/terrain.bin",fs::current_path()/L"data/calaveras/terrain.bin"})if(fs::exists(candidate)){path=candidate;break;}
-  if(path.empty())throw std::runtime_error("Missing data/calaveras/terrain.bin: run python pipeline/build_bundle.py calaveras --native");
+  if(path.empty())throw std::runtime_error("Missing data/calaveras/terrain.bin: run python pipeline/build.py calaveras --native");
   std::ifstream in(path,std::ios::binary);std::vector<uint16_t> words(3*n);in.read((char*)words.data(),words.size()*2);if((size_t)in.gcount()!=words.size()*2)throw std::runtime_error("Terrain asset has an unexpected size.");
   // Header texels as in data/calaveras/terrain.json (width, height, gridOrigin, cell); the
   // native host renders Calaveras only.

@@ -1,12 +1,13 @@
-"""Build one reservoir bundle in data/<id>/ from USGS 3DEP elevation (public domain).
+"""Build one water-body bundle in data/<id>/ from its source.json and USGS 3DEP elevation
+(public domain).
 
   terrain.bin.gz  planar uint16 channels (height, shoreline distance, valley), rows
                   delta-coded; scales/offsets in terrain.json
   terrain.json    grid, datum, water level, origin, channel codecs, name, biome
-  cameras.json    viewpoints (pinned in reservoirs.json or searched) and flyover keys
+  cameras.json    viewpoints (pinned in source.json or searched) and flyover keys
 
 Local axes: x east, z south, y up from the reservoir surface, origin at the water centroid.
-Requires numpy, scipy, Pillow.  Usage:  python pipeline/build_bundle.py <id> [--native]
+Requires numpy, scipy, Pillow.  Usage:  python pipeline/build.py <id> [--native]
 --native also writes the uncompressed terrain.bin (gitignored) for the native CUDA host.
 """
 
@@ -25,7 +26,7 @@ PIPELINE = ROOT / "pipeline"
 
 
 def build(rid, native=False):
-    config = json.loads((PIPELINE / "reservoirs.json").read_text())[rid]
+    config = json.loads((ROOT / "data" / rid / "source.json").read_text())
     dem, sx, sy, left, top = demlib.fetch_dem(rid, config["bbox"], config["size"], PIPELINE / ".cache")
     anchor_lat, anchor_lon = config["anchor"]
     anchor_e, anchor_n = geo.utm10(anchor_lat, anchor_lon)
@@ -78,5 +79,5 @@ def build(rid, native=False):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        sys.exit("usage: python pipeline/build_bundle.py <id> [--native]")
+        sys.exit("usage: python pipeline/build.py <id> [--native]")
     build(sys.argv[1], native="--native" in sys.argv)

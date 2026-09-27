@@ -376,7 +376,7 @@ __device__ float3 sky(const float4 *L, float3 d, int season, float time) {
   col = mix3(col, farCol, smooth(far + .0015f, far - .0015f, e));
   return mix3(col, nearCol, smooth(nearR + .0015f, nearR - .0015f, e));
 }
-// Real terrain: USGS 3DEP lidar packed by pipeline/build_bundle.py into data/<id>/terrain.*.
+// Real terrain: USGS 3DEP lidar packed by pipeline/build.py into data/<id>/terrain.*.
 // The buffer describes itself: T[0] = (width, height, x0, z0), T[1].x = cell size, and cell
 // (row, col) is T[2 + row * width + col] = (height, signed shoreline distance, valley, 0).
 // Local metres: x east, z south, y up from the reservoir surface.

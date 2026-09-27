@@ -15,7 +15,9 @@ async function json(url) {
 
 async function loadJourney() {
   try {
-    const journey = await json("./journey.json");
+    const tourId = new URLSearchParams(location.search).get("tour") || "hetch-hetchy";
+    if (!/^[a-z0-9-]+$/.test(tourId)) throw new Error(`Invalid tour: ${tourId}`);
+    const journey = await json(`./data/tours/${tourId}.json`);
     state.stops = await Promise.all(
       journey.stops.map(async (stop) => {
         const [story, cameras] = await Promise.all([

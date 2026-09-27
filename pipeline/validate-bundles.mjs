@@ -1,11 +1,12 @@
-// Schema checks for reservoir bundles in data/<id>/ (and, from Task 7, journey.json).
+// Schema checks for water-body bundles in data/<id>/, their biomes (data/biomes/<biome>/)
+// and tours (data/tours/<tour>.json).
 // Usage: node pipeline/validate-bundles.mjs   (exits 1 and lists problems on failure)
 import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { PRESET_NAMES } from "../renderer/land/presets.js";
 
-export const REQUIRED = ["terrain.bin.gz", "terrain.json", "cameras.json", "story.json", "land.json", "flyover.mp4", "poster.jpg"];
+export const REQUIRED = ["terrain.bin.gz", "terrain.json", "cameras.json", "story.json", "land.json", "source.json", "flyover.mp4", "poster.jpg"];
 
 export async function validateBundle(dir) {
   const id = path.basename(dir),
@@ -14,8 +15,8 @@ export async function validateBundle(dir) {
     await stat(path.join(dir, file)).catch(() => errors.push(`${id}: missing ${file}`));
   if (errors.length) return errors;
   const json = async (file) => JSON.parse(await readFile(path.join(dir, file), "utf8"));
-  const [terrain, cameras, story, land] = await Promise.all(
-    ["terrain.json", "cameras.json", "story.json", "land.json"].map(json),
+  const [terrain, cameras, story, land, source] = await Promise.all(
+    ["terrain.json", "cameras.json", "story.json", "land.json", "source.json"].map(json),
   );
   for (const key of ["name", "biome", "width", "height", "cell", "gridOrigin", "waterLevel", "originUTM", "channels"])
     if (terrain[key] === undefined) errors.push(`${id}: terrain.json lacks ${key}`);
@@ -50,27 +51,39 @@ export async function validateBundle(dir) {
     errors.push(`${id}: land.json defaultPreset ${land.defaultPreset} is not in its presets`);
   if (!["spring", "summer"].includes(land.defaultSeason))
     errors.push(`${id}: land.json defaultSeason ${land.defaultSeason} is not spring or summer`);
+  const biomeFile = path.join(path.dirname(dir), "biomes", source.biome ?? "", "biome.json");
+  await stat(biomeFile).catch(() =>
+    errors.push(`${id}: biome ${source.biome} has no data/biomes/${source.biome}/biome.json`),
+  );
+  if (source.biome !== terrain.biome)
+    errors.push(`${id}: source.json biome ${source.biome} differs from terrain.json ${terrain.biome}`);
   return errors;
 }
 
-export async function validateJourney(root) {
-  const journey = JSON.parse(await readFile(path.join(root, "journey.json"), "utf8")),
+// Tours (data/tours/<tour>.json): ordered stops, each an existing water body.
+export async function validateTours(root) {
+  const dir = path.join(root, "data", "tours"),
     errors = [];
-  if (!journey.stops?.length) errors.push("journey.json has no stops");
-  for (const stop of journey.stops ?? []) {
-    if (!stop.caption) errors.push(`journey.json: stop ${stop.id} has no caption`);
-    await stat(path.join(root, "data", stop.id)).catch(() =>
-      errors.push(`journey.json: no bundle for stop ${stop.id}`),
-    );
+  for (const file of (await readdir(dir)).filter((f) => f.endsWith(".json"))) {
+    const tour = JSON.parse(await readFile(path.join(dir, file), "utf8")),
+      name = file.slice(0, -5);
+    if (!tour.title) errors.push(`tour ${name}: no title`);
+    if (!tour.stops?.length) errors.push(`tour ${name}: no stops`);
+    for (const stop of tour.stops ?? []) {
+      if (!stop.caption) errors.push(`tour ${name}: stop ${stop.id} has no caption`);
+      await stat(path.join(root, "data", stop.id)).catch(() =>
+        errors.push(`tour ${name}: no bundle for stop ${stop.id}`),
+      );
+    }
   }
   return errors;
 }
 
 export async function validateAll(root) {
   const dirs = (await readdir(path.join(root, "data"), { withFileTypes: true }))
-    .filter((d) => d.isDirectory())
+    .filter((d) => d.isDirectory() && !["biomes", "tours"].includes(d.name))
     .map((d) => path.join(root, "data", d.name));
-  return [...(await Promise.all(dirs.map(validateBundle))).flat(), ...(await validateJourney(root))];
+  return [...(await Promise.all(dirs.map(validateBundle))).flat(), ...(await validateTours(root))];
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

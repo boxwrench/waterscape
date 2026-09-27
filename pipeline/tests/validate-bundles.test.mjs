@@ -3,10 +3,14 @@ import assert from "node:assert/strict";
 import { mkdtemp, mkdir, writeFile, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { REQUIRED, validateBundle } from "../validate-bundles.mjs";
+import { REQUIRED, validateBundle, validateTours } from "../validate-bundles.mjs";
 
 const view = { x: 0, z: 0, above: 3, yaw: 0, pitch: -0.1, speed: 40, label: "View" };
 const good = {
+  "source.json": {
+    name: "Test Reservoir", biome: "diablo-oak", anchor: [37.5, -121.8],
+    bbox: [-121.9, 37.4, -121.7, 37.6], size: [2, 2],
+  },
   "terrain.json": {
     name: "Test Reservoir", biome: "diablo-oak", width: 2, height: 2, cell: [10, 10],
     gridOrigin: [0, 0], waterLevel: 100, originUTM: [0, 0], channels: {},
@@ -28,6 +32,9 @@ const good = {
 async function bundle(overrides = {}, drop = []) {
   const dir = path.join(await mkdtemp(path.join(os.tmpdir(), "bundle-")), "test");
   await mkdir(dir);
+  await mkdir(path.join(path.dirname(dir), "biomes", "diablo-oak"), { recursive: true });
+  await writeFile(path.join(path.dirname(dir), "biomes", "diablo-oak", "biome.json"),
+    JSON.stringify({ id: "diablo-oak", name: "Diablo Range oak woodland", description: "x" }));
   for (const file of REQUIRED) {
     if (drop.includes(file)) continue;
     const body = file.endsWith(".json") ? JSON.stringify({ ...good[file], ...overrides[file] }) : "";
@@ -73,4 +80,23 @@ test("land.json defaultSeason must be spring or summer", async () => {
   const dir = await bundle({ "land.json": { defaultSeason: "autumn" } });
   assert.deepEqual(await validateBundle(dir), ["test: land.json defaultSeason autumn is not spring or summer"]);
   await rm(path.dirname(dir), { recursive: true });
+});
+
+test("the body's biome must exist and agree across files", async () => {
+  const dir = await bundle({ "source.json": { biome: "sierra" } });
+  assert.deepEqual(await validateBundle(dir), [
+    "test: biome sierra has no data/biomes/sierra/biome.json",
+    "test: source.json biome sierra differs from terrain.json diablo-oak",
+  ]);
+  await rm(path.dirname(dir), { recursive: true });
+});
+
+test("tour stops must name existing bodies", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "tours-"));
+  await mkdir(path.join(root, "data", "tours"), { recursive: true });
+  await mkdir(path.join(root, "data", "calaveras"), { recursive: true });
+  await writeFile(path.join(root, "data", "tours", "t.json"),
+    JSON.stringify({ title: "T", stops: [{ id: "calaveras", caption: "c" }, { id: "nowhere", caption: "n" }] }));
+  assert.deepEqual(await validateTours(root), ["tour t: no bundle for stop nowhere"]);
+  await rm(root, { recursive: true });
 });
