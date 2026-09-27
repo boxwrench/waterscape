@@ -24,7 +24,7 @@ waves, water clarity). And on a typical laptop the browser picks the integrated 
 | Which land problems | Near-field ground/grass (A) and trees (B). Horizon and lighting mood are not in scope (lighting mood arrives partly through time of day). |
 | Which controls | Time of day and season; wind/waves and water clarity. Water level stays in parent step 2. |
 | Weakest device for live 3D | Recent integrated GPUs (Intel Xe class) with automatic quality tiers; phones stay on the video tier. |
-| Land approach | Image-based detail inside the existing CUDA ray-marched renderer: CC0 photo ground textures and baked oak impostors. No second (raster) renderer. |
+| Land approach | Image-based detail inside the existing CUDA ray-marched renderer: CC0 photo ground textures and baked voxel oaks (high tier). No second (raster) renderer. |
 | Order | 1 quality tiers + GPU visibility → 2 near-field land → 3 scene controls. Each is its own plan. |
 
 ## Sub-project 1 — Quality tiers and GPU visibility
@@ -68,23 +68,31 @@ waves, water clarity). And on a typical laptop the browser picks the integrated 
 - Detail fades to today's procedural shading with pixel footprint (beyond a few hundred
   metres), so distant hills are unchanged and aliasing-free.
 
-### Trees (impostors)
-- `pipeline/bake-impostors.py` runs Blender 5.2 headless (installed on this machine) to
-  build or import 3–4 California oak shapes — spreading valley oak, compact blue oak, dense
-  coast live oak — and bake each into an **octahedral impostor** atlas: colour+alpha,
-  normal and depth for many view directions.
-- Shading: the existing per-cell tree placement stays (density rules, positions, sizes). A
-  ray that meets a tree's bounds samples the impostor view nearest the ray direction; alpha
-  decides hit or pass-through (the ray continues to the next candidate or the ground);
-  normal and depth give correct sun lighting and cast shadows. Species chosen per tree by
-  hash and site (drainage/aspect).
-- Far groves keep today's averaged canopy, tinted by the impostors' mean colours.
-- Tier scaling: fewer candidate trees and lower mip on low/medium.
+### Trees (voxel oaks)
+Decided 2026-09-27, replacing the octahedral-impostor plan: a cloud session built working
+voxel oaks (branch `origin/claude/water-usage-alternatives-ctk0dz`, commit `2c73b3d`), and
+they are ported rather than re-invented.
+- `scripts/build-oaks.mjs` grows eight California oak variants (coast live, blue, valley)
+  by space colonization with pipe-model limb radii and bakes each into a 40×30×40 block of
+  leaf density, wood density, sun transmittance and sky openness (`oaks.bin.gz` +
+  `oaks.json`). Lighting inside the crown is baked, so the shader only marches opacity.
+- Shading: the existing per-cell tree placement on the lidar terrain stays (density rules,
+  positions, sizes); each placed tree picks a variant by hash. Within `treeNear` the shader
+  ray-marches the nearest two tree blocks per pixel (trunks, lobed crowns, gaps, dappled
+  shadows traced through the same blocks). Beyond it, today's analytic crowns and averaged
+  canopy stay, tinted toward the variants' mean colours.
+- **Tier scaling:** voxel oaks are the **high** tier (the discrete-GPU option). Medium and
+  low keep today's analytic crowns unless a cheaper oak mode — e.g. one block per pixel,
+  fewer march steps, a shorter `treeNear` — keeps medium under its budget on Intel Xe with
+  an acceptable look; that is measured during the port, and the low tier's ≤ 33 ms at
+  768 px must still hold.
+- `OAK_*` shader constants are checked against `oaks.json` at startup; the native host
+  loads the uncompressed block file.
 
 ### Assets
 - Shared (not per reservoir): `data/shared/ground/*` and `data/shared/trees/*` plus a small
   JSON manifest, validated like bundles (files present, sizes, dimensions). Scripts fetch
-  and pack textures (`pipeline/fetch-textures.py`) and bake impostors. Every source is CC0
+  and pack textures (`pipeline/fetch-textures.py`); `scripts/build-oaks.mjs` rebuilds the oak blocks. Every source is CC0
   and recorded in THIRD_PARTY_NOTICES with its URL.
 - Flyover videos and posters are re-rendered after this sub-project.
 
