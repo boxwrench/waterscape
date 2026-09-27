@@ -176,3 +176,19 @@ button:disabled {
     bottom: 12px;
   }
 }
+#stage.live #flyover,
+#stage.live #poster {
+  visibility: hidden;
+}
+#liveFrame {
+  background: #173d42;
+}
+#slowNotice {
+  margin: 12px 0 0;
+  font-size: 12px;
+  color: #ffe2b8;
+}
+#slowNotice button {
+  margin-left: 6px;
+  padding: 4px 8px;
+}

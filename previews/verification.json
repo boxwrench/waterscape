@@ -118,9 +118,9 @@
   },
   "distant": {
     "finite": true,
-    "min": -0.33503761887550354,
-    "max": 0.3785203695297241,
-    "rms": 0.07697463165898256,
+    "min": -0.3291463851928711,
+    "max": 0.38172677159309387,
+    "rms": 0.0769725311510569,
     "ripplePeak": 0,
     "adapter": {
       "vendor": "intel",
@@ -146,10 +146,10 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 3336,
-      "submissions": 106,
-      "dispatches": 3336,
-      "uniformBytesUploaded": 763696,
+      "bindGroupsCreated": 3270,
+      "submissions": 104,
+      "dispatches": 3270,
+      "uniformBytesUploaded": 748512,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 42631168
     }
@@ -184,10 +184,10 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 3767,
-      "submissions": 120,
-      "dispatches": 3767,
-      "uniformBytesUploaded": 862064,
+      "bindGroupsCreated": 3701,
+      "submissions": 118,
+      "dispatches": 3701,
+      "uniformBytesUploaded": 846880,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 46825472
     }
@@ -215,9 +215,9 @@
       "viewpoint": "overlook",
       "time": 20,
       "playing": false,
-      "frames": 56
+      "frames": 55
     },
-    "frames": 56,
+    "frames": 55,
     "cascades": [
       4.6,
       37,
@@ -231,7 +231,7 @@
     ],
     "width": 1152,
     "height": 720,
-    "frameMs": 134.0799999833107,
+    "frameMs": 96.01999998092651,
     "readbackBytes": 42631168
   },
   "browserErrors": []

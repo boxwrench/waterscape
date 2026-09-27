@@ -1,7 +1,9 @@
 // Waterscape journey: one stop per reservoir bundle in data/<id>/. Every stop works from
 // its poster and flyover video alone; the journey never waits on 3D.
+import { liveCapable } from "./device.js";
+import { poseAt } from "./flyover-path.js";
 const $ = (id) => document.getElementById(id);
-const state = { stops: [], index: 0 };
+const state = { stops: [], index: 0, live: null };
 window.waterscapeJourney = state;
 const dataUrl = (id, file) => `./data/${id}/${file}`;
 
@@ -84,7 +86,49 @@ function prefetch(i) {
   }
 }
 
+// Median frame time above this for 2 s means the device should stay on video.
+const SLOW_MS = 60;
+
+function enterLive() {
+  const stop = state.stops[state.index],
+    video = $("flyover");
+  if (!stop.cameras?.flyover) return;
+  const pose = poseAt(stop.cameras.flyover, video.currentTime || 0),
+    frame = document.createElement("iframe");
+  frame.id = "liveFrame";
+  frame.title = `${stop.story?.name ?? stop.id}, live 3D`;
+  frame.src =
+    `./renderer/explore.html?reservoir=${encodeURIComponent(stop.id)}&embed=1&pose=` +
+    [pose.x, pose.y, pose.z, pose.yaw, pose.pitch].map((v) => v.toFixed(3)).join(",");
+  state.live = { id: stop.id, pose, frameTimes: [], started: performance.now() };
+  $("stage").append(frame);
+  $("stage").classList.add("live");
+  video.pause();
+  $("explore").textContent = "Back to video";
+  $("slowNotice").hidden = true;
+}
+
+function leaveLive() {
+  if (!state.live) return;
+  $("liveFrame")?.remove(); // frees the GPU work
+  state.live = null;
+  $("stage").classList.remove("live");
+  $("slowNotice").hidden = true;
+  $("explore").textContent = "Explore in 3D";
+  $("flyover").play().catch(() => {});
+}
+
+addEventListener("message", (e) => {
+  if (e.origin !== location.origin || e.data?.type !== "waterscape:frame" || !state.live) return;
+  const times = state.live.frameTimes;
+  times.push(e.data.ms);
+  const median = [...times].sort((a, b) => a - b)[times.length >> 1];
+  if (performance.now() - state.live.started > 2000 && times.length >= 4 && median > SLOW_MS)
+    $("slowNotice").hidden = false;
+});
+
 function show(i) {
+  leaveLive();
   i = Math.max(0, Math.min(state.stops.length - 1, i));
   state.index = i;
   const stop = state.stops[i];
@@ -103,6 +147,8 @@ $("flyover").addEventListener("playing", () => $("stage").classList.add("playing
 $("flyover").addEventListener("error", () => $("stage").classList.add("video-failed"));
 $("prev").onclick = () => show(state.index - 1);
 $("next").onclick = () => show(state.index + 1);
+$("explore").onclick = () => (state.live ? leaveLive() : enterLive());
+$("slowBack").onclick = leaveLive;
 addEventListener("keydown", (e) => {
   if (e.key === "ArrowRight" || e.key === "PageDown") show(state.index + 1);
   if (e.key === "ArrowLeft" || e.key === "PageUp") show(state.index - 1);
@@ -127,4 +173,5 @@ addEventListener("hashchange", showFromHash);
 
 await loadJourney();
 renderMap();
+$("explore").hidden = !(await liveCapable());
 showFromHash();

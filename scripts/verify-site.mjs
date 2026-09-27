@@ -55,6 +55,33 @@ try {
   assert.equal(await broken.textContent("#stopName"), "Calaveras Reservoir");
   await broken.close();
 
+  // Video tier: no 3D offer.
+  assert.equal(await page.isVisible("#explore"), false);
+
+  // Live tier: the iframe opens at the flyover pose and reports frame times.
+  const live = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+  await live.goto(`${base}/?tier=live`);
+  await live.waitForSelector("#explore", { state: "visible" });
+  await live.click("#explore");
+  const frame = await (await live.waitForSelector("#liveFrame")).contentFrame();
+  await frame.waitForFunction(() => window.clearwaterDiagnostics?.ready, null, { timeout: 120000 });
+  await live.waitForFunction(() => window.waterscapeJourney.live?.frameTimes.length > 0, null, {
+    timeout: 30000,
+  });
+  const expected = await live.evaluate(() => window.waterscapeJourney.live.pose),
+    actual = await frame.evaluate(() => ({ ...window.clearwaterLab.state }));
+  assert.ok(Math.abs(actual.x - expected.x) < 1 && Math.abs(actual.z - expected.z) < 1,
+    JSON.stringify({ expected, actual }));
+  assert.equal(await live.textContent("#explore"), "Back to video");
+  await live.click("#explore");
+  assert.equal(await live.$("#liveFrame"), null);
+  // Changing stop while live also closes the renderer.
+  await live.click("#explore");
+  await live.waitForSelector("#liveFrame");
+  await live.keyboard.press("ArrowRight");
+  assert.equal(await live.$("#liveFrame"), null);
+  await live.close();
+
   assert.deepEqual(errors, []);
   console.log("Journey checks passed.");
 } finally {
