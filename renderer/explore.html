@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#243b2d" />
+    <link rel="icon" href="data:," />
+    <title>Calaveras Reservoir · Water study</title>
+    <link rel="stylesheet" href="./explore.css" />
+  </head>
+  <body>
+    <canvas
+      id="water"
+      aria-label="Interactive Calaveras Reservoir study. Drag or use arrows to look, WASD to fly, E up, Q down (flying higher moves faster), Shift to boost, scroll to change speed, click the water for ripples."
+    ></canvas>
+    <header>
+      <div class="brand">
+        <span class="mark">≈</span>
+        <div>
+          <strong>CALAVERAS</strong><small>RESERVOIR STUDY</small>
+        </div>
+      </div>
+      <div class="live"><i></i><span id="status">INITIALIZING</span></div>
+    </header>
+    <main id="panel">
+      <p class="eyebrow">37°28′42.5″N / 121°49′21.5″W</p>
+      <h1>Water held<br />by the hills.</h1>
+      <p class="intro">A spring study of Calaveras Reservoir,<br />Milpitas, California.</p>
+      <div class="presets">
+        <button data-preset="overlook" class="active">North ridge</button
+        ><button data-preset="ridge">West ridge</button
+        ><button data-preset="shore">Shoreline</button>
+      </div>
+      <label
+        >Wave energy <output id="energyValue">0.4</output
+        ><input
+          id="energy"
+          type="range"
+          min="0.10"
+          max="1.60"
+          step="0.05"
+          value="0.38"
+      /></label>
+      <label
+        >Basin depth <output id="depthValue">18.0 m</output
+        ><input
+          id="depth"
+          type="range"
+          min="2"
+          max="30"
+          step="0.1"
+          value="18"
+      /></label>
+      <label
+        >Exposure <output id="exposureValue">0.9</output
+        ><input
+          id="exposure"
+          type="range"
+          min="0.4"
+          max="2.4"
+          step="0.05"
+          value="0.85"
+      /></label>
+      <div class="row">
+        <label
+          >Season<select id="season">
+            <option value="0" selected>Spring green</option>
+            <option value="1">Summer gold</option>
+          </select></label
+        ><label
+          >Resolution<select id="quality">
+            <option value="768">Performance</option>
+            <option value="1152" selected>Balanced</option>
+            <option value="1536">High</option>
+          </select></label
+        >
+      </div>
+      <div class="row">
+        <label
+          >View<select id="view">
+            <option value="0">Water</option>
+            <option value="1">Caustics</option>
+            <option value="2">Normals</option>
+          </select></label
+        >
+      </div>
+      <div class="checks">
+        <label><input id="glare" type="checkbox" checked /> Lens glare</label
+        ><label><input id="cruise" type="checkbox" /> Drift forward</label>
+      </div>
+      <div class="actions">
+        <button id="pause">Ⅱ Pause</button><button id="reset">Reset view</button
+        ><button id="capture" title="Save image">↓ PNG</button>
+      </div>
+      <div class="engine">
+        <span>CUDA WEBSHADER</span><span>USGS LIDAR / 3 × 256² FFT</span>
+      </div>
+    </main>
+    <aside id="survey" class="survey" aria-label="Elevation readout">
+      <p class="eyebrow">Elevation · USGS 3DEP lidar</p>
+      <dl>
+        <dt>Camera</dt><dd id="elevCamera">—</dd>
+        <dt>Ground</dt><dd id="elevGround">—</dd>
+        <dt>Cursor</dt><dd id="elevCursor">Point at the land</dd>
+        <dt>Position</dt><dd id="elevPosition">—</dd>
+      </dl>
+      <p class="source">
+        Water surface <span id="waterLevel">—</span> at survey time. Terrain:
+        <a href="https://www.usgs.gov/3d-elevation-program" target="_blank" rel="noopener"
+          >USGS 3D Elevation Program</a
+        >
+        (public domain) ·
+        <a id="dataLink" href="https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer" target="_blank" rel="noopener"
+          >data service</a
+        >
+      </p>
+    </aside>
+    <button id="toggle" title="Hide or show controls (H)">
+      Hide controls ↗
+    </button>
+    <footer>
+      <span
+        >DRAG TO LOOK <b>·</b> WASD TO EXPLORE <b>·</b> E / Q UP / DOWN
+        <b>·</b> HIGHER FLIES FASTER <b>·</b> SHIFT BOOST <b>·</b> SCROLL FOR SPEED</span
+      ><span id="metrics">Preparing the surface…</span>
+    </footer>
+    <div id="loading">
+      <span class="mark">≈</span>
+      <h2>Finding the light.</h2>
+      <p id="loadText">Shaping the Calaveras basin…</p>
+    </div>
+    <div id="error" hidden></div>
+    <a
+      class="credit"
+      href="https://github.com/Aureliengmz/clearwater"
+      target="_blank"
+      rel="noopener"
+      >Water optics based on Clearwater by Aurélien / Lumaris</a
+    >
+    <script type="module" src="./explore.js"></script>
+  </body>
+</html>

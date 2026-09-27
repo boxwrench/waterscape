@@ -1,4 +1,4 @@
-"""Build assets/calaveras-terrain.bin.gz from USGS 3DEP elevation (public domain).
+"""Build data/calaveras/terrain.bin.gz from USGS 3DEP elevation (public domain).
 
 Fetches a UTM 10N (EPSG:32610) float32 GeoTIFF around Calaveras Reservoir from the
 National Map 3DEP ImageServer, then packs three uint16 channels per ~10 m cell. Channels
@@ -10,8 +10,8 @@ row above (mod 65536) so gzip can exploit the smooth terrain:
   2  valley-ness from smoothed curvature       (0 ridge/spur .. 1 ravine bottom)
 
 Local scene axes: x = east, z = south, y = up, origin at `origin` (UTM) on the water.
-Requires numpy, scipy and Pillow.  Usage:  python scripts/build-terrain.py [--native]
---native also writes the same bytes uncompressed to assets/calaveras-terrain.bin (gitignored)
+Requires numpy, scipy and Pillow.  Usage:  python pipeline/build_bundle.py [--native]
+--native also writes the same bytes uncompressed to data/calaveras/terrain.bin (gitignored)
 for the native CUDA host, which has no gzip decoder.
 """
 
@@ -28,7 +28,7 @@ from PIL import Image
 from scipy import ndimage
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT = ROOT / "assets"
+OUT = ROOT / "data" / "calaveras"
 # Lon/lat box covering the reservoir, the dam, Arroyo Hondo and the enclosing ridges.
 BBOX = (-121.875, 37.435, -121.770, 37.530)
 SIZE = (900, 1050)
@@ -74,7 +74,8 @@ def utm10(lat, lon):
 
 
 def fetch():
-    cache = ROOT / "scripts" / ".cache-3dep.tif"
+    cache = ROOT / "pipeline" / ".cache" / "calaveras.tif"
+    cache.parent.mkdir(exist_ok=True)
     if not cache.exists():
         print("Downloading USGS 3DEP elevation...")
         with urllib.request.urlopen(URL, timeout=120) as r:
@@ -129,10 +130,10 @@ def main():
         delta = plane.copy()
         delta[1:] = (plane[1:] - plane[:-1]) % 65536
         body += delta.astype("<u2").tobytes()
-    with gzip.GzipFile(OUT / "calaveras-terrain.bin.gz", "wb", compresslevel=9, mtime=0) as g:
+    with gzip.GzipFile(OUT / "terrain.bin.gz", "wb", compresslevel=9, mtime=0) as g:
         g.write(body)
     if "--native" in sys.argv:
-        (OUT / "calaveras-terrain.bin").write_bytes(body)
+        (OUT / "terrain.bin").write_bytes(body)
 
     def local(lat, lon):
         e, n = utm10(lat, lon)
@@ -161,11 +162,11 @@ def main():
             "handoffReference": local(37.478472, -121.822639),
         },
     }
-    (OUT / "calaveras-terrain.json").write_text(json.dumps(meta, indent=2) + "\n")
+    (OUT / "terrain.json").write_text(json.dumps(meta, indent=2) + "\n")
     print(json.dumps({k: meta[k] for k in ("waterLevel", "originUTM", "gridOrigin", "landmarks")}))
     print("water cells", int(water.sum()), "area km2", round(water.sum() * sx * sy / 1e6, 2))
     print("height range", float(height.min()), float(height.max()))
-    print("bytes", (OUT / "calaveras-terrain.bin.gz").stat().st_size)
+    print("bytes", (OUT / "terrain.bin.gz").stat().st_size)
 
 
 if __name__ == "__main__":

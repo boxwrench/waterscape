@@ -23,7 +23,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
-#include "../src/clearwater.cu"
+#include "../renderer/clearwater.cu"
 
 using Microsoft::WRL::ComPtr;
 namespace fs = std::filesystem;
@@ -52,7 +52,7 @@ struct App {
  Buffer<unsigned> photons,pixels;
  const dim3 block{8,8,1},wavesGrid{32,32,3},ripGrid{32,32,1};
  ~App(){cudaDeviceSynchronize();if(shared)cudaGraphicsUnregisterResource(shared);if(font)DeleteObject(font);if(heading)DeleteObject(heading);if(background)DeleteObject(background);}
- void paths(){wchar_t p[32768];GetModuleFileNameW(nullptr,p,32768);executableDir=fs::path(p).parent_path();outputDir=executableDir/L"output";fs::create_directories(outputDir);for(auto candidate:{executableDir/L"assets/seabed.jpg",executableDir/L"../../assets/seabed.jpg",fs::current_path()/L"assets/seabed.jpg"})if(fs::exists(candidate)){assetPath=fs::canonical(candidate);break;}if(assetPath.empty())throw std::runtime_error("Missing assets/seabed.jpg beside ClearwaterNative.exe");}
+ void paths(){wchar_t p[32768];GetModuleFileNameW(nullptr,p,32768);executableDir=fs::path(p).parent_path();outputDir=executableDir/L"output";fs::create_directories(outputDir);for(auto candidate:{executableDir/L"renderer/assets/seabed.jpg",executableDir/L"../../renderer/assets/seabed.jpg",fs::current_path()/L"renderer/assets/seabed.jpg"})if(fs::exists(candidate)){assetPath=fs::canonical(candidate);break;}if(assetPath.empty())throw std::runtime_error("Missing assets/seabed.jpg beside ClearwaterNative.exe");}
  void graphics(){
   ComPtr<IDXGIFactory> factory;hr(CreateDXGIFactory(__uuidof(IDXGIFactory),(void**)factory.GetAddressOf()));
   ComPtr<IDXGIAdapter> selected;
@@ -67,13 +67,13 @@ struct App {
   ComPtr<IWICBitmapDecoder> decoder;hr(wic->CreateDecoderFromFilename(assetPath.c_str(),nullptr,GENERIC_READ,WICDecodeMetadataCacheOnLoad,decoder.GetAddressOf()));ComPtr<IWICBitmapFrameDecode> frame;hr(decoder->GetFrame(0,frame.GetAddressOf()));UINT w,h;hr(frame->GetSize(&w,&h));if(w!=1024||h!=1024)throw std::runtime_error("Seabed asset must be 1024 x 1024.");
   ComPtr<IWICFormatConverter> convert;hr(wic->CreateFormatConverter(convert.GetAddressOf()));hr(convert->Initialize(frame.Get(),GUID_WICPixelFormat32bppRGBA,WICBitmapDitherTypeNone,nullptr,0,WICBitmapPaletteTypeCustom));std::vector<unsigned char> bytes(w*h*4);hr(convert->CopyPixels(nullptr,w*4,(UINT)bytes.size(),bytes.data()));std::vector<float4> linear(w*h);for(size_t i=0;i<linear.size();i++)linear[i]=make_float4(std::pow(bytes[i*4]/255.f,2.2f),std::pow(bytes[i*4+1]/255.f,2.2f),std::pow(bytes[i*4+2]/255.f,2.2f),1);pebbles.alloc(linear.size());check(cudaMemcpy(pebbles.p,linear.data(),linear.size()*sizeof(float4),cudaMemcpyHostToDevice));
  }
- // Real terrain (USGS 3DEP): the uncompressed twin of assets/calaveras-terrain.bin.gz, written by
- // `python scripts/build-terrain.py --native`. Planar uint16 channels, rows delta-coded; the
- // scales/offsets match assets/calaveras-terrain.json.
+ // Real terrain (USGS 3DEP): the uncompressed twin of data/calaveras/terrain.bin.gz, written by
+ // `python pipeline/build_bundle.py calaveras --native`. Planar uint16 channels, rows delta-coded; the
+ // scales/offsets match data/calaveras/terrain.json.
  void decodeTerrain(){
   const int w=900,h=1050;const size_t n=(size_t)w*h;fs::path path;
-  for(auto candidate:{executableDir/L"assets/calaveras-terrain.bin",executableDir/L"../../assets/calaveras-terrain.bin",fs::current_path()/L"assets/calaveras-terrain.bin"})if(fs::exists(candidate)){path=candidate;break;}
-  if(path.empty())throw std::runtime_error("Missing assets/calaveras-terrain.bin: run python scripts/build-terrain.py --native");
+  for(auto candidate:{executableDir/L"data/calaveras/terrain.bin",executableDir/L"../../data/calaveras/terrain.bin",fs::current_path()/L"data/calaveras/terrain.bin"})if(fs::exists(candidate)){path=candidate;break;}
+  if(path.empty())throw std::runtime_error("Missing data/calaveras/terrain.bin: run python pipeline/build_bundle.py calaveras --native");
   std::ifstream in(path,std::ios::binary);std::vector<uint16_t> words(3*n);in.read((char*)words.data(),words.size()*2);if((size_t)in.gcount()!=words.size()*2)throw std::runtime_error("Terrain asset has an unexpected size.");
   const float scale[3]={.05f,.25f,1.f/65472},offset[3]={-250.f,-4000.f,0.f};std::vector<float4> cells(n,make_float4(0,0,0,0));std::vector<uint16_t> row(w);
   for(int c=0;c<3;c++){std::fill(row.begin(),row.end(),0);for(int r=0;r<h;r++)for(int i=0;i<w;i++){row[i]=uint16_t(row[i]+words[c*n+(size_t)r*w+i]);float v=row[i]*scale[c]+offset[c];float4& cell=cells[(size_t)r*w+i];if(c==0)cell.x=v;else if(c==1)cell.y=v;else cell.z=v;}}

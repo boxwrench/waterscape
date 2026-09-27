@@ -1,7 +1,11 @@
 import { chromium } from "playwright";
 import { mkdir, writeFile } from "node:fs/promises";
 import assert from "node:assert/strict";
+import { createStaticServer } from "./serve.mjs";
 await mkdir("previews", { recursive: true });
+const server = createStaticServer();
+await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+const base = `http://127.0.0.1:${server.address().port}`;
 const browser = await chromium.launch({
   channel: "msedge",
   headless: false,
@@ -19,7 +23,7 @@ try {
   page.on("response", (r) => {
     if (r.status() >= 400) errors.push(`${r.status()} ${r.url()}`);
   });
-  await page.goto("http://127.0.0.1:5186/");
+  await page.goto(`${base}/renderer/explore.html`);
   await page.waitForFunction(
     () =>
       window.clearwaterDiagnostics?.ready ||
@@ -173,4 +177,5 @@ try {
   console.log(JSON.stringify(result, null, 2));
 } finally {
   await browser.close();
+  server.close();
 }

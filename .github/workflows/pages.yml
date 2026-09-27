@@ -19,7 +19,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: node --check app.js
+      - run: node --check renderer/explore.js
       - run: npm run check
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3

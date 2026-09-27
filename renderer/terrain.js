@@ -78,7 +78,7 @@ export class Terrain {
   }
 }
 
-export async function loadTerrain(base = "./assets/calaveras-terrain") {
+export async function loadTerrain(base) {
   const meta = await (await fetch(`${base}.json`)).json(),
     fetched = await (await fetch(`${base}.bin.gz`)).arrayBuffer(),
     magic = new Uint8Array(fetched, 0, 2),

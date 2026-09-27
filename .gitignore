@@ -10,5 +10,6 @@ previews/export.png
 dist/
 Native/build/
 Native/output/
-scripts/.cache-3dep.tif
-assets/calaveras-terrain.bin
+pipeline/.cache/
+data/*/terrain.bin
+__pycache__/

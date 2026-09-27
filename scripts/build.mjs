@@ -11,10 +11,12 @@ async function moduleGraph(file){
   await moduleGraph(path.resolve(path.dirname(file),match[1]));
  }
 }
-await moduleGraph(path.join(root,'app.js'));
-for(const file of [...modules,...['index.html','style.css','src/clearwater.cu','assets/seabed.jpg','assets/calaveras-terrain.bin.gz','assets/calaveras-terrain.json','LICENSE','THIRD_PARTY_NOTICES.md','vendor/cuda-webshader/LICENSE'].map(f=>path.join(root,f))]){
+await moduleGraph(path.join(root,'renderer/explore.js'));
+for(const file of [...modules,...['index.html','renderer/explore.html','renderer/explore.css','renderer/clearwater.cu','renderer/assets/seabed.jpg','LICENSE','THIRD_PARTY_NOTICES.md','vendor/cuda-webshader/LICENSE'].map(f=>path.join(root,f))]){
  const relative=path.relative(root,file);if(relative.startsWith('..'))throw Error('Asset outside project');
  await mkdir(path.dirname(path.join(out,relative)),{recursive:true});await cp(file,path.join(out,relative));
 }
+// Reservoir bundles ship whole; the uncompressed native twin never does.
+await cp(path.join(root,'data'),path.join(out,'data'),{recursive:true,filter:(src)=>!src.endsWith('terrain.bin')});
 await writeFile(path.join(out,'.nojekyll'),'');
 console.log(`Built Pages with ${modules.size} browser modules, shared CUDA source and licensed assets.`);

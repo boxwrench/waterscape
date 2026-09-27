@@ -1,4 +1,4 @@
-import { GpuRuntime } from "./vendor/cuda-webshader/runtime/runtime.js";
+import { GpuRuntime } from "../vendor/cuda-webshader/runtime/runtime.js";
 import { checkShaderGrid, formatElevation, formatLatLon, loadTerrain } from "./terrain.js";
 const $ = (id) => document.getElementById(id),
   canvas = $("water"),
@@ -668,9 +668,9 @@ $("capture").onclick = () =>
 try {
   rt = await GpuRuntime.create({ onError: fail });
   ctx = canvas.getContext("webgpu");
-  const source = await (await fetch("./src/clearwater.cu")).text();
+  const source = await (await fetch(new URL("./clearwater.cu", import.meta.url))).text();
   $("loadText").textContent = "Loading USGS lidar terrain…";
-  terrain = await loadTerrain();
+  terrain = await loadTerrain(new URL("../data/calaveras/terrain", import.meta.url).href);
   checkShaderGrid(source, terrain);
   terrainCells = rt.createBuffer(terrain.cells);
   Object.assign(state, viewpoint(state.viewpoint));
@@ -702,7 +702,7 @@ try {
   caustics = rt.createBuffer(512 * 512 * 16);
   // Asset decoding only: the source asset is converted to linear floats once.
   const bitmap = await createImageBitmap(
-      await (await fetch("./assets/seabed.jpg")).blob(),
+      await (await fetch(new URL("./assets/seabed.jpg", import.meta.url))).blob(),
     ),
     off = new OffscreenCanvas(1024, 1024),
     dc = off.getContext("2d");
