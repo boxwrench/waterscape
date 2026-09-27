@@ -6,7 +6,7 @@ pre-rendered flyover that plays on any device, and — in Chrome or Edge with We
 scene where the water is simulated and lit in real time and you can fly anywhere over the land.
 
 **Live:** https://boxwrench.github.io/waterscape/ — starting with the Hetch Hetchy Regional
-Water System (Calaveras and San Antonio reservoirs).
+Water System (Calaveras and San Antonio reservoirs). What comes next is in the [roadmap](ROADMAP.md).
 
 ![Calaveras Reservoir in live 3D](previews/calaveras-overlook.png)
 
@@ -74,7 +74,7 @@ URL options: `?reservoir=<id>`, `?preset=morning|midday|golden`, `?quality=low|m
 | `pipeline/` | Builds and checks water bodies: `build.py`, `render-flyover.mjs`, `validate-bundles.mjs` |
 | `vendor/` | cuda-webshader and three.js, vendored (the site loads nothing from CDNs) |
 | `Native/` | Optional native Windows CUDA host (developer tool) |
-| `docs/` | [Architecture](docs/architecture.md), [make a waterscape](docs/make-a-waterscape.md), design history |
+| `docs/` | [Architecture](docs/architecture.md), [make a waterscape](docs/make-a-waterscape.md), design history; see also the [roadmap](ROADMAP.md) |
 
 ## Tests
 
