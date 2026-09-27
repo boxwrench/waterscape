@@ -195,6 +195,8 @@ try {
   assert.ok(Math.abs(embedState.x + 1200) < 1 && Math.abs(embedState.z + 2600) < 1, JSON.stringify(embedState));
   assert.equal(embedState.message.type, "waterscape:frame");
   assert.equal(embedState.message.reservoir, "calaveras");
+  assert.equal(typeof embedState.message.tier, "number");
+  assert.equal(typeof embedState.message.struggling, "boolean");
   await embed.close();
   // Forced tiers render and report themselves; low meets its frame budget at 768 px.
   const tiers = {};
@@ -221,6 +223,17 @@ try {
     await tp.close();
   }
 
+  // Automatic quality: on by default, starts from the vendor, off after a manual resolution pick.
+  const auto = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  await auto.goto(`${base}/renderer/explore.html`);
+  await auto.waitForFunction(() => window.clearwaterDiagnostics?.ready, null, { timeout: 120000 });
+  const autoStart = await auto.evaluate(() => ({ ...window.clearwaterDiagnostics.quality }));
+  assert.equal(autoStart.auto, true, JSON.stringify(autoStart));
+  assert.equal(autoStart.tier, autoStart.vendor === "nvidia" ? 2 : 1, JSON.stringify(autoStart));
+  assert.equal(typeof autoStart.struggling, "boolean");
+  await auto.selectOption("#quality", "1536");
+  assert.equal(await auto.evaluate(() => window.clearwaterDiagnostics.quality.auto), false);
+  await auto.close();
   const result = {
     fft,
     model,

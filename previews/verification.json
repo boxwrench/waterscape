@@ -26,7 +26,7 @@
     "link": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer"
   },
   "tiers": {
-    "lowMedianMs": 13.535000026226044
+    "lowMedianMs": 14.9200000166893
   },
   "optics": {
     "causticMean": [
@@ -57,9 +57,9 @@
       "features": [
         "core-features-and-limits",
         "subgroup-size-control",
-        "subgroups",
-        "float32-filterable",
         "shader-f16",
+        "float32-filterable",
+        "subgroups",
         "timestamp-query"
       ],
       "timestampQuery": true,
@@ -73,10 +73,10 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 2228,
-      "submissions": 72,
-      "dispatches": 2228,
-      "uniformBytesUploaded": 509296,
+      "bindGroupsCreated": 2168,
+      "submissions": 70,
+      "dispatches": 2168,
+      "uniformBytesUploaded": 495696,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 34242560
     }
@@ -95,9 +95,9 @@
       "features": [
         "core-features-and-limits",
         "subgroup-size-control",
-        "subgroups",
-        "float32-filterable",
         "shader-f16",
+        "float32-filterable",
+        "subgroups",
         "timestamp-query"
       ],
       "timestampQuery": true,
@@ -111,19 +111,19 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 2840,
-      "submissions": 92,
-      "dispatches": 2840,
-      "uniformBytesUploaded": 648464,
+      "bindGroupsCreated": 2780,
+      "submissions": 90,
+      "dispatches": 2780,
+      "uniformBytesUploaded": 634864,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 38436864
     }
   },
   "distant": {
     "finite": true,
-    "min": -0.38195371627807617,
-    "max": 0.37394535541534424,
-    "rms": 0.07622704351470404,
+    "min": -0.3808148503303528,
+    "max": 0.3740881085395813,
+    "rms": 0.0762788902672117,
     "ripplePeak": 0,
     "adapter": {
       "vendor": "nvidia",
@@ -133,9 +133,9 @@
       "features": [
         "core-features-and-limits",
         "subgroup-size-control",
-        "subgroups",
-        "float32-filterable",
         "shader-f16",
+        "float32-filterable",
+        "subgroups",
         "timestamp-query"
       ],
       "timestampQuery": true,
@@ -149,10 +149,10 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 4659,
-      "submissions": 148,
-      "dispatches": 4659,
-      "uniformBytesUploaded": 1066192,
+      "bindGroupsCreated": 4895,
+      "submissions": 156,
+      "dispatches": 4895,
+      "uniformBytesUploaded": 1119760,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 42631168
     }
@@ -171,9 +171,9 @@
       "features": [
         "core-features-and-limits",
         "subgroup-size-control",
-        "subgroups",
-        "float32-filterable",
         "shader-f16",
+        "float32-filterable",
+        "subgroups",
         "timestamp-query"
       ],
       "timestampQuery": true,
@@ -187,10 +187,10 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 5661,
-      "submissions": 180,
-      "dispatches": 5661,
-      "uniformBytesUploaded": 1295232,
+      "bindGroupsCreated": 5893,
+      "submissions": 188,
+      "dispatches": 5893,
+      "uniformBytesUploaded": 1347872,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 46825472
     }
@@ -219,9 +219,9 @@
       "viewpoint": "overlook",
       "time": 20,
       "playing": false,
-      "frames": 86
+      "frames": 90
     },
-    "frames": 86,
+    "frames": 90,
     "cascades": [
       4.6,
       37,
@@ -233,7 +233,8 @@
       "tier": 2,
       "width": 1152,
       "auto": false,
-      "vendor": "nvidia"
+      "vendor": "nvidia",
+      "struggling": false
     },
     "coordinates": [
       37.472608030037705,
@@ -241,7 +242,7 @@
     ],
     "width": 1152,
     "height": 720,
-    "frameMs": 41.61500000953674,
+    "frameMs": 31.680000007152557,
     "readbackBytes": 42631168
   },
   "browserErrors": []

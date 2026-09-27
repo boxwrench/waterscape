@@ -1,5 +1,6 @@
 import { GpuRuntime } from "../vendor/cuda-webshader/runtime/runtime.js";
 import { formatElevation, formatLatLon, loadTerrain } from "./terrain.js";
+import { LEVELS, QualityGovernor, forcedTier, startingLevel } from "./quality.js";
 const $ = (id) => document.getElementById(id),
   canvas = $("water"),
   q = new URLSearchParams(location.search);
@@ -98,6 +99,7 @@ let rt,
   last = 0,
   accumulator = 0,
   tap = null,
+  governor = null,
   failed = false,
   locked = false;
 const keys = new Set(),
@@ -120,7 +122,12 @@ function labels() {
       Number($(id).value).toFixed(1) + (id === "depth" ? " m" : "");
 }
 for (const id of ["energy", "depth", "exposure"]) $(id).oninput = labels;
-$("quality").onchange = () => (resizePending = true);
+$("quality").onchange = () => {
+  // A visitor's own resolution choice wins over automatic quality.
+  governor = null;
+  if (diag.quality) diag.quality.auto = false;
+  resizePending = true;
+};
 addEventListener("resize", () => (resizePending = true));
 function liveLabel() {
   return terrain ? `LIVE / ${terrain.meta.name.toUpperCase()}` : "LIVE";
@@ -505,8 +512,19 @@ async function frame(now) {
       render();
       await rt.idle();
       diag.frameMs = performance.now() - start;
-      diag.quality.tier = state.quality;
-      diag.quality.width = width;
+      if (governor) {
+        const next = governor.sample(diag.frameMs, performance.now());
+        if (next) {
+          state.quality = next.tier;
+          $("quality").value = String(next.width);
+          resizePending = true;
+        }
+      }
+      Object.assign(diag.quality, {
+        tier: state.quality,
+        width,
+        struggling: !!governor?.struggling,
+      });
       diag.frames = ++state.frames;
       diag.ready = true;
       diag.readbackBytes = rt.stats.readbackBytes;
@@ -518,7 +536,13 @@ async function frame(now) {
         survey();
         if (embedded)
           parent.postMessage(
-            { type: "waterscape:frame", ms: diag.frameMs, reservoir: reservoirId },
+            {
+              type: "waterscape:frame",
+              ms: diag.frameMs,
+              reservoir: reservoirId,
+              tier: state.quality,
+              struggling: diag.quality.struggling,
+            },
             location.origin,
           );
       }
@@ -690,10 +714,14 @@ try {
   if (!/^[a-z0-9_]+$/.test(reservoirId))
     throw new Error(`Invalid reservoir id: ${reservoirId}`);
   rt = await GpuRuntime.create({ onError: fail });
-  const vendor = rt.describe().vendor;
-  const forcedQuality = ["low", "medium", "high"].indexOf(q.get("quality"));
-  if (forcedQuality >= 0) state.quality = forcedQuality;
-  diag.quality = { tier: state.quality, width: +$("quality").value, auto: false, vendor };
+  const vendor = rt.describe().vendor,
+    forced = forcedTier(q.get("quality"));
+  if (forced === null) {
+    governor = new QualityGovernor(startingLevel(vendor));
+    state.quality = governor.current.tier;
+    $("quality").value = String(governor.current.width);
+  } else state.quality = forced;
+  diag.quality = { tier: state.quality, width: +$("quality").value, auto: !!governor, vendor, struggling: false };
   ctx = canvas.getContext("webgpu");
   const source = await (await fetch(new URL("./clearwater.cu", import.meta.url))).text();
   $("loadText").textContent = "Loading USGS lidar terrain…";

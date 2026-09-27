@@ -34,7 +34,7 @@ const browser = await chromium.launch({
 try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
   await page.goto(
-    `http://127.0.0.1:${server.address().port}/renderer/explore.html?reservoir=${id}&embed=1`,
+    `http://127.0.0.1:${server.address().port}/renderer/explore.html?reservoir=${id}&embed=1&quality=high`,
   );
   await page.waitForFunction(
     () => window.clearwaterDiagnostics?.ready || window.clearwaterDiagnostics?.errors.length,
