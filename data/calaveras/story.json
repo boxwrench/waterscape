@@ -5,9 +5,8 @@
   "operator": "San Francisco Public Utilities Commission",
   "headline": "Rebuilt so it keeps holding water after a major earthquake on the fault beside it.",
   "facts": [
-    { "label": "Capacity", "value": "96,850 acre-feet", "source": "https://en.wikipedia.org/wiki/Calaveras_Reservoir" },
-    { "label": "New dam", "value": "220 ft tall, completed 2019", "source": "https://hetchhetchy.org/wp-content/uploads/2022/10/CALAVERAS-DAM-REPLACEMENT-PROJECT.pdf" },
-    { "label": "Calaveras Fault", "value": "0.3 miles from the dam", "source": "https://hetchhetchy.org/wp-content/uploads/2022/10/CALAVERAS-DAM-REPLACEMENT-PROJECT.pdf" },
+    { "label": "Capacity", "value": "96,850 acre-feet", "source": "https://geospatial.sec.usace.army.mil/dls/rest/services/NID/National_Inventory_of_Dams_Public_Service/FeatureServer/0/query?where=NIDID%3D%27CA01546%27&outFields=MAX_STORAGE&f=json" },
+    { "label": "New dam", "value": "210 ft tall, completed 2018", "source": "https://geospatial.sec.usace.army.mil/dls/rest/services/NID/National_Inventory_of_Dams_Public_Service/FeatureServer/0/query?where=NIDID%3D%27CA01546%27&outFields=DAM_HEIGHT,YEAR_COMPLETED&f=json" },
     { "label": "Water system", "value": "Hetch Hetchy Regional Water System, serving 2.7 million people", "source": "https://www.sfpuc.gov/about-us/our-systems" },
     { "label": "Surface at 2006 lidar survey", "value": "223.7 m (734 ft) above sea level", "source": "https://epqs.nationalmap.gov/v1/json?x=-121.81816&y=37.47261&units=Meters&wkid=4326&includeDate=true" }
   ]
