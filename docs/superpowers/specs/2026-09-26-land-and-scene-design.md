@@ -1,6 +1,9 @@
 # Waterscape — land quality, quality tiers and scene controls — design
 
 Date: 2026-09-26 · Status: approved in conversation, pending spec review
+
+> **Superseded in part (2026-09-27):** sub-project 2 (near-field land) and the time-of-day
+> control of sub-project 3 are replaced by `2026-09-27-land-engine-design.md`.
 Parent spec: `2026-09-26-waterscape-design.md` (its constraints still bind: public government
 data, static hosting, no external browser imports, visuals first class, journey never blocks
 on 3D). Water level by month remains that spec's build step 2 and is out of scope here.
