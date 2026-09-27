@@ -50,7 +50,7 @@ The browser mirrors the shoreline function in `app.js` for navigation and verifi
 In `src/clearwater.cu`:
 
 - `terrainHeight(x, z)` produces the basin, near banks, rolling elevation and a raised far ridge.
-- `terrainTrace(...)` performs a bounded height-field ray trace for nearby land.
+- `terrainTrace(...)` performs a bounded height-field ray trace for nearby land. (Browser, since 2026-09-27: camera rays no longer trace; three.js renders the lidar mesh and `render_water` reads each pixel's land distance — see `renderer/land/`. Reflections and the native host still trace.)
 - `terrainNormal(...)` estimates terrain normals from height samples.
 - `terrainShade(...)` applies seasonal grass, exposed shoreline, clustered dark vegetation and distance haze.
 - The sky shader now contains a world-oriented distant ridge layer. This supplies a stable background and reflected hill color while keeping the expensive terrain trace limited to nearby land.

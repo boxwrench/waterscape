@@ -46,6 +46,8 @@ Open **http://localhost:5173/**.
 
 Live 3D adapts its quality automatically: NVIDIA GPUs start at the high tier, others at medium, and the renderer steps its tier and resolution to stay near 30 fps. `?quality=low|medium|high` on the journey or the explore page pins a tier. A chip in 3D names the GPU in use; on laptops with two GPUs, Chrome and Edge give pages the integrated GPU unless the visitor switches the browser to High performance (the chip's tip explains how).
 
+Land is drawn by three.js (vendored in `vendor/three/`, r186) on the same WebGPU device as the CUDA water: it renders the lidar terrain mesh, and a small pass hands the water shader each pixel's distance to the land, so the shader no longer ray-marches the terrain for the camera. Light comes from three presets — Morning, Midday and Golden hour (`renderer/land/presets.js`) — which set the sun, a Preetham sky with drifting clouds (ported from three.js `SkyMesh`), fill light and haze. Each reservoir's `data/<id>/land.json` lists the presets it offers and its default. `node scripts/vendor-three.mjs` refreshes the vendored copy after changing the pinned version in `package.json`.
+
 ## CUDA pipeline
 
 | Stage | Implementation |
