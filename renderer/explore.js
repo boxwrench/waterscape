@@ -2,6 +2,7 @@ import { GpuRuntime } from "../vendor/cuda-webshader/runtime/runtime.js";
 import { formatElevation, formatLatLon, loadTerrain } from "./terrain.js";
 import { QualityGovernor, TIER_NAMES, forcedTier, startingLevel } from "./quality.js";
 import { PRESETS, choosePreset, presetBuffer } from "./land/presets.js";
+import { createLandPass } from "./land/scene.js";
 const $ = (id) => document.getElementById(id),
   canvas = $("water"),
   q = new URLSearchParams(location.search);
@@ -102,6 +103,7 @@ let rt,
   accumulator = 0,
   tap = null,
   lightBuf,
+  landPass = null,
   landProfile = null,
   governor = null,
   failed = false,
@@ -304,6 +306,7 @@ async function resize() {
     rt.createBuffer(width * height * 16),
   ];
   pixels = rt.createBuffer(width * height * 4);
+  landPass?.resize(width, height);
   ctx.configure({
     device: rt.device,
     format: "rgba8unorm",
@@ -417,6 +420,7 @@ function setupLens() {
   rt.device.queue.submit([enc.finish()]);
 }
 function render() {
+  landPass?.render(state);
   const batch = rt.batch(),
     grid = [width / 8, height / 8, 1];
   batch
@@ -428,7 +432,7 @@ function render() {
     .dispatch(k.filter_caustics.bind({ photons, caustics }), [64, 64, 1]);
   batch.dispatch(
     k.render_water.bind(
-      { surface, rip: ripNormals, caustics, pebbles, terrain: terrainCells, light: lightBuf, hdr },
+      { surface, rip: ripNormals, caustics, pebbles, terrain: terrainCells, light: lightBuf, land: landPass ? landPass.buffer : terrainCells, hdr },
       {
         width,
         height,
@@ -444,6 +448,7 @@ function render() {
         view: +$("view").value,
         season: +$("season").value,
         quality: state.quality,
+        landPass: landPass ? 1 : 0,
       },
     ),
     grid,
@@ -778,6 +783,15 @@ try {
   for (const opt of [...$("preset").options]) opt.hidden = !landProfile.presets.includes(opt.value);
   $("preset").value = state.preset;
   $("preset").onchange = () => applyPreset($("preset").value);
+  // Land from three.js on our device; if it cannot start, keep today's traced land.
+  try {
+    landPass = await createLandPass(rt, terrain);
+    if (width) landPass.resize(width, height);
+    diag.land = { shared: landPass.shared, error: null };
+  } catch (e) {
+    landPass = null;
+    diag.land = { shared: false, error: String(e) };
+  }
   diag.location = terrain.meta.name;
   diag.coordinates = terrain.latLon(0, 0);
   document.title = `${terrain.meta.name} · Waterscape`;

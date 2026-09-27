@@ -203,6 +203,19 @@ try {
   assert.equal(typeof embedState.message.tier, "number");
   assert.equal(typeof embedState.message.struggling, "boolean");
   await embed.close();
+  // Land comes from three.js on the runtime's own device.
+  const land = await page.evaluate(() => window.clearwaterDiagnostics.land);
+  assert.equal(land?.shared, true, JSON.stringify(land));
+  // Resolution changes resize the land pass with the frame buffers (Review Focus 1).
+  const before = await page.evaluate(() => window.clearwaterDiagnostics.frames);
+  await page.selectOption("#quality", "768");
+  await page.waitForFunction((n) => window.clearwaterDiagnostics.frames > n + 10, before);
+  await page.selectOption("#quality", "1152");
+  // Far outside the lidar crop the sky and far ridges still render (Review Focus 2).
+  await page.evaluate(() => Object.assign(window.clearwaterLab.state, { x: 20000, z: 20000, y: 400 }));
+  const far = await page.evaluate(() => window.clearwaterDiagnostics.frames);
+  await page.waitForFunction((n) => window.clearwaterDiagnostics.frames > n + 5, far);
+  assert.deepEqual(await page.evaluate(() => window.clearwaterDiagnostics.errors), []);
   // The main page's checks are done; close it so it doesn't share the GPU with the timed pages below.
   await page.close();
   // Forced tiers render and report themselves; low meets its frame budget at 768 px.

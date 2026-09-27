@@ -707,10 +707,10 @@ __device__ float3 stone(const float4 *peb, float x, float z, float footprint) {
   return mix3(col, v3(.20f, .18f, .14f), smooth(.015f, .16f, footprint));
 }
 __global__ void render_water(const float4 *surface, const float4 *rip, const float4 *caustics,
-                             const float4 *pebbles, const float4 *terrain, const float4 *light, float4 *hdr, int width,
+                             const float4 *pebbles, const float4 *terrain, const float4 *light, const float4 *land, float4 *hdr, int width,
                              int height, float camX, float camZ, float camY, float yaw, float pitch, float centerX,
                              float centerZ, float depth, float time, int view, int season,
-                             int quality) {
+                             int quality, int landPass) {
   int ix = (int)(blockIdx.x * blockDim.x + threadIdx.x),
       iy = (int)(blockIdx.y * blockDim.y + threadIdx.y);
   if (ix >= width || iy >= height)
@@ -725,10 +725,20 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
   float3 rd = ray(sx, sy, (float)width / (float)height, yaw, pitch),
          ro = v3(camX, camY, camZ), sun = lightSun(light),
          SUN = mul(lightRad(light), 2.9f), col = sky(light, rd, season, time);
-  float landT = terrainTrace(terrain, ro, rd, traceSteps, 16000.0f);
-  if (landT > 0)
-    col = terrainShade(terrain, light, add(ro, mul(rd, landT)), rd, landT, season, shadowSteps, treeNear,
-                       time);
+  // Land along this pixel: from three.js's land pass (w < 0: land at -w, 0: sky), or, in the
+  // native host, today's height-field trace. Snap to the shader's surface, which adds
+  // sub-grid relief the mesh lacks, so shading and shadows start on the ground.
+  float landT = -1.0f;
+  if (landPass) {
+    float w = land[iy * width + ix].w;
+    landT = w < 0.0f ? -w : -1.0f;
+  } else
+    landT = terrainTrace(terrain, ro, rd, traceSteps, 16000.0f);
+  if (landT > 0) {
+    float3 lp = add(ro, mul(rd, landT));
+    lp.y = terrainHeight(terrain, lp.x, lp.z);
+    col = terrainShade(terrain, light, lp, rd, landT, season, shadowSteps, treeNear, time);
+  }
   if (rd.y < .0015f) {
     float3 wd = norm(v3(rd.x, fminf(rd.y, -.0015f), rd.z));
     float t = -camY / wd.y;
