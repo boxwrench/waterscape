@@ -23,7 +23,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
-#include "../renderer/clearwater.cu"
+#include "../renderer/water.cu"
 
 using Microsoft::WRL::ComPtr;
 namespace fs = std::filesystem;
@@ -82,7 +82,7 @@ struct App {
   for(int c=0;c<3;c++){std::fill(row.begin(),row.end(),0);for(int r=0;r<h;r++)for(int i=0;i<w;i++){row[i]=uint16_t(row[i]+words[c*n+(size_t)r*w+i]);float v=row[i]*scale[c]+offset[c];float4& cell=cells[2+(size_t)r*w+i];if(c==0)cell.x=v;else if(c==1)cell.y=v;else cell.z=v;}}
   terrain.alloc(n+2);check(cudaMemcpy(terrain.p,cells.data(),(n+2)*sizeof(float4),cudaMemcpyHostToDevice));
  }
- // Golden-hour preset (renderer/land/presets.js presetBuffer): the native host keeps one light.
+ // Golden-hour preset (renderer/engine/presets.js presetBuffer): the native host keeps one light.
  void decodeLight(){
   const float golden[24]={-0.9505f,0.1701f,0.2601f,0.52f, 2.4f,1.55f,0.85f,0.5f, 0.3f,0.34f,0.44f,2.0f,
    4.0f,1.4f,0.005f,0.85f, 0.74f,0.71f,0.68f,0.00017f, 0.0002f,0.00002f,0.85f,0.0f};

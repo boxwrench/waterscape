@@ -4,7 +4,7 @@
 import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { PRESET_NAMES } from "../renderer/land/presets.js";
+import { PRESET_NAMES } from "../renderer/engine/presets.js";
 
 export const REQUIRED = ["terrain.bin.gz", "terrain.json", "cameras.json", "story.json", "land.json", "source.json", "flyover.mp4", "poster.jpg"];
 

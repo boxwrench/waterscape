@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { createStaticServer } from "./serve.mjs";
 await mkdir("previews", { recursive: true });
 // Reservoir grids come from the bundle at runtime, never from shader constants.
-const cudaSource = await readFile("renderer/clearwater.cu", "utf8");
+const cudaSource = await readFile("renderer/water.cu", "utf8");
 assert.ok(!/#define TERRAIN_/.test(cudaSource), "shader must not hard-code a terrain grid");
 const server = createStaticServer();
 await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
@@ -30,24 +30,24 @@ try {
   await page.goto(`${base}/renderer/explore.html?quality=high`);
   await page.waitForFunction(
     () =>
-      window.clearwaterDiagnostics?.ready ||
-      window.clearwaterDiagnostics?.errors.length,
+      window.waterscapeDiagnostics?.ready ||
+      window.waterscapeDiagnostics?.errors.length,
     {},
     { timeout: 120000 },
   );
-  let diag = await page.evaluate(() => window.clearwaterDiagnostics);
+  let diag = await page.evaluate(() => window.waterscapeDiagnostics);
   assert.deepEqual(diag.errors, []);
-  await page.waitForFunction(() => window.clearwaterDiagnostics.frames >= 20);
+  await page.waitForFunction(() => window.waterscapeDiagnostics.frames >= 20);
   const noReadback = await page.evaluate(
-    () => window.clearwaterDiagnostics.readbackBytes,
+    () => window.waterscapeDiagnostics.readbackBytes,
   );
   assert.equal(noReadback, 0, "render loop must stay GPU resident");
   // Lighting comes from a preset (the bundle's default: golden hour).
-  assert.equal(await page.evaluate(() => window.clearwaterDiagnostics.preset), "golden");
+  assert.equal(await page.evaluate(() => window.waterscapeDiagnostics.preset), "golden");
   // Hills open summer gold (the bundle's defaultSeason).
   assert.equal(await page.locator("#season").inputValue(), "1");
   await page.selectOption("#preset", "midday");
-  assert.equal(await page.evaluate(() => window.clearwaterDiagnostics.preset), "midday");
+  assert.equal(await page.evaluate(() => window.waterscapeDiagnostics.preset), "midday");
   await page.selectOption("#preset", "golden");
   const model = await page.evaluate(() => {
     const { terrain, viewpoints: v } = window.waterscapeModel;
@@ -78,38 +78,38 @@ try {
     ["ridge", "West ridge"],
     ["shore", "Shoreline"],
   ]);
-  await page.evaluate(() => window.clearwaterLab.seek(5));
+  await page.evaluate(() => window.waterscapeLab.seek(5));
   await page.screenshot({ path: "previews/calaveras-ui.png" });
   await page.locator("#toggle").click();
   await page.screenshot({ path: "previews/calaveras-overlook.png" });
-  const fft = await page.evaluate(() => window.clearwaterLab.fftTest());
+  const fft = await page.evaluate(() => window.waterscapeLab.fftTest());
   assert.ok(
     fft.maxError < 5e-5 && fft.roundtripError < 2e-5,
     JSON.stringify(fft),
   );
   const optics = await page.evaluate(() =>
-    window.clearwaterLab.inspectOptics(),
+    window.waterscapeLab.inspectOptics(),
   );
   assert.ok(optics.hdrFinite && optics.glareFinite);
   for (const v of optics.causticMean) assert.ok(Math.abs(v - 1) < 0.03);
   for (const v of optics.psfEnergy) assert.ok(Math.abs(v - 1) < 1e-4);
-  const first = await page.evaluate(() => window.clearwaterLab.inspect());
+  const first = await page.evaluate(() => window.waterscapeLab.inspect());
   assert.ok(first.finite && first.rms > 0.001);
   await page.locator("#toggle").click();
   await page.locator('[data-preset="shore"]').click();
   await page.waitForTimeout(300);
   await page.locator("#toggle").click();
   await page.screenshot({ path: "previews/calaveras-shoreline.png" });
-  await page.evaluate(() => window.clearwaterLab.resume());
+  await page.evaluate(() => window.waterscapeLab.resume());
   await page.mouse.click(910, 740);
   await page.waitForTimeout(150);
-  const ripple = await page.evaluate(() => window.clearwaterLab.inspect());
+  const ripple = await page.evaluate(() => window.waterscapeLab.inspect());
   assert.ok(ripple.ripplePeak > 0.00001, "tap must generate ripples");
   await page.keyboard.down("KeyW");
   await page.waitForTimeout(400);
   await page.keyboard.up("KeyW");
   // The shoreline view looks east, so flying forward increases x.
-  assert.ok((await page.evaluate(() => window.clearwaterLab.state.x)) > -739.9);
+  assert.ok((await page.evaluate(() => window.waterscapeLab.state.x)) > -739.9);
   await page.waitForTimeout(300);
   const readout = await page.evaluate(() => ({
     camera: document.getElementById("elevCamera").textContent,
@@ -121,21 +121,21 @@ try {
   assert.match(readout.position, /°.*N .*°.*W/, JSON.stringify(readout));
   assert.match(readout.link, /elevation\.nationalmap\.gov/, JSON.stringify(readout));
   await page.evaluate(() => {
-    window.clearwaterLab.state.x = 10000;
-    window.clearwaterLab.state.z = -10000;
+    window.waterscapeLab.state.x = 10000;
+    window.waterscapeLab.state.z = -10000;
   });
   await page.waitForTimeout(500);
-  const distant = await page.evaluate(() => window.clearwaterLab.inspect());
+  const distant = await page.evaluate(() => window.waterscapeLab.inspect());
   assert.ok(distant.finite);
   await page.locator("#toggle").click();
   await page.locator('[data-preset="overlook"]').click();
   await page.waitForTimeout(300);
-  await page.evaluate(() => window.clearwaterLab.seek(20));
+  await page.evaluate(() => window.waterscapeLab.seek(20));
   await page.locator("#toggle").click();
   await page.screenshot({ path: "previews/calaveras-late-water.png" });
-  const overlook = await page.evaluate(() => window.clearwaterLab.inspect());
+  const overlook = await page.evaluate(() => window.waterscapeLab.inspect());
   assert.ok(overlook.finite);
-  diag = await page.evaluate(() => window.clearwaterDiagnostics);
+  diag = await page.evaluate(() => window.waterscapeDiagnostics);
   assert.deepEqual(diag.errors, []);
   assert.deepEqual(errors, []);
   await page.locator("#toggle").click();
@@ -143,8 +143,8 @@ try {
   await page.setViewportSize({ width: 900, height: 700 });
   await page.waitForFunction(
     () =>
-      window.clearwaterDiagnostics.width === 768 &&
-      window.clearwaterDiagnostics.height === 600,
+      window.waterscapeDiagnostics.width === 768 &&
+      window.waterscapeDiagnostics.height === 600,
   );
   await page.locator("#view").selectOption("1");
   await page.waitForTimeout(100);
@@ -157,14 +157,14 @@ try {
   await page.locator("#glare").uncheck();
   await page.waitForTimeout(100);
   await page.locator("#glare").check();
-  const timeBefore = await page.evaluate(() => window.clearwaterLab.state.time);
+  const timeBefore = await page.evaluate(() => window.waterscapeLab.state.time);
   await page.waitForTimeout(150);
   assert.equal(
-    await page.evaluate(() => window.clearwaterLab.state.time),
+    await page.evaluate(() => window.waterscapeLab.state.time),
     timeBefore,
   );
   await page.locator("#reset").click();
-  assert.equal(await page.evaluate(() => window.clearwaterLab.state.x), -1500);
+  assert.equal(await page.evaluate(() => window.waterscapeLab.state.x), -1500);
   const [download] = await Promise.all([
     page.waitForEvent("download"),
     page.locator("#capture").click(),
@@ -173,7 +173,7 @@ try {
   await download.saveAs("previews/export.png");
   assert.deepEqual(errors, []);
   assert.deepEqual(
-    await page.evaluate(() => window.clearwaterDiagnostics.errors),
+    await page.evaluate(() => window.waterscapeDiagnostics.errors),
     [],
   );
   const embed = await browser.newPage({ viewport: { width: 960, height: 540 } });
@@ -184,7 +184,7 @@ try {
     window.frameMessages = [];
     addEventListener("message", (e) => window.frameMessages.push(e.data));
   });
-  await embed.waitForFunction(() => window.clearwaterDiagnostics?.ready, null, {
+  await embed.waitForFunction(() => window.waterscapeDiagnostics?.ready, null, {
     timeout: 120000,
   });
   await embed.waitForFunction(() => window.frameMessages.length > 0, null, {
@@ -193,8 +193,8 @@ try {
   const embedState = await embed.evaluate(() => ({
     header: getComputedStyle(document.querySelector("header")).display,
     panel: getComputedStyle(document.getElementById("panel")).display,
-    x: window.clearwaterLab.state.x,
-    z: window.clearwaterLab.state.z,
+    x: window.waterscapeLab.state.x,
+    z: window.waterscapeLab.state.z,
     message: window.frameMessages[0],
   }));
   assert.equal(embedState.header, "none");
@@ -206,18 +206,18 @@ try {
   assert.equal(typeof embedState.message.struggling, "boolean");
   await embed.close();
   // Land comes from three.js on the runtime's own device.
-  const land = await page.evaluate(() => window.clearwaterDiagnostics.land);
+  const land = await page.evaluate(() => window.waterscapeDiagnostics.land);
   assert.equal(land?.shared, true, JSON.stringify(land));
   // Resolution changes resize the land pass with the frame buffers (Review Focus 1).
-  const before = await page.evaluate(() => window.clearwaterDiagnostics.frames);
+  const before = await page.evaluate(() => window.waterscapeDiagnostics.frames);
   await page.selectOption("#quality", "768");
-  await page.waitForFunction((n) => window.clearwaterDiagnostics.frames > n + 10, before);
+  await page.waitForFunction((n) => window.waterscapeDiagnostics.frames > n + 10, before);
   await page.selectOption("#quality", "1152");
   // Far outside the lidar crop the sky and far ridges still render (Review Focus 2).
-  await page.evaluate(() => Object.assign(window.clearwaterLab.state, { x: 20000, z: 20000, y: 400 }));
-  const far = await page.evaluate(() => window.clearwaterDiagnostics.frames);
-  await page.waitForFunction((n) => window.clearwaterDiagnostics.frames > n + 5, far);
-  assert.deepEqual(await page.evaluate(() => window.clearwaterDiagnostics.errors), []);
+  await page.evaluate(() => Object.assign(window.waterscapeLab.state, { x: 20000, z: 20000, y: 400 }));
+  const far = await page.evaluate(() => window.waterscapeDiagnostics.frames);
+  await page.waitForFunction((n) => window.waterscapeDiagnostics.frames > n + 5, far);
+  assert.deepEqual(await page.evaluate(() => window.waterscapeDiagnostics.errors), []);
   // The main page's checks are done; close it so it doesn't share the GPU with the timed pages below.
   await page.close();
   // Forced tiers render and report themselves; low meets its frame budget at 768 px.
@@ -225,17 +225,17 @@ try {
   for (const [name, tier] of [["low", 0], ["medium", 1], ["high", 2]]) {
     const tp = await browser.newPage({ viewport: { width: 1440, height: 900 } });
     await tp.goto(`${base}/renderer/explore.html?quality=${name}`);
-    await tp.waitForFunction(() => window.clearwaterDiagnostics?.ready, null, { timeout: 120000 });
-    const q = await tp.evaluate(() => window.clearwaterDiagnostics.quality);
+    await tp.waitForFunction(() => window.waterscapeDiagnostics?.ready, null, { timeout: 120000 });
+    const q = await tp.evaluate(() => window.waterscapeDiagnostics.quality);
     assert.equal(q.tier, tier, JSON.stringify(q));
-    assert.equal(await tp.evaluate(() => window.clearwaterLab.state.quality), tier);
+    assert.equal(await tp.evaluate(() => window.waterscapeLab.state.quality), tier);
     if (name === "low") {
       await tp.selectOption("#quality", "768");
-      await tp.waitForFunction(() => window.clearwaterDiagnostics.width === 768);
+      await tp.waitForFunction(() => window.waterscapeDiagnostics.width === 768);
       await tp.waitForTimeout(1500);
       const samples = [];
       for (let i = 0; i < 40; i++) {
-        samples.push(await tp.evaluate(() => window.clearwaterDiagnostics.frameMs));
+        samples.push(await tp.evaluate(() => window.waterscapeDiagnostics.frameMs));
         await tp.waitForTimeout(50);
       }
       samples.sort((a, b) => a - b);
@@ -248,27 +248,27 @@ try {
   // Automatic quality: on by default, starts from the vendor, off after a manual resolution pick.
   const auto = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   await auto.goto(`${base}/renderer/explore.html`);
-  await auto.waitForFunction(() => window.clearwaterDiagnostics?.ready, null, { timeout: 120000 });
-  const autoStart = await auto.evaluate(() => ({ ...window.clearwaterDiagnostics.quality }));
+  await auto.waitForFunction(() => window.waterscapeDiagnostics?.ready, null, { timeout: 120000 });
+  const autoStart = await auto.evaluate(() => ({ ...window.waterscapeDiagnostics.quality }));
   assert.equal(autoStart.auto, true, JSON.stringify(autoStart));
   assert.equal(autoStart.tier, autoStart.vendor === "nvidia" ? 2 : 1, JSON.stringify(autoStart));
   assert.equal(typeof autoStart.struggling, "boolean");
   await auto.selectOption("#quality", "1536");
-  assert.equal(await auto.evaluate(() => window.clearwaterDiagnostics.quality.auto), false);
+  assert.equal(await auto.evaluate(() => window.waterscapeDiagnostics.quality.auto), false);
   await auto.close();
   // GPU chip everywhere in 3D; the tip on Intel (the test browser's default GPU) until dismissed.
   const gpu = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   await gpu.goto(`${base}/renderer/explore.html?embed=1`);
   await gpu.evaluate(() => localStorage.removeItem("waterscape.gpuTipDismissed"));
   await gpu.reload();
-  await gpu.waitForFunction(() => window.clearwaterDiagnostics?.ready, null, { timeout: 120000 });
+  await gpu.waitForFunction(() => window.waterscapeDiagnostics?.ready, null, { timeout: 120000 });
   await gpu.waitForFunction(() => document.getElementById("gpuChip").textContent.includes("·"));
   const gpuState = await gpu.evaluate(() => ({
     chip: document.getElementById("gpuChip").textContent,
     shown: getComputedStyle(document.getElementById("gpu")).display !== "none",
     tip: !document.getElementById("gpuTip").hidden,
-    vendor: window.clearwaterDiagnostics.quality.vendor,
-    tier: window.clearwaterDiagnostics.quality.tier,
+    vendor: window.waterscapeDiagnostics.quality.vendor,
+    tier: window.waterscapeDiagnostics.quality.tier,
   }));
   assert.ok(gpuState.shown, "chip visible in embed mode");
   assert.ok(gpuState.chip.includes(gpuState.vendor), JSON.stringify(gpuState));
@@ -279,7 +279,7 @@ try {
     await gpu.click("#gpuTipDismiss");
     assert.equal(await gpu.evaluate(() => document.getElementById("gpuTip").hidden), true);
     await gpu.reload();
-    await gpu.waitForFunction(() => window.clearwaterDiagnostics?.ready, null, { timeout: 120000 });
+    await gpu.waitForFunction(() => window.waterscapeDiagnostics?.ready, null, { timeout: 120000 });
     assert.equal(await gpu.evaluate(() => document.getElementById("gpuTip").hidden), true, "dismissal remembered");
   }
   await gpu.evaluate(() => localStorage.removeItem("waterscape.gpuTipDismissed"));

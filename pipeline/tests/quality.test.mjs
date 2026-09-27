@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { LEVELS, QualityGovernor, forcedTier, startingLevel } from "../../renderer/quality.js";
+import { LEVELS, QualityGovernor, forcedTier, startingLevel } from "../../renderer/engine/quality.js";
 
 // Feed frames of `ms` duration back to back from `start` until `until`; return level changes.
 function run(gov, ms, start, until) {

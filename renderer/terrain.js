@@ -13,7 +13,7 @@ export class Terrain {
     [this.x0, this.z0] = meta.gridOrigin;
     this.waterLevel = meta.waterLevel;
   }
-  // GPU layout read by terrainSample() in clearwater.cu: two header texels
+  // GPU layout read by terrainSample() in water.cu: two header texels
   // (width, height, x0, z0) and (cell, 0, 0, 0), then the cells.
   gpuCells() {
     const out = new Float32Array(this.cells.length + 8);

@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { PRESETS, PRESET_NAMES, choosePreset, presetBuffer } from "../../renderer/land/presets.js";
+import { PRESETS, PRESET_NAMES, choosePreset, presetBuffer } from "../../renderer/engine/presets.js";
 
 test("three presets, suns above the horizon and normalised", () => {
   assert.deepEqual(Object.keys(PRESETS).sort(), [...PRESET_NAMES].sort());

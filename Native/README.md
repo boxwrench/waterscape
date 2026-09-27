@@ -1,6 +1,6 @@
 # Clearwater Native
 
-Native Windows CUDA application with two independent windows: a water view and a control panel. The application directly includes `../src/clearwater.cu`; it does not fork or translate the water implementation. No browser or WebGPU is used in this build.
+Native Windows CUDA application with two independent windows: a water view and a control panel. The application directly includes `../src/water.cu`; it does not fork or translate the water implementation. No browser or WebGPU is used in this build.
 
 ## Build and run
 

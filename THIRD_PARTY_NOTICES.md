@@ -12,5 +12,5 @@ Playwright is a development dependency used for browser validation and is not sh
 
 `vendor/three/` is three.js r186 (https://github.com/mrdoob/three.js), MIT License,
 Copyright © 2010-2025 three.js authors; see `vendor/three/LICENSE`. The sky model in
-`renderer/clearwater.cu` (`sky()`) is ported from three.js's `SkyMesh` (MIT), itself based
+`renderer/water.cu` (`sky()`) is ported from three.js's `SkyMesh` (MIT), itself based
 on Preetham et al. 1999 and the work of Simon Wallner, Martin Upitis and zz85.

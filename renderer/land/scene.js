@@ -7,7 +7,7 @@ import { createPack } from "./pack.js";
 
 const NEAR = 1,
   FAR = 40000,
-  // Same vertical field of view as ray() in clearwater.cu.
+  // Same vertical field of view as ray() in water.cu.
   FOV_Y = (2 * Math.atan(0.62487) * 180) / Math.PI;
 
 export async function createLandPass(rt, terrain) {

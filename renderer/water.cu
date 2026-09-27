@@ -279,7 +279,7 @@ __device__ float fresnel(float ci) {
         rp = (1.3335f * ci - ct) / (1.3335f * ci + ct);
   return .5f * (rs * rs + rp * rp);
 }
-// Preset lighting (renderer/land/presets.js presetBuffer): six float4s.
+// Preset lighting (renderer/engine/presets.js presetBuffer): six float4s.
 // L[0] sun direction xyz, cloud coverage · L[1] sun radiance rgb, cloud density
 // L[2] sky fill rgb, sky gain · L[3] turbidity, rayleigh, mie coefficient, mie g
 // L[4] haze rgb, haze density · L[5] cloud scale, cloud speed, exposure, unused

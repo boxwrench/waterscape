@@ -64,12 +64,12 @@ try {
   await live.waitForSelector("#explore", { state: "visible" });
   await live.click("#explore");
   const frame = await (await live.waitForSelector("#liveFrame")).contentFrame();
-  await frame.waitForFunction(() => window.clearwaterDiagnostics?.ready, null, { timeout: 120000 });
+  await frame.waitForFunction(() => window.waterscapeDiagnostics?.ready, null, { timeout: 120000 });
   await live.waitForFunction(() => window.waterscapeJourney.live?.frameTimes.length > 0, null, {
     timeout: 30000,
   });
   const expected = await live.evaluate(() => window.waterscapeJourney.live.pose),
-    actual = await frame.evaluate(() => ({ ...window.clearwaterLab.state }));
+    actual = await frame.evaluate(() => ({ ...window.waterscapeLab.state }));
   assert.ok(Math.abs(actual.x - expected.x) < 1 && Math.abs(actual.z - expected.z) < 1,
     JSON.stringify({ expected, actual }));
   assert.equal(await live.textContent("#explore"), "Back to video");
@@ -87,7 +87,7 @@ try {
   // Presets: the journey offers them in live mode and forwards the choice to the renderer.
   assert.equal(await live.isVisible("#livePreset"), true);
   await live.selectOption("#livePreset", "midday");
-  await frame.waitForFunction(() => window.clearwaterDiagnostics?.preset === "midday");
+  await frame.waitForFunction(() => window.waterscapeDiagnostics?.preset === "midday");
   await live.click("#explore");
   assert.equal(await live.$("#liveFrame"), null);
   // Changing stop while live also closes the renderer.

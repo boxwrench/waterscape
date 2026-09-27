@@ -2,7 +2,7 @@
 // each can be made to look right. Scene axes: +x east, +y up, +z south. Radiances are in the
 // renderer's HDR units (today's sun was (2.0, 1.83, 1.55), sky fill (.36, .46, .62)).
 // skyGain scales the Preetham sky (whose raw brightness falls ~10x from midday to a low sun)
-// to those units; see sky() in clearwater.cu.
+// to those units; see sky() in water.cu.
 const unit = (v) => {
   const l = Math.hypot(...v);
   return v.map((x) => x / l);

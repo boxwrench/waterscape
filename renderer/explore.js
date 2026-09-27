@@ -1,7 +1,7 @@
 import { GpuRuntime } from "../vendor/cuda-webshader/runtime/runtime.js";
 import { formatElevation, formatLatLon, loadTerrain } from "./terrain.js";
-import { QualityGovernor, TIER_NAMES, forcedTier, startingLevel } from "./quality.js";
-import { PRESETS, choosePreset, presetBuffer } from "./land/presets.js";
+import { QualityGovernor, TIER_NAMES, forcedTier, startingLevel } from "./engine/quality.js";
+import { PRESETS, choosePreset, presetBuffer } from "./engine/presets.js";
 import { createLandPass } from "./land/scene.js";
 const $ = (id) => document.getElementById(id),
   canvas = $("water"),
@@ -27,7 +27,7 @@ function altitudeFactor() {
   const above = state.y - terrain.ground(state.x, state.z);
   return Math.min(80, Math.max(1, above / 25));
 }
-// Same camera ray as ray() in renderer/clearwater.cu, so picking matches the image.
+// Same camera ray as ray() in renderer/water.cu, so picking matches the image.
 function viewRay(sx, sy, aspect, yaw, pitch) {
   const cy = Math.cos(yaw),
     syaw = Math.sin(yaw),
@@ -65,7 +65,7 @@ const state = {
   playing: !q.has("t"),
   frames: 0,
 };
-const diag = (window.clearwaterDiagnostics = {
+const diag = (window.waterscapeDiagnostics = {
   ready: false,
   errors: [],
   state,
@@ -608,7 +608,7 @@ async function exclusive(fn) {
     locked = false;
   }
 }
-window.clearwaterLab = {
+window.waterscapeLab = {
   state,
   pause: () => play(false),
   resume: () => play(true),
@@ -771,7 +771,7 @@ try {
   diag.quality = { tier: state.quality, width: +$("quality").value, auto: !!governor, vendor, struggling: false };
   updateGpu();
   ctx = canvas.getContext("webgpu");
-  const source = await (await fetch(new URL("./clearwater.cu", import.meta.url))).text();
+  const source = await (await fetch(new URL("./water.cu", import.meta.url))).text();
   $("loadText").textContent = "Loading USGS lidar terrain…";
   terrain = await loadTerrain(new URL("terrain", bundleBase).href);
   VIEWPOINTS = (await (await fetch(new URL("cameras.json", bundleBase))).json()).viewpoints;

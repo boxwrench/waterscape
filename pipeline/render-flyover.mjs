@@ -37,25 +37,25 @@ try {
     `http://127.0.0.1:${server.address().port}/renderer/explore.html?reservoir=${id}&embed=1&quality=high`,
   );
   await page.waitForFunction(
-    () => window.clearwaterDiagnostics?.ready || window.clearwaterDiagnostics?.errors.length,
+    () => window.waterscapeDiagnostics?.ready || window.waterscapeDiagnostics?.errors.length,
     null,
     { timeout: 180000 },
   );
-  const errors = await page.evaluate(() => window.clearwaterDiagnostics.errors);
+  const errors = await page.evaluate(() => window.waterscapeDiagnostics.errors);
   if (errors.length) throw new Error(errors.join("\n"));
   await page.evaluate(() => {
     const q = document.getElementById("quality");
     q.value = "1536";
     q.dispatchEvent(new Event("change"));
   });
-  await page.waitForFunction(() => window.clearwaterDiagnostics.width === 1536, null, {
+  await page.waitForFunction(() => window.waterscapeDiagnostics.width === 1536, null, {
     timeout: 30000,
   });
   for (let i = 0; i < frames; i++) {
     const pose = poseAt(flyover, i / fps);
     await page.evaluate(
       async ({ pose, t }) => {
-        const { state, seek } = window.clearwaterLab;
+        const { state, seek } = window.waterscapeLab;
         Object.assign(state, { x: pose.x, y: pose.y, z: pose.z, yaw: pose.yaw, pitch: pose.pitch });
         await seek(t);
       },

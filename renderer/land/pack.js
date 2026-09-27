@@ -1,6 +1,6 @@
 // Turns three.js's land render (colour + depth) into the float4-per-pixel buffer the water
 // kernel reads: rgb = colour, w = -(distance along the pixel's camera ray), 0 where no land.
-// The ray matches ray() in clearwater.cu (vertical half-FOV atan(0.62487)).
+// The ray matches ray() in water.cu (vertical half-FOV atan(0.62487)).
 const WGSL = /* wgsl */ `
 @group(0) @binding(0) var colorTex: texture_2d<f32>;
 @group(0) @binding(1) var depthTex: texture_depth_2d;

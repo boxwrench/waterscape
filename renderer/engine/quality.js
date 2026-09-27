@@ -1,5 +1,5 @@
 // Automatic quality for the live renderer. A level is a shader tier (0 low, 1 medium,
-// 2 high — see render_water in clearwater.cu) at a render width in pixels, cheapest first.
+// 2 high — see render_water in water.cu) at a render width in pixels, cheapest first.
 export const LEVELS = [
   { tier: 0, width: 768 },
   { tier: 0, width: 1152 },
