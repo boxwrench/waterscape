@@ -13,3 +13,4 @@ Native/output/
 pipeline/.cache/
 data/*/terrain.bin
 .superpowers/
+.worktrees/
