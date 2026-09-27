@@ -303,6 +303,15 @@ footer b {
   color: #abc6c3;
   font-size: 12px;
 }
+#loading .site {
+  position: absolute;
+  right: 24px;
+  bottom: 20px;
+  color: #abc6c3;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+}
 #error {
   position: fixed;
   inset: auto 25px 80px;
