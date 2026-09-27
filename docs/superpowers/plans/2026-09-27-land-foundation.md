@@ -21,6 +21,7 @@
 ## Global Constraints
 
 - Work on a feature branch in a worktree (not `main`); commit per task; never push.
+- Target browsers: Chromium-based (Chrome, Edge) with WebGPU; no other-browser code paths (others keep the video tier).
 - No external browser imports: every browser `import` is relative (`scripts/build.mjs` throws otherwise). three.js is vendored; its one bare import (`three.tsl.js` → `'three/webgpu'`) is rewritten when vendoring.
 - Zero GPU→CPU readbacks in the frame loop (`diag.readbackBytes` stays 0).
 - Low tier ≤ 33 ms/frame at 768 px on Intel Xe-LPG (`scripts/verify.mjs` asserts it on whatever GPU Edge picks; also measure with `--force_low_power_gpu`).
