@@ -44,6 +44,8 @@ try {
   assert.equal(noReadback, 0, "render loop must stay GPU resident");
   // Lighting comes from a preset (the bundle's default: golden hour).
   assert.equal(await page.evaluate(() => window.clearwaterDiagnostics.preset), "golden");
+  // Hills open summer gold (the bundle's defaultSeason).
+  assert.equal(await page.locator("#season").inputValue(), "1");
   await page.selectOption("#preset", "midday");
   assert.equal(await page.evaluate(() => window.clearwaterDiagnostics.preset), "midday");
   await page.selectOption("#preset", "golden");
@@ -149,9 +151,9 @@ try {
   await page.locator("#view").selectOption("2");
   await page.waitForTimeout(100);
   await page.locator("#view").selectOption("0");
-  await page.locator("#season").selectOption("1");
-  await page.waitForTimeout(100);
   await page.locator("#season").selectOption("0");
+  await page.waitForTimeout(100);
+  await page.locator("#season").selectOption("1");
   await page.locator("#glare").uncheck();
   await page.waitForTimeout(100);
   await page.locator("#glare").check();

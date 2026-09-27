@@ -21,7 +21,7 @@ const good = {
   },
   "land.json": {
     biome: "diablo-oak", vegetation: { density: 1, species: { "coast-live": 1 } },
-    grass: { spring: "green", summer: "gold" }, presets: ["golden"], defaultPreset: "golden",
+    grass: { spring: "green", summer: "gold" }, presets: ["golden"], defaultPreset: "golden", defaultSeason: "summer",
   },
 };
 
@@ -66,5 +66,11 @@ test("land.json must match the terrain biome and name known presets", async () =
     "test: land.json names unknown preset dusk",
     "test: land.json defaultPreset midday is not in its presets",
   ]);
+  await rm(path.dirname(dir), { recursive: true });
+});
+
+test("land.json defaultSeason must be spring or summer", async () => {
+  const dir = await bundle({ "land.json": { defaultSeason: "autumn" } });
+  assert.deepEqual(await validateBundle(dir), ["test: land.json defaultSeason autumn is not spring or summer"]);
   await rm(path.dirname(dir), { recursive: true });
 });

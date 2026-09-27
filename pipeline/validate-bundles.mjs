@@ -48,6 +48,8 @@ export async function validateBundle(dir) {
     if (!PRESET_NAMES.includes(name)) errors.push(`${id}: land.json names unknown preset ${name}`);
   if (!land.presets?.includes(land.defaultPreset))
     errors.push(`${id}: land.json defaultPreset ${land.defaultPreset} is not in its presets`);
+  if (!["spring", "summer"].includes(land.defaultSeason))
+    errors.push(`${id}: land.json defaultSeason ${land.defaultSeason} is not spring or summer`);
   return errors;
 }
 

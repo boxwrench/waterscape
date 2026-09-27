@@ -779,6 +779,8 @@ try {
   landProfile = await (await fetch(new URL("land.json", bundleBase))).json();
   lightBuf = rt.createBuffer(24 * 4);
   applyPreset(q.get("preset"));
+  // The bundle's usual look: Diablo Range hills are gold most of the year.
+  $("season").value = landProfile.defaultSeason === "spring" ? "0" : "1";
   // Only the presets this reservoir offers, default selected.
   for (const opt of [...$("preset").options]) opt.hidden = !landProfile.presets.includes(opt.value);
   $("preset").value = state.preset;
