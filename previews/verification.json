@@ -26,7 +26,7 @@
     "link": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer"
   },
   "tiers": {
-    "lowMedianMs": 30.2950000166893
+    "lowMedianMs": 30.694999992847443
   },
   "optics": {
     "causticMean": [
@@ -73,20 +73,20 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 1932,
-      "submissions": 62,
-      "dispatches": 1932,
-      "uniformBytesUploaded": 442320,
+      "bindGroupsCreated": 1992,
+      "submissions": 64,
+      "dispatches": 1992,
+      "uniformBytesUploaded": 455920,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 34242560
     }
   },
   "ripple": {
     "finite": true,
-    "min": -0.2727507948875427,
-    "max": 0.39713260531425476,
-    "rms": 0.07620760988252197,
-    "ripplePeak": 0.010570482350885868,
+    "min": -0.2732265293598175,
+    "max": 0.39715179800987244,
+    "rms": 0.07616386977767277,
+    "ripplePeak": 0.01090712659060955,
     "adapter": {
       "vendor": "intel",
       "architecture": "xe-lpg",
@@ -111,19 +111,19 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 2789,
-      "submissions": 90,
-      "dispatches": 2789,
-      "uniformBytesUploaded": 637216,
+      "bindGroupsCreated": 2848,
+      "submissions": 92,
+      "dispatches": 2848,
+      "uniformBytesUploaded": 650560,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 38436864
     }
   },
   "distant": {
     "finite": true,
-    "min": -0.3774927258491516,
-    "max": 0.37397778034210205,
-    "rms": 0.07640126860369334,
+    "min": -0.37650489807128906,
+    "max": 0.373846173286438,
+    "rms": 0.07643226075613137,
     "ripplePeak": 0,
     "adapter": {
       "vendor": "intel",
@@ -149,10 +149,10 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 4171,
-      "submissions": 132,
-      "dispatches": 4171,
-      "uniformBytesUploaded": 955056,
+      "bindGroupsCreated": 4229,
+      "submissions": 134,
+      "dispatches": 4229,
+      "uniformBytesUploaded": 968144,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 42631168
     }
@@ -187,10 +187,10 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 4738,
-      "submissions": 150,
-      "dispatches": 4738,
-      "uniformBytesUploaded": 1084864,
+      "bindGroupsCreated": 4794,
+      "submissions": 152,
+      "dispatches": 4794,
+      "uniformBytesUploaded": 1097440,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 46825472
     }
@@ -219,9 +219,9 @@
       "viewpoint": "overlook",
       "time": 20,
       "playing": false,
-      "frames": 71
+      "frames": 72
     },
-    "frames": 71,
+    "frames": 72,
     "cascades": [
       4.6,
       37,
@@ -242,7 +242,7 @@
     ],
     "width": 1152,
     "height": 720,
-    "frameMs": 75.46499997377396,
+    "frameMs": 72.43000000715256,
     "readbackBytes": 42631168
   },
   "browserErrors": []

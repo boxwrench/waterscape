@@ -44,6 +44,8 @@ Open **http://localhost:5173/**.
 - Adjust wave energy, basin depth, exposure, resolution, diagnostics and lens glare.
 - PNG exports the current frame. `?t=5` starts at a fixed wave time.
 
+Live 3D adapts its quality automatically: NVIDIA GPUs start at the high tier, others at medium, and the renderer steps its tier and resolution to stay near 30 fps. `?quality=low|medium|high` on the journey or the explore page pins a tier. A chip in 3D names the GPU in use; on laptops with two GPUs, Chrome and Edge give pages the integrated GPU unless the visitor switches the browser to High performance (the chip's tip explains how).
+
 ## CUDA pipeline
 
 | Stage | Implementation |

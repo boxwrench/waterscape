@@ -60,7 +60,7 @@ try {
 
   // Live tier: the iframe opens at the flyover pose and reports frame times.
   const live = await browser.newPage({ viewport: { width: 1280, height: 800 } });
-  await live.goto(`${base}/?tier=live`);
+  await live.goto(`${base}/?tier=live&quality=low`);
   await live.waitForSelector("#explore", { state: "visible" });
   await live.click("#explore");
   const frame = await (await live.waitForSelector("#liveFrame")).contentFrame();
@@ -73,6 +73,17 @@ try {
   assert.ok(Math.abs(actual.x - expected.x) < 1 && Math.abs(actual.z - expected.z) < 1,
     JSON.stringify({ expected, actual }));
   assert.equal(await live.textContent("#explore"), "Back to video");
+  // The journey forwards ?quality= and trusts the renderer's struggling flag, not raw frame times.
+  assert.ok((await live.getAttribute("#liveFrame", "src")).includes("quality=low"));
+  await frame.evaluate(() =>
+    parent.postMessage({ type: "waterscape:frame", ms: 250, reservoir: "calaveras", tier: 0, struggling: false }, location.origin),
+  );
+  await live.waitForTimeout(300);
+  assert.equal(await live.isVisible("#slowNotice"), false, "slow frames alone do not show the notice");
+  await frame.evaluate(() =>
+    parent.postMessage({ type: "waterscape:frame", ms: 250, reservoir: "calaveras", tier: 0, struggling: true }, location.origin),
+  );
+  await live.waitForSelector("#slowNotice", { state: "visible" });
   await live.click("#explore");
   assert.equal(await live.$("#liveFrame"), null);
   // Changing stop while live also closes the renderer.

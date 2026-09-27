@@ -91,8 +91,6 @@ function prefetch(i) {
   }
 }
 
-// Median frame time above this for 2 s means the device should stay on video.
-const SLOW_MS = 60;
 
 function enterLive() {
   const stop = state.stops[state.index],
@@ -102,10 +100,12 @@ function enterLive() {
     frame = document.createElement("iframe");
   frame.id = "liveFrame";
   frame.title = `${stop.story?.name ?? stop.id}, live 3D`;
+  const forcedQuality = new URLSearchParams(location.search).get("quality");
   frame.src =
     `./renderer/explore.html?reservoir=${encodeURIComponent(stop.id)}&embed=1&pose=` +
-    [pose.x, pose.y, pose.z, pose.yaw, pose.pitch].map((v) => v.toFixed(3)).join(",");
-  state.live = { id: stop.id, pose, frameTimes: [], started: performance.now(), firstFrame: false };
+    [pose.x, pose.y, pose.z, pose.yaw, pose.pitch].map((v) => v.toFixed(3)).join(",") +
+    (forcedQuality ? `&quality=${encodeURIComponent(forcedQuality)}` : "");
+  state.live = { id: stop.id, pose, frameTimes: [], firstFrame: false };
   $("stage").append(frame);
   video.pause();
   $("explore").textContent = "Back to video";
@@ -134,11 +134,10 @@ addEventListener("message", (e) => {
     state.live.firstFrame = true;
     $("stage").classList.add("live");
   }
-  const times = state.live.frameTimes;
-  times.push(e.data.ms);
-  const median = [...times].sort((a, b) => a - b)[times.length >> 1];
-  if (performance.now() - state.live.started > 2000 && times.length >= 4 && median > SLOW_MS)
-    $("slowNotice").hidden = false;
+  state.live.frameTimes.push(e.data.ms);
+  // The renderer already adapts its quality; it says "struggling" only when its cheapest
+  // level is still too slow.
+  if (e.data.struggling === true) $("slowNotice").hidden = false;
 });
 
 function show(i) {
