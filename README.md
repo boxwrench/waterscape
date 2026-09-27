@@ -1,94 +1,108 @@
 # Waterscape
 
-**Hydrology, simulated.** A journey through California's water, starting with the Hetch Hetchy Regional Water System: real lidar landscapes, reservoir optics, and the public data behind each place. Every stop plays a pre-rendered flyover on any device; WebGPU-capable devices can switch to the live renderer and explore.
+**Hydrology, simulated.** Real lakes and reservoirs, rebuilt from public lidar and public
+records, and brought to life in the browser. Each water body becomes a stop on a journey: a
+pre-rendered flyover that plays on any device, and — in Chrome or Edge with WebGPU — a live 3D
+scene where the water is simulated and lit in real time and you can fly anywhere over the land.
 
-## Layout
+**Live:** https://boxwrench.github.io/waterscape/ — starting with the Hetch Hetchy Regional
+Water System (Calaveras and San Antonio reservoirs).
 
-| Path | What it is |
-|---|---|
-| `index.html`, `site/`, `journey.json` | The journey page (video tier, live-tier switch) |
-| `renderer/` | The live CUDA→WGSL→WebGPU renderer (`explore.html?reservoir=<id>`) |
-| `data/<id>/` | One bundle per reservoir: terrain, cameras, story, flyover, poster |
-| `pipeline/` | Builds bundles: `build_bundle.py` (USGS 3DEP terrain + cameras), `render-flyover.mjs` (video), `validate-bundles.mjs` |
+![Calaveras Reservoir in live 3D](previews/calaveras-overlook.png)
 
-## Adding a reservoir
+## How a frame is made
 
-1. Add an entry to `pipeline/reservoirs.json` (name, biome, lon/lat bbox, grid size, and an on-water anchor lat/lon).
-2. `python pipeline/build_bundle.py <id>` (needs numpy, scipy, Pillow).
-3. Write `data/<id>/story.json`; every fact needs an https source.
-4. `node pipeline/render-flyover.mjs <id>` (Edge + ffmpeg; uses the discrete GPU).
-5. Add the stop to `journey.json`, then `npm test`.
+- **Land** — the water body's USGS 3DEP lidar is a triangle mesh drawn by
+  [three.js](https://threejs.org) on the page's WebGPU device.
+- **Water** — a CUDA program ([`renderer/water.cu`](renderer/water.cu)), compiled to WebGPU by
+  [cuda-webshader](https://github.com/SamG-Coder/cuda-webshader), simulates FFT waves and
+  click ripples, then traces refraction, caustics and reflections. It reads each pixel's
+  distance to the land from the three.js pass, so land and water meet exactly.
+- **Light** — three hand-tuned presets (Morning, Midday, Golden hour) set the sun, a Preetham
+  sky with drifting clouds, fill light and haze.
+- **Quality** — the renderer picks a tier from the GPU and adapts tier and resolution to hold
+  ~30 fps; a chip shows the GPU in use and how to switch a laptop to its faster one.
+- **Everyone else** — browsers without WebGPU get the flyover video and the same facts.
 
-![Calaveras Reservoir](previews/calaveras-ui.png)
+## Make your own waterscape
 
-All simulation and image formation lives in [`renderer/clearwater.cu`](renderer/clearwater.cu). The browser executes it through [cuda-webshader](https://github.com/SamG-Coder/cuda-webshader): CUDA source → generated WGSL → WebGPU. JavaScript handles controls, resources, dispatch and presentation. There is no WebGL, Three.js, handwritten WGSL, CPU wave simulation or CPU FFT.
+Any US lake, reservoir or pond with 3DEP lidar coverage can become a stop:
+
+1. Create `data/<id>/source.json` — name, biome, a lon/lat box around the water and an
+   on-water anchor point.
+2. `python pipeline/build.py <id>` — downloads the lidar and writes the terrain and cameras.
+3. Write `data/<id>/story.json` (facts, each with an https source) and `data/<id>/land.json`
+   (light presets, default season).
+4. `node pipeline/render-flyover.mjs <id>` — renders the flyover video and poster.
+5. Add the stop to a tour in `data/tours/`, run `npm test`, and publish with GitHub Pages.
+
+The full guide, with field references and examples, is
+[docs/make-a-waterscape.md](docs/make-a-waterscape.md).
 
 ## Run locally
 
-Requires Node.js 20+ and a WebGPU-capable browser.
+Requires Node.js 20+ and Chrome or Edge. On Windows, double-click **`START.bat`**; otherwise:
 
-On Windows, double-click **`START.bat`**. It starts the local server and opens the experience. To run it manually:
-
-```powershell
+```
 npm ci
 npm start
 ```
 
-Open **http://localhost:5173/**.
+Open **http://localhost:5173/** for the journey, or
+**http://localhost:5173/renderer/explore.html?reservoir=calaveras** for live 3D.
 
-- The journey opens at the first reservoir stop; use the arrows, scroll, or the system map to move between stops.
-- Click **Explore in 3D** on a stop to drop into its live viewpoints, defined by that reservoir's bundle.
-- Drag or use arrow keys to look. WASD flies, E rises and Q descends.
-- Scroll changes travel speed; Shift provides a temporary 6× boost. Speed also scales with height above the ground (1× below 25 m, 20× at 500 m), so climbing with E is the fast way across the basin.
-- Click nearby water to create ripples. Space pauses and H hides the controls.
-- Adjust wave energy, basin depth, exposure, resolution, diagnostics and lens glare.
-- PNG exports the current frame. `?t=5` starts at a fixed wave time.
+In live 3D: drag or arrow keys to look; W/A/S/D to fly, E/Q up and down; scroll sets speed,
+Shift boosts (speed also grows with height above the ground). Click water for ripples, Space
+pauses, H hides the controls. The panel sets wave energy, basin depth, exposure, season,
+light, resolution and lens glare; PNG saves the frame.
 
-Live 3D adapts its quality automatically: NVIDIA GPUs start at the high tier, others at medium, and the renderer steps its tier and resolution to stay near 30 fps. `?quality=low|medium|high` on the journey or the explore page pins a tier. A chip in 3D names the GPU in use; on laptops with two GPUs, Chrome and Edge give pages the integrated GPU unless the visitor switches the browser to High performance (the chip's tip explains how).
+URL options: `?reservoir=<id>`, `?preset=morning|midday|golden`, `?quality=low|medium|high`
+(pins a tier), `?t=<seconds>` (fixed wave time); the journey takes `?tour=<tour>`.
 
-Land is drawn by three.js (vendored in `vendor/three/`, r186) on the same WebGPU device as the CUDA water: it renders the lidar terrain mesh, and a small pass hands the water shader each pixel's distance to the land, so the shader no longer ray-marches the terrain for the camera. Light comes from three presets — Morning, Midday and Golden hour (`renderer/land/presets.js`) — which set the sun, a Preetham sky with drifting clouds (ported from three.js `SkyMesh`), fill light and haze. Each reservoir's `data/<id>/land.json` lists the presets it offers and its default. `node scripts/vendor-three.mjs` refreshes the vendored copy after changing the pinned version in `package.json`.
+## Repository layout
 
-## CUDA pipeline
-
-| Stage | Implementation |
+| Path | What it is |
 |---|---|
-| Spectrum | Seeded Gaussian complex coefficients, directional spectral bumps and GPU RMS slope normalization |
-| Reservoir surface | Three independently seeded 256² cascades spanning 4.6 m, 37 m and 293 m, clipped by an irregular shoreline |
-| Terrain | Ray-traced procedural near bank plus a world-oriented ridge layer for stable distant hills and reflections |
-| Materials | Spring/summer grass, exposed shoreline, sediment, clustered oak shading and distance haze |
-| Interaction | 256² camera-relative ripple field, 16 m wide, fixed 120 Hz wave equation |
-| Caustics | 1024² refracted rays, three refractive indices, fixed-point splats into a 512² RGB field |
-| Water optics | Fresnel reflection, Snell refraction, Beer–Lambert extinction, underwater scattering and pebble/sediment seabed |
-| Lens/output | Diffraction, bloom, filmic tone curve and direct GPU-buffer-to-canvas copy |
+| `index.html`, `site/` | The journey page (videos, facts, "Explore in 3D") |
+| `renderer/explore.*` | The live 3D page: controls, input and readouts |
+| `renderer/engine/` | The engine: `waterscape.js` (runtime, kernels, frame), `body.js`, `camera.js`, `quality.js`, `presets.js` |
+| `renderer/land/` | three.js land pass: terrain mesh, depth → distance pack |
+| `renderer/water.cu` | All water simulation and image formation (CUDA, shared with the native host) |
+| `data/<id>/` | One folder per water body: `source.json` (inputs), terrain, cameras, story, land profile, flyover, poster |
+| `data/biomes/<biome>/` | Reusable assets per landscape type (`diablo-oak` today) |
+| `data/tours/<tour>.json` | Journeys: ordered stops |
+| `pipeline/` | Builds and checks water bodies: `build.py`, `render-flyover.mjs`, `validate-bundles.mjs` |
+| `vendor/` | cuda-webshader and three.js, vendored (the site loads nothing from CDNs) |
+| `Native/` | Optional native Windows CUDA host (developer tool) |
+| `docs/` | [Architecture](docs/architecture.md), [make a waterscape](docs/make-a-waterscape.md), design history |
 
-The normal frame loop performs **zero GPU-to-CPU readbacks**. Explicit inspection and PNG export read data back on request. The compiler/runtime graph is vendored; no runtime CDN is needed.
+## Tests
 
-## Verification
-
-```powershell
-npm run check
+```
 npm test
 ```
 
-`npm test` serves itself; no separate server is needed. The suite compiles all 20 CUDA entries and launches Microsoft Edge through Playwright. It checks FFT correctness, optical energy, finite buffers, zero render-loop readbacks, ripple interaction, viewpoint/reset behavior, seasonal controls, resizing, diagnostics, PNG export and reservoir classification. Latest evidence is in [`previews/verification.json`](previews/verification.json).
+Serves itself, compiles all 20 CUDA kernels, validates every water body, biome and tour, and
+drives Edge through Playwright: FFT correctness, optics, zero readbacks in the frame loop,
+ripples, viewpoints, presets, resizing, quality tiers and the journey. Pipeline tests:
+`python -m pytest pipeline/tests -q`.
 
-## Scope and tradeoffs
+## Scope
 
-Landforms, shoreline and elevations come from USGS 3DEP lidar; everything finer than the ~10 m grid (grass, oaks, bank detail, sub-grid relief) is procedural. Lidar flattens water, so the reservoir bed is modelled as banks falling at about 1:3 to the interface's basin depth. The water level is the level at the time of the lidar survey (≈224 m). Outside the ~9 × 11 km crop, the land falls away under painted, hazy far ridges.
+Still water only — one water level inside a shoreline. Landforms and shorelines come from
+lidar (~10 m); everything finer is procedural or from shared biome assets. Lidar flattens
+water, so the bed is modelled as banks falling about 1:3 to the chosen basin depth, and the
+water level is the level at survey time. Outside the lidar crop the land falls away under
+painted far ridges.
 
-`python pipeline/build_bundle.py` regenerates `data/<id>/terrain.*` bin.gz and its `.json` metadata from the USGS service (needs numpy, scipy, Pillow). The shader's `TERRAIN_*` constants are checked against that metadata at startup. `--native` also writes the uncompressed `.bin` the native host loads.
+## Credits and licences
 
-The water is bounded visually while its FFT fields remain periodic underneath. This is a linear spectral height field, not volumetric water; it does not model sediment transport or changing reservoir levels. The distant hills are a directional landscape layer, while nearby banks use the traversable height field. Caustics and the pebble bed are intentionally strongest in the Shoreline view.
+- Water optics: [Clearwater](https://github.com/Aureliengmz/clearwater) by Aurélien / Lumaris
+  (MIT) and its CUDA reimplementation [SamG-Coder/clearwater](https://github.com/SamG-Coder/clearwater) (MIT).
+- [cuda-webshader](https://github.com/SamG-Coder/cuda-webshader) (MIT) and
+  [three.js](https://github.com/mrdoob/three.js) r186 (MIT), vendored under `vendor/`.
+- Terrain: USGS 3D Elevation Program, public domain. Facts: public records cited per fact.
+- References: Tessendorf (FFT water), Evan Wallace (caustics), Preetham et al. (sky),
+  Inigo Quilez (texture repetition), Olano & Baker (LEAN mapping).
 
-The browser and optional native Windows host share `renderer/clearwater.cu`. The native host remains a developer-oriented compatibility target and requires Windows, CUDA Toolkit 13.x, Visual Studio C++ Build Tools and an NVIDIA GPU.
-
-## Provenance
-
-- Original Clearwater: [Aureliengmz/clearwater](https://github.com/Aureliengmz/clearwater), commit `4bc826134321043a25df3c2b6fed16fb7b9241e8`, MIT, copyright 2026 Lumaris.
-- CUDA reimplementation: [SamG-Coder/clearwater](https://github.com/SamG-Coder/clearwater), MIT.
-- Pebble image: extracted without modification from the original embedded asset into `renderer/assets/seabed.jpg`.
-- CUDA WebShader: vendored compiler and runtime, MIT; license at `vendor/cuda-webshader/LICENSE`.
-- Terrain: USGS National Map 3D Elevation Program (3DEP), public domain, fetched from the [3DEPElevation ImageServer](https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer) by `pipeline/build_bundle.py`.
-- Original design references: Tessendorf (FFT water), Evan Wallace (refracted-grid caustics), Inigo Quilez (texture repetition), Olano & Baker (LEAN Mapping).
-
-The original license is retained in [`LICENSE`](LICENSE), with additional notices in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+MIT licence ([`LICENSE`](LICENSE)); third-party notices in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
