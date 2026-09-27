@@ -1,0 +1,14 @@
+{
+  "id": "calaveras",
+  "name": "Calaveras Reservoir",
+  "place": "Alameda and Santa Clara counties, east of Milpitas",
+  "operator": "San Francisco Public Utilities Commission",
+  "headline": "Rebuilt so it keeps holding water after a major earthquake on the fault beside it.",
+  "facts": [
+    { "label": "Capacity", "value": "96,850 acre-feet", "source": "https://en.wikipedia.org/wiki/Calaveras_Reservoir" },
+    { "label": "New dam", "value": "220 ft tall, completed 2019", "source": "https://hetchhetchy.org/wp-content/uploads/2022/10/CALAVERAS-DAM-REPLACEMENT-PROJECT.pdf" },
+    { "label": "Calaveras Fault", "value": "0.3 miles from the dam", "source": "https://hetchhetchy.org/wp-content/uploads/2022/10/CALAVERAS-DAM-REPLACEMENT-PROJECT.pdf" },
+    { "label": "Water system", "value": "Hetch Hetchy Regional Water System, serving 2.7 million people", "source": "https://www.sfpuc.gov/about-us/our-systems" },
+    { "label": "Surface at lidar survey", "value": "223.7 m (734 ft) above sea level", "source": "https://www.usgs.gov/3d-elevation-program" }
+  ]
+}

@@ -8,7 +8,8 @@
     "start": "node scripts/serve.mjs",
     "build": "node scripts/build.mjs",
     "check": "node scripts/check.mjs",
-    "test": "node scripts/verify.mjs",
+    "validate": "node pipeline/validate-bundles.mjs",
+    "test": "node --test \"pipeline/tests/*.test.mjs\" && node pipeline/validate-bundles.mjs && node scripts/verify.mjs",
     "bundle": "python pipeline/build_bundle.py",
     "test:pipeline": "python -m pytest pipeline/tests -q"
   },

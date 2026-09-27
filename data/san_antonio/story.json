@@ -1,0 +1,14 @@
+{
+  "id": "san_antonio",
+  "name": "San Antonio Reservoir",
+  "place": "Alameda County, about three miles east-southeast of Sunol",
+  "operator": "San Francisco Public Utilities Commission",
+  "headline": "Surveyed by the USGS in 2018: half a century of sediment had taken 1.5% of its storage.",
+  "facts": [
+    { "label": "Capacity", "value": "50,500 acre-feet as built", "source": "https://en.wikipedia.org/wiki/San_Antonio_Reservoir" },
+    { "label": "Dam", "value": "James H. Turner Dam, completed 1964", "source": "https://en.wikipedia.org/wiki/San_Antonio_Reservoir" },
+    { "label": "Lost to sediment, 1965–2018", "value": "733 acre-feet (1.5%)", "source": "https://www.usgs.gov/publications/storage-capacity-and-sedimentation-characteristics-san-antonio-reservoir-california" },
+    { "label": "Water system", "value": "Hetch Hetchy Regional Water System, serving 2.7 million people", "source": "https://www.sfpuc.gov/about-us/our-systems" },
+    { "label": "Surface at lidar survey", "value": "141.7 m (465 ft) above sea level", "source": "https://www.usgs.gov/3d-elevation-program" }
+  ]
+}

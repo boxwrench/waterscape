@@ -70,20 +70,20 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 2112,
-      "submissions": 68,
-      "dispatches": 2112,
-      "uniformBytesUploaded": 483120,
+      "bindGroupsCreated": 1932,
+      "submissions": 62,
+      "dispatches": 1932,
+      "uniformBytesUploaded": 442320,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 34242560
     }
   },
   "ripple": {
     "finite": true,
-    "min": -0.2729654908180237,
-    "max": 0.39714741706848145,
-    "rms": 0.07618583544505636,
-    "ripplePeak": 0.01090712659060955,
+    "min": -0.2741762101650238,
+    "max": 0.39706599712371826,
+    "rms": 0.0760728674087681,
+    "ripplePeak": 0.012486369349062443,
     "adapter": {
       "vendor": "intel",
       "architecture": "xe-lpg",
@@ -108,19 +108,19 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 2908,
-      "submissions": 94,
-      "dispatches": 2908,
-      "uniformBytesUploaded": 664160,
+      "bindGroupsCreated": 2544,
+      "submissions": 82,
+      "dispatches": 2544,
+      "uniformBytesUploaded": 581488,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 38436864
     }
   },
   "distant": {
     "finite": true,
-    "min": -0.37428829073905945,
-    "max": 0.37339717149734497,
-    "rms": 0.07650343452299826,
+    "min": -0.3520349860191345,
+    "max": 0.3680095374584198,
+    "rms": 0.07689766739926587,
     "ripplePeak": 0,
     "adapter": {
       "vendor": "intel",
@@ -146,10 +146,10 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 4285,
-      "submissions": 136,
-      "dispatches": 4285,
-      "uniformBytesUploaded": 980720,
+      "bindGroupsCreated": 3594,
+      "submissions": 114,
+      "dispatches": 3594,
+      "uniformBytesUploaded": 822848,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 42631168
     }
@@ -184,10 +184,10 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 4908,
-      "submissions": 156,
-      "dispatches": 4908,
-      "uniformBytesUploaded": 1123056,
+      "bindGroupsCreated": 4091,
+      "submissions": 130,
+      "dispatches": 4091,
+      "uniformBytesUploaded": 936400,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 46825472
     }
@@ -215,9 +215,9 @@
       "viewpoint": "overlook",
       "time": 20,
       "playing": false,
-      "frames": 74
+      "frames": 61
     },
-    "frames": 74,
+    "frames": 61,
     "cascades": [
       4.6,
       37,
@@ -231,7 +231,7 @@
     ],
     "width": 1152,
     "height": 720,
-    "frameMs": 76.4549999833107,
+    "frameMs": 108.5,
     "readbackBytes": 42631168
   },
   "browserErrors": []
