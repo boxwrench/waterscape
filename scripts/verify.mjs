@@ -42,7 +42,7 @@ try {
   );
   assert.equal(noReadback, 0, "render loop must stay GPU resident");
   const model = await page.evaluate(() => {
-    const { terrain, viewpoints: v } = window.calaverasModel;
+    const { terrain, viewpoints: v } = window.waterscapeModel;
     return {
       center: terrain.shoreDistance(0, 0),
       overlook: terrain.shoreDistance(v.overlook.x, v.overlook.z),
@@ -61,6 +61,15 @@ try {
   assert.ok(model.waterLevel > 180 && model.waterLevel < 240, JSON.stringify(model));
   const [lat, lon] = model.centerLatLon;
   assert.ok(Math.abs(lat - 37.47) < 0.03 && Math.abs(lon + 121.82) < 0.03, JSON.stringify(model));
+  // Viewpoint buttons come from the bundle's cameras.json.
+  const presets = await page.$$eval("[data-preset]", (b) =>
+    b.map((x) => [x.dataset.preset, x.textContent]),
+  );
+  assert.deepEqual(presets, [
+    ["overlook", "North ridge"],
+    ["ridge", "West ridge"],
+    ["shore", "Shoreline"],
+  ]);
   await page.evaluate(() => window.clearwaterLab.seek(5));
   await page.screenshot({ path: "previews/calaveras-ui.png" });
   await page.locator("#toggle").click();
@@ -159,6 +168,33 @@ try {
     await page.evaluate(() => window.clearwaterDiagnostics.errors),
     [],
   );
+  const embed = await browser.newPage({ viewport: { width: 960, height: 540 } });
+  await embed.goto(
+    `${base}/renderer/explore.html?reservoir=calaveras&embed=1&pose=-1200,420,-2600,2.5,-0.1`,
+  );
+  await embed.evaluate(() => {
+    window.frameMessages = [];
+    addEventListener("message", (e) => window.frameMessages.push(e.data));
+  });
+  await embed.waitForFunction(() => window.clearwaterDiagnostics?.ready, null, {
+    timeout: 120000,
+  });
+  await embed.waitForFunction(() => window.frameMessages.length > 0, null, {
+    timeout: 30000,
+  });
+  const embedState = await embed.evaluate(() => ({
+    header: getComputedStyle(document.querySelector("header")).display,
+    panel: getComputedStyle(document.getElementById("panel")).display,
+    x: window.clearwaterLab.state.x,
+    z: window.clearwaterLab.state.z,
+    message: window.frameMessages[0],
+  }));
+  assert.equal(embedState.header, "none");
+  assert.equal(embedState.panel, "none");
+  assert.ok(Math.abs(embedState.x + 1200) < 1 && Math.abs(embedState.z + 2600) < 1, JSON.stringify(embedState));
+  assert.equal(embedState.message.type, "waterscape:frame");
+  assert.equal(embedState.message.reservoir, "calaveras");
+  await embed.close();
   const result = {
     fft,
     model,

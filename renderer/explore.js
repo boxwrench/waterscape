@@ -3,14 +3,11 @@ import { formatElevation, formatLatLon, loadTerrain } from "./terrain.js";
 const $ = (id) => document.getElementById(id),
   canvas = $("water"),
   q = new URLSearchParams(location.search);
-// Viewpoints on the real (USGS 3DEP lidar) terrain, chosen by a line-of-sight search for
-// ground that sees the most open water; y is set from the ground on load.
-// Local metres: x east, z south, origin on the reservoir. yaw 0 looks north.
-const VIEWPOINTS = {
-  overlook: { x: -1500, z: -3000, above: 3, yaw: 2.69, pitch: -0.12, speed: 40 },
-  ridge: { x: -1600, z: 900, above: 3, yaw: 1.29, pitch: -0.15, speed: 40 },
-  shore: { x: -740, z: 300, above: 1.6, yaw: 1.571, pitch: -0.04, speed: 4 },
-};
+// The reservoir bundle (data/<id>/) supplies terrain and named viewpoints.
+const reservoirId = q.get("reservoir") || "calaveras",
+  bundleBase = new URL(`../data/${reservoirId}/`, import.meta.url),
+  embedded = q.has("embed");
+let VIEWPOINTS = {};
 let terrain = null;
 function viewpoint(name) {
   const { x, z, above, yaw, pitch, speed } = VIEWPOINTS[name];
@@ -41,11 +38,13 @@ function viewRay(sx, sy, aspect, yaw, pitch) {
     l = Math.hypot(...d);
   return d.map((v) => v / l);
 }
-window.calaverasModel = {
+window.waterscapeModel = {
   get terrain() {
     return terrain;
   },
-  viewpoints: VIEWPOINTS,
+  get viewpoints() {
+    return VIEWPOINTS;
+  },
   viewpoint,
 };
 const state = {
@@ -67,8 +66,7 @@ const diag = (window.clearwaterDiagnostics = {
   frames: 0,
   cascades: [4.6, 37, 293],
   fftSize: 256,
-  location: "Calaveras Reservoir",
-  coordinates: [37.478472, -121.822639],
+  location: reservoirId,
 });
 let rt,
   ctx,
@@ -133,18 +131,28 @@ $("toggle").onclick = () => {
     : "Hide controls ↗";
 };
 $("reset").onclick = () => Object.assign(state, viewpoint(state.viewpoint));
-for (const button of document.querySelectorAll("[data-preset]"))
-  button.onclick = () => {
-    const name = button.dataset.preset;
-    state.viewpoint = name;
-    Object.assign(state, viewpoint(name));
-    $("energy").value = name === "shore" ? 0.30 : 0.38;
-    $("depth").value = 18;
-    document
-      .querySelectorAll("[data-preset]")
-      .forEach((b) => b.classList.toggle("active", b === button));
-    labels();
-  };
+function selectViewpoint(name) {
+  state.viewpoint = name;
+  Object.assign(state, viewpoint(name));
+  $("energy").value = name === "shore" ? 0.3 : 0.38;
+  $("depth").value = 18;
+  document
+    .querySelectorAll("[data-preset]")
+    .forEach((b) => b.classList.toggle("active", b.dataset.preset === name));
+  labels();
+}
+function buildPresets() {
+  document.querySelector(".presets").replaceChildren(
+    ...Object.entries(VIEWPOINTS).map(([name, v]) => {
+      const b = document.createElement("button");
+      b.dataset.preset = name;
+      b.textContent = v.label;
+      b.classList.toggle("active", name === state.viewpoint);
+      b.onclick = () => selectViewpoint(name);
+      return b;
+    }),
+  );
+}
 // Elevation readouts from the lidar surface: camera, ground below, and whatever the cursor
 // is over (picked along the same ray the renderer casts for that pixel).
 let hover = null;
@@ -500,6 +508,11 @@ async function frame(now) {
         $("metrics").textContent =
           `${Math.round(1 / dt)} FPS · ${width} × ${height} · SPEED ${state.speed * boost < 100 ? (state.speed * boost).toFixed(1) : Math.round(state.speed * boost).toLocaleString()} m/s · ${formatElevation(terrain.elevation(state.y))}`;
         survey();
+        if (embedded)
+          parent.postMessage(
+            { type: "waterscape:frame", ms: diag.frameMs, reservoir: reservoirId },
+            location.origin,
+          );
       }
     }
     requestAnimationFrame(frame);
@@ -660,7 +673,7 @@ $("capture").onclick = () =>
       const url = URL.createObjectURL(blob),
         a = document.createElement("a");
       a.href = url;
-      a.download = "Calaveras-Reservoir.png";
+      a.download = `${terrain.meta.name.replaceAll(" ", "-")}.png`;
       a.click();
       setTimeout(() => URL.revokeObjectURL(url), 2000);
     });
@@ -670,9 +683,21 @@ try {
   ctx = canvas.getContext("webgpu");
   const source = await (await fetch(new URL("./clearwater.cu", import.meta.url))).text();
   $("loadText").textContent = "Loading USGS lidar terrain…";
-  terrain = await loadTerrain(new URL("../data/calaveras/terrain", import.meta.url).href);
+  if (embedded) document.body.classList.add("embed");
+  terrain = await loadTerrain(new URL("terrain", bundleBase).href);
+  VIEWPOINTS = (await (await fetch(new URL("cameras.json", bundleBase))).json()).viewpoints;
   terrainCells = rt.createBuffer(terrain.gpuCells());
-  Object.assign(state, viewpoint(state.viewpoint));
+  diag.location = terrain.meta.name;
+  diag.coordinates = terrain.latLon(0, 0);
+  document.title = `${terrain.meta.name} · Waterscape`;
+  $("place").textContent = terrain.meta.name.toUpperCase();
+  $("coords").textContent = formatLatLon(terrain.latLon(0, 0));
+  $("intro").textContent = `A spring study of ${terrain.meta.name}, from USGS lidar terrain.`;
+  buildPresets();
+  const pose = q.get("pose")?.split(",").map(Number);
+  if (pose?.length === 5 && pose.every(Number.isFinite))
+    Object.assign(state, { x: pose[0], y: pose[1], z: pose[2], yaw: pose[3], pitch: pose[4] });
+  else Object.assign(state, viewpoint(state.viewpoint));
   $("waterLevel").textContent = formatElevation(terrain.waterLevel);
   $("dataLink").href = terrain.meta.service;
   for (const name of [...source.matchAll(/__global__ void (\w+)/g)].map(

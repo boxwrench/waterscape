@@ -1,5 +1,7 @@
 {
   "source": "USGS National Map 3D Elevation Program (3DEP), public domain",
+  "name": "Calaveras Reservoir",
+  "biome": "diablo-oak",
   "service": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer",
   "bbox_lonlat": [
     -121.875,

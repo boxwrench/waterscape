@@ -365,3 +365,13 @@ footer b {
     margin-top: 12px;
   }
 }
+
+/* Embedded in the journey: the view only, no chrome. */
+.embed header,
+.embed #panel,
+.embed .survey,
+.embed footer,
+.embed .credit,
+.embed #toggle {
+  display: none;
+}

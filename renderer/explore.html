@@ -5,32 +5,28 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="theme-color" content="#243b2d" />
     <link rel="icon" href="data:," />
-    <title>Calaveras Reservoir · Water study</title>
+    <title>Waterscape</title>
     <link rel="stylesheet" href="./explore.css" />
   </head>
   <body>
     <canvas
       id="water"
-      aria-label="Interactive Calaveras Reservoir study. Drag or use arrows to look, WASD to fly, E up, Q down (flying higher moves faster), Shift to boost, scroll to change speed, click the water for ripples."
+      aria-label="Interactive reservoir study. Drag or use arrows to look, WASD to fly, E up, Q down (flying higher moves faster), Shift to boost, scroll to change speed, click the water for ripples."
     ></canvas>
     <header>
       <div class="brand">
         <span class="mark">≈</span>
         <div>
-          <strong>CALAVERAS</strong><small>RESERVOIR STUDY</small>
+          <strong>WATERSCAPE</strong><small id="place">RESERVOIR</small>
         </div>
       </div>
       <div class="live"><i></i><span id="status">INITIALIZING</span></div>
     </header>
     <main id="panel">
-      <p class="eyebrow">37°28′42.5″N / 121°49′21.5″W</p>
-      <h1>Water held<br />by the hills.</h1>
-      <p class="intro">A spring study of Calaveras Reservoir,<br />Milpitas, California.</p>
-      <div class="presets">
-        <button data-preset="overlook" class="active">North ridge</button
-        ><button data-preset="ridge">West ridge</button
-        ><button data-preset="shore">Shoreline</button>
-      </div>
+      <p class="eyebrow" id="coords"></p>
+      <h1>Hydrology,<br />simulated.</h1>
+      <p class="intro" id="intro"></p>
+      <div class="presets"></div>
       <label
         >Wave energy <output id="energyValue">0.4</output
         ><input

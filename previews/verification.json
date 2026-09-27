@@ -54,10 +54,10 @@
       "features": [
         "core-features-and-limits",
         "subgroup-size-control",
-        "shader-f16",
-        "float32-filterable",
         "subgroups",
-        "timestamp-query"
+        "float32-filterable",
+        "timestamp-query",
+        "shader-f16"
       ],
       "timestampQuery": true,
       "limits": {
@@ -70,20 +70,20 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 2052,
-      "submissions": 66,
-      "dispatches": 2052,
-      "uniformBytesUploaded": 469520,
+      "bindGroupsCreated": 2112,
+      "submissions": 68,
+      "dispatches": 2112,
+      "uniformBytesUploaded": 483120,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 34242560
     }
   },
   "ripple": {
     "finite": true,
-    "min": -0.27309784293174744,
-    "max": 0.3971509337425232,
-    "rms": 0.07617483614614116,
-    "ripplePeak": 0.01090712659060955,
+    "min": -0.27729466557502747,
+    "max": 0.396903395652771,
+    "rms": 0.07631375784413953,
+    "ripplePeak": 0.009240212850272655,
     "adapter": {
       "vendor": "intel",
       "architecture": "xe-lpg",
@@ -92,10 +92,10 @@
       "features": [
         "core-features-and-limits",
         "subgroup-size-control",
-        "shader-f16",
-        "float32-filterable",
         "subgroups",
-        "timestamp-query"
+        "float32-filterable",
+        "timestamp-query",
+        "shader-f16"
       ],
       "timestampQuery": true,
       "limits": {
@@ -108,19 +108,19 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 2908,
-      "submissions": 94,
-      "dispatches": 2908,
-      "uniformBytesUploaded": 664160,
+      "bindGroupsCreated": 2974,
+      "submissions": 96,
+      "dispatches": 2974,
+      "uniformBytesUploaded": 679344,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 38436864
     }
   },
   "distant": {
     "finite": true,
-    "min": -0.3767598569393158,
-    "max": 0.3738833963871002,
-    "rms": 0.07642444622125773,
+    "min": -0.37734365463256836,
+    "max": 0.37396013736724854,
+    "rms": 0.07640606884546411,
     "ripplePeak": 0,
     "adapter": {
       "vendor": "intel",
@@ -130,10 +130,10 @@
       "features": [
         "core-features-and-limits",
         "subgroup-size-control",
-        "shader-f16",
-        "float32-filterable",
         "subgroups",
-        "timestamp-query"
+        "float32-filterable",
+        "timestamp-query",
+        "shader-f16"
       ],
       "timestampQuery": true,
       "limits": {
@@ -146,10 +146,10 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 4350,
+      "bindGroupsCreated": 4351,
       "submissions": 138,
-      "dispatches": 4350,
-      "uniformBytesUploaded": 995600,
+      "dispatches": 4351,
+      "uniformBytesUploaded": 995904,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 42631168
     }
@@ -168,10 +168,10 @@
       "features": [
         "core-features-and-limits",
         "subgroup-size-control",
-        "shader-f16",
-        "float32-filterable",
         "subgroups",
-        "timestamp-query"
+        "float32-filterable",
+        "timestamp-query",
+        "shader-f16"
       ],
       "timestampQuery": true,
       "limits": {
@@ -184,10 +184,10 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 4913,
-      "submissions": 156,
-      "dispatches": 4913,
-      "uniformBytesUploaded": 1124336,
+      "bindGroupsCreated": 4975,
+      "submissions": 158,
+      "dispatches": 4975,
+      "uniformBytesUploaded": 1138544,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 46825472
     }
@@ -215,9 +215,9 @@
       "viewpoint": "overlook",
       "time": 20,
       "playing": false,
-      "frames": 74
+      "frames": 75
     },
-    "frames": 74,
+    "frames": 75,
     "cascades": [
       4.6,
       37,
@@ -226,12 +226,12 @@
     "fftSize": 256,
     "location": "Calaveras Reservoir",
     "coordinates": [
-      37.478472,
-      -121.822639
+      37.472608030037705,
+      -121.81815953185885
     ],
     "width": 1152,
     "height": 720,
-    "frameMs": 74.51499998569489,
+    "frameMs": 72.62000000476837,
     "readbackBytes": 42631168
   },
   "browserErrors": []

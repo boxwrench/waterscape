@@ -1,0 +1,7 @@
+{
+  "viewpoints": {
+    "overlook": { "x": -1500, "z": -3000, "above": 3, "yaw": 2.69, "pitch": -0.12, "speed": 40, "label": "North ridge" },
+    "ridge": { "x": -1600, "z": 900, "above": 3, "yaw": 1.29, "pitch": -0.15, "speed": 40, "label": "West ridge" },
+    "shore": { "x": -740, "z": 300, "above": 1.6, "yaw": 1.571, "pitch": -0.04, "speed": 4, "label": "Shoreline" }
+  }
+}
