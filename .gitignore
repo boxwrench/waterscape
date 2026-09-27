@@ -14,3 +14,4 @@ pipeline/.cache/
 data/*/terrain.bin
 .superpowers/
 .worktrees/
+previews/verification.json
