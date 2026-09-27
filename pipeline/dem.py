@@ -14,14 +14,14 @@ SHORE = {"offset": -4000.0, "scale": 0.25}  # -4000 .. 12383 m at 25 cm
 VALLEY = {"offset": 0, "scale": 1 / 65472}
 
 
-def fetch_dem(rid, bbox, size, cache_dir):
-    """Float32 UTM 10N elevation grid; returns (dem, cell_x, cell_y, left, top)."""
-    cache = Path(cache_dir) / f"{rid}.tif"
+def fetch_dem(rid, bbox, size, cache_dir, zone):
+    """Float32 UTM elevation grid in the given zone; returns (dem, cell_x, cell_y, left, top)."""
+    cache = Path(cache_dir) / f"{rid}_z{zone}.tif"
     if not cache.exists():
         cache.parent.mkdir(parents=True, exist_ok=True)
         url = (
             f"{SERVICE}/exportImage?bbox={bbox[0]},{bbox[1]},{bbox[2]},{bbox[3]}&bboxSR=4326"
-            f"&imageSR=32610&size={size[0]},{size[1]}&format=tiff&pixelType=F32"
+            f"&imageSR=326{zone:02d}&size={size[0]},{size[1]}&format=tiff&pixelType=F32"
             "&noDataInterpretation=esriNoDataMatchAny&interpolation=RSP_BilinearInterpolation&f=image"
         )
         with urllib.request.urlopen(url, timeout=120) as r:

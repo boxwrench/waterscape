@@ -27,9 +27,10 @@ PIPELINE = ROOT / "pipeline"
 
 def build(rid, native=False):
     config = json.loads((ROOT / "data" / rid / "source.json").read_text())
-    dem, sx, sy, left, top = demlib.fetch_dem(rid, config["bbox"], config["size"], PIPELINE / ".cache")
     anchor_lat, anchor_lon = config["anchor"]
-    anchor_e, anchor_n = geo.utm10(anchor_lat, anchor_lon)
+    zone = geo.utm_zone(anchor_lon)
+    dem, sx, sy, left, top = demlib.fetch_dem(rid, config["bbox"], config["size"], PIPELINE / ".cache", zone)
+    anchor_e, anchor_n = geo.utm(anchor_lat, anchor_lon, zone)
     anchor_col = round((anchor_e - left) / sx - 0.5)
     anchor_row = round((top - anchor_n) / sy - 0.5)
     h, w = dem.shape
@@ -55,7 +56,8 @@ def build(rid, native=False):
         "anchor": config["anchor"],
         "service": demlib.SERVICE,
         "bbox_lonlat": config["bbox"],
-        "crs": "EPSG:32610",
+        "crs": f"EPSG:326{zone:02d}",
+        "utmZone": zone,
         "verticalDatum": "NAVD88 metres (3DEP)",
         "encoding": "gzip; 3 planar uint16 channels; rows delta-coded from the row above",
         "width": w,

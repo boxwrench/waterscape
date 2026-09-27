@@ -1,14 +1,23 @@
-"""WGS84 -> UTM zone 10N (EPSG:32610), Snyder's series; sub-millimetre here."""
+"""WGS84 -> UTM (northern hemisphere, EPSG:326zz), Snyder's series; sub-millimetre here."""
 import math
 
 
+def utm_zone(lon):
+    """UTM zone number (1-60) containing a longitude."""
+    return int((lon + 180.0) // 6) + 1
+
+
 def utm10(lat, lon):
-    """WGS84 lat/lon -> UTM zone 10N easting/northing (Snyder's series, < 1 mm here)."""
+    return utm(lat, lon, 10)
+
+
+def utm(lat, lon, zone):
+    """WGS84 lat/lon -> UTM easting/northing in a northern-hemisphere zone (Snyder's series)."""
     a, f, k0 = 6378137.0, 1 / 298.257223563, 0.9996
     e2 = f * (2 - f)
     ep2 = e2 / (1 - e2)
     phi, lam = math.radians(lat), math.radians(lon)
-    lam0 = math.radians(-123.0)
+    lam0 = math.radians(-183.0 + 6.0 * zone)
     n = a / math.sqrt(1 - e2 * math.sin(phi) ** 2)
     t = math.tan(phi) ** 2
     c = ep2 * math.cos(phi) ** 2

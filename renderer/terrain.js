@@ -79,10 +79,11 @@ export class Terrain {
     }
     return null;
   }
-  // Local metres (x east, z south) -> [lat, lon] via inverse UTM zone 10N.
+  // Local metres (x east, z south) -> [lat, lon] via inverse UTM (the bundle's zone; older
+  // bundles without utmZone are zone 10).
   latLon(x, z) {
     const [oe, on] = this.meta.originUTM;
-    return utm10Inverse(oe + x, on - z);
+    return utmInverse(oe + x, on - z, this.meta.utmZone ?? 10);
   }
 }
 
@@ -122,8 +123,8 @@ export async function loadTerrain(base) {
   return new Terrain(meta, cells);
 }
 
-// Inverse transverse Mercator (Snyder), WGS84, central meridian -123°.
-function utm10Inverse(east, north) {
+// Inverse transverse Mercator (Snyder), WGS84, northern-hemisphere UTM zone.
+export function utmInverse(east, north, zone) {
   const a = 6378137,
     f = 1 / 298.257223563,
     k0 = 0.9996,
@@ -154,7 +155,7 @@ function utm10Inverse(east, north) {
         ((1 + 2 * t1 + c1) * d ** 3) / 6 +
         ((5 - 2 * c1 + 28 * t1 - 3 * c1 * c1 + 8 * ep2 + 24 * t1 * t1) * d ** 5) / 120) /
       Math.cos(phi1);
-  return [(lat * 180) / Math.PI, -123 + (lon * 180) / Math.PI];
+  return [(lat * 180) / Math.PI, -183 + 6 * zone + (lon * 180) / Math.PI];
 }
 
 export function formatElevation(metres) {
