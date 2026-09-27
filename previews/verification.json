@@ -12,8 +12,8 @@
     "overlook": 959.0460566961494,
     "ridge": 919.0482290820945,
     "shoreline": -29.460648573382034,
-    "waterLevel": 223.6999969482422,
-    "overlookElevation": 360.70813640540143,
+    "waterLevel": 223.7,
+    "overlookElevation": 360.70813945715923,
     "centerLatLon": [
       37.472608030037705,
       -121.81815953185885
@@ -118,9 +118,9 @@
   },
   "distant": {
     "finite": true,
-    "min": -0.3520349860191345,
-    "max": 0.3680095374584198,
-    "rms": 0.07689766739926587,
+    "min": -0.3520365357398987,
+    "max": 0.3680099844932556,
+    "rms": 0.0768976555871977,
     "ripplePeak": 0,
     "adapter": {
       "vendor": "intel",
@@ -184,10 +184,10 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 4091,
+      "bindGroupsCreated": 4092,
       "submissions": 130,
-      "dispatches": 4091,
-      "uniformBytesUploaded": 936400,
+      "dispatches": 4092,
+      "uniformBytesUploaded": 936704,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 46825472
     }
@@ -231,7 +231,7 @@
     ],
     "width": 1152,
     "height": 720,
-    "frameMs": 108.5,
+    "frameMs": 100.02500003576279,
     "readbackBytes": 42631168
   },
   "browserErrors": []

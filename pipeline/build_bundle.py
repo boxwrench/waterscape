@@ -18,6 +18,7 @@ import numpy as np
 
 import cameras
 import dem as demlib
+import geo
 
 ROOT = Path(__file__).resolve().parent.parent
 PIPELINE = ROOT / "pipeline"
@@ -26,7 +27,14 @@ PIPELINE = ROOT / "pipeline"
 def build(rid, native=False):
     config = json.loads((PIPELINE / "reservoirs.json").read_text())[rid]
     dem, sx, sy, left, top = demlib.fetch_dem(rid, config["bbox"], config["size"], PIPELINE / ".cache")
-    water, level = demlib.detect_water(dem)
+    anchor_lat, anchor_lon = config["anchor"]
+    anchor_e, anchor_n = geo.utm10(anchor_lat, anchor_lon)
+    anchor_col = round((anchor_e - left) / sx - 0.5)
+    anchor_row = round((top - anchor_n) / sy - 0.5)
+    h, w = dem.shape
+    if not (0 <= anchor_row < h and 0 <= anchor_col < w):
+        raise ValueError(f"{rid}: anchor {config['anchor']} falls outside the raster")
+    water, level = demlib.detect_water(dem, anchor=(anchor_row, anchor_col))
     height, sdf, valley = demlib.channels(dem, water, level, sx)
     rows, cols = np.nonzero(water)
     origin_e = left + (float(cols.mean()) + 0.5) * sx
@@ -39,11 +47,11 @@ def build(rid, native=False):
     demlib.write_gzip(out / "terrain.bin.gz", body)
     if native:
         (out / "terrain.bin").write_bytes(body)
-    h, w = dem.shape
     meta = {
         "source": "USGS National Map 3D Elevation Program (3DEP), public domain",
         "name": config["name"],
         "biome": config["biome"],
+        "anchor": config["anchor"],
         "service": demlib.SERVICE,
         "bbox_lonlat": config["bbox"],
         "crs": "EPSG:32610",

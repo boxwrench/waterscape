@@ -2,6 +2,10 @@
   "source": "USGS National Map 3D Elevation Program (3DEP), public domain",
   "name": "San Antonio Reservoir",
   "biome": "diablo-oak",
+  "anchor": [
+    37.57983,
+    -121.82922
+  ],
   "service": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer",
   "bbox_lonlat": [
     -121.881,
@@ -18,7 +22,7 @@
     10.595458439562936,
     10.595458439563059
   ],
-  "waterLevel": 141.6999969482422,
+  "waterLevel": 141.7,
   "originUTM": [
     603410.300266683,
     4159840.182410167

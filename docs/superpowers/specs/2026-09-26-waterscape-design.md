@@ -77,8 +77,12 @@ the bundle alone.
 ### Water level
 
 Lidar flattens water, so terrain below the survey-time surface is unknown. Levels **above**
-the survey level are derived from the DEM, flood-filled from the dam within the basin
-(this also solves atlas-twin's TODO #1). Levels **below** it are not shown as terrain
+the survey level are derived from the DEM by a flood fill that starts at the
+reservoir's anchor point (a known on-water coordinate in `pipeline/reservoirs.json`, also used
+to pick the lidar water surface) and cannot cross the dam line, taken from the USACE National
+Inventory of Dams (coordinates, crest length, height). Without both, a fill by elevation alone
+can spill into neighbouring or downstream valleys — the failure seen in atlas-twin's TODO #1.
+Levels **below** it are not shown as terrain
 until bathymetry or an operator's elevation–storage table is available; the cards still
 show the storage number. Where CDEC reports reservoir elevation directly, it is used in
 preference to converting storage percentage.
@@ -117,7 +121,10 @@ Each step is its own spec → plan → implementation cycle.
 4. **Hetch Hetchy.** Sierra granite and conifer biome.
 5. **Later:** SWRCB / DDW water-system layers, the local studio tier, the remaining atlas
    reservoirs, and performance work for general browsers (auto quality, half-resolution
-   terrain, GPU indicator).
+   terrain, GPU indicator). Deeper-layer candidates already produced by the pipeline: lidar
+   acquisition date and water level (USGS Elevation Point Query Service), measured
+   water-surface area, shoreline and slope profiles, the 2018 USGS San Antonio bathymetric
+   survey, and NID dam specifications.
 
 ## Out of scope for now
 
