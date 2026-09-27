@@ -92,6 +92,21 @@
         <span>CUDA WEBSHADER</span><span>USGS LIDAR / 3 × 256² FFT</span>
       </div>
     </main>
+    <aside id="gpu" class="gpu" aria-label="Graphics and quality">
+      <span id="gpuChip"></span>
+      <div id="gpuTip" hidden>
+        <p>Running on integrated graphics. If this computer has a faster graphics card, let your browser use it:</p>
+        <details>
+          <summary>Windows setting</summary>
+          <p>Windows: Settings → System → Display → Graphics → your browser → Options → High performance, then fully quit and reopen the browser.</p>
+        </details>
+        <details>
+          <summary>Chrome or Edge flag</summary>
+          <p>Chrome or Edge: open chrome://flags (or edge://flags), search "high performance GPU", enable it, relaunch.</p>
+        </details>
+        <button id="gpuTipDismiss">Got it</button>
+      </div>
+    </aside>
     <aside id="survey" class="survey" aria-label="Elevation readout">
       <p class="eyebrow">Elevation · USGS 3DEP lidar</p>
       <dl>

@@ -1,7 +1,7 @@
 {
   "fft": {
-    "maxError": 3.882331766069669e-7,
-    "roundtripError": 2.980232238769531e-7,
+    "maxError": 0.000028253567878611108,
+    "roundtripError": 0.0000074803829193115234,
     "modes": 5,
     "axes": 2,
     "cascades": 3,
@@ -26,32 +26,32 @@
     "link": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer"
   },
   "tiers": {
-    "lowMedianMs": 14.9200000166893
+    "lowMedianMs": 30.2950000166893
   },
   "optics": {
     "causticMean": [
-      0.9922300539910793,
-      0.9922300912439823,
-      0.9922309704124928
+      0.9922287426888943,
+      0.9922311678528786,
+      0.9922289848327637
     ],
     "hdrFinite": true,
     "glareFinite": true,
     "psfEnergy": [
       1.0000001192092896,
-      1.000000238418579,
-      0.9999998807907104
+      0.9999999403953552,
+      1
     ]
   },
   "noReadback": 0,
   "first": {
     "finite": true,
-    "min": -0.3680235743522644,
-    "max": 0.5278598666191101,
-    "rms": 0.10103752129736673,
+    "min": -0.36802569031715393,
+    "max": 0.5278588533401489,
+    "rms": 0.10103742875755141,
     "ripplePeak": 0,
     "adapter": {
-      "vendor": "nvidia",
-      "architecture": "blackwell",
+      "vendor": "intel",
+      "architecture": "xe-lpg",
       "device": "",
       "description": "",
       "features": [
@@ -73,23 +73,23 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 2168,
-      "submissions": 70,
-      "dispatches": 2168,
-      "uniformBytesUploaded": 495696,
+      "bindGroupsCreated": 1932,
+      "submissions": 62,
+      "dispatches": 1932,
+      "uniformBytesUploaded": 442320,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 34242560
     }
   },
   "ripple": {
     "finite": true,
-    "min": -0.2741737961769104,
-    "max": 0.3970620036125183,
-    "rms": 0.07607294153013498,
-    "ripplePeak": 0.012486369349062443,
+    "min": -0.2727507948875427,
+    "max": 0.39713260531425476,
+    "rms": 0.07620760988252197,
+    "ripplePeak": 0.010570482350885868,
     "adapter": {
-      "vendor": "nvidia",
-      "architecture": "blackwell",
+      "vendor": "intel",
+      "architecture": "xe-lpg",
       "device": "",
       "description": "",
       "features": [
@@ -111,23 +111,23 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 2780,
+      "bindGroupsCreated": 2789,
       "submissions": 90,
-      "dispatches": 2780,
-      "uniformBytesUploaded": 634864,
+      "dispatches": 2789,
+      "uniformBytesUploaded": 637216,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 38436864
     }
   },
   "distant": {
     "finite": true,
-    "min": -0.3808148503303528,
-    "max": 0.3740881085395813,
-    "rms": 0.0762788902672117,
+    "min": -0.3774927258491516,
+    "max": 0.37397778034210205,
+    "rms": 0.07640126860369334,
     "ripplePeak": 0,
     "adapter": {
-      "vendor": "nvidia",
-      "architecture": "blackwell",
+      "vendor": "intel",
+      "architecture": "xe-lpg",
       "device": "",
       "description": "",
       "features": [
@@ -149,23 +149,23 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 4895,
-      "submissions": 156,
-      "dispatches": 4895,
-      "uniformBytesUploaded": 1119760,
+      "bindGroupsCreated": 4171,
+      "submissions": 132,
+      "dispatches": 4171,
+      "uniformBytesUploaded": 955056,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 42631168
     }
   },
   "overlook": {
     "finite": true,
-    "min": -0.3875102400779724,
-    "max": 0.42243796586990356,
-    "rms": 0.09185822217877992,
+    "min": -0.38751116394996643,
+    "max": 0.42243295907974243,
+    "rms": 0.09185812621039559,
     "ripplePeak": 0,
     "adapter": {
-      "vendor": "nvidia",
-      "architecture": "blackwell",
+      "vendor": "intel",
+      "architecture": "xe-lpg",
       "device": "",
       "description": "",
       "features": [
@@ -187,10 +187,10 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 5893,
-      "submissions": 188,
-      "dispatches": 5893,
-      "uniformBytesUploaded": 1347872,
+      "bindGroupsCreated": 4738,
+      "submissions": 150,
+      "dispatches": 4738,
+      "uniformBytesUploaded": 1084864,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 46825472
     }
@@ -219,9 +219,9 @@
       "viewpoint": "overlook",
       "time": 20,
       "playing": false,
-      "frames": 90
+      "frames": 71
     },
-    "frames": 90,
+    "frames": 71,
     "cascades": [
       4.6,
       37,
@@ -233,7 +233,7 @@
       "tier": 2,
       "width": 1152,
       "auto": false,
-      "vendor": "nvidia",
+      "vendor": "intel",
       "struggling": false
     },
     "coordinates": [
@@ -242,7 +242,7 @@
     ],
     "width": 1152,
     "height": 720,
-    "frameMs": 31.680000007152557,
+    "frameMs": 75.46499997377396,
     "readbackBytes": 42631168
   },
   "browserErrors": []

@@ -198,6 +198,8 @@ try {
   assert.equal(typeof embedState.message.tier, "number");
   assert.equal(typeof embedState.message.struggling, "boolean");
   await embed.close();
+  // The main page's checks are done; close it so it doesn't share the GPU with the timed pages below.
+  await page.close();
   // Forced tiers render and report themselves; low meets its frame budget at 768 px.
   const tiers = {};
   for (const [name, tier] of [["low", 0], ["medium", 1], ["high", 2]]) {
@@ -234,6 +236,34 @@ try {
   await auto.selectOption("#quality", "1536");
   assert.equal(await auto.evaluate(() => window.clearwaterDiagnostics.quality.auto), false);
   await auto.close();
+  // GPU chip everywhere in 3D; the tip on Intel (the test browser's default GPU) until dismissed.
+  const gpu = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  await gpu.goto(`${base}/renderer/explore.html?embed=1`);
+  await gpu.evaluate(() => localStorage.removeItem("waterscape.gpuTipDismissed"));
+  await gpu.reload();
+  await gpu.waitForFunction(() => window.clearwaterDiagnostics?.ready, null, { timeout: 120000 });
+  await gpu.waitForFunction(() => document.getElementById("gpuChip").textContent.includes("·"));
+  const gpuState = await gpu.evaluate(() => ({
+    chip: document.getElementById("gpuChip").textContent,
+    shown: getComputedStyle(document.getElementById("gpu")).display !== "none",
+    tip: !document.getElementById("gpuTip").hidden,
+    vendor: window.clearwaterDiagnostics.quality.vendor,
+    tier: window.clearwaterDiagnostics.quality.tier,
+  }));
+  assert.ok(gpuState.shown, "chip visible in embed mode");
+  assert.ok(gpuState.chip.includes(gpuState.vendor), JSON.stringify(gpuState));
+  assert.equal(gpuState.tip, gpuState.vendor === "intel" || gpuState.tier === 0, JSON.stringify(gpuState));
+  if (gpuState.tip) {
+    assert.match(await gpu.textContent("#gpuTip"), /Running on integrated graphics/);
+    assert.match(await gpu.textContent("#gpuTip"), /chrome:\/\/flags/);
+    await gpu.click("#gpuTipDismiss");
+    assert.equal(await gpu.evaluate(() => document.getElementById("gpuTip").hidden), true);
+    await gpu.reload();
+    await gpu.waitForFunction(() => window.clearwaterDiagnostics?.ready, null, { timeout: 120000 });
+    assert.equal(await gpu.evaluate(() => document.getElementById("gpuTip").hidden), true, "dismissal remembered");
+  }
+  await gpu.evaluate(() => localStorage.removeItem("waterscape.gpuTipDismissed"));
+  await gpu.close();
   const result = {
     fft,
     model,

@@ -375,3 +375,46 @@ footer b {
 .embed #toggle {
   display: none;
 }
+
+/* GPU and quality chip: shown in both the explore page and the journey's live view. */
+.gpu {
+  position: fixed;
+  right: 38px;
+  bottom: 120px;
+  max-width: 300px;
+  padding: 8px 12px;
+  font-size: 11px;
+  background: linear-gradient(130deg, #183f469e, #15363f61);
+  backdrop-filter: blur(22px);
+  border: 1px solid #ffffff26;
+  border-radius: 3px;
+}
+.gpu p {
+  margin: 8px 0;
+  line-height: 1.45;
+}
+.gpu summary {
+  cursor: pointer;
+}
+.gpu button {
+  margin-top: 6px;
+  font-size: 11px;
+  padding: 5px 10px;
+}
+.embed .gpu {
+  right: 16px;
+  bottom: 56px;
+}
+/* Narrow journey view: the stop card fills the bottom, so the chip sits in the sky above it. */
+@media (max-width: 600px) {
+  .embed .gpu {
+    top: 112px;
+    bottom: auto;
+    left: 16px;
+    right: 16px;
+    max-width: none;
+  }
+}
+.clean:not(.embed) .gpu {
+  display: none;
+}

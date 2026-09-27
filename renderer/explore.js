@@ -1,6 +1,6 @@
 import { GpuRuntime } from "../vendor/cuda-webshader/runtime/runtime.js";
 import { formatElevation, formatLatLon, loadTerrain } from "./terrain.js";
-import { LEVELS, QualityGovernor, forcedTier, startingLevel } from "./quality.js";
+import { QualityGovernor, TIER_NAMES, forcedTier, startingLevel } from "./quality.js";
 const $ = (id) => document.getElementById(id),
   canvas = $("water"),
   q = new URLSearchParams(location.search);
@@ -172,6 +172,28 @@ function buildPresets() {
 let hover = null;
 canvas.addEventListener("pointermove", (e) => (hover = e));
 canvas.addEventListener("pointerleave", () => (hover = null));
+// GPU chip and the "use your faster GPU" tip (browsers on dual-GPU laptops default to the
+// integrated GPU and ignore a page's powerPreference, so only the visitor can change it).
+function tipDismissed() {
+  try {
+    return localStorage.getItem("waterscape.gpuTipDismissed") === "1";
+  } catch {
+    return false;
+  }
+}
+function updateGpu() {
+  const { vendor, tier, width } = diag.quality,
+    arch = rt.describe().architecture;
+  $("gpuChip").textContent = `${vendor}${arch ? " " + arch : ""} · ${TIER_NAMES[tier]} · ${width} px`;
+  $("gpuTip").hidden = tipDismissed() || !(vendor === "intel" || tier === 0);
+}
+$("gpuTipDismiss").onclick = () => {
+  try {
+    localStorage.setItem("waterscape.gpuTipDismissed", "1");
+  } catch {}
+  $("gpuTip").hidden = true;
+};
+
 function survey() {
   const ground = terrain.ground(state.x, state.z);
   $("elevCamera").textContent =
@@ -534,6 +556,7 @@ async function frame(now) {
         $("metrics").textContent =
           `${Math.round(1 / dt)} FPS · ${width} × ${height} · SPEED ${state.speed * boost < 100 ? (state.speed * boost).toFixed(1) : Math.round(state.speed * boost).toLocaleString()} m/s · ${formatElevation(terrain.elevation(state.y))}`;
         survey();
+        updateGpu();
         if (embedded)
           parent.postMessage(
             {
@@ -722,6 +745,7 @@ try {
     $("quality").value = String(governor.current.width);
   } else state.quality = forced;
   diag.quality = { tier: state.quality, width: +$("quality").value, auto: !!governor, vendor, struggling: false };
+  updateGpu();
   ctx = canvas.getContext("webgpu");
   const source = await (await fetch(new URL("./clearwater.cu", import.meta.url))).text();
   $("loadText").textContent = "Loading USGS lidar terrain…";
