@@ -9,6 +9,6 @@
     { "label": "New dam", "value": "220 ft tall, completed 2019", "source": "https://hetchhetchy.org/wp-content/uploads/2022/10/CALAVERAS-DAM-REPLACEMENT-PROJECT.pdf" },
     { "label": "Calaveras Fault", "value": "0.3 miles from the dam", "source": "https://hetchhetchy.org/wp-content/uploads/2022/10/CALAVERAS-DAM-REPLACEMENT-PROJECT.pdf" },
     { "label": "Water system", "value": "Hetch Hetchy Regional Water System, serving 2.7 million people", "source": "https://www.sfpuc.gov/about-us/our-systems" },
-    { "label": "Surface at lidar survey", "value": "223.7 m (734 ft) above sea level", "source": "https://www.usgs.gov/3d-elevation-program" }
+    { "label": "Surface at 2006 lidar survey", "value": "223.7 m (734 ft) above sea level", "source": "https://epqs.nationalmap.gov/v1/json?x=-121.81816&y=37.47261&units=Meters&wkid=4326&includeDate=true" }
   ]
 }
