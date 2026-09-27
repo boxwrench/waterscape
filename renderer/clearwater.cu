@@ -502,8 +502,9 @@ __device__ float4 oakRayHit(float3 p, float3 rd, float3 n, float density, float 
   *hitBack = fmaxf(best, 0.0f);
   return make_float4(cover, bestN.x, bestN.y, bestN.z);
 }
+// treeNear: distance within which trees get individual 3D crown tests (0 = never; reflections).
 __device__ float3 terrainShade(const float4 *T, float3 p, float3 rd, float distance, int season,
-                               int shadowSteps, float time) {
+                               int shadowSteps, float treeNear, float time) {
   float3 sun = sunDir(), n = terrainNormal(T, p.x, p.z, distance);
   float footprint = distance * .0015f;
   float4 cell = terrainSample(T, p.x, p.z);
@@ -550,12 +551,12 @@ __device__ float3 terrainShade(const float4 *T, float3 p, float3 rd, float dista
   float crownX = p.x, crownZ = p.z;
   float facing = -dot3(rd, n);
   // The ground-plane extrapolation only holds while the slope faces the camera.
-  if (distance < 260.0f && shadowSteps > 0 && facing > .18f) {
+  if (distance < treeNear && shadowSteps > 0 && facing > .18f) {
     float back;
     crown = oakRayHit(p, rd, n, density, footprint, &back);
     crownX = p.x - rd.x * back;
     crownZ = p.z - rd.z * back;
-  } else if (distance < 260.0f) {
+  } else if (distance < treeNear) {
     // Near slope seen edge-on: parallax would smear crowns into ribbons; draw their tops.
     float4 c = oakCrowns(p.x, p.z, 7.0f, density, footprint);
     crown = c;
@@ -617,7 +618,7 @@ __device__ float3 environment(const float4 *T, float3 ro, float3 rd, int steps, 
                               float time) {
   float t = terrainTrace(T, ro, rd, steps, 16000.0f);
   if (t > 0)
-    return terrainShade(T, add(ro, mul(rd, t)), rd, t, season, 0, time);
+    return terrainShade(T, add(ro, mul(rd, t)), rd, t, season, 0, 0.0f, time);
   return sky(rd, season);
 }
 __device__ float floorDepth(const float4 *T, float x, float z, float depth) {
@@ -639,19 +640,26 @@ __device__ float3 stone(const float4 *peb, float x, float z, float footprint) {
 __global__ void render_water(const float4 *surface, const float4 *rip, const float4 *caustics,
                              const float4 *pebbles, const float4 *terrain, float4 *hdr, int width,
                              int height, float camX, float camZ, float camY, float yaw, float pitch, float centerX,
-                             float centerZ, float depth, float time, int view, int season) {
+                             float centerZ, float depth, float time, int view, int season,
+                             int quality) {
   int ix = (int)(blockIdx.x * blockDim.x + threadIdx.x),
       iy = (int)(blockIdx.y * blockDim.y + threadIdx.y);
   if (ix >= width || iy >= height)
     return;
   float sx = 2 * ((float)ix + .5f) / (float)width - 1,
         sy = 1 - 2 * ((float)iy + .5f) / (float)height;
+  // Quality tier (0 low, 1 medium, 2 high = the original budgets): scales the costliest loops.
+  int traceSteps = quality >= 2 ? 128 : (quality == 1 ? 96 : 64),
+      shadowSteps = quality >= 2 ? 10 : (quality == 1 ? 6 : 0),
+      reflectSteps = quality >= 2 ? 24 : (quality == 1 ? 16 : 10);
+  float treeNear = quality >= 2 ? 260.0f : (quality == 1 ? 160.0f : 80.0f);
   float3 rd = ray(sx, sy, (float)width / (float)height, yaw, pitch),
          ro = v3(camX, camY, camZ), sun = sunDir(),
          SUN = v3(6, 5.4f, 4.44f), col = sky(rd, season);
-  float landT = terrainTrace(terrain, ro, rd, 128, 16000.0f);
+  float landT = terrainTrace(terrain, ro, rd, traceSteps, 16000.0f);
   if (landT > 0)
-    col = terrainShade(terrain, add(ro, mul(rd, landT)), rd, landT, season, 10, time);
+    col = terrainShade(terrain, add(ro, mul(rd, landT)), rd, landT, season, shadowSteps, treeNear,
+                       time);
   if (rd.y < .0015f) {
     float3 wd = norm(v3(rd.x, fminf(rd.y, -.0015f), rd.z));
     float t = -camY / wd.y;
@@ -675,7 +683,7 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
     float3 rr = sub(wd, mul(nr, 2 * dot3(wd, nr)));
     rr.y = fabsf(rr.y);
     // Reservoirs read by what they mirror: trace the reflected ray against the hills.
-    float3 reflection = environment(terrain, add(P, v3(0, .3f, 0)), rr, 24, season, time),
+    float3 reflection = environment(terrain, add(P, v3(0, .3f, 0)), rr, reflectSteps, season, time),
            h = norm(add(v, sun));
     float nh = fmaxf(0, dot3(n, h)), nl = fmaxf(0, dot3(n, sun)),
           a2 = .00012f + 1.2f * a.w + .000025f * t, c2 = fmaxf(nh * nh, .0001f),

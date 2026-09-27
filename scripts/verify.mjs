@@ -26,7 +26,8 @@ try {
   page.on("response", (r) => {
     if (r.status() >= 400) errors.push(`${r.status()} ${r.url()}`);
   });
-  await page.goto(`${base}/renderer/explore.html`);
+  // The main suite pins today's settings; automatic quality has its own checks below.
+  await page.goto(`${base}/renderer/explore.html?quality=high`);
   await page.waitForFunction(
     () =>
       window.clearwaterDiagnostics?.ready ||
@@ -195,10 +196,36 @@ try {
   assert.equal(embedState.message.type, "waterscape:frame");
   assert.equal(embedState.message.reservoir, "calaveras");
   await embed.close();
+  // Forced tiers render and report themselves; low meets its frame budget at 768 px.
+  const tiers = {};
+  for (const [name, tier] of [["low", 0], ["medium", 1], ["high", 2]]) {
+    const tp = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+    await tp.goto(`${base}/renderer/explore.html?quality=${name}`);
+    await tp.waitForFunction(() => window.clearwaterDiagnostics?.ready, null, { timeout: 120000 });
+    const q = await tp.evaluate(() => window.clearwaterDiagnostics.quality);
+    assert.equal(q.tier, tier, JSON.stringify(q));
+    assert.equal(await tp.evaluate(() => window.clearwaterLab.state.quality), tier);
+    if (name === "low") {
+      await tp.selectOption("#quality", "768");
+      await tp.waitForFunction(() => window.clearwaterDiagnostics.width === 768);
+      await tp.waitForTimeout(1500);
+      const samples = [];
+      for (let i = 0; i < 40; i++) {
+        samples.push(await tp.evaluate(() => window.clearwaterDiagnostics.frameMs));
+        await tp.waitForTimeout(50);
+      }
+      samples.sort((a, b) => a - b);
+      tiers.lowMedianMs = samples[samples.length >> 1];
+      assert.ok(tiers.lowMedianMs <= 33, `low tier median ${tiers.lowMedianMs} ms > 33 ms at 768 px`);
+    }
+    await tp.close();
+  }
+
   const result = {
     fft,
     model,
     readout,
+    tiers,
     optics,
     noReadback,
     first,

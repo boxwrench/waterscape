@@ -113,7 +113,7 @@ struct App {
  }
  void draw(){
   dim3 grid(width/8,height/8,1);clear_caustics<<<dim3(64,64,1),block>>>(photons.p);trace_caustics<<<dim3(128,128,1),block>>>(surface.p,photons.p,depth);filter_caustics<<<dim3(64,64,1),block>>>(photons.p,caustics.p);
-  render_water<<<grid,block>>>(surface.p,ripNormals.p,caustics.p,pebbles.p,terrain.p,hdr.p,width,height,cam.x,cam.z,cam.y,cam.yaw,cam.pitch,cx,cz,depth,time,view,0);
+  render_water<<<grid,block>>>(surface.p,ripNormals.p,caustics.p,pebbles.p,terrain.p,hdr.p,width,height,cam.x,cam.z,cam.y,cam.yaw,cam.pitch,cx,cz,depth,time,view,0,2);
   if(glare){glare_source<<<wavesGrid,block>>>(hdr.p,lens[0].p,width,height);transform(lens[0].p,lens[1].p,-1);glare_multiply<<<wavesGrid,block>>>(lens[0].p,lensKernel.p,lens[1].p);transform(lens[1].p,lens[0].p,1);}
   bloom_pass<<<grid,block>>>(hdr.p,bloom[0].p,width,height,0);bloom_pass<<<grid,block>>>(bloom[0].p,bloom[1].p,width,height,1);present<<<grid,block>>>(hdr.p,bloom[1].p,lens[1].p,pixels.p,width,height,exposure,glare?1:0);check(cudaGetLastError());
   check(cudaGraphicsMapResources(1,&shared));cudaArray_t array;check(cudaGraphicsSubResourceGetMappedArray(&array,shared,0,0));check(cudaMemcpy2DToArray(array,0,0,pixels.p,width*4,width*4,height,cudaMemcpyDeviceToDevice));check(cudaGraphicsUnmapResources(1,&shared));ComPtr<ID3D11Texture2D> back;hr(swap->GetBuffer(0,IID_PPV_ARGS(back.GetAddressOf())));context->CopyResource(back.Get(),texture.Get());hr(swap->Present(1,0));

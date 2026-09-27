@@ -1,7 +1,7 @@
 {
   "fft": {
-    "maxError": 0.000028253567878611108,
-    "roundtripError": 0.0000074803829193115234,
+    "maxError": 3.882331766069669e-7,
+    "roundtripError": 2.980232238769531e-7,
     "modes": 5,
     "axes": 2,
     "cascades": 3,
@@ -25,30 +25,33 @@
     "water": "224 m · 734 ft",
     "link": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer"
   },
+  "tiers": {
+    "lowMedianMs": 13.535000026226044
+  },
   "optics": {
     "causticMean": [
-      0.9922287426888943,
-      0.9922311678528786,
-      0.9922289848327637
+      0.9922300539910793,
+      0.9922300912439823,
+      0.9922309704124928
     ],
     "hdrFinite": true,
     "glareFinite": true,
     "psfEnergy": [
       1.0000001192092896,
-      0.9999999403953552,
-      1
+      1.000000238418579,
+      0.9999998807907104
     ]
   },
   "noReadback": 0,
   "first": {
     "finite": true,
-    "min": -0.36802569031715393,
-    "max": 0.5278588533401489,
-    "rms": 0.10103742875755141,
+    "min": -0.3680235743522644,
+    "max": 0.5278598666191101,
+    "rms": 0.10103752129736673,
     "ripplePeak": 0,
     "adapter": {
-      "vendor": "intel",
-      "architecture": "xe-lpg",
+      "vendor": "nvidia",
+      "architecture": "blackwell",
       "device": "",
       "description": "",
       "features": [
@@ -56,8 +59,8 @@
         "subgroup-size-control",
         "subgroups",
         "float32-filterable",
-        "timestamp-query",
-        "shader-f16"
+        "shader-f16",
+        "timestamp-query"
       ],
       "timestampQuery": true,
       "limits": {
@@ -70,23 +73,23 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 1932,
-      "submissions": 62,
-      "dispatches": 1932,
-      "uniformBytesUploaded": 442320,
+      "bindGroupsCreated": 2228,
+      "submissions": 72,
+      "dispatches": 2228,
+      "uniformBytesUploaded": 509296,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 34242560
     }
   },
   "ripple": {
     "finite": true,
-    "min": -0.2741762101650238,
-    "max": 0.39706599712371826,
-    "rms": 0.0760728674087681,
+    "min": -0.2741737961769104,
+    "max": 0.3970620036125183,
+    "rms": 0.07607294153013498,
     "ripplePeak": 0.012486369349062443,
     "adapter": {
-      "vendor": "intel",
-      "architecture": "xe-lpg",
+      "vendor": "nvidia",
+      "architecture": "blackwell",
       "device": "",
       "description": "",
       "features": [
@@ -94,8 +97,8 @@
         "subgroup-size-control",
         "subgroups",
         "float32-filterable",
-        "timestamp-query",
-        "shader-f16"
+        "shader-f16",
+        "timestamp-query"
       ],
       "timestampQuery": true,
       "limits": {
@@ -108,23 +111,23 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 2484,
-      "submissions": 80,
-      "dispatches": 2484,
-      "uniformBytesUploaded": 567888,
+      "bindGroupsCreated": 2840,
+      "submissions": 92,
+      "dispatches": 2840,
+      "uniformBytesUploaded": 648464,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 38436864
     }
   },
   "distant": {
     "finite": true,
-    "min": -0.33503761887550354,
-    "max": 0.3785203695297241,
-    "rms": 0.07697463165898256,
+    "min": -0.38195371627807617,
+    "max": 0.37394535541534424,
+    "rms": 0.07622704351470404,
     "ripplePeak": 0,
     "adapter": {
-      "vendor": "intel",
-      "architecture": "xe-lpg",
+      "vendor": "nvidia",
+      "architecture": "blackwell",
       "device": "",
       "description": "",
       "features": [
@@ -132,8 +135,8 @@
         "subgroup-size-control",
         "subgroups",
         "float32-filterable",
-        "timestamp-query",
-        "shader-f16"
+        "shader-f16",
+        "timestamp-query"
       ],
       "timestampQuery": true,
       "limits": {
@@ -146,23 +149,23 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 3336,
-      "submissions": 106,
-      "dispatches": 3336,
-      "uniformBytesUploaded": 763696,
+      "bindGroupsCreated": 4659,
+      "submissions": 148,
+      "dispatches": 4659,
+      "uniformBytesUploaded": 1066192,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 42631168
     }
   },
   "overlook": {
     "finite": true,
-    "min": -0.38751116394996643,
-    "max": 0.42243295907974243,
-    "rms": 0.09185812621039559,
+    "min": -0.3875102400779724,
+    "max": 0.42243796586990356,
+    "rms": 0.09185822217877992,
     "ripplePeak": 0,
     "adapter": {
-      "vendor": "intel",
-      "architecture": "xe-lpg",
+      "vendor": "nvidia",
+      "architecture": "blackwell",
       "device": "",
       "description": "",
       "features": [
@@ -170,8 +173,8 @@
         "subgroup-size-control",
         "subgroups",
         "float32-filterable",
-        "timestamp-query",
-        "shader-f16"
+        "shader-f16",
+        "timestamp-query"
       ],
       "timestampQuery": true,
       "limits": {
@@ -184,10 +187,10 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 3768,
-      "submissions": 120,
-      "dispatches": 3768,
-      "uniformBytesUploaded": 862368,
+      "bindGroupsCreated": 5661,
+      "submissions": 180,
+      "dispatches": 5661,
+      "uniformBytesUploaded": 1295232,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 46825472
     }
@@ -212,12 +215,13 @@
       "yaw": 2.69,
       "pitch": -0.12,
       "speed": 40,
+      "quality": 2,
       "viewpoint": "overlook",
       "time": 20,
       "playing": false,
-      "frames": 56
+      "frames": 86
     },
-    "frames": 56,
+    "frames": 86,
     "cascades": [
       4.6,
       37,
@@ -225,13 +229,19 @@
     ],
     "fftSize": 256,
     "location": "Calaveras Reservoir",
+    "quality": {
+      "tier": 2,
+      "width": 1152,
+      "auto": false,
+      "vendor": "nvidia"
+    },
     "coordinates": [
       37.472608030037705,
       -121.81815953185885
     ],
     "width": 1152,
     "height": 720,
-    "frameMs": 118.48499995470047,
+    "frameMs": 41.61500000953674,
     "readbackBytes": 42631168
   },
   "browserErrors": []

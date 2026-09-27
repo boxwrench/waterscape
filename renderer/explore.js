@@ -55,6 +55,7 @@ const state = {
   yaw: 0,
   pitch: 0,
   speed: 40,
+  quality: 2,
   viewpoint: "overlook",
   time: q.has("t") ? Number(q.get("t")) : 0,
   playing: !q.has("t"),
@@ -394,6 +395,7 @@ function render() {
         time: state.time,
         view: +$("view").value,
         season: +$("season").value,
+        quality: state.quality,
       },
     ),
     grid,
@@ -503,6 +505,8 @@ async function frame(now) {
       render();
       await rt.idle();
       diag.frameMs = performance.now() - start;
+      diag.quality.tier = state.quality;
+      diag.quality.width = width;
       diag.frames = ++state.frames;
       diag.ready = true;
       diag.readbackBytes = rt.stats.readbackBytes;
@@ -686,6 +690,10 @@ try {
   if (!/^[a-z0-9_]+$/.test(reservoirId))
     throw new Error(`Invalid reservoir id: ${reservoirId}`);
   rt = await GpuRuntime.create({ onError: fail });
+  const vendor = rt.describe().vendor;
+  const forcedQuality = ["low", "medium", "high"].indexOf(q.get("quality"));
+  if (forcedQuality >= 0) state.quality = forcedQuality;
+  diag.quality = { tier: state.quality, width: +$("quality").value, auto: false, vendor };
   ctx = canvas.getContext("webgpu");
   const source = await (await fetch(new URL("./clearwater.cu", import.meta.url))).text();
   $("loadText").textContent = "Loading USGS lidar terrain…";
