@@ -1,5 +1,44 @@
 <!doctype html>
-<meta charset="utf-8" />
-<title>Waterscape</title>
-<meta http-equiv="refresh" content="0; url=./renderer/explore.html" />
-<a href="./renderer/explore.html">Open Waterscape</a>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#173d42" />
+    <meta
+      name="description"
+      content="Follow California's water through real lidar landscapes: the reservoirs, who they serve, and the public data behind them."
+    />
+    <link rel="icon" href="data:," />
+    <title>Waterscape · Hydrology, simulated.</title>
+    <link rel="stylesheet" href="./site/journey.css" />
+  </head>
+  <body>
+    <section id="stage" aria-label="Reservoir view">
+      <img id="poster" alt="" />
+      <video id="flyover" muted playsinline loop preload="auto" aria-hidden="true"></video>
+    </section>
+    <header class="brand">
+      <span class="mark">≈</span>
+      <div><strong>WATERSCAPE</strong><small>Hydrology, simulated.</small></div>
+    </header>
+    <article id="card" aria-live="polite">
+      <p class="eyebrow" id="stopIndex"></p>
+      <h1 id="stopName"></h1>
+      <p class="operator" id="operator"></p>
+      <p class="headline" id="headline"></p>
+      <dl id="facts"></dl>
+      <div class="nav">
+        <button id="prev" aria-label="Previous stop">←</button
+        ><button id="next">Next stop →</button>
+      </div>
+    </article>
+    <nav id="systemMap" aria-label="Journey stops"><ol></ol></nav>
+    <p class="credit">
+      Terrain:
+      <a href="https://www.usgs.gov/3d-elevation-program" target="_blank" rel="noopener">USGS 3DEP lidar</a>
+      · Water optics after
+      <a href="https://github.com/Aureliengmz/clearwater" target="_blank" rel="noopener">Clearwater</a>
+    </p>
+    <script type="module" src="./site/journey.js"></script>
+  </body>
+</html>

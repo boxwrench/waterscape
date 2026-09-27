@@ -44,11 +44,24 @@ export async function validateBundle(dir) {
   return errors;
 }
 
+export async function validateJourney(root) {
+  const journey = JSON.parse(await readFile(path.join(root, "journey.json"), "utf8")),
+    errors = [];
+  if (!journey.stops?.length) errors.push("journey.json has no stops");
+  for (const stop of journey.stops ?? []) {
+    if (!stop.caption) errors.push(`journey.json: stop ${stop.id} has no caption`);
+    await stat(path.join(root, "data", stop.id)).catch(() =>
+      errors.push(`journey.json: no bundle for stop ${stop.id}`),
+    );
+  }
+  return errors;
+}
+
 export async function validateAll(root) {
   const dirs = (await readdir(path.join(root, "data"), { withFileTypes: true }))
     .filter((d) => d.isDirectory())
     .map((d) => path.join(root, "data", d.name));
-  return (await Promise.all(dirs.map(validateBundle))).flat();
+  return [...(await Promise.all(dirs.map(validateBundle))).flat(), ...(await validateJourney(root))];
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

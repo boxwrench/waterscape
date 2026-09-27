@@ -11,8 +11,8 @@ async function moduleGraph(file){
   await moduleGraph(path.resolve(path.dirname(file),match[1]));
  }
 }
-await moduleGraph(path.join(root,'renderer/explore.js'));
-for(const file of [...modules,...['index.html','renderer/explore.html','renderer/explore.css','renderer/clearwater.cu','renderer/assets/seabed.jpg','LICENSE','THIRD_PARTY_NOTICES.md','vendor/cuda-webshader/LICENSE'].map(f=>path.join(root,f))]){
+for(const entry of ['renderer/explore.js','site/journey.js'])await moduleGraph(path.join(root,entry));
+for(const file of [...modules,...['journey.json','site/journey.css','index.html','renderer/explore.html','renderer/explore.css','renderer/clearwater.cu','renderer/assets/seabed.jpg','LICENSE','THIRD_PARTY_NOTICES.md','vendor/cuda-webshader/LICENSE'].map(f=>path.join(root,f))]){
  const relative=path.relative(root,file);if(relative.startsWith('..'))throw Error('Asset outside project');
  await mkdir(path.dirname(path.join(out,relative)),{recursive:true});await cp(file,path.join(out,relative));
 }
