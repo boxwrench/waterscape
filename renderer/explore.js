@@ -1,6 +1,7 @@
 import { GpuRuntime } from "../vendor/cuda-webshader/runtime/runtime.js";
 import { formatElevation, formatLatLon, loadTerrain } from "./terrain.js";
 import { QualityGovernor, TIER_NAMES, forcedTier, startingLevel } from "./quality.js";
+import { PRESETS, choosePreset, presetBuffer } from "./land/presets.js";
 const $ = (id) => document.getElementById(id),
   canvas = $("water"),
   q = new URLSearchParams(location.search);
@@ -57,6 +58,7 @@ const state = {
   pitch: 0,
   speed: 40,
   quality: 2,
+  preset: "golden",
   viewpoint: "overlook",
   time: q.has("t") ? Number(q.get("t")) : 0,
   playing: !q.has("t"),
@@ -99,6 +101,8 @@ let rt,
   last = 0,
   accumulator = 0,
   tap = null,
+  lightBuf,
+  landProfile = null,
   governor = null,
   failed = false,
   locked = false;
@@ -174,6 +178,15 @@ canvas.addEventListener("pointermove", (e) => (hover = e));
 canvas.addEventListener("pointerleave", () => (hover = null));
 // GPU chip and the "use your faster GPU" tip (browsers on dual-GPU laptops default to the
 // integrated GPU and ignore a page's powerPreference, so only the visitor can change it).
+// Lighting preset: the shader reads six float4s (sun, radiance, fill, sky, haze, clouds).
+function applyPreset(name) {
+  state.preset = choosePreset(name, landProfile);
+  const p = PRESETS[state.preset];
+  rt.write(lightBuf, presetBuffer(p));
+  $("exposure").value = String(p.exposure);
+  $("exposure").dispatchEvent(new Event("input"));
+  diag.preset = state.preset;
+}
 function tipDismissed() {
   try {
     return localStorage.getItem("waterscape.gpuTipDismissed") === "1";
@@ -403,13 +416,13 @@ function render() {
   batch
     .dispatch(k.clear_caustics.bind({ photons }), [64, 64, 1])
     .dispatch(
-      k.trace_caustics.bind({ surface, photons }, { depth: +$("depth").value }),
+      k.trace_caustics.bind({ surface, photons, light: lightBuf }, { depth: +$("depth").value }),
       [128, 128, 1],
     )
     .dispatch(k.filter_caustics.bind({ photons, caustics }), [64, 64, 1]);
   batch.dispatch(
     k.render_water.bind(
-      { surface, rip: ripNormals, caustics, pebbles, terrain: terrainCells, hdr },
+      { surface, rip: ripNormals, caustics, pebbles, terrain: terrainCells, light: lightBuf, hdr },
       {
         width,
         height,
@@ -752,6 +765,9 @@ try {
   terrain = await loadTerrain(new URL("terrain", bundleBase).href);
   VIEWPOINTS = (await (await fetch(new URL("cameras.json", bundleBase))).json()).viewpoints;
   terrainCells = rt.createBuffer(terrain.gpuCells());
+  landProfile = await (await fetch(new URL("land.json", bundleBase))).json();
+  lightBuf = rt.createBuffer(24 * 4);
+  applyPreset(q.get("preset"));
   diag.location = terrain.meta.name;
   diag.coordinates = terrain.latLon(0, 0);
   document.title = `${terrain.meta.name} · Waterscape`;

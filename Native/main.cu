@@ -48,7 +48,7 @@ struct App {
  ComPtr<ID3D11Device> device;ComPtr<ID3D11DeviceContext> context;ComPtr<IDXGISwapChain> swap;
  ComPtr<ID3D11Texture2D> texture;cudaGraphicsResource* shared=nullptr;
  Buffer<float2> seed;Buffer<float> rows,scales;
- Buffer<float4> fft[2],surface,rip[2],ripNormals,caustics,pebbles,terrain,hdr,bloom[2],lens[2],lensKernel;
+ Buffer<float4> fft[2],surface,rip[2],ripNormals,caustics,pebbles,terrain,light,hdr,bloom[2],lens[2],lensKernel;
  Buffer<unsigned> photons,pixels;
  const dim3 block{8,8,1},wavesGrid{32,32,3},ripGrid{32,32,1};
  ~App(){cudaDeviceSynchronize();if(shared)cudaGraphicsUnregisterResource(shared);if(font)DeleteObject(font);if(heading)DeleteObject(heading);if(background)DeleteObject(background);}
@@ -82,11 +82,17 @@ struct App {
   for(int c=0;c<3;c++){std::fill(row.begin(),row.end(),0);for(int r=0;r<h;r++)for(int i=0;i<w;i++){row[i]=uint16_t(row[i]+words[c*n+(size_t)r*w+i]);float v=row[i]*scale[c]+offset[c];float4& cell=cells[2+(size_t)r*w+i];if(c==0)cell.x=v;else if(c==1)cell.y=v;else cell.z=v;}}
   terrain.alloc(n+2);check(cudaMemcpy(terrain.p,cells.data(),(n+2)*sizeof(float4),cudaMemcpyHostToDevice));
  }
+ // Golden-hour preset (renderer/land/presets.js presetBuffer): the native host keeps one light.
+ void decodeLight(){
+  const float golden[24]={-0.9505f,0.1701f,0.2601f,0.52f, 2.4f,1.55f,0.85f,0.5f, 0.3f,0.34f,0.44f,2.0f,
+   4.0f,1.4f,0.005f,0.85f, 0.74f,0.71f,0.68f,0.00017f, 0.0002f,0.00002f,0.85f,0.0f};
+  light.alloc(6);check(cudaMemcpy(light.p,golden,sizeof golden,cudaMemcpyHostToDevice));
+ }
  void transform(float4* a,float4* b,float sign){for(int axis=0;axis<2;axis++)for(int p=1;p<256;p*=2){fft_pass<<<wavesGrid,block>>>(a,b,p,axis,sign);std::swap(a,b);}}
  void initGpu(){
   seed.alloc(3*65536);rows.alloc(768);scales.alloc(3);surface.alloc(3*65536);ripNormals.alloc(65536);photons.alloc(512*512*3);caustics.alloc(512*512);lensKernel.alloc(3*65536);
   for(int i=0;i<2;i++){fft[i].alloc(3*65536);rip[i].alloc(65536);lens[i].alloc(3*65536);}
-  decodeAsset();decodeTerrain();seed_spectrum<<<wavesGrid,block>>>(seed.p,7);spectrum_rows<<<12,64>>>(seed.p,rows.p);spectrum_norm<<<1,64>>>(rows.p,scales.p);
+  decodeAsset();decodeTerrain();decodeLight();seed_spectrum<<<wavesGrid,block>>>(seed.p,7);spectrum_rows<<<12,64>>>(seed.p,rows.p);spectrum_norm<<<1,64>>>(rows.p,scales.p);
   lens_aperture<<<wavesGrid,block>>>(lens[0].p);transform(lens[0].p,lens[1].p,-1);lens_power<<<wavesGrid,block>>>(lens[0].p,lens[1].p);lens_rows<<<12,64>>>(lens[1].p,rows.p);lens_normalize<<<wavesGrid,block>>>(lens[1].p,rows.p,lens[0].p);transform(lens[0].p,lens[1].p,-1);check(cudaMemcpy(lensKernel.p,lens[0].p,3*65536*sizeof(float4),cudaMemcpyDeviceToDevice));check(cudaGetLastError());check(cudaDeviceSynchronize());
  }
  void resize(){
@@ -112,8 +118,8 @@ struct App {
   }ripple_normals<<<ripGrid,block>>>(rip[ripIndex].p,ripNormals.p);
  }
  void draw(){
-  dim3 grid(width/8,height/8,1);clear_caustics<<<dim3(64,64,1),block>>>(photons.p);trace_caustics<<<dim3(128,128,1),block>>>(surface.p,photons.p,depth);filter_caustics<<<dim3(64,64,1),block>>>(photons.p,caustics.p);
-  render_water<<<grid,block>>>(surface.p,ripNormals.p,caustics.p,pebbles.p,terrain.p,hdr.p,width,height,cam.x,cam.z,cam.y,cam.yaw,cam.pitch,cx,cz,depth,time,view,0,2);
+  dim3 grid(width/8,height/8,1);clear_caustics<<<dim3(64,64,1),block>>>(photons.p);trace_caustics<<<dim3(128,128,1),block>>>(surface.p,photons.p,light.p,depth);filter_caustics<<<dim3(64,64,1),block>>>(photons.p,caustics.p);
+  render_water<<<grid,block>>>(surface.p,ripNormals.p,caustics.p,pebbles.p,terrain.p,light.p,hdr.p,width,height,cam.x,cam.z,cam.y,cam.yaw,cam.pitch,cx,cz,depth,time,view,0,2);
   if(glare){glare_source<<<wavesGrid,block>>>(hdr.p,lens[0].p,width,height);transform(lens[0].p,lens[1].p,-1);glare_multiply<<<wavesGrid,block>>>(lens[0].p,lensKernel.p,lens[1].p);transform(lens[1].p,lens[0].p,1);}
   bloom_pass<<<grid,block>>>(hdr.p,bloom[0].p,width,height,0);bloom_pass<<<grid,block>>>(bloom[0].p,bloom[1].p,width,height,1);present<<<grid,block>>>(hdr.p,bloom[1].p,lens[1].p,pixels.p,width,height,exposure,glare?1:0);check(cudaGetLastError());
   check(cudaGraphicsMapResources(1,&shared));cudaArray_t array;check(cudaGraphicsSubResourceGetMappedArray(&array,shared,0,0));check(cudaMemcpy2DToArray(array,0,0,pixels.p,width*4,width*4,height,cudaMemcpyDeviceToDevice));check(cudaGraphicsUnmapResources(1,&shared));ComPtr<ID3D11Texture2D> back;hr(swap->GetBuffer(0,IID_PPV_ARGS(back.GetAddressOf())));context->CopyResource(back.Get(),texture.Get());hr(swap->Present(1,0));

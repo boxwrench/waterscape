@@ -26,13 +26,13 @@
     "link": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer"
   },
   "tiers": {
-    "lowMedianMs": 30.694999992847443
+    "lowMedianMs": 32.7049999833107
   },
   "optics": {
     "causticMean": [
-      0.9922287426888943,
-      0.9922311678528786,
-      0.9922289848327637
+      0.9922344498336315,
+      0.9922299236059189,
+      0.9922297187149525
     ],
     "hdrFinite": true,
     "glareFinite": true,
@@ -73,20 +73,20 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 1992,
-      "submissions": 64,
-      "dispatches": 1992,
-      "uniformBytesUploaded": 455920,
-      "dataBytesUploaded": 35042976,
+      "bindGroupsCreated": 1932,
+      "submissions": 62,
+      "dispatches": 1932,
+      "uniformBytesUploaded": 442320,
+      "dataBytesUploaded": 35043072,
       "readbackBytes": 34242560
     }
   },
   "ripple": {
     "finite": true,
-    "min": -0.2732265293598175,
-    "max": 0.39715179800987244,
-    "rms": 0.07616386977767277,
-    "ripplePeak": 0.01090712659060955,
+    "min": -0.2741762101650238,
+    "max": 0.39706599712371826,
+    "rms": 0.0760728674087681,
+    "ripplePeak": 0.012486369349062443,
     "adapter": {
       "vendor": "intel",
       "architecture": "xe-lpg",
@@ -111,19 +111,19 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 2848,
-      "submissions": 92,
-      "dispatches": 2848,
-      "uniformBytesUploaded": 650560,
-      "dataBytesUploaded": 35042976,
+      "bindGroupsCreated": 2604,
+      "submissions": 84,
+      "dispatches": 2604,
+      "uniformBytesUploaded": 595088,
+      "dataBytesUploaded": 35043072,
       "readbackBytes": 38436864
     }
   },
   "distant": {
     "finite": true,
-    "min": -0.37650489807128906,
-    "max": 0.373846173286438,
-    "rms": 0.07643226075613137,
+    "min": -0.3533042371273041,
+    "max": 0.36835652589797974,
+    "rms": 0.07688518947242716,
     "ripplePeak": 0,
     "adapter": {
       "vendor": "intel",
@@ -149,11 +149,11 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 4229,
-      "submissions": 134,
-      "dispatches": 4229,
-      "uniformBytesUploaded": 968144,
-      "dataBytesUploaded": 35042976,
+      "bindGroupsCreated": 3656,
+      "submissions": 116,
+      "dispatches": 3656,
+      "uniformBytesUploaded": 837008,
+      "dataBytesUploaded": 35043072,
       "readbackBytes": 42631168
     }
   },
@@ -187,11 +187,11 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 4794,
-      "submissions": 152,
-      "dispatches": 4794,
-      "uniformBytesUploaded": 1097440,
-      "dataBytesUploaded": 35042976,
+      "bindGroupsCreated": 4155,
+      "submissions": 132,
+      "dispatches": 4155,
+      "uniformBytesUploaded": 951120,
+      "dataBytesUploaded": 35043072,
       "readbackBytes": 46825472
     }
   },
@@ -216,12 +216,13 @@
       "pitch": -0.12,
       "speed": 40,
       "quality": 2,
+      "preset": "golden",
       "viewpoint": "overlook",
       "time": 20,
       "playing": false,
-      "frames": 72
+      "frames": 62
     },
-    "frames": 72,
+    "frames": 62,
     "cascades": [
       4.6,
       37,
@@ -236,13 +237,14 @@
       "vendor": "intel",
       "struggling": false
     },
+    "preset": "golden",
     "coordinates": [
       37.472608030037705,
       -121.81815953185885
     ],
     "width": 1152,
     "height": 720,
-    "frameMs": 72.43000000715256,
+    "frameMs": 83.05000001192093,
     "readbackBytes": 42631168
   },
   "browserErrors": []

@@ -51,7 +51,6 @@ __device__ float fbm(float x, float z) {
 // One sun for sky, terrain, water and caustics. Late afternoon from the west-southwest
 // (+z is south): the overlook, looking north, gets raking side light that reveals the
 // ridges and drainages, and the sun stays where it can be at 37 degrees north.
-__device__ float3 sunDir() { return v3(-.860f, .450f, .240f); }
 __device__ int wrap(int x, int n) { return (x % n + n) % n; }
 __device__ float lengthL(int c) { return c == 0 ? 4.6f : (c == 1 ? 37.0f : 293.0f); }
 __device__ float4 sample4(const float4 *data, float x, float z, int n, int offset) {
@@ -233,14 +232,14 @@ __global__ void clear_caustics(unsigned *photons) {
     photons[id + 2] = 0;
   }
 }
-__global__ void trace_caustics(const float4 *surface, unsigned *photons, float depth) {
+__global__ void trace_caustics(const float4 *surface, unsigned *photons, const float4 *light, float depth) {
   int x = (int)(blockIdx.x * blockDim.x + threadIdx.x),
       z = (int)(blockIdx.y * blockDim.y + threadIdx.y);
   if (x >= 1024 || z >= 1024)
     return;
   float wx = ((float)x + .5f) * 4.6f / 1024, wz = ((float)z + .5f) * 4.6f / 1024;
   float4 a = sample4(surface, wx * 256 / 4.6f, wz * 256 / 4.6f, 256, 0);
-  float3 n = norm(v3(-a.y, 1, -a.z)), sun = sunDir();
+  float3 n = norm(v3(-a.y, 1, -a.z)), sun = lightSun(light);
   for (int c = 0; c < 3; c++) {
     float ior = c == 0 ? 1.3315f : (c == 1 ? 1.3335f : 1.3365f);
     float3 d = refract3(mul(sun, -1), n, 1 / ior);
@@ -280,29 +279,100 @@ __device__ float fresnel(float ci) {
         rp = (1.3335f * ci - ct) / (1.3335f * ci + ct);
   return .5f * (rs * rs + rp * rp);
 }
-__device__ float3 skyHorizon(int season) {
-  return season == 0 ? v3(.34f, .50f, .72f) : v3(.40f, .50f, .64f);
-}
+// Preset lighting (renderer/land/presets.js presetBuffer): six float4s.
+// L[0] sun direction xyz, cloud coverage · L[1] sun radiance rgb, cloud density
+// L[2] sky fill rgb, sky gain · L[3] turbidity, rayleigh, mie coefficient, mie g
+// L[4] haze rgb, haze density · L[5] cloud scale, cloud speed, exposure, unused
+__device__ float3 lightSun(const float4 *L) { return v3(L[0].x, L[0].y, L[0].z); }
+__device__ float3 lightRad(const float4 *L) { return v3(L[1].x, L[1].y, L[1].z); }
+__device__ float3 lightFill(const float4 *L) { return v3(L[2].x, L[2].y, L[2].z); }
+__device__ float3 lightHaze(const float4 *L) { return v3(L[4].x, L[4].y, L[4].z); }
 // Aerial perspective shared by land and water so both recede into the same air.
-__device__ float3 aerial(float3 col, float distance, int season) {
-  float haze = 1.0f - expf(-distance * .00016f);
-  return mix3(col, mul(skyHorizon(season), 1.05f), haze * .82f);
+__device__ float3 aerial(const float4 *L, float3 col, float distance) {
+  float haze = 1.0f - expf(-distance * L[4].w);
+  return mix3(col, mul(lightHaze(L), 1.05f), haze * .82f);
 }
-__device__ float3 sky(float3 d, int season) {
-  float3 sun = sunDir();
-  float mu = fmaxf(0, dot3(d, sun)), e = d.y;
-  float3 col = mix3(skyHorizon(season), v3(.06f, .20f, .52f), powf(sat(e), .45f));
-  col = add(
-      col, mul(v3(1, .86f, .66f), .22f * powf(mu, 6) + .3f * powf(mu, 64) + 1.6f * powf(mu, 2400)));
-  // Distant, hazy ridgelines behind the traced terrain: two layers at different depths.
-  float a = atan2f(d.z, d.x);
+// acos for the sky model (the transpiler has no acosf): Abramowitz & Stegun 4.4.45,
+// |error| < 7e-5 rad on [-1, 1].
+__device__ float acosApprox(float x) {
+  float a = fminf(fabsf(x), 1.0f);
+  float r = sqrtf(1.0f - a) * (1.5707288f + a * (-.2121144f + a * (.0742610f - .0187293f * a)));
+  return x < 0.0f ? 3.14159265f - r : r;
+}
+// Signed fbm in about [-1, 1] for the cloud layer; per-octave drift makes clouds billow.
+__device__ float cloudFbm(float x, float z, float drift) {
+  float r = 0.0f, a = 1.0f;
+  for (int i = 0; i < 4; i++) {
+    r += a * (2.0f * noise(x, z) - 1.0f);
+    a *= .5f;
+    x = x * 2.0f + drift;
+    z = z * 2.0f + drift;
+  }
+  return r;
+}
+// Preetham daylight sky with a drifting cloud layer, ported from three.js SkyMesh (MIT), then
+// the painted far ridges beyond the lidar crop. d is a unit view direction.
+__device__ float3 sky(const float4 *L, float3 d, int season, float time) {
+  float3 sun = lightSun(L);
+  float turbidity = L[3].x, rayleigh = L[3].y, mieCoefficient = L[3].z, g = L[3].w;
+  float sunE = 1000.0f * fmaxf(0.0f, 1.0f - expf(-(1.6110731556870734f -
+                                                  acosApprox(fminf(fmaxf(sun.y, -1.0f), 1.0f))) /
+                                                 1.5f));
+  float3 betaR = mul(v3(5.804542996261093e-6f, 1.3562911419845635e-5f, 3.0265902468824876e-5f),
+                     rayleigh);
+  float3 betaM = mul(v3(1.8399918514433978e14f, 2.7798023919660528e14f, 4.0790479543861094e14f),
+                     .434f * .2f * turbidity * 10e-18f * mieCoefficient);
+  float zenith = acosApprox(fmaxf(0.0f, d.y));
+  float inv = 1.0f / (cosf(zenith) + .15f * powf(93.885f - zenith * 57.2957795f, -1.253f));
+  float3 Fex = exp3(mul(add(mul(betaR, 8.4e3f * inv), mul(betaM, 1.25e3f * inv)), -1.0f));
+  float cosT = dot3(d, sun), g2 = g * g;
+  float rPhase = .0596831f * (1.0f + powf(cosT * .5f + .5f, 2.0f));
+  float mPhase = .0795775f * (1.0f - g2) / powf(1.0f - 2.0f * g * cosT + g2, 1.5f);
+  float3 inS = mul(v3((betaR.x * rPhase + betaM.x * mPhase) / (betaR.x + betaM.x),
+                      (betaR.y * rPhase + betaM.y * mPhase) / (betaR.y + betaM.y),
+                      (betaR.z * rPhase + betaM.z * mPhase) / (betaR.z + betaM.z)),
+                   sunE);
+  float3 Lin = v3(powf(inS.x * (1.0f - Fex.x), 1.5f), powf(inS.y * (1.0f - Fex.y), 1.5f),
+                  powf(inS.z * (1.0f - Fex.z), 1.5f));
+  float low = sat(powf(1.0f - sun.y, 5.0f));
+  Lin = prod(Lin, mix3(v3(1, 1, 1),
+                       v3(sqrtf(inS.x * Fex.x), sqrtf(inS.y * Fex.y), sqrtf(inS.z * Fex.z)), low));
+  float3 L0 = mul(Fex, .1f);
+  float disc = sat((cosT - .9999566769464484f) * 50000.0f);
+  float3 discC = mul(v3(fminf(sunE * Fex.x, 80.0f), fminf(sunE * Fex.y, 80.0f),
+                        fminf(sunE * Fex.z, 80.0f)),
+                     760.0f * disc);
+  float3 col = add(add(mul(add(Lin, L0), .04f), discC), v3(0, .0003f, .00075f));
+  if (d.y > 0.0f && L[0].w > 0.0f) {
+    // Cloud plane at SkyMesh's default elevation (0.5 -> 0.55).
+    float u = d.x / (d.y * .55f) * L[5].x + time * L[5].y,
+          w = d.z / (d.y * .55f) * L[5].x + time * L[5].y;
+    float cn = sat(cloudFbm(u * 1000.0f, w * 1000.0f, time * L[5].y * 300.0f) * .7f + .5f);
+    float region = (2.0f * noise(u * 300.0f, w * 300.0f) - 1.0f) * .37f + .5f;
+    float thr = 1.0f - sat(L[0].w + (region - .5f) * .6f);
+    float horizon = smooth(0.0f, .06f, d.y);
+    float mask = smooth(thr, thr + .3f, cn) * horizon;
+    float3 sunC = mul(Fex, sunE * .0088f), amb = add(mul(Lin, .04f), v3(0, .0003f, .00075f));
+    float depth = fmaxf(0.0f, cn - thr), beer = expf(-4.0f * depth), powder = 1.0f - beer * beer;
+    float shade = lerp(.45f, 1.0f, sat(beer * powder * 2.6f));
+    float silver = fminf(3.0f, .51f / powf(1.49f - 1.4f * cosT, 1.5f)),
+          edge = mask * (1.0f - mask) * 4.0f;
+    float3 cc = mul(add(amb, mul(sunC, shade + silver * edge * .6f)),
+                    fmaxf(smooth(-.08f, .3f, sun.y), .03f));
+    float alpha = (1.0f - expf(-depth * L[1].w * 12.0f)) * horizon;
+    col = sub(col, mul(add(mul(L0, .04f), discC), alpha));
+    float3 through = v3(lerp(col.x, cc.x, Fex.x), lerp(col.y, cc.y, Fex.y), lerp(col.z, cc.z, Fex.z));
+    col = mix3(col, through, alpha);
+  }
+  col = mul(col, L[2].w);
+  // Distant, hazy ridgelines beyond the lidar crop: two layers at different depths.
+  float e = d.y, a = atan2f(d.z, d.x);
   float far = .050f + .018f * sinf(a * 2.0f + .8f) + .012f * sinf(a * 5.0f - .5f) +
               .006f * sinf(a * 11.0f + 2.2f) + .003f * (noise(a * 90.0f, 3.0f) - .5f);
   float nearR = .030f + .014f * sinf(a * 3.0f - 1.3f) + .008f * sinf(a * 8.0f + .4f) +
                 .004f * (fbm(a * 40.0f, 1.0f) - .5f);
   float3 hills = mix3(v3(.13f, .20f, .10f), v3(.24f, .20f, .10f), season == 0 ? 0.0f : 1.0f);
-  float3 farCol = mix3(hills, skyHorizon(season), .72f),
-         nearCol = mix3(hills, skyHorizon(season), .52f);
+  float3 farCol = mix3(hills, lightHaze(L), .72f), nearCol = mix3(hills, lightHaze(L), .52f);
   col = mix3(col, farCol, smooth(far + .0015f, far - .0015f, e));
   return mix3(col, nearCol, smooth(nearR + .0015f, nearR - .0015f, e));
 }
@@ -402,8 +472,7 @@ __device__ float3 terrainNormal(const float4 *T, float x, float z, float distanc
                  terrainHeight(T, x, z - e) - terrainHeight(T, x, z + e)));
 }
 // Soft sun visibility: march toward the sun and keep the tightest clearance ratio.
-__device__ float terrainShadow(const float4 *T, float3 p, int steps) {
-  float3 sun = sunDir();
+__device__ float terrainShadow(const float4 *T, float3 p, float3 sun, int steps) {
   float vis = 1.0f, t = 6.0f;
   for (int i = 0; i < 16; i++) {
     if (i >= steps)
@@ -503,9 +572,9 @@ __device__ float4 oakRayHit(float3 p, float3 rd, float3 n, float density, float 
   return make_float4(cover, bestN.x, bestN.y, bestN.z);
 }
 // treeNear: distance within which trees get individual 3D crown tests (0 = never; reflections).
-__device__ float3 terrainShade(const float4 *T, float3 p, float3 rd, float distance, int season,
+__device__ float3 terrainShade(const float4 *T, const float4 *L, float3 p, float3 rd, float distance, int season,
                                int shadowSteps, float treeNear, float time) {
-  float3 sun = sunDir(), n = terrainNormal(T, p.x, p.z, distance);
+  float3 sun = lightSun(L), n = terrainNormal(T, p.x, p.z, distance);
   float footprint = distance * .0015f;
   float4 cell = terrainSample(T, p.x, p.z);
   // Lidar curvature: 1 in ravine bottoms, 0 on spurs and ridge crests.
@@ -598,8 +667,8 @@ __device__ float3 terrainShade(const float4 *T, float3 p, float3 rd, float dista
   ground = mix3(ground, bank, ring);
   ground = mix3(ground, mul(bank, .45f), wet);
   // Lighting: sun with terrain shadows, sky dome, warm bounce.
-  float shadow = shadowSteps > 0 ? terrainShadow(T, add(p, mul(n, .6f)), shadowSteps) : 1.0f;
-  float3 sunC = mul(v3(1.30f, 1.18f, 1.00f), 1.55f), skyC = v3(.36f, .46f, .62f),
+  float shadow = shadowSteps > 0 ? terrainShadow(T, add(p, mul(n, .6f)), sun, shadowSteps) : 1.0f;
+  float3 sunC = lightRad(L), skyC = lightFill(L),
          bounce = v3(.20f, .16f, .08f);
   float groundSun = fmaxf(0, dot3(n, sun)) * shadow * (1.0f - .85f * castShadow);
   float3 groundLit = prod(ground, add(mul(sunC, groundSun),
@@ -611,15 +680,15 @@ __device__ float3 terrainShade(const float4 *T, float3 p, float3 rd, float dista
   float3 crownLit = prod(oak, add(mul(sunC, .15f + .85f * crownSun),
                                   mul(skyC, .45f + .25f * crownN.y)));
   float3 lit = mix3(groundLit, crownLit, canopy * (1.0f - ring));
-  return aerial(lit, distance, season);
+  return aerial(L, lit, distance);
 }
 // Reflected / environment lookup: terrain if the ray hits it, otherwise the sky.
-__device__ float3 environment(const float4 *T, float3 ro, float3 rd, int steps, int season,
-                              float time) {
+__device__ float3 environment(const float4 *T, const float4 *L, float3 ro, float3 rd, int steps,
+                              int season, float time) {
   float t = terrainTrace(T, ro, rd, steps, 16000.0f);
   if (t > 0)
-    return terrainShade(T, add(ro, mul(rd, t)), rd, t, season, 0, 0.0f, time);
-  return sky(rd, season);
+    return terrainShade(T, L, add(ro, mul(rd, t)), rd, t, season, 0, 0.0f, time);
+  return sky(L, rd, season, time);
 }
 __device__ float floorDepth(const float4 *T, float x, float z, float depth) {
   // Floor meets the surface at the waterline so the bank shows through shallow water.
@@ -638,7 +707,7 @@ __device__ float3 stone(const float4 *peb, float x, float z, float footprint) {
   return mix3(col, v3(.20f, .18f, .14f), smooth(.015f, .16f, footprint));
 }
 __global__ void render_water(const float4 *surface, const float4 *rip, const float4 *caustics,
-                             const float4 *pebbles, const float4 *terrain, float4 *hdr, int width,
+                             const float4 *pebbles, const float4 *terrain, const float4 *light, float4 *hdr, int width,
                              int height, float camX, float camZ, float camY, float yaw, float pitch, float centerX,
                              float centerZ, float depth, float time, int view, int season,
                              int quality) {
@@ -654,11 +723,11 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
       reflectSteps = quality >= 2 ? 24 : (quality == 1 ? 16 : 10);
   float treeNear = quality >= 2 ? 260.0f : (quality == 1 ? 160.0f : 80.0f);
   float3 rd = ray(sx, sy, (float)width / (float)height, yaw, pitch),
-         ro = v3(camX, camY, camZ), sun = sunDir(),
-         SUN = v3(6, 5.4f, 4.44f), col = sky(rd, season);
+         ro = v3(camX, camY, camZ), sun = lightSun(light),
+         SUN = mul(lightRad(light), 2.9f), col = sky(light, rd, season, time);
   float landT = terrainTrace(terrain, ro, rd, traceSteps, 16000.0f);
   if (landT > 0)
-    col = terrainShade(terrain, add(ro, mul(rd, landT)), rd, landT, season, shadowSteps, treeNear,
+    col = terrainShade(terrain, light, add(ro, mul(rd, landT)), rd, landT, season, shadowSteps, treeNear,
                        time);
   if (rd.y < .0015f) {
     float3 wd = norm(v3(rd.x, fminf(rd.y, -.0015f), rd.z));
@@ -683,7 +752,7 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
     float3 rr = sub(wd, mul(nr, 2 * dot3(wd, nr)));
     rr.y = fabsf(rr.y);
     // Reservoirs read by what they mirror: trace the reflected ray against the hills.
-    float3 reflection = environment(terrain, add(P, v3(0, .3f, 0)), rr, reflectSteps, season, time),
+    float3 reflection = environment(terrain, light, add(P, v3(0, .3f, 0)), rr, reflectSteps, season, time),
            h = norm(add(v, sun));
     float nh = fmaxf(0, dot3(n, h)), nl = fmaxf(0, dot3(n, sun)),
           a2 = .00012f + 1.2f * a.w + .000025f * t, c2 = fmaxf(nh * nh, .0001f),
@@ -736,7 +805,7 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
             3.2f);
     float3 under = add(prod(Lfloor, Tv), Lin);
     col = add(add(mul(reflection, F), mul(under, 1 - F)), spec);
-    col = aerial(col, t, season);
+    col = aerial(light, col, t);
     if (view == 1)
       col = mul(caus, .4f);
     if (view == 2)
