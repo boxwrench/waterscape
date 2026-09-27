@@ -13,6 +13,14 @@ export class Terrain {
     [this.x0, this.z0] = meta.gridOrigin;
     this.waterLevel = meta.waterLevel;
   }
+  // GPU layout read by terrainSample() in clearwater.cu: two header texels
+  // (width, height, x0, z0) and (cell, 0, 0, 0), then the cells.
+  gpuCells() {
+    const out = new Float32Array(this.cells.length + 8);
+    out.set([this.width, this.height, this.x0, this.z0, this.cell, 0, 0, 0]);
+    out.set(this.cells, 8);
+    return out;
+  }
   // Bilinear lookup of one channel, clamped at the grid edge exactly like terrainSample().
   sample(x, z, channel) {
     const w = this.width,
@@ -106,21 +114,6 @@ export async function loadTerrain(base) {
       }
   });
   return new Terrain(meta, cells);
-}
-
-// The shader hard-codes the grid; refuse to render if it disagrees with the asset.
-export function checkShaderGrid(source, terrain) {
-  const read = (name) => Number(source.match(new RegExp(`#define ${name} (-?[\\d.]+)`))?.[1]),
-    expected = {
-      TERRAIN_W: terrain.width,
-      TERRAIN_H: terrain.height,
-      TERRAIN_X0: terrain.x0,
-      TERRAIN_Z0: terrain.z0,
-      TERRAIN_CELL: terrain.cell,
-    };
-  for (const [name, value] of Object.entries(expected))
-    if (!(Math.abs(read(name) - value) < 1e-3))
-      throw new Error(`Shader ${name} (${read(name)}) does not match terrain asset (${value}).`);
 }
 
 // Inverse transverse Mercator (Snyder), WGS84, central meridian -123°.

@@ -75,9 +75,12 @@ struct App {
   for(auto candidate:{executableDir/L"data/calaveras/terrain.bin",executableDir/L"../../data/calaveras/terrain.bin",fs::current_path()/L"data/calaveras/terrain.bin"})if(fs::exists(candidate)){path=candidate;break;}
   if(path.empty())throw std::runtime_error("Missing data/calaveras/terrain.bin: run python pipeline/build_bundle.py calaveras --native");
   std::ifstream in(path,std::ios::binary);std::vector<uint16_t> words(3*n);in.read((char*)words.data(),words.size()*2);if((size_t)in.gcount()!=words.size()*2)throw std::runtime_error("Terrain asset has an unexpected size.");
-  const float scale[3]={.05f,.25f,1.f/65472},offset[3]={-250.f,-4000.f,0.f};std::vector<float4> cells(n,make_float4(0,0,0,0));std::vector<uint16_t> row(w);
-  for(int c=0;c<3;c++){std::fill(row.begin(),row.end(),0);for(int r=0;r<h;r++)for(int i=0;i<w;i++){row[i]=uint16_t(row[i]+words[c*n+(size_t)r*w+i]);float v=row[i]*scale[c]+offset[c];float4& cell=cells[(size_t)r*w+i];if(c==0)cell.x=v;else if(c==1)cell.y=v;else cell.z=v;}}
-  terrain.alloc(n);check(cudaMemcpy(terrain.p,cells.data(),n*sizeof(float4),cudaMemcpyHostToDevice));
+  // Header texels as in data/calaveras/terrain.json (width, height, gridOrigin, cell); the
+  // native host renders Calaveras only.
+  const float scale[3]={.05f,.25f,1.f/65472},offset[3]={-250.f,-4000.f,0.f};std::vector<float4> cells(n+2,make_float4(0,0,0,0));std::vector<uint16_t> row(w);
+  cells[0]=make_float4((float)w,(float)h,-5097.1276f,-6581.1548f);cells[1]=make_float4(10.4616285f,0,0,0);
+  for(int c=0;c<3;c++){std::fill(row.begin(),row.end(),0);for(int r=0;r<h;r++)for(int i=0;i<w;i++){row[i]=uint16_t(row[i]+words[c*n+(size_t)r*w+i]);float v=row[i]*scale[c]+offset[c];float4& cell=cells[2+(size_t)r*w+i];if(c==0)cell.x=v;else if(c==1)cell.y=v;else cell.z=v;}}
+  terrain.alloc(n+2);check(cudaMemcpy(terrain.p,cells.data(),(n+2)*sizeof(float4),cudaMemcpyHostToDevice));
  }
  void transform(float4* a,float4* b,float sign){for(int axis=0;axis<2;axis++)for(int p=1;p<256;p*=2){fft_pass<<<wavesGrid,block>>>(a,b,p,axis,sign);std::swap(a,b);}}
  void initGpu(){

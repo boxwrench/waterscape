@@ -306,21 +306,26 @@ __device__ float3 sky(float3 d, int season) {
   col = mix3(col, farCol, smooth(far + .0015f, far - .0015f, e));
   return mix3(col, nearCol, smooth(nearR + .0015f, nearR - .0015f, e));
 }
-// Real terrain: USGS 3DEP lidar elevation packed by scripts/build-terrain.py (metadata in
-// assets/calaveras-terrain.json). Local metres: x east, z south, y up from the reservoir
-// surface. Each cell is (height, signed shoreline distance, valley-ness, 0); the host checks
-// these constants against the JSON before rendering.
-#define TERRAIN_W 900
-#define TERRAIN_H 1050
-#define TERRAIN_X0 -5097.1276f
-#define TERRAIN_Z0 -6581.1548f
-#define TERRAIN_CELL 10.4616285f
+// Real terrain: USGS 3DEP lidar packed by pipeline/build_bundle.py into data/<id>/terrain.*.
+// The buffer describes itself: T[0] = (width, height, x0, z0), T[1].x = cell size, and cell
+// (row, col) is T[2 + row * width + col] = (height, signed shoreline distance, valley, 0).
+// Local metres: x east, z south, y up from the reservoir surface.
 __device__ float4 terrainSample(const float4 *T, float x, float z) {
-  float u = fminf(fmaxf((x - TERRAIN_X0) / TERRAIN_CELL, 0.0f), (float)TERRAIN_W - 1.001f),
-        v = fminf(fmaxf((z - TERRAIN_Z0) / TERRAIN_CELL, 0.0f), (float)TERRAIN_H - 1.001f);
-  int iu = (int)u, iv = (int)v, i = iv * TERRAIN_W + iu;
+  float4 g = T[0];
+  float cell = T[1].x;
+  int w = (int)g.x;
+  float u = fminf(fmaxf((x - g.z) / cell, 0.0f), g.x - 1.001f),
+        v = fminf(fmaxf((z - g.w) / cell, 0.0f), g.y - 1.001f);
+  int iu = (int)u, iv = (int)v, i = 2 + iv * w + iu;
   float fu = u - (float)iu, fv = v - (float)iv;
-  return mix4(mix4(T[i], T[i + 1], fu), mix4(T[i + TERRAIN_W], T[i + TERRAIN_W + 1], fu), fv);
+  return mix4(mix4(T[i], T[i + 1], fu), mix4(T[i + w], T[i + w + 1], fu), fv);
+}
+// Metres outside the surveyed grid (negative inside).
+__device__ float terrainOutside(const float4 *T, float x, float z) {
+  float4 g = T[0];
+  float cell = T[1].x;
+  return fmaxf(fmaxf(g.z - x, x - (g.z + (g.x - 1.0f) * cell)),
+               fmaxf(g.w - z, z - (g.w + (g.y - 1.0f) * cell)));
 }
 // Metres to the shoreline: negative over the reservoir, positive on land.
 __device__ float shoreDistance(const float4 *T, float x, float z) {
@@ -340,9 +345,7 @@ __device__ float terrainHeight(const float4 *T, float x, float z) {
                  .5f * (noise(x * .21f, z * .21f) - .5f);
   // Past the edge of the survey the clamped lookup would smear the last row into a plateau;
   // let the land fall away under the haze so the painted far ridges take over instead.
-  float outside = fmaxf(fmaxf(TERRAIN_X0 - x, x - (TERRAIN_X0 + (TERRAIN_W - 1) * TERRAIN_CELL)),
-                        fmaxf(TERRAIN_Z0 - z, z - (TERRAIN_Z0 + (TERRAIN_H - 1) * TERRAIN_CELL)));
-  return s.x + detail * smooth(0.0f, 25.0f, s.y) - .25f * fmaxf(0.0f, outside);
+  return s.x + detail * smooth(0.0f, 25.0f, s.y) - .25f * fmaxf(0.0f, terrainOutside(T, x, z));
 }
 __device__ float terrainTrace(const float4 *T, float3 ro, float3 rd, int steps,
                               float maxDistance) {

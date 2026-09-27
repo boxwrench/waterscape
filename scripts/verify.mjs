@@ -1,8 +1,11 @@
 import { chromium } from "playwright";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import assert from "node:assert/strict";
 import { createStaticServer } from "./serve.mjs";
 await mkdir("previews", { recursive: true });
+// Reservoir grids come from the bundle at runtime, never from shader constants.
+const cudaSource = await readFile("renderer/clearwater.cu", "utf8");
+assert.ok(!/#define TERRAIN_/.test(cudaSource), "shader must not hard-code a terrain grid");
 const server = createStaticServer();
 await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
 const base = `http://127.0.0.1:${server.address().port}`;

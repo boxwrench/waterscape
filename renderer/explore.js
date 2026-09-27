@@ -1,5 +1,5 @@
 import { GpuRuntime } from "../vendor/cuda-webshader/runtime/runtime.js";
-import { checkShaderGrid, formatElevation, formatLatLon, loadTerrain } from "./terrain.js";
+import { formatElevation, formatLatLon, loadTerrain } from "./terrain.js";
 const $ = (id) => document.getElementById(id),
   canvas = $("water"),
   q = new URLSearchParams(location.search);
@@ -671,8 +671,7 @@ try {
   const source = await (await fetch(new URL("./clearwater.cu", import.meta.url))).text();
   $("loadText").textContent = "Loading USGS lidar terrain…";
   terrain = await loadTerrain(new URL("../data/calaveras/terrain", import.meta.url).href);
-  checkShaderGrid(source, terrain);
-  terrainCells = rt.createBuffer(terrain.cells);
+  terrainCells = rt.createBuffer(terrain.gpuCells());
   Object.assign(state, viewpoint(state.viewpoint));
   $("waterLevel").textContent = formatElevation(terrain.waterLevel);
   $("dataLink").href = terrain.meta.service;
