@@ -1,8 +1,23 @@
-# Calaveras Reservoir — CUDA/WebGPU water study
+# Waterscape
 
-A local, interactive study of Calaveras Reservoir at **37°28′42.5″N, 121°49′21.5″W**, built from [SamG-Coder's CUDA Clearwater reimplementation](https://github.com/SamG-Coder/clearwater) and the original [Clearwater](https://github.com/Aureliengmz/clearwater) optical design.
+**Hydrology, simulated.** A journey through California's water, starting with the Hetch Hetchy Regional Water System: real lidar landscapes, reservoir optics, and the public data behind each place. Every stop plays a pre-rendered flyover on any device; WebGPU-capable devices can switch to the live renderer and explore.
 
-The terrain is the real ground: a ~9 × 11 km crop of [USGS 3D Elevation Program](https://www.usgs.gov/3d-elevation-program) lidar (public domain) at ~10 m, with the reservoir outline taken from the lidar's flattened water surface. Oak woodland follows the real drainages, grass moves with travelling wind gusts, and the three-scale FFT water, interactive ripples, caustics and CUDA-authored post-processing are unchanged. The interface reads out camera, ground and cursor elevation above sea level, and the camera's latitude/longitude, from the same data.
+## Layout
+
+| Path | What it is |
+|---|---|
+| `index.html`, `site/`, `journey.json` | The journey page (video tier, live-tier switch) |
+| `renderer/` | The live CUDA→WGSL→WebGPU renderer (`explore.html?reservoir=<id>`) |
+| `data/<id>/` | One bundle per reservoir: terrain, cameras, story, flyover, poster |
+| `pipeline/` | Builds bundles: `build_bundle.py` (USGS 3DEP terrain + cameras), `render-flyover.mjs` (video), `validate-bundles.mjs` |
+
+## Adding a reservoir
+
+1. Add an entry to `pipeline/reservoirs.json` (name, biome, lon/lat bbox, grid size, and an on-water anchor lat/lon).
+2. `python pipeline/build_bundle.py <id>` (needs numpy, scipy, Pillow).
+3. Write `data/<id>/story.json`; every fact needs an https source.
+4. `node pipeline/render-flyover.mjs <id>` (Edge + ffmpeg; uses the discrete GPU).
+5. Add the stop to `journey.json`, then `npm test`.
 
 ![Calaveras Reservoir](previews/calaveras-ui.png)
 
@@ -19,7 +34,7 @@ npm ci
 npm start
 ```
 
-Open **http://localhost:5173**.
+Open **http://localhost:5173/renderer/explore.html**.
 
 - Choose **Overlook** for the Calaveras Road composition or **Shoreline** for the shallow-water view.
 - Switch between the March-inspired **Spring green** palette and **Summer gold**.
@@ -46,27 +61,18 @@ The normal frame loop performs **zero GPU-to-CPU readbacks**. Explicit inspectio
 
 ## Verification
 
-In one terminal:
-
-```powershell
-$env:PORT='5186'
-npm start
-```
-
-In another:
-
 ```powershell
 npm run check
 npm test
 ```
 
-The suite compiles all 20 CUDA entries and launches Microsoft Edge through Playwright. It checks FFT correctness, optical energy, finite buffers, zero render-loop readbacks, ripple interaction, viewpoint/reset behavior, seasonal controls, resizing, diagnostics, PNG export and reservoir classification. Latest evidence is in [`previews/verification.json`](previews/verification.json).
+`npm test` serves itself; no separate server is needed. The suite compiles all 20 CUDA entries and launches Microsoft Edge through Playwright. It checks FFT correctness, optical energy, finite buffers, zero render-loop readbacks, ripple interaction, viewpoint/reset behavior, seasonal controls, resizing, diagnostics, PNG export and reservoir classification. Latest evidence is in [`previews/verification.json`](previews/verification.json).
 
 ## Scope and tradeoffs
 
 Landforms, shoreline and elevations come from USGS 3DEP lidar; everything finer than the ~10 m grid (grass, oaks, bank detail, sub-grid relief) is procedural. Lidar flattens water, so the reservoir bed is modelled as banks falling at about 1:3 to the interface's basin depth. The water level is the level at the time of the lidar survey (≈224 m). Outside the ~9 × 11 km crop, the land falls away under painted, hazy far ridges.
 
-`python scripts/build-terrain.py` regenerates `assets/calaveras-terrain.bin.gz` and its `.json` metadata from the USGS service (needs numpy, scipy, Pillow). The shader's `TERRAIN_*` constants are checked against that metadata at startup. `--native` also writes the uncompressed `.bin` the native host loads.
+`python pipeline/build_bundle.py` regenerates `data/<id>/terrain.*` bin.gz and its `.json` metadata from the USGS service (needs numpy, scipy, Pillow). The shader's `TERRAIN_*` constants are checked against that metadata at startup. `--native` also writes the uncompressed `.bin` the native host loads.
 
 The water is bounded visually while its FFT fields remain periodic underneath. This is a linear spectral height field, not volumetric water; it does not model sediment transport or changing reservoir levels. The distant hills are a directional landscape layer, while nearby banks use the traversable height field. Caustics and the pebble bed are intentionally strongest in the Shoreline view.
 

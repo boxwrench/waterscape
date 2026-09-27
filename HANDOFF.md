@@ -1,5 +1,7 @@
 # Calaveras Reservoir — Project Handoff
 
+> **Superseded for planning purposes** by `docs/superpowers/specs/2026-09-26-waterscape-design.md` and the plans in `docs/superpowers/plans/`. File paths below predate the restructure: `src/` → `renderer/`, `app.js` → `renderer/explore.js`, `assets/calaveras-terrain.*` → `data/calaveras/terrain.*`.
+
 ## Project status
 
 This repository is now a working local WebGPU/CUDA water study inspired by Calaveras Reservoir near Milpitas, California:

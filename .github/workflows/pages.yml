@@ -21,6 +21,8 @@ jobs:
       - run: npm ci
       - run: node --check renderer/explore.js
       - run: npm run check
+      - run: node --test "pipeline/tests/*.test.mjs"
+      - run: node pipeline/validate-bundles.mjs
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
