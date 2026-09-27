@@ -192,3 +192,9 @@ button:disabled {
   margin-left: 6px;
   padding: 4px 8px;
 }
+
+#livePreset {
+  margin-left: 6px;
+  font: inherit;
+  padding: 6px 8px;
+}

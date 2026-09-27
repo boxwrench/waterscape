@@ -187,6 +187,12 @@ function applyPreset(name) {
   $("exposure").dispatchEvent(new Event("input"));
   diag.preset = state.preset;
 }
+// The journey's live view picks presets from outside the iframe.
+addEventListener("message", (e) => {
+  if (e.origin !== location.origin || e.data?.type !== "waterscape:preset" || !lightBuf) return;
+  applyPreset(e.data.name);
+  $("preset").value = state.preset;
+});
 function tipDismissed() {
   try {
     return localStorage.getItem("waterscape.gpuTipDismissed") === "1";
@@ -768,6 +774,10 @@ try {
   landProfile = await (await fetch(new URL("land.json", bundleBase))).json();
   lightBuf = rt.createBuffer(24 * 4);
   applyPreset(q.get("preset"));
+  // Only the presets this reservoir offers, default selected.
+  for (const opt of [...$("preset").options]) opt.hidden = !landProfile.presets.includes(opt.value);
+  $("preset").value = state.preset;
+  $("preset").onchange = () => applyPreset($("preset").value);
   diag.location = terrain.meta.name;
   diag.coordinates = terrain.latLon(0, 0);
   document.title = `${terrain.meta.name} · Waterscape`;

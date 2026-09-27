@@ -104,12 +104,14 @@ function enterLive() {
   frame.src =
     `./renderer/explore.html?reservoir=${encodeURIComponent(stop.id)}&embed=1&pose=` +
     [pose.x, pose.y, pose.z, pose.yaw, pose.pitch].map((v) => v.toFixed(3)).join(",") +
-    (forcedQuality ? `&quality=${encodeURIComponent(forcedQuality)}` : "");
+    (forcedQuality ? `&quality=${encodeURIComponent(forcedQuality)}` : "") +
+    `&preset=${encodeURIComponent($("livePreset").value)}`;
   state.live = { id: stop.id, pose, frameTimes: [], firstFrame: false };
   $("stage").append(frame);
   video.pause();
   $("explore").textContent = "Back to video";
   $("slowNotice").hidden = true;
+  $("livePreset").hidden = false;
 }
 
 function leaveLive() {
@@ -118,6 +120,7 @@ function leaveLive() {
   state.live = null;
   $("stage").classList.remove("live");
   $("slowNotice").hidden = true;
+  $("livePreset").hidden = true;
   $("explore").textContent = "Explore in 3D";
   $("flyover").play().catch(() => {});
 }
@@ -163,6 +166,12 @@ $("prev").onclick = () => show(state.index - 1);
 $("next").onclick = () => show(state.index + 1);
 $("explore").onclick = () => (state.live ? leaveLive() : enterLive());
 $("slowBack").onclick = leaveLive;
+$("livePreset").value = new URLSearchParams(location.search).get("preset") || "golden";
+$("livePreset").onchange = () =>
+  $("liveFrame")?.contentWindow.postMessage(
+    { type: "waterscape:preset", name: $("livePreset").value },
+    location.origin,
+  );
 addEventListener("keydown", (e) => {
   if (e.key === "ArrowRight" || e.key === "PageDown") show(state.index + 1);
   if (e.key === "ArrowLeft" || e.key === "PageUp") show(state.index - 1);

@@ -84,6 +84,10 @@ try {
     parent.postMessage({ type: "waterscape:frame", ms: 250, reservoir: "calaveras", tier: 0, struggling: true }, location.origin),
   );
   await live.waitForSelector("#slowNotice", { state: "visible" });
+  // Presets: the journey offers them in live mode and forwards the choice to the renderer.
+  assert.equal(await live.isVisible("#livePreset"), true);
+  await live.selectOption("#livePreset", "midday");
+  await frame.waitForFunction(() => window.clearwaterDiagnostics?.preset === "midday");
   await live.click("#explore");
   assert.equal(await live.$("#liveFrame"), null);
   // Changing stop while live also closes the renderer.

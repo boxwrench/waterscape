@@ -44,6 +44,9 @@ try {
   assert.equal(noReadback, 0, "render loop must stay GPU resident");
   // Lighting comes from a preset (the bundle's default: golden hour).
   assert.equal(await page.evaluate(() => window.clearwaterDiagnostics.preset), "golden");
+  await page.selectOption("#preset", "midday");
+  assert.equal(await page.evaluate(() => window.clearwaterDiagnostics.preset), "midday");
+  await page.selectOption("#preset", "golden");
   const model = await page.evaluate(() => {
     const { terrain, viewpoints: v } = window.waterscapeModel;
     return {
