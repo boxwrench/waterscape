@@ -3,8 +3,9 @@
 import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { PRESET_NAMES } from "../renderer/land/presets.js";
 
-export const REQUIRED = ["terrain.bin.gz", "terrain.json", "cameras.json", "story.json", "flyover.mp4", "poster.jpg"];
+export const REQUIRED = ["terrain.bin.gz", "terrain.json", "cameras.json", "story.json", "land.json", "flyover.mp4", "poster.jpg"];
 
 export async function validateBundle(dir) {
   const id = path.basename(dir),
@@ -13,8 +14,8 @@ export async function validateBundle(dir) {
     await stat(path.join(dir, file)).catch(() => errors.push(`${id}: missing ${file}`));
   if (errors.length) return errors;
   const json = async (file) => JSON.parse(await readFile(path.join(dir, file), "utf8"));
-  const [terrain, cameras, story] = await Promise.all(
-    ["terrain.json", "cameras.json", "story.json"].map(json),
+  const [terrain, cameras, story, land] = await Promise.all(
+    ["terrain.json", "cameras.json", "story.json", "land.json"].map(json),
   );
   for (const key of ["name", "biome", "width", "height", "cell", "gridOrigin", "waterLevel", "originUTM", "channels"])
     if (terrain[key] === undefined) errors.push(`${id}: terrain.json lacks ${key}`);
@@ -41,6 +42,12 @@ export async function validateBundle(dir) {
     if (!/^https:\/\//.test(f.source ?? ""))
       errors.push(`${id}: fact ${i} (${f.label}) has no https source`);
   });
+  if (land.biome !== terrain.biome)
+    errors.push(`${id}: land.json biome ${land.biome} differs from terrain.json ${terrain.biome}`);
+  for (const name of land.presets ?? [])
+    if (!PRESET_NAMES.includes(name)) errors.push(`${id}: land.json names unknown preset ${name}`);
+  if (!land.presets?.includes(land.defaultPreset))
+    errors.push(`${id}: land.json defaultPreset ${land.defaultPreset} is not in its presets`);
   return errors;
 }
 

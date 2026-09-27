@@ -19,6 +19,10 @@ const good = {
     id: "test", name: "Test Reservoir", operator: "Someone", headline: "Hello.",
     facts: [{ label: "Capacity", value: "1 acre-foot", source: "https://example.gov/" }],
   },
+  "land.json": {
+    biome: "diablo-oak", vegetation: { density: 1, species: { "coast-live": 1 } },
+    grass: { spring: "green", summer: "gold" }, presets: ["golden"], defaultPreset: "golden",
+  },
 };
 
 async function bundle(overrides = {}, drop = []) {
@@ -53,4 +57,14 @@ test("a fact without an https source is reported", async () => {
 test("flyover keys must end at the duration", async () => {
   const dir = await bundle({ "cameras.json": { flyover: { duration: 12, keys: [{ t: 0 }, { t: 10 }] } } });
   assert.deepEqual(await validateBundle(dir), ["test: last flyover key must be at duration"]);
+});
+
+test("land.json must match the terrain biome and name known presets", async () => {
+  const dir = await bundle({ "land.json": { biome: "sierra", presets: ["golden", "dusk"], defaultPreset: "midday" } });
+  assert.deepEqual(await validateBundle(dir), [
+    "test: land.json biome sierra differs from terrain.json diablo-oak",
+    "test: land.json names unknown preset dusk",
+    "test: land.json defaultPreset midday is not in its presets",
+  ]);
+  await rm(path.dirname(dir), { recursive: true });
 });

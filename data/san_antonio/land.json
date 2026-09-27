@@ -1,0 +1,7 @@
+{
+  "biome": "diablo-oak",
+  "vegetation": { "density": 1.0, "species": { "coast-live": 0.5, "blue": 0.3, "valley": 0.2 } },
+  "grass": { "spring": "green", "summer": "gold" },
+  "presets": ["morning", "midday", "golden"],
+  "defaultPreset": "golden"
+}
