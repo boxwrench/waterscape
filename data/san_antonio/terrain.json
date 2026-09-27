@@ -1,31 +1,31 @@
 {
   "source": "USGS National Map 3D Elevation Program (3DEP), public domain",
-  "name": "Calaveras Reservoir",
+  "name": "San Antonio Reservoir",
   "biome": "diablo-oak",
   "service": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer",
   "bbox_lonlat": [
-    -121.875,
-    37.435,
-    -121.77,
-    37.53
+    -121.881,
+    37.535,
+    -121.778,
+    37.624
   ],
   "crs": "EPSG:32610",
   "verticalDatum": "NAVD88 metres (3DEP)",
   "encoding": "gzip; 3 planar uint16 channels; rows delta-coded from the row above",
-  "width": 900,
-  "height": 1050,
+  "width": 870,
+  "height": 950,
   "cell": [
-    10.461628489238986,
-    10.461628489238874
+    10.595458439562936,
+    10.595458439563059
   ],
-  "waterLevel": 223.6999969482422,
+  "waterLevel": 141.6999969482422,
   "originUTM": [
-    604503.0584113639,
-    4147958.1740467143
+    603410.300266683,
+    4159840.182410167
   ],
   "gridOrigin": [
-    -5097.127632806194,
-    -6581.154758233111
+    -4658.686309349374,
+    -4993.874073173851
   ],
   "channels": {
     "height": {
