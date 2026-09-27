@@ -4,7 +4,7 @@ import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-export const REQUIRED = ["terrain.bin.gz", "terrain.json", "cameras.json", "story.json"];
+export const REQUIRED = ["terrain.bin.gz", "terrain.json", "cameras.json", "story.json", "flyover.mp4", "poster.jpg"];
 
 export async function validateBundle(dir) {
   const id = path.basename(dir),

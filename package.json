@@ -11,6 +11,7 @@
     "validate": "node pipeline/validate-bundles.mjs",
     "test": "node --test \"pipeline/tests/*.test.mjs\" && node pipeline/validate-bundles.mjs && node scripts/verify.mjs",
     "bundle": "python pipeline/build_bundle.py",
+    "flyover": "node pipeline/render-flyover.mjs",
     "test:pipeline": "python -m pytest pipeline/tests -q"
   },
   "devDependencies": {

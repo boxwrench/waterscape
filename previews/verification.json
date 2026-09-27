@@ -54,9 +54,9 @@
       "features": [
         "core-features-and-limits",
         "subgroup-size-control",
-        "shader-f16",
-        "float32-filterable",
         "subgroups",
+        "float32-filterable",
+        "shader-f16",
         "timestamp-query"
       ],
       "timestampQuery": true,
@@ -70,10 +70,10 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 1932,
-      "submissions": 62,
-      "dispatches": 1932,
-      "uniformBytesUploaded": 442320,
+      "bindGroupsCreated": 1992,
+      "submissions": 64,
+      "dispatches": 1992,
+      "uniformBytesUploaded": 455920,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 34242560
     }
@@ -92,9 +92,9 @@
       "features": [
         "core-features-and-limits",
         "subgroup-size-control",
-        "shader-f16",
-        "float32-filterable",
         "subgroups",
+        "float32-filterable",
+        "shader-f16",
         "timestamp-query"
       ],
       "timestampQuery": true,
@@ -108,19 +108,19 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 2544,
-      "submissions": 82,
-      "dispatches": 2544,
-      "uniformBytesUploaded": 581488,
+      "bindGroupsCreated": 2604,
+      "submissions": 84,
+      "dispatches": 2604,
+      "uniformBytesUploaded": 595088,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 38436864
     }
   },
   "distant": {
     "finite": true,
-    "min": -0.3520365357398987,
-    "max": 0.3680099844932556,
-    "rms": 0.0768976555871977,
+    "min": -0.35203349590301514,
+    "max": 0.36800915002822876,
+    "rms": 0.07689768410624358,
     "ripplePeak": 0,
     "adapter": {
       "vendor": "intel",
@@ -130,9 +130,9 @@
       "features": [
         "core-features-and-limits",
         "subgroup-size-control",
-        "shader-f16",
-        "float32-filterable",
         "subgroups",
+        "float32-filterable",
+        "shader-f16",
         "timestamp-query"
       ],
       "timestampQuery": true,
@@ -146,10 +146,10 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 3594,
-      "submissions": 114,
-      "dispatches": 3594,
-      "uniformBytesUploaded": 822848,
+      "bindGroupsCreated": 3654,
+      "submissions": 116,
+      "dispatches": 3654,
+      "uniformBytesUploaded": 836448,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 42631168
     }
@@ -168,9 +168,9 @@
       "features": [
         "core-features-and-limits",
         "subgroup-size-control",
-        "shader-f16",
-        "float32-filterable",
         "subgroups",
+        "float32-filterable",
+        "shader-f16",
         "timestamp-query"
       ],
       "timestampQuery": true,
@@ -184,10 +184,10 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 4092,
-      "submissions": 130,
-      "dispatches": 4092,
-      "uniformBytesUploaded": 936704,
+      "bindGroupsCreated": 4151,
+      "submissions": 132,
+      "dispatches": 4151,
+      "uniformBytesUploaded": 950000,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 46825472
     }
@@ -215,9 +215,9 @@
       "viewpoint": "overlook",
       "time": 20,
       "playing": false,
-      "frames": 61
+      "frames": 62
     },
-    "frames": 61,
+    "frames": 62,
     "cascades": [
       4.6,
       37,
@@ -231,7 +231,7 @@
     ],
     "width": 1152,
     "height": 720,
-    "frameMs": 100.02500003576279,
+    "frameMs": 92.15000003576279,
     "readbackBytes": 42631168
   },
   "browserErrors": []
