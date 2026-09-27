@@ -12,4 +12,4 @@ Native/build/
 Native/output/
 pipeline/.cache/
 data/*/terrain.bin
-__pycache__/
+.superpowers/

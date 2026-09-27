@@ -34,10 +34,10 @@ npm ci
 npm start
 ```
 
-Open **http://localhost:5173/renderer/explore.html**.
+Open **http://localhost:5173/**.
 
-- Choose **Overlook** for the Calaveras Road composition or **Shoreline** for the shallow-water view.
-- Switch between the March-inspired **Spring green** palette and **Summer gold**.
+- The journey opens at the first reservoir stop; use the arrows, scroll, or the system map to move between stops.
+- Click **Explore in 3D** on a stop to drop into its live viewpoints, defined by that reservoir's bundle.
 - Drag or use arrow keys to look. WASD flies, E rises and Q descends.
 - Scroll changes travel speed; Shift provides a temporary 6× boost. Speed also scales with height above the ground (1× below 25 m, 20× at 500 m), so climbing with E is the fast way across the basin.
 - Click nearby water to create ripples. Space pauses and H hides the controls.

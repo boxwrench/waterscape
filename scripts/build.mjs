@@ -1,6 +1,7 @@
-import {cp, mkdir, readFile, writeFile} from 'node:fs/promises';
+import {cp, mkdir, readFile, rm, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 const root=path.resolve(import.meta.dirname,'..'),out=path.join(root,'dist');
+await rm(out,{recursive:true,force:true});
 await mkdir(out,{recursive:true});
 const modules=new Set();
 async function moduleGraph(file){
