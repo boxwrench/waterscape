@@ -40,9 +40,19 @@ waves, water clarity). And on a typical laptop the browser picks the integrated 
   33 ms step down a tier (then down in resolution); if it stays under 16 ms for 4 s at a
   lower tier, step up once. `?quality=low|medium|high` forces a tier (tests, sharing links).
 - **Visible:** in 3D mode (journey live view and explore page) a small chip shows the GPU
-  (vendor/architecture from `adapter.info`) and the tier. When the vendor is `intel` (or
-  the tier drops to low) it links a one-line tip: "If this computer has a faster graphics card, set your browser to High
-  performance in Windows graphics settings."
+  (vendor/architecture from `adapter.info`) and the tier.
+- **Why the tip matters:** measured on this laptop (RTX 5070 Ti + Intel Xe), both Chrome 153
+  and Edge 154 hand every WebGPU page the Intel GPU regardless of `powerPreference`; only
+  launching with high-performance GPU forced gives the page the NVIDIA GPU. A web page cannot
+  change this, so the tip is the only remedy for visitors with a good GPU in a hybrid laptop.
+- **The tip** appears when the vendor is `intel` (or the tier drops to low): "Running on
+  integrated graphics. If this computer has a faster graphics card, let your browser use it:"
+  with two short, collapsible instructions —
+  - Windows: Settings → System → Display → Graphics → your browser → Options → High
+    performance, then fully quit and reopen the browser.
+  - Chrome or Edge: open `chrome://flags` (or `edge://flags`), search "high performance
+    GPU", enable it, relaunch.
+  The tip can be dismissed and stays dismissed (localStorage, with fallback).
 - The journey's "struggling" notice appears only when the lowest tier is still above 60 ms.
 
 ## Sub-project 2 — Near-field land
