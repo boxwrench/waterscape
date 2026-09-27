@@ -54,10 +54,10 @@
       "features": [
         "core-features-and-limits",
         "subgroup-size-control",
-        "shader-f16",
-        "float32-filterable",
         "subgroups",
-        "timestamp-query"
+        "float32-filterable",
+        "timestamp-query",
+        "shader-f16"
       ],
       "timestampQuery": true,
       "limits": {
@@ -92,10 +92,10 @@
       "features": [
         "core-features-and-limits",
         "subgroup-size-control",
-        "shader-f16",
-        "float32-filterable",
         "subgroups",
-        "timestamp-query"
+        "float32-filterable",
+        "timestamp-query",
+        "shader-f16"
       ],
       "timestampQuery": true,
       "limits": {
@@ -118,9 +118,9 @@
   },
   "distant": {
     "finite": true,
-    "min": -0.3350352644920349,
-    "max": 0.37852174043655396,
-    "rms": 0.07697463403142306,
+    "min": -0.33503761887550354,
+    "max": 0.3785203695297241,
+    "rms": 0.07697463165898256,
     "ripplePeak": 0,
     "adapter": {
       "vendor": "intel",
@@ -130,10 +130,10 @@
       "features": [
         "core-features-and-limits",
         "subgroup-size-control",
-        "shader-f16",
-        "float32-filterable",
         "subgroups",
-        "timestamp-query"
+        "float32-filterable",
+        "timestamp-query",
+        "shader-f16"
       ],
       "timestampQuery": true,
       "limits": {
@@ -168,10 +168,10 @@
       "features": [
         "core-features-and-limits",
         "subgroup-size-control",
-        "shader-f16",
-        "float32-filterable",
         "subgroups",
-        "timestamp-query"
+        "float32-filterable",
+        "timestamp-query",
+        "shader-f16"
       ],
       "timestampQuery": true,
       "limits": {
@@ -184,10 +184,10 @@
     "stats": {
       "pipelineCompiles": 20,
       "pipelineCacheHits": 0,
-      "bindGroupsCreated": 3767,
+      "bindGroupsCreated": 3768,
       "submissions": 120,
-      "dispatches": 3767,
-      "uniformBytesUploaded": 862064,
+      "dispatches": 3768,
+      "uniformBytesUploaded": 862368,
       "dataBytesUploaded": 35042976,
       "readbackBytes": 46825472
     }
@@ -231,7 +231,7 @@
     ],
     "width": 1152,
     "height": 720,
-    "frameMs": 126.49500000476837,
+    "frameMs": 118.48499995470047,
     "readbackBytes": 42631168
   },
   "browserErrors": []

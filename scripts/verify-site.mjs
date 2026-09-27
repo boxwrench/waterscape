@@ -82,6 +82,22 @@ try {
   assert.equal(await live.$("#liveFrame"), null);
   await live.close();
 
+  // Forced live-asset failure: falls back to video, poster/card stay put.
+  const failing = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+  await failing.route("**/data/calaveras/terrain.bin.gz", (r) => r.abort());
+  await failing.goto(`${base}/?tier=live`);
+  await failing.waitForSelector("#explore", { state: "visible" });
+  await failing.click("#explore");
+  await failing.waitForSelector("#liveFrame");
+  await failing.waitForFunction(
+    () => !document.getElementById("liveFrame") && !document.getElementById("stage").classList.contains("live"),
+    null,
+    { timeout: 30000 },
+  );
+  assert.ok(await failing.evaluate(() => document.getElementById("poster").naturalWidth > 0));
+  assert.equal(await failing.textContent("#stopName"), "Calaveras Reservoir");
+  await failing.close();
+
   assert.deepEqual(errors, []);
   console.log("Journey checks passed.");
 } finally {

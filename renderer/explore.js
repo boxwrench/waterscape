@@ -7,6 +7,7 @@ const $ = (id) => document.getElementById(id),
 const reservoirId = q.get("reservoir") || "calaveras",
   bundleBase = new URL(`../data/${reservoirId}/`, import.meta.url),
   embedded = q.has("embed");
+if (embedded) document.body.classList.add("embed");
 let VIEWPOINTS = {};
 let terrain = null;
 function viewpoint(name) {
@@ -23,7 +24,7 @@ function altitudeFactor() {
   const above = state.y - terrain.ground(state.x, state.z);
   return Math.min(80, Math.max(1, above / 25));
 }
-// Same camera ray as ray() in src/clearwater.cu, so picking matches the image.
+// Same camera ray as ray() in renderer/clearwater.cu, so picking matches the image.
 function viewRay(sx, sy, aspect, yaw, pitch) {
   const cy = Math.cos(yaw),
     syaw = Math.sin(yaw),
@@ -109,6 +110,8 @@ function fail(e) {
   $("error").textContent = diag.errors.at(-1);
   $("loading").hidden = true;
   $("status").textContent = "UNAVAILABLE";
+  if (embedded)
+    parent.postMessage({ type: "waterscape:failed", reservoir: reservoirId }, location.origin);
 }
 function labels() {
   for (const id of ["energy", "depth", "exposure"])
@@ -118,10 +121,13 @@ function labels() {
 for (const id of ["energy", "depth", "exposure"]) $(id).oninput = labels;
 $("quality").onchange = () => (resizePending = true);
 addEventListener("resize", () => (resizePending = true));
+function liveLabel() {
+  return terrain ? `LIVE / ${terrain.meta.name.toUpperCase()}` : "LIVE";
+}
 function play(value) {
   state.playing = value;
   $("pause").textContent = value ? "Ⅱ Pause" : "▶ Resume";
-  $("status").textContent = value ? "LIVE / CALAVERAS BASIN" : "PAUSED";
+  $("status").textContent = value ? liveLabel() : "PAUSED";
 }
 $("pause").onclick = () => play(!state.playing);
 $("toggle").onclick = () => {
@@ -501,9 +507,7 @@ async function frame(now) {
       diag.ready = true;
       diag.readbackBytes = rt.stats.readbackBytes;
       $("loading").hidden = true;
-      $("status").textContent = state.playing
-        ? "LIVE / CALAVERAS BASIN"
-        : "PAUSED";
+      $("status").textContent = state.playing ? liveLabel() : "PAUSED";
       if (state.frames % 15 === 0) {
         $("metrics").textContent =
           `${Math.round(1 / dt)} FPS · ${width} × ${height} · SPEED ${state.speed * boost < 100 ? (state.speed * boost).toFixed(1) : Math.round(state.speed * boost).toLocaleString()} m/s · ${formatElevation(terrain.elevation(state.y))}`;
@@ -679,11 +683,12 @@ $("capture").onclick = () =>
     });
   });
 try {
+  if (!/^[a-z0-9_]+$/.test(reservoirId))
+    throw new Error(`Invalid reservoir id: ${reservoirId}`);
   rt = await GpuRuntime.create({ onError: fail });
   ctx = canvas.getContext("webgpu");
   const source = await (await fetch(new URL("./clearwater.cu", import.meta.url))).text();
   $("loadText").textContent = "Loading USGS lidar terrain…";
-  if (embedded) document.body.classList.add("embed");
   terrain = await loadTerrain(new URL("terrain", bundleBase).href);
   VIEWPOINTS = (await (await fetch(new URL("cameras.json", bundleBase))).json()).viewpoints;
   terrainCells = rt.createBuffer(terrain.gpuCells());

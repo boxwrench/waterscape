@@ -14,16 +14,21 @@ async function json(url) {
 }
 
 async function loadJourney() {
-  const journey = await json("./journey.json");
-  state.stops = await Promise.all(
-    journey.stops.map(async (stop) => {
-      const [story, cameras] = await Promise.all([
-        json(dataUrl(stop.id, "story.json")).catch(() => null),
-        json(dataUrl(stop.id, "cameras.json")).catch(() => null),
-      ]);
-      return { ...stop, story, cameras };
-    }),
-  );
+  try {
+    const journey = await json("./journey.json");
+    state.stops = await Promise.all(
+      journey.stops.map(async (stop) => {
+        const [story, cameras] = await Promise.all([
+          json(dataUrl(stop.id, "story.json")).catch(() => null),
+          json(dataUrl(stop.id, "cameras.json")).catch(() => null),
+        ]);
+        return { ...stop, story, cameras };
+      }),
+    );
+  } catch (e) {
+    console.error(e);
+    $("headline").textContent = "The journey could not be loaded.";
+  }
 }
 
 function renderMap() {
@@ -100,9 +105,8 @@ function enterLive() {
   frame.src =
     `./renderer/explore.html?reservoir=${encodeURIComponent(stop.id)}&embed=1&pose=` +
     [pose.x, pose.y, pose.z, pose.yaw, pose.pitch].map((v) => v.toFixed(3)).join(",");
-  state.live = { id: stop.id, pose, frameTimes: [], started: performance.now() };
+  state.live = { id: stop.id, pose, frameTimes: [], started: performance.now(), firstFrame: false };
   $("stage").append(frame);
-  $("stage").classList.add("live");
   video.pause();
   $("explore").textContent = "Back to video";
   $("slowNotice").hidden = true;
@@ -119,7 +123,17 @@ function leaveLive() {
 }
 
 addEventListener("message", (e) => {
-  if (e.origin !== location.origin || e.data?.type !== "waterscape:frame" || !state.live) return;
+  if (e.origin !== location.origin || e.source !== $("liveFrame")?.contentWindow || !state.live)
+    return;
+  if (e.data?.type === "waterscape:failed") {
+    leaveLive();
+    return;
+  }
+  if (e.data?.type !== "waterscape:frame") return;
+  if (!state.live.firstFrame) {
+    state.live.firstFrame = true;
+    $("stage").classList.add("live");
+  }
   const times = state.live.frameTimes;
   times.push(e.data.ms);
   const median = [...times].sort((a, b) => a - b)[times.length >> 1];
@@ -128,8 +142,9 @@ addEventListener("message", (e) => {
 });
 
 function show(i) {
-  leaveLive();
   i = Math.max(0, Math.min(state.stops.length - 1, i));
+  if (i === state.index && !state.live && $("flyover").src) return;
+  leaveLive();
   state.index = i;
   const stop = state.stops[i];
   renderCard(stop, i);
@@ -173,5 +188,5 @@ addEventListener("hashchange", showFromHash);
 
 await loadJourney();
 renderMap();
-$("explore").hidden = !(await liveCapable());
 showFromHash();
+liveCapable().then((ok) => ($("explore").hidden = !ok));

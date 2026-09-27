@@ -1,4 +1,4 @@
-// Real Calaveras terrain (USGS 3DEP lidar, public domain) for the host: decoding the packed
+// Reservoir terrain (USGS 3DEP lidar, public domain) for the host: decoding the packed
 // asset for the GPU, CPU-side sampling for collisions and elevation readouts, cursor picking,
 // and local metres -> WGS84. The renderer is the visual authority; this mirrors its lidar
 // surface without the shader's sub-grid detail noise.
@@ -86,9 +86,15 @@ export class Terrain {
   }
 }
 
+async function fetchOk(url) {
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`${r.status} ${url}`);
+  return r;
+}
+
 export async function loadTerrain(base) {
-  const meta = await (await fetch(`${base}.json`)).json(),
-    fetched = await (await fetch(`${base}.bin.gz`)).arrayBuffer(),
+  const meta = await (await fetchOk(`${base}.json`)).json(),
+    fetched = await (await fetchOk(`${base}.bin.gz`)).arrayBuffer(),
     magic = new Uint8Array(fetched, 0, 2),
     // Some hosts send .gz with Content-Encoding: gzip, so it may arrive already inflated.
     raw =
