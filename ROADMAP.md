@@ -7,6 +7,11 @@ map, not the contract.
 The roadmap broken into agent-sized tasks — including fully spelled-out tasks for small local
 models — is the [work queue](docs/roadmap/README.md); agents start with [`AGENTS.md`](AGENTS.md).
 
+The repository also contains the separate **River Pulse** experiment on the
+`river-pulse/bootstrap` branch. River Pulse reuses parts of the terrain/rendering stack but has
+its own river data model, authored-place system, and visual-binding contract under
+[`docs/river-pulse/`](docs/river-pulse/). It should not be confused with Waterscape's still-water roadmap below.
+
 ## Shipped
 
 - **Journey + video tier** — Calaveras and San Antonio reservoirs (Hetch Hetchy Regional Water
@@ -56,6 +61,22 @@ knee height to the horizon — on NVIDIA as the showcase and still smooth on int
 7. **More tours** — beyond the Hetch Hetchy system, e.g. the State Water Project and the
    remaining California reservoirs; anyone can add their own lake with the guide.
 
+## River Pulse experiment
+
+River Pulse is intentionally developed in smaller verified batches rather than being folded into
+Waterscape's still-water engine. Its current direction is:
+
+1. authoritative Russian River terrain/hydrography plus USGS flow/time context;
+2. a **corridor/overhead river representation** with animated flow, relative-flow-width and
+   seasonal-condition-color display modes;
+3. a separate **authored-place hero-water representation** for Hacienda and Jenner with much
+   higher visual fidelity and place-specific optics/current cues;
+4. forecast/weather/model layers and replay after the observed/historical path is solid;
+5. contributor/package generalization only after the first river proves the abstractions.
+
+The two River Pulse visual scales consume the same selected scientific state but are not forced
+through one renderer. Expressive simulation is allowed; unsupported hydraulic quantities are not silently presented as measurements.
+
 ## Scene controls
 
 A compact Scene panel in live 3D and in the journey's live view:
@@ -83,8 +104,9 @@ A compact Scene panel in live 3D and in the journey's live view:
 - Flyover videos predate the summer-gold default and the new sky.
 - The optional native Windows host is not rebuilt with each change.
 
-## Not planned
+## Not planned for Waterscape itself
 
-Rivers and coasts (Waterscape models still water with one level inside a shoreline);
-elevation sources outside the US; accounts or any server-side component; a continuous
-multi-reservoir world.
+Waterscape's current product remains focused on still water with one level inside a shoreline;
+rivers and coasts are therefore not being added by mutating the reservoir model. River Pulse is
+the separate river path in this repository. Also not planned here: elevation sources outside
+the US, accounts or any server-side component, or a continuous multi-reservoir world.
