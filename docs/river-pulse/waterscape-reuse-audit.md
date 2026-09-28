@@ -4,7 +4,9 @@ This audit identifies which parts of the current Waterscape implementation shoul
 
 ## Summary
 
-River Pulse should reuse a meaningful amount of Waterscape, but it should not become “Waterscape with a river substituted for the reservoir.” The cleanest path is to retain mature geospatial/rendering infrastructure while replacing still-water assumptions with river-specific state, data, current fields, and package semantics.
+River Pulse should reuse a meaningful amount of Waterscape, but it should not become “Waterscape with a river substituted for the reservoir.” The cleanest path is to retain mature geospatial/rendering infrastructure while replacing still-water assumptions with river-specific state, data, current fields, package semantics, and scale-specific presentation.
+
+Visual quality is a first-class River Pulse requirement. The reuse target is therefore not only plumbing: Waterscape's optics and real-time rendering work are valuable, especially at authored places, as long as their visual technique is kept separate from unsupported river science.
 
 ## Reuse map
 
@@ -158,7 +160,7 @@ camera/runtime controls
 
 ### Do not mutate `createWaterscape()` into River Pulse
 
-The current renderer is centered on one still water body and one reservoir-oriented water kernel. River Pulse should instead extract or reimplement the generic pieces behind a river-specific renderer.
+The current renderer is centered on one still water body and one reservoir-oriented water kernel. River Pulse should instead extract or reimplement the generic pieces behind river-specific renderers.
 
 Candidate split:
 
@@ -172,7 +174,7 @@ graphics/
   presentation
 
 river-renderer/
-  overview-water
+  corridor-water
   current-fields
   hero-water
   weather-effects
@@ -271,19 +273,25 @@ The external current-field references listed in the implementation contract shou
 
 ## 6. Two rendering scales
 
-River Pulse should not pay hero-scene costs across the full Russian River corridor.
+River Pulse should not pay hero-scene costs across the full Russian River corridor, and it should not reduce authored places to a thick GIS line merely because that representation works overhead.
 
-### Overview water
+### Corridor / overhead water
+
+The map-scale visual system should be cheap, readable, animated, and LOD-friendly across many miles.
+
+Initial data-driven encodings:
 
 ```text
-cheap
-river-scale
-flow-readable
-many miles
-LOD-friendly
+relative-flow width
+seasonal-condition color
+downstream directional motion
 ```
 
-### Hero water
+The corridor should support a user-facing toggle between **Flow width** and **Seasonal color** so each encoding remains legible. The same RiverState is underneath both modes.
+
+The width mode is an illustrative mapping of relative flow unless a future source/model supports literal bank/water-extent geometry. It must not inherit scientific meaning from the ribbon's apparent physical size.
+
+### Authored-place / hero water
 
 ```text
 Hacienda / Jenner
@@ -293,15 +301,20 @@ refraction
 caustics
 foam
 local geometry
+lighting/composition
 ```
 
-Both consume RiverState through visual bindings; they simply render it differently.
+This representation should pursue much higher visual fidelity. The local water facsimile may be tuned to the phenomenon being communicated and can use Waterscape optical techniques aggressively without adopting its still-reservoir assumptions.
+
+Both scales consume RiverState through visual bindings; they deliberately render it differently.
 
 ## 7. Quality and fallback
 
 Waterscape's quality governor is small and reusable. Keep the measured frame-time feedback and tier/resolution ladder, but avoid assuming NVIDIA should always start higher than other vendors.
 
 A warm-up benchmark or conservative start followed by measured adaptation is preferable for an open river engine expected to run on AMD, Intel, NVIDIA, and mobile hardware.
+
+River Pulse quality budgets should also recognize the scale split: corridor water must stay inexpensive over a large world, while hero water can spend more GPU budget near an authored place.
 
 Waterscape's video fallback is also a useful design precedent. River Pulse cannot replace a dynamic timeline with one video, but the principle remains useful:
 
@@ -343,7 +356,7 @@ engine/camera.js             →   REUSE
 engine/quality.js            →   REUSE/ADAPT
 GPU runtime pattern          →   REUSE
 package validator pattern    →   REUSE
-water optics                 →   EXTRACT/ADAPT
+water optics                 →   EXTRACT/ADAPT FOR HERO WATER
 FFT reservoir waves          →   OPTIONAL DETAIL ONLY
 reservoir water detector     →   NO
 reservoir bed model          →   NO
@@ -360,6 +373,7 @@ First prove:
 2. The existing land/WebGPU path can render it.
 3. The camera system can navigate it.
 4. River-specific hydrography can be layered independently.
-5. A simple current field can drive an adapted visual water layer.
+5. A corridor river visual can respond to selected discharge/seasonal state.
+6. A separate authored-place water treatment can reuse Waterscape optics without adopting reservoir science.
 
 If those work and code is genuinely duplicated between both projects, extract the common infrastructure then.
