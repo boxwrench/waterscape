@@ -4,7 +4,12 @@ Waterscape is a static site. The journey page (`index.html`, `site/`) plays each
 flyover video and fact card; "Explore in 3D" embeds the live page
 (`renderer/explore.html?reservoir=<id>&embed=1`) in an iframe.
 
-## Data flow
+The `river-pulse/bootstrap` branch also contains a sibling experiment, **River Pulse**. River
+Pulse reuses selected geospatial/rendering infrastructure but does not turn Waterscape's
+still-water model into a river model. Its own contract lives in
+[`docs/river-pulse/implementation-contract.md`](river-pulse/implementation-contract.md).
+
+## Waterscape data flow
 
 ```
 data/<id>/source.json ──pipeline/build.py──▶ data/<id>/terrain.bin.gz, terrain.json, cameras.json
@@ -18,7 +23,7 @@ data/biomes/<biome>/  (shared per landscape)          data/tours/<tour>.json (jo
 Terrain is USGS 3DEP lidar in a local frame: x east, z south, y up from the water surface,
 origin at the water's centroid; `terrain.json` records the UTM zone and origin.
 
-## The engine (`renderer/engine/`)
+## The Waterscape engine (`renderer/engine/`)
 
 | Module | Interface |
 |---|---|
@@ -32,7 +37,7 @@ The page (`renderer/explore.js`) owns controls, input, readouts, the quality gov
 journey messaging. It keeps `ws.settings` in sync with its controls and calls `ws.step(dt)`
 each animation frame.
 
-## Anatomy of a frame (`step`)
+## Anatomy of a Waterscape frame (`step`)
 
 1. **Waves** — `evolve_spectrum` + 16 FFT passes produce three 256² height/slope cascades
    (4.6 m, 37 m, 293 m).
@@ -47,12 +52,67 @@ each animation frame.
 
 Light comes from a six-float4 preset buffer shared by sky, land, water and caustics.
 
+## River Pulse architecture
+
+River Pulse uses a separate scientific-state path:
+
+```text
+source records
+  → source adapters
+  → normalized Quantity + provenance
+  → deterministic time selection
+  → RiverState
+  → visual bindings
+  → corridor / hero renderers + charts + labels
+```
+
+The central rule is that scientific state is independent of presentation. A discharge
+observation remains the same Quantity whether it drives an exact label, a hydrograph, an
+illustrative river width, a seasonal-condition color, particles, foam, or a local hero-water
+effect.
+
+### Two visual scales
+
+River Pulse does not force one water renderer across every camera scale.
+
+**Corridor / overhead** uses a cheap, legible, animated river representation over long reaches.
+The first planned display modes are relative-flow width and USGS seasonal-condition color.
+Width is illustrative unless a bank/water-extent source or hydraulic model supports literal
+geometry.
+
+**Authored-place / hero** uses higher-detail local water at places such as Hacienda and Jenner.
+This is where Waterscape optics, refraction/reflection, caustics, foam, current cues, local
+geometry and authored lighting can be adapted aggressively. The visual facsimile can differ
+from the corridor renderer because the communication problem and perspective differ.
+
+Both scales consume the same RiverState through declared visual bindings. Neither renderer may
+silently turn discharge alone into measured local depth, water-surface elevation, bank width or
+velocity.
+
+### Shared/reused pieces
+
+River Pulse currently reuses or adapts the parts of Waterscape that are genuinely generic:
+
+- USGS 3DEP acquisition and WGS84/UTM georeferencing
+- terrain transport/sampling concepts with absolute river elevation semantics
+- Three.js/WebGPU land rendering patterns
+- flight camera/navigation
+- quality/validation patterns
+- selected water optics for future authored-place rendering
+
+Reservoir flat-water detection, one-water-level semantics, shoreline-distance/basin-depth
+assumptions, and reservoir automatic viewpoints remain Waterscape-specific.
+
 ## Quality
 
-Tier 2 (high) is the full budget; medium and low shorten terrain shadows, reflection steps,
-and near-tree detail, and the governor also steps resolution. NVIDIA starts high,
-other vendors medium; frames over 33 ms step down, under 16 ms for 4 s step up once. The
-journey shows "struggling" only when the lowest level is still over 60 ms.
+Tier 2 (high) is the full Waterscape budget; medium and low shorten terrain shadows, reflection
+steps, and near-tree detail, and the governor also steps resolution. NVIDIA starts high, other
+vendors medium; frames over 33 ms step down, under 16 ms for 4 s step up once. The journey shows
+"struggling" only when the lowest level is still over 60 ms.
+
+River Pulse should preserve measured quality adaptation while treating corridor and hero water
+as separate budgets: map-scale water should remain cheap enough for long reaches, while authored
+places may spend substantially more GPU budget near the camera.
 
 ## The native host
 
@@ -62,5 +122,5 @@ not part of the site.
 
 ## Design history
 
-Specs and implementation plans live in `docs/design/` — read them for why things are the way
-they are.
+Waterscape specs and implementation plans live in `docs/design/`. River Pulse decisions and
+running implementation notes live in `docs/river-pulse/`.
