@@ -57,7 +57,7 @@ Calaveras, San Antonio and San Andreas are not in CDEC, so they have no timeline
 
 | ID | Task | Who | Needs | Status |
 |---|---|---|---|---|
-| L1 | Ground materials and wind grass ([brief](capable-agent-briefs.md#l1-ground-and-grass)) | capable | — | in progress (Claude, branch `land-l1`) |
+| L1 | Ground materials and wind grass ([brief](capable-agent-briefs.md#l1-ground-and-grass)) | capable | — | done 2026-09-28 |
 | L1b | Grass refinement: blades read pixelated or sparse at 1152 px (thin blades alias without MSAA in the land pass); try MSAA or alpha-to-coverage on the land target, wider far blades, denser near field; golden-hour shade too muddy, backlit glow ([brief](capable-agent-briefs.md#l1-ground-and-grass)) | capable | L1 | later |
 | L2 | California oaks ([brief](capable-agent-briefs.md#l2-oaks)) | capable | L1 | later |
 | L3 | Light and tuning, re-rendered flyovers ([brief](capable-agent-briefs.md#l3-light-and-tuning)) | capable | L2 | later |

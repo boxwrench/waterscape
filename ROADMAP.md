@@ -18,6 +18,11 @@ models — is the [work queue](docs/roadmap/README.md); agents start with [`AGEN
 - **Land foundation** — three.js draws the lidar terrain on the same GPU device as the water
   (about twice as fast on integrated graphics); Preetham sky with drifting clouds; Morning,
   Midday and Golden hour light presets; summer-gold hills by default.
+- **Ground and grass** — photo-textured ground (CC0 grass, soil, rock) with baked terrain
+  shadows and ambient occlusion per light preset; a field of wind-blown 3D grass blades around
+  the camera on every quality tier; natural lake depth from each dam's hydraulic height;
+  Shoreline views at the waterline. Refinement (sharper, denser grass; golden-hour shade) is
+  queued as L1b.
 - **Engine and data architecture** — one folder per water body, shared biome assets, tours,
   any US location, the engine split from its page, and a
   [make-your-own guide](docs/make-a-waterscape.md).
@@ -27,18 +32,13 @@ models — is the [work queue](docs/roadmap/README.md); agents start with [`AGEN
 The goal: grass that moves in the breeze and real oak trees — no flat, low-quality texture from
 knee height to the horizon — on NVIDIA as the showcase and still smooth on integrated graphics.
 
-1. **Ground and grass**
-   - CC0 photo materials per biome (green grass, dry grass, bare soil, rock) blended by slope,
-     ravines and season, with anti-tiling; land colour moves from the water shader to three.js.
-   - A camera-following field of instanced grass blades with rolling gusts, swell and
-     per-blade flutter, thinning into the ground material at its edge.
-2. **Oaks**
+1. **Oaks**
    - California coast live, blue and valley oak variants — ez-tree presets tuned toward real
      silhouettes, or authored in Blender — baked into `data/biomes/diablo-oak/`.
    - Full meshes with leaf cards near the camera, octahedral impostors far away; placement from
      one `density(x, z)` function (procedural now, land-cover data later).
    - Water reflections of land drawn from a mirrored three.js render on the high tier.
-3. **Light and tuning**
+2. **Light and tuning**
    - Cloud shadows sweeping across the land and the water.
    - Per-tier budgets for grass count, tree range and shadows, tuned on Intel and NVIDIA.
    - Preset polish: calmer far-water reflections under the brighter horizon, per-preset water
