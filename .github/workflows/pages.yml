@@ -46,6 +46,24 @@ jobs:
           assert 'waterLevel' not in m
           print(f"Hacienda terrain {m['width']}x{m['height']} {m['crs']} {m['verticalDatum']}")
           PY
+      - name: Build real Hacienda 3DHP hydrography for River Pulse draft
+        if: github.event_name == 'pull_request' && github.head_ref == 'river-pulse/bootstrap'
+        run: python pipeline/build_river_hydrography.py river-pulse/data/russian_river/places/hacienda_bridge/source.json
+      - name: Verify Hacienda hydrography artifact
+        if: github.event_name == 'pull_request' && github.head_ref == 'river-pulse/bootstrap'
+        run: |
+          test -s river-pulse/data/russian_river/places/hacienda_bridge/hydrography.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('river-pulse/data/russian_river/places/hacienda_bridge/hydrography.json')
+          h = json.loads(p.read_text())
+          assert h['schemaVersion'] == 'river-pulse-hydrography-0.1'
+          assert h['source'].startswith('U.S. Geological Survey 3D Hydrography Program')
+          assert len(h['features']) > 0
+          names = sorted({f['name'] for f in h['features'] if f.get('name')})
+          print(f"Hacienda 3DHP flowlines: {len(h['features'])}; names: {', '.join(names[:12]) or '(unnamed)'}")
+          PY
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
