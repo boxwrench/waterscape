@@ -29,6 +29,23 @@ jobs:
       - run: node --test "pipeline/tests/*.test.mjs"
       - run: python -m pytest pipeline/tests -q
       - run: node pipeline/validate-bundles.mjs
+      - name: Build real Hacienda terrain for River Pulse draft
+        if: github.event_name == 'pull_request' && github.head_ref == 'river-pulse/bootstrap'
+        run: python pipeline/build_river_terrain.py river-pulse/data/russian_river/places/hacienda_bridge/source.json
+      - name: Verify Hacienda terrain artifact
+        if: github.event_name == 'pull_request' && github.head_ref == 'river-pulse/bootstrap'
+        run: |
+          test -s river-pulse/data/russian_river/places/hacienda_bridge/terrain.bin.gz
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('river-pulse/data/russian_river/places/hacienda_bridge/terrain.json')
+          m = json.loads(p.read_text())
+          assert m['schemaVersion'] == 'river-pulse-terrain-0.1'
+          assert m['verticalDatum'] == 'NAVD88 metres (3DEP)'
+          assert 'waterLevel' not in m
+          print(f"Hacienda terrain {m['width']}x{m['height']} {m['crs']} {m['verticalDatum']}")
+          PY
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
