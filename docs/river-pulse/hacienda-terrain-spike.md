@@ -6,7 +6,7 @@
 
 The spike established that River Pulse can stand on Waterscape's geospatial/rendering foundation **without pretending a river is a reservoir**.
 
-Follow-on work has already begun on top of this result: normalized USGS flow quantities, deterministic time selection, RiverState, visual bindings, recent daily history, and the scene-first Hacienda UI.
+Follow-on work on the same branch now includes normalized USGS flow quantities, deterministic time selection, RiverState, recent daily history, interactive time selection, USGS seasonal condition context, authoritative river hydrography, and the scene-first Hacienda UI.
 
 ## Goal
 
@@ -107,11 +107,27 @@ RiverState
     ↓
 visual binding
     ↓
-Hacienda UI / hydrograph
+Hacienda UI / hydrograph / river scene
 ```
 
 Recent daily mean discharge is represented as a derived statistic rather than an instantaneous observation. Current-flow selection refuses future observations and marks data stale rather than silently presenting an old reading as current.
 
-## Next spatial step
+## Next visual step
 
-Add authoritative river/reach geometry as a separate layer, then connect a river-specific current/water renderer. Waterscape's optics remain a candidate rendering resource; its reservoir water simulation does not become River Pulse hydrodynamics by default.
+The next problem is deliberately split by scale rather than forcing one water system everywhere.
+
+### Corridor / overhead
+
+Build a first-class animated river corridor from the authoritative hydrography already layered over the terrain. Initial display modes should include:
+
+- **relative-flow width** — illustrative widening/narrowing driven by a declared discharge comparison mapping;
+- **seasonal-condition color** — the USGS day-of-year condition class;
+- subtle downstream motion so the river reads as flowing water rather than a static GIS line.
+
+The corridor width is not literal bank geometry or measured water extent unless a later source/model provides those quantities.
+
+### Hacienda authored-place / hero water
+
+Treat close-range Hacienda water as a separate rendering problem. Reuse/adapt Waterscape optics where they help, then add place-scale surface/current cues, foam, refraction/reflection, caustics, and shoreline/structure interaction as appropriate. The local visual facsimile should be tuned to the phenomenon being communicated rather than constrained to match the map-scale corridor renderer.
+
+This split lets the corridor be clear and performant while allowing authored places to pursue much higher visual fidelity.
