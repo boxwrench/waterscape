@@ -110,7 +110,7 @@ test("selection policy records its deterministic rule", () => {
   const policy = latestAtOrBeforePolicy({ maximumAgeMs: 15 * 60 * 1000 });
   assert.equal(policy.id, "latest-at-or-before");
   assert.equal(policy.future_values, "forbidden");
-  assert.equal(policy.tie_break, "quantity_id_ascending");
+  assert.equal(policy.tie_break, "latest_explicit_availability_then_quantity_id_ascending");
   assert.equal(policy.maximum_age_ms, 15 * 60 * 1000);
 });
 

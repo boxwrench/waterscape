@@ -30,10 +30,10 @@ jobs:
       - run: python -m pytest pipeline/tests -q
       - run: node pipeline/validate-bundles.mjs
       - name: Build real Hacienda terrain for River Pulse draft
-        if: github.event_name == 'pull_request' && github.head_ref == 'river-pulse/bootstrap'
+        if: hashFiles('river-pulse/data/russian_river/places/hacienda_bridge/source.json') != ''
         run: python pipeline/build_river_terrain.py river-pulse/data/russian_river/places/hacienda_bridge/source.json
       - name: Verify Hacienda terrain artifact
-        if: github.event_name == 'pull_request' && github.head_ref == 'river-pulse/bootstrap'
+        if: hashFiles('river-pulse/data/russian_river/places/hacienda_bridge/source.json') != ''
         run: |
           test -s river-pulse/data/russian_river/places/hacienda_bridge/terrain.bin.gz
           python - <<'PY'
@@ -47,10 +47,10 @@ jobs:
           print(f"Hacienda terrain {m['width']}x{m['height']} {m['crs']} {m['verticalDatum']}")
           PY
       - name: Build real Hacienda 3DHP hydrography for River Pulse draft
-        if: github.event_name == 'pull_request' && github.head_ref == 'river-pulse/bootstrap'
+        if: hashFiles('river-pulse/data/russian_river/places/hacienda_bridge/source.json') != ''
         run: python pipeline/build_river_hydrography.py river-pulse/data/russian_river/places/hacienda_bridge/source.json
       - name: Verify Hacienda hydrography artifact
-        if: github.event_name == 'pull_request' && github.head_ref == 'river-pulse/bootstrap'
+        if: hashFiles('river-pulse/data/russian_river/places/hacienda_bridge/source.json') != ''
         run: |
           test -s river-pulse/data/russian_river/places/hacienda_bridge/hydrography.json
           python - <<'PY'
@@ -65,6 +65,17 @@ jobs:
           print(f"Hacienda 3DHP flowlines: {len(h['features'])}; names: {', '.join(names[:12]) or '(unnamed)'}")
           PY
       - run: npm run build
+      - name: Install Chromium for River Pulse interface checks
+        run: npx playwright install --with-deps chromium
+      - name: Verify built River Pulse interface
+        run: node scripts/verify-river-pulse.mjs
+      - name: Upload River Pulse visual checks
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: river-pulse-visual-checks
+          path: previews/river-pulse-ui
+          if-no-files-found: ignore
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

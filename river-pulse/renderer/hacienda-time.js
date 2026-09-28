@@ -5,140 +5,138 @@ import {
 import { observedFlowStatus } from "../visual-bindings/flow-status.js";
 
 const slider = document.querySelector("#time-range"),
-  selectionLabel = document.querySelector("#time-selection-label"),
-  timelineHeading = document.querySelector("#timeline-heading"),
-  flowValue = document.querySelector("#flow-value"),
-  flowTime = document.querySelector("#flow-time"),
-  flowQuality = document.querySelector("#flow-quality"),
-  historyCursor = document.querySelector("#history-cursor"),
-  SOURCE_URL = "../data/russian_river/places/hacienda_bridge/source.json";
+  label = document.querySelector("#time-selection-label"),
+  heading = document.querySelector("#timeline-heading"),
+  value = document.querySelector("#flow-value"),
+  time = document.querySelector("#flow-time"),
+  quality = document.querySelector("#flow-quality"),
+  cursor = document.querySelector("#history-cursor"),
+  play = document.querySelector("#history-play"),
+  now = document.querySelector("#return-now");
+let currentState = window.riverPulseCurrentState ?? null,
+  graph = window.riverPulseHistory ?? null,
+  featureId = currentState?.features.gauges[0]?.id,
+  live = true,
+  timer = null,
+  offline = false;
 
-function unit(value) {
-  return value === "ft^3/s" ? "ft³/s" : value ?? "";
-}
-
-function number(value) {
-  return Number(value).toLocaleString("en-US", { maximumFractionDigits: 2 });
-}
-
-function formatDate(iso, { year = true } = {}) {
-  const date = new Date(iso);
-  if (!Number.isFinite(date.getTime())) return iso;
+function date(iso) {
   return new Intl.DateTimeFormat("en-US", {
     timeZone: "UTC",
+    year: "numeric",
     month: "short",
     day: "numeric",
-    ...(year ? { year: "numeric" } : {}),
-  }).format(date);
+  }).format(new Date(iso));
 }
-
-function currentPresentation(state, featureId) {
-  return observedFlowStatus(state, featureId);
+function stop() {
+  clearInterval(timer);
+  timer = null;
+  play.textContent = "Play history";
+  play.setAttribute("aria-pressed", "false");
 }
-
-function historicalPresentation(state) {
-  const q = state.selected_quantities[0];
-  if (!q)
-    return {
-      kind: "unavailable",
-      badge: "Missing",
-      headline: "No daily value",
-      detail: "No daily mean covers the selected date",
-    };
-  return {
-    kind: "historical",
-    badge: "History",
-    headline: `${number(q.value)} ${unit(q.unit)}`,
-    detail: `${formatDate(q.time.valid_start)} · daily mean · ${q.source_approval}`,
-  };
-}
-
-function setFlowPresentation(presentation) {
-  flowValue.textContent = presentation.headline;
-  flowTime.textContent = presentation.detail;
-  flowQuality.className = `flow-quality ${presentation.kind}`;
-  flowQuality.textContent = presentation.badge;
-}
-
-function dispatchState(state, mode, monitoringLocationId) {
+function publish(state, mode) {
   window.riverPulseState = state;
-  window.dispatchEvent(
+  dispatchEvent(
     new CustomEvent("river-pulse-state-change", {
-      detail: { state, mode, monitoringLocationId },
+      detail: { state, mode, monitoringLocationId: featureId },
     }),
   );
 }
-
-async function waitForHydrology(timeoutMs = 8000) {
-  const start = performance.now();
-  while (performance.now() - start < timeoutMs) {
-    if (window.riverPulseState && window.riverPulseHistory?.kind === "series")
-      return { currentState: window.riverPulseState, graph: window.riverPulseHistory };
-    await new Promise((resolve) => setTimeout(resolve, 80));
+function apply(index) {
+  const points = graph?.points ?? [],
+    count = points.length;
+  live = index >= count;
+  if (live) {
+    cursor.hidden = true;
+    label.textContent = "Now";
+    heading.textContent = "Latest continuous observation";
+    slider.value = String(count);
+    slider.setAttribute("aria-valuetext", "Now");
+    if (!currentState) return;
+    const presentation = observedFlowStatus(currentState, featureId);
+    value.textContent = presentation.headline;
+    time.textContent = offline
+      ? "USGS is unavailable. Saved history can still be explored."
+      : presentation.detail;
+    quality.className = `flow-quality ${presentation.kind}`;
+    quality.textContent = offline ? "Offline" : presentation.badge;
+    publish(currentState, GAUGE_TIME_MODES.CURRENT_CONTINUOUS);
+    return;
   }
-  return null;
+  const point = points[index],
+    q = point.quantity,
+    start = Date.parse(q.time.valid_start),
+    end = Date.parse(q.time.valid_end),
+    state = resolveGaugeDischargeState({
+      featureId: q.feature_id,
+      validTime: new Date(start + (end - start) / 2).toISOString(),
+      mode: GAUGE_TIME_MODES.HISTORICAL_DAILY,
+      dailyQuantities: points.map((p) => p.quantity),
+    }),
+    selected = state.selected_quantities[0];
+  featureId = q.feature_id;
+  value.textContent = selected
+    ? `${Number(selected.value).toLocaleString("en-US", { maximumFractionDigits: 2 })} ft³/s`
+    : "No daily value";
+  time.textContent = `${date(q.time.valid_start)} · daily mean · ${q.source_approval}`;
+  quality.className = "flow-quality historical";
+  quality.textContent = "History";
+  label.textContent = date(q.time.valid_start);
+  heading.textContent = "Historical daily mean";
+  slider.setAttribute("aria-valuetext", date(q.time.valid_start));
+  cursor.setAttribute("cx", point.x.toFixed(2));
+  cursor.setAttribute("cy", point.y.toFixed(2));
+  cursor.hidden = false;
+  publish(state, GAUGE_TIME_MODES.HISTORICAL_DAILY);
 }
-
-async function main() {
-  const sourceResponse = await fetch(SOURCE_URL);
-  if (!sourceResponse.ok) return;
-  const source = await sourceResponse.json(),
-    agency = source.gauge?.agency ?? "USGS",
-    site = source.gauge?.id ?? "11467000",
-    featureId = `${agency}-${site}`,
-    ready = await waitForHydrology();
-  if (!ready || !ready.graph.points.length) return;
-
-  const currentState = ready.currentState,
-    graph = ready.graph,
-    dailyQuantities = graph.points.map((point) => point.quantity),
-    nowIndex = dailyQuantities.length;
-
+function updateGraph(next) {
+  const previous = graph?.points?.[Number(slider.value)]?.time;
+  graph = next;
+  const count = graph?.points?.length ?? 0;
   slider.min = "0";
-  slider.max = String(nowIndex);
-  slider.value = String(nowIndex);
-  slider.disabled = false;
-  slider.setAttribute("aria-valuemin", "0");
-  slider.setAttribute("aria-valuemax", String(nowIndex));
-  slider.setAttribute("aria-valuetext", "Now");
-
-  function apply(index) {
-    if (index >= nowIndex) {
-      historyCursor.hidden = true;
-      selectionLabel.textContent = "Now";
-      selectionLabel.classList.remove("history-selected");
-      timelineHeading.textContent = "Live continuous observation";
-      slider.setAttribute("aria-valuetext", "Now");
-      setFlowPresentation(currentPresentation(currentState, featureId));
-      dispatchState(currentState, GAUGE_TIME_MODES.CURRENT_CONTINUOUS, featureId);
-      return;
-    }
-
-    const point = graph.points[index],
-      q = point.quantity,
-      startMs = Date.parse(q.time.valid_start),
-      endMs = Date.parse(q.time.valid_end),
-      validTime = new Date(startMs + Math.max(1, endMs - startMs) / 2).toISOString(),
-      state = resolveGaugeDischargeState({
-        featureId,
-        validTime,
-        mode: GAUGE_TIME_MODES.HISTORICAL_DAILY,
-        dailyQuantities,
-      });
-
-    historyCursor.setAttribute("cx", point.x.toFixed(2));
-    historyCursor.setAttribute("cy", point.y.toFixed(2));
-    historyCursor.hidden = false;
-    selectionLabel.textContent = formatDate(q.time.valid_start, { year: false });
-    selectionLabel.classList.add("history-selected");
-    timelineHeading.textContent = "Historical daily mean — scrub to compare dates";
-    slider.setAttribute("aria-valuetext", formatDate(q.time.valid_start));
-    setFlowPresentation(historicalPresentation(state));
-    dispatchState(state, GAUGE_TIME_MODES.HISTORICAL_DAILY, featureId);
-  }
-
-  slider.addEventListener("input", () => apply(Number(slider.value)));
-  apply(nowIndex);
+  slider.max = String(count);
+  slider.disabled = count === 0;
+  play.disabled = count === 0;
+  now.disabled = !currentState;
+  const oldIndex = graph?.points?.findIndex((p) => p.time === previous) ?? -1;
+  slider.value = String(live || oldIndex < 0 ? count : oldIndex);
+  apply(Number(slider.value));
 }
-
-main().catch((error) => console.warn("Interactive river time unavailable", error));
+addEventListener("river-pulse-current-change", (event) => {
+  currentState = event.detail.state;
+  featureId = event.detail.monitoringLocationId;
+  offline = Boolean(event.detail.offline);
+  now.disabled = false;
+  if (live) apply(graph?.points?.length ?? 0);
+});
+addEventListener("river-pulse-history-change", (event) =>
+  updateGraph(event.detail.graph),
+);
+slider.addEventListener("input", () => {
+  stop();
+  apply(Number(slider.value));
+});
+now.addEventListener("click", () => {
+  stop();
+  apply(graph?.points?.length ?? 0);
+});
+play.addEventListener("click", () => {
+  if (timer) return stop();
+  if (live) {
+    slider.value = "0";
+    apply(0);
+  }
+  play.textContent = "Pause history";
+  play.setAttribute("aria-pressed", "true");
+  timer = setInterval(() => {
+    const index = Number(slider.value) + 1,
+      count = graph?.points?.length ?? 0;
+    slider.value = String(index);
+    apply(index);
+    if (index >= count) stop();
+  }, 1200);
+});
+addEventListener("visibilitychange", () => {
+  if (document.hidden) stop();
+});
+updateGraph(graph);

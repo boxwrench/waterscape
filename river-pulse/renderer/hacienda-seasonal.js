@@ -33,9 +33,13 @@ function datePartsForState(state, observation, timeZone) {
 }
 
 function selectedDischarge(state, monitoringLocationId) {
-  return state?.selected_quantities?.find(
-    (candidate) => candidate.feature_id === monitoringLocationId && candidate.phenomenon === "discharge",
-  ) ?? null;
+  return (
+    state?.selected_quantities?.find(
+      (candidate) =>
+        candidate.feature_id === monitoringLocationId &&
+        candidate.phenomenon === "discharge",
+    ) ?? null
+  );
 }
 
 function publish(condition, monthDay) {
@@ -52,7 +56,9 @@ function publish(condition, monthDay) {
   );
 }
 
-function publishUnavailable(message = "USGS day-of-year statistics could not be loaded") {
+function publishUnavailable(
+  message = "USGS day-of-year statistics could not be loaded",
+) {
   const condition = {
     kind: "unavailable",
     label: "Seasonal context unavailable",
@@ -85,7 +91,11 @@ async function updateForState(state) {
   );
 
   try {
-    const stats = await fetchDayOfYearStatistics(monitoringLocationId, monthDay, validDate);
+    const stats = await fetchDayOfYearStatistics(
+      monitoringLocationId,
+      monthDay,
+      validDate,
+    );
     if (sequence !== requestSequence) return;
     publish(streamflowCondition(observation, stats.quantities), monthDay);
   } catch (error) {
@@ -96,13 +106,15 @@ async function updateForState(state) {
 }
 
 function scheduleUpdate(state) {
+  requestSequence++;
   clearTimeout(debounceTimer);
   debounceTimer = setTimeout(() => updateForState(state), 180);
 }
 
 async function main() {
   const sourceResponse = await fetch(SOURCE_URL);
-  if (!sourceResponse.ok) throw new Error(`Source manifest ${sourceResponse.status}`);
+  if (!sourceResponse.ok)
+    throw new Error(`Source manifest ${sourceResponse.status}`);
   const source = await sourceResponse.json(),
     agency = source.gauge?.agency ?? "USGS",
     site = source.gauge?.id ?? "11467000";
@@ -111,7 +123,9 @@ async function main() {
     timeZone: source.timeZone ?? "America/Los_Angeles",
   };
 
-  window.addEventListener("river-pulse-state-change", (event) => scheduleUpdate(event.detail?.state));
+  window.addEventListener("river-pulse-state-change", (event) =>
+    scheduleUpdate(event.detail?.state),
+  );
 
   // The time controller may have emitted its initial state before this module attached.
   // Reading the shared selected state makes startup order deterministic either way.

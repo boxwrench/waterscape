@@ -11,15 +11,38 @@ async function moduleGraph(file) {
   modules.add(file);
   const source = await readFile(file, "utf8");
   // Specifiers never contain spaces or commas (keeps words like 'from' in string lists out).
-  for (const match of source.matchAll(/(?:from\s*|import\s*\()\s*['"]([^'"\s,]+)['"]/g)) {
-    if (!match[1].startsWith(".")) throw Error(`External browser import: ${match[1]}`);
+  for (const match of source.matchAll(
+    /(?:from\s*|import\s*\()\s*['"]([^'"\s,]+)['"]/g,
+  )) {
+    if (!match[1].startsWith("."))
+      throw Error(`External browser import: ${match[1]}`);
     await moduleGraph(path.resolve(path.dirname(file), match[1]));
   }
 }
-for (const entry of ["renderer/explore.js", "site/journey.js", "river-pulse/renderer/hacienda.js"])
-  await moduleGraph(path.join(root, entry));
+// HTML is the source of truth for browser entry points and stylesheets. Independent
+// timeline/seasonal modules must ship even when the scene does not import them.
+const htmlFiles = [
+    "index.html",
+    "renderer/explore.html",
+    "river-pulse/renderer/hacienda.html",
+  ],
+  htmlAssets = new Set();
+for (const entry of htmlFiles) {
+  const file = path.join(root, entry),
+    html = await readFile(file, "utf8");
+  for (const match of html.matchAll(
+    /<(script|link)\b[^>]*(?:src|href)=["']([^"']+)["'][^>]*>/g,
+  )) {
+    const specifier = match[2];
+    if (!specifier.startsWith(".")) continue;
+    const asset = path.resolve(path.dirname(file), specifier);
+    if (match[1] === "script") await moduleGraph(asset);
+    else if (/rel=["']stylesheet["']/.test(match[0])) htmlAssets.add(asset);
+  }
+}
 for (const file of [
   ...modules,
+  ...htmlAssets,
   ...[
     "site/journey.css",
     "index.html",
@@ -48,6 +71,12 @@ await cp(path.join(root, "data"), path.join(out, "data"), {
   filter: (src) => !src.endsWith("terrain.bin"),
 });
 // River Pulse packages are additive and currently contain authored source plus generated terrain.
-await cp(path.join(root, "river-pulse", "data"), path.join(out, "river-pulse", "data"), { recursive: true });
+await cp(
+  path.join(root, "river-pulse", "data"),
+  path.join(out, "river-pulse", "data"),
+  { recursive: true },
+);
 await writeFile(path.join(out, ".nojekyll"), "");
-console.log(`Built Pages with ${modules.size} browser modules, shared CUDA source and licensed assets.`);
+console.log(
+  `Built Pages with ${modules.size} browser modules, shared CUDA source and licensed assets.`,
+);
