@@ -169,10 +169,12 @@ select option {
 }
 .checks {
   display: flex;
-  gap: 15px;
+  flex-wrap: wrap;
+  gap: 6px 15px;
 }
 .checks label {
   font-size: 10px;
+  white-space: nowrap;
 }
 input[type="checkbox"] {
   accent-color: #acd6c5;

@@ -41,7 +41,8 @@ export async function createLandPass(rt, terrain, { biome, biomeBase }) {
   // Photographed oaks from the mesh range out to the impostor range.
   const impostors = trees ? createImpostors(terrain, biome, biomeBase, ground, trees.species) : null;
   if (impostors) scene.add(impostors.mesh);
-  let treeRange = 0;
+  let treeRange = 0,
+    treesOn = true;
   let season = 1;
   renderer.initTexture(ground.lightTex);
 
@@ -63,6 +64,12 @@ export async function createLandPass(rt, terrain, { biome, biomeBase }) {
       ground.setSeason(s);
     },
     // Within this distance the oaks are meshes; the kernel draws crowns beyond it.
+    // Show or hide the oak meshes and impostors; hidden, the kernel draws crowns everywhere.
+    setTrees(on) {
+      treesOn = on;
+      if (trees) trees.group.visible = on;
+      if (impostors) impostors.mesh.visible = on;
+    },
     get treeRange() {
       return treeRange;
     },
@@ -94,8 +101,10 @@ export async function createLandPass(rt, terrain, { biome, biomeBase }) {
       // Our yaw turns the forward vector (sin yaw, ., -cos yaw); three's camera looks down -z.
       if (state.quality !== grassTier) grass.setTier((grassTier = state.quality));
       grass.update(state);
-      trees?.update(state, season);
-      treeRange = impostors ? impostors.update(state, trees.range) : (trees?.range ?? 0);
+      if (treesOn) {
+        trees?.update(state, season);
+        treeRange = impostors ? impostors.update(state, trees.range) : (trees?.range ?? 0);
+      } else treeRange = 0;
       camera.position.set(state.x, state.y, state.z);
       camera.rotation.set(state.pitch, -state.yaw, 0);
       renderer.setRenderTarget(target);

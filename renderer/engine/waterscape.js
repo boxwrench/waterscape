@@ -40,6 +40,8 @@ export async function createWaterscape(
       view: 0,
       season: 1,
       glare: true,
+      // Oak meshes and impostors (false: the shader's procedural crowns everywhere).
+      trees: true,
     },
     diag = {
       ready: false,
@@ -270,6 +272,7 @@ export async function createWaterscape(
   }
   function render() {
     landPass?.setSeason(settings.season);
+    landPass?.setTrees?.(settings.trees);
     landPass?.render(state);
     const batch = rt.batch(),
       grid = [width / 8, height / 8, 1];
