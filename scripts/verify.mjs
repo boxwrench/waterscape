@@ -231,6 +231,9 @@ try {
     assert.equal(q.tier, tier, JSON.stringify(q));
     assert.equal(await tp.evaluate(() => window.waterscapeLab.state.quality), tier);
     if (name === "low") {
+      // The budget is timed at the overlook; the page opens at the shoreline, where the water
+      // fills most of the frame and costs more.
+      await tp.locator('[data-preset="overlook"]').click();
       await tp.selectOption("#quality", "768");
       await tp.waitForFunction(() => window.waterscapeDiagnostics.width === 768);
       await tp.waitForTimeout(1500);

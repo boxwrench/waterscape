@@ -138,8 +138,9 @@
           rows.push({ id, size: 2 * s, centre: [centre.x, centre.y, centre.z] });
         }
         return {
-          albedo: sheets.albedo.toDataURL("image/png"),
-          normal: sheets.normal.toDataURL("image/png"),
+          // WebP keeps alpha at a fraction of PNG's size.
+          albedo: sheets.albedo.toDataURL("image/webp", 0.88),
+          normal: sheets.normal.toDataURL("image/webp", 0.92),
           rows,
         };
       };

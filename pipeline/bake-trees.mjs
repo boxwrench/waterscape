@@ -88,7 +88,7 @@ try {
       [rowsFor.map((v) => v.id), { ...spec, tints: rowsFor.map((v) => manifest.trees.tints[v.species].spring) }],
     );
   for (const kind of ["albedo", "normal"]) {
-    const file = `trees/impostor-${kind}.png`;
+    const file = `trees/impostor-${kind}.webp`;
     await writeFile(path.join(biomeDir, file), Buffer.from(sheets[kind].split(",")[1], "base64"));
     textures[`impostor${kind[0].toUpperCase()}${kind.slice(1)}`] = file;
   }

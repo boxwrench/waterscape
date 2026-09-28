@@ -1,6 +1,6 @@
 import http from 'node:http';import {readFile,stat} from 'node:fs/promises';import {fileURLToPath} from 'node:url';import path from 'node:path';
 export function createStaticServer(root=fileURLToPath(new URL('../',import.meta.url))){
-  root=path.resolve(root);const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.cu':'text/plain; charset=utf-8','.wgsl':'text/plain; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.ico':'image/x-icon'};
+  root=path.resolve(root);const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.cu':'text/plain; charset=utf-8','.wgsl':'text/plain; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.ico':'image/x-icon'};
   return http.createServer(async(req,res)=>{
     try{
       const url=new URL(req.url,'http://localhost'),decoded=decodeURIComponent(url.pathname);

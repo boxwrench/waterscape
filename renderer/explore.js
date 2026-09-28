@@ -303,6 +303,11 @@ try {
   $("place").textContent = terrain.meta.name.toUpperCase();
   $("coords").textContent = formatLatLon(terrain.latLon(0, 0));
   intro();
+  // Open at the waterline, where the shallow water and the land read best.
+  if (body.viewpoints.shore) {
+    ws.state.viewpoint = "shore";
+    $("energy").value = 0.3;
+  }
   buildViewpoints();
   const pose = q.get("pose")?.split(",").map(Number);
   if (pose?.length === 5 && pose.every(Number.isFinite))

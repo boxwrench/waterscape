@@ -237,8 +237,8 @@
       "bark": "trees/bark.jpg",
       "barkNormal": "trees/barkNormal.jpg",
       "leaf": "trees/leaf.png",
-      "impostorAlbedo": "trees/impostor-albedo.png",
-      "impostorNormal": "trees/impostor-normal.png"
+      "impostorAlbedo": "trees/impostor-albedo.webp",
+      "impostorNormal": "trees/impostor-normal.webp"
     },
     "generator": "ez-tree 1.1.0 (MIT), pipeline/bake-trees.mjs",
     "baked": [
