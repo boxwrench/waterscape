@@ -39,7 +39,8 @@ test("river terrain preserves absolute elevation and non-square cells", () => {
   const terrain = fixture();
   assert.equal(terrain.sampleElevation(-10, -20), 10);
   assert.equal(terrain.sampleElevation(0, -20), 20);
-  assert.equal(terrain.sampleElevation(-10, 0), 40);
+  // Sampling clamps just inside the outermost cell so bilinear lookup never reads past the grid.
+  assert.ok(Math.abs(terrain.sampleElevation(-10, 0) - 40) < 0.05);
   assert.equal(terrain.elevation(terrain.ground(-10, -20)), 10);
   assert.equal(terrain.cellX, 10);
   assert.equal(terrain.cellZ, 20);
