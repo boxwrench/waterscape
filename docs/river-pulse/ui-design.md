@@ -12,7 +12,7 @@ A visitor should be able to answer three questions at increasing depth:
 2. **How does it compare?** — timeline, historical context, forecast, and linked charts.
 3. **How do we know?** — exact values, source, time semantics, method, quality, and visual mapping.
 
-The interface can be beautiful and game-like without blurring measured data, model output, and illustrative rendering.
+The interface can be beautiful and game-like without blurring measured data, model output, and illustrative rendering. Visual quality is part of the product, not a decorative layer added after the data path works.
 
 ## Visual character
 
@@ -20,8 +20,41 @@ The interface can be beautiful and game-like without blurring measured data, mod
 - Restrained river-green / blue accents rather than a saturated dashboard palette.
 - Large place names and small technical labels: landscape first, instrumentation second.
 - Rounded glass surfaces, thin borders, soft depth, and compact controls.
-- Motion should feel geographic: camera travel, layered fades, timeline transitions, and spatial selection.
+- Motion should feel geographic: camera travel, layered fades, timeline transitions, spatial selection, and visible downstream flow cues.
 - Use full-screen 3D whenever it adds information; do not shrink the scene into a card surrounded by charts.
+
+## Two visual regimes
+
+River Pulse has two deliberately different water presentation scales. They consume the same selected scientific state through visual bindings, but the rendering problem is different.
+
+### Corridor / overhead
+
+The corridor view is a long-range spatial visualization. Its job is to make the river readable across miles, not to reproduce close-up water optics everywhere.
+
+A first-class corridor representation may use:
+
+- an animated river ribbon/corridor following authoritative hydrography
+- **relative-flow width**: illustrative widening/narrowing tied to selected discharge or a declared comparison baseline
+- **seasonal-condition color**: the USGS day-of-year condition class mapped to the river corridor
+- directional motion, texture, or restrained particles to communicate downstream flow
+- LOD appropriate to map-scale viewing
+
+Relative width and seasonal color are different encodings. The interface should allow a simple display toggle such as `Flow width` / `Seasonal color` rather than forcing both encodings simultaneously.
+
+An illustrative width is not a measured bank edge, channel width, or water-surface extent. That distinction belongs in the visual binding and inspector.
+
+### Authored-place / hero
+
+Hacienda, Jenner, and later authored places are close-range experiences. Their water should prioritize believable local appearance and composition:
+
+- surface detail and current cues
+- reflections/refraction and attenuation
+- foam/turbulence where useful
+- caustics where useful at close range
+- interaction with bridge/shoreline/rocks/vegetation
+- authored lighting and camera composition
+
+The hero renderer may use a local visual facsimile tuned to the phenomenon being communicated. It is not required to share the corridor ribbon's geometry or shader. Apparent local width, level, current direction, depth, or turbulence become factual only when supported by the corresponding source/model.
 
 ## Information hierarchy
 
@@ -31,7 +64,7 @@ Keep only the essentials visible:
 
 - River Pulse / river identity
 - current authored place
-- active data mode
+- active data/display mode
 - source/status cue
 - one compact time control when hydrology is connected
 
@@ -45,6 +78,7 @@ Show when relevant:
 - historical comparison
 - forecast state
 - uncertainty
+- river display toggle when more than one useful encoding is available
 
 ### Inspectable
 
@@ -56,17 +90,19 @@ Hide deeper evidence behind an explicit inspection action:
 - selection policy
 - source flags
 - model version
-- visual-binding explanation
+- visual-binding explanation, including whether geometry/behavior is direct, derived, modelled, or illustrative
 
-## Data modes
+## Data and display modes
 
-`Terrain`, `Flow`, and `Forecast` are understandable user-facing modes. They are not evidence types in the data model.
+`Terrain`, `Flow`, and `Forecast` are understandable user-facing data modes. They are not evidence types in the data model.
+
+Display choices such as `Flow width` and `Seasonal color` are presentation choices inside a data mode; they must not alter the underlying selected Quantity or RiverState.
 
 The UI must not imply a mode is available when its required data is absent. Disabled or unavailable states should be explicit rather than silently substituted.
 
 ## Authored places
 
-An authored place should feel recognizable and intentional. Use high-quality photographic references to guide camera composition, bridge/landmark placement, vegetation, riverbank character, and lighting.
+An authored place should feel recognizable and intentional. Use high-quality photographic references to guide camera composition, bridge/landmark placement, vegetation, riverbank character, water appearance, and lighting.
 
 Each authored place should expose a small set of named views, for example:
 
@@ -81,17 +117,19 @@ Transitions between views should preserve geographic continuity rather than tele
 
 Clicking or tapping the world should select a spatial feature or terrain point where possible.
 
-The inspector should report exact geographic/elevation information independently from illustrative effects. Later, selecting a gauge or reach should use the same interaction pattern to expose hydrologic quantities and provenance.
+The inspector should report exact geographic/elevation information independently from illustrative effects. Selecting a gauge, reach, or rendered river state should use the same interaction pattern to expose hydrologic quantities, provenance, and the active visual mapping.
 
 ## Timeline
 
 The timeline is a primary interaction system, not a decorative chart.
 
-When implemented, one scrub should coordinate:
+One scrub should coordinate:
 
 - scene state
 - gauge values
-- historical context
+- seasonal context
+- corridor representation
+- authored-place water response where supported
 - weather
 - model output
 - charts
@@ -108,20 +146,22 @@ Mobile should become a compact heads-up display / bottom-sheet experience:
 - preserve most of the screen for the world
 - collapse descriptive copy first
 - retain place identity, time control, and the currently selected value
+- retain the active river display mode when it materially changes interpretation
 - use touch-friendly authored-view controls
 
 Do not create a separate reduced-information mobile product unless performance requires it.
 
 ## Current Hacienda prototype
 
-The first Hacienda page establishes this language before live streamflow is connected:
+The Hacienda branch currently establishes:
 
 - full-screen WebGPU terrain
 - River Pulse / Russian River identity
 - authored Overview and Bridge views
-- USGS gauge identity
-- direct terrain inspection
-- source/datum provenance
-- a visible but inactive future `History → Flow → Forecast` vocabulary
+- USGS gauge identity and live discharge path
+- recent daily-mean hydrograph and interactive historical time selection
+- USGS seasonal-condition context
+- direct terrain inspection and provenance
+- authoritative river geometry as a separate layer
 
-The UI should evolve with the data path. Do not fill unfinished modes with fake values merely to make the interface look complete.
+The next visual step is to make the river itself first-class: a map-scale animated corridor with relative-flow-width and seasonal-color display modes, followed separately by a higher-detail authored-place water treatment. Do not fill unsupported hydraulic quantities merely to make either renderer look complete.
