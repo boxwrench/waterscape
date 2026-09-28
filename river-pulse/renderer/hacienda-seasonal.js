@@ -38,13 +38,29 @@ function selectedDischarge(state, monitoringLocationId) {
   ) ?? null;
 }
 
-function render(condition, monthDay) {
+function publish(condition, monthDay) {
   conditionCard.dataset.condition = condition.kind;
   conditionLabel.textContent = condition.label;
   conditionDetail.textContent = condition.rankable
     ? `${condition.detail} · ${condition.sample_count} historical day-of-year observations for ${monthDay}`
     : condition.detail;
   window.riverPulseSeasonalCondition = condition;
+  window.dispatchEvent(
+    new CustomEvent("river-pulse-condition-change", {
+      detail: { condition, monthDay },
+    }),
+  );
+}
+
+function publishUnavailable(message = "USGS day-of-year statistics could not be loaded") {
+  const condition = {
+    kind: "unavailable",
+    label: "Seasonal context unavailable",
+    detail: message,
+    rankable: false,
+    representation: "historical-context",
+  };
+  publish(condition, "—");
 }
 
 async function updateForState(state) {
@@ -55,24 +71,27 @@ async function updateForState(state) {
     sequence = ++requestSequence;
 
   if (!observation) {
-    render(streamflowCondition(null, []), monthDay);
+    publish(streamflowCondition(null, []), monthDay);
     return;
   }
 
   conditionCard.dataset.condition = "checking";
   conditionLabel.textContent = "Checking historical context…";
   conditionDetail.textContent = `USGS day-of-year statistics for ${monthDay}`;
+  window.dispatchEvent(
+    new CustomEvent("river-pulse-condition-change", {
+      detail: { condition: { kind: "checking" }, monthDay },
+    }),
+  );
 
   try {
     const stats = await fetchDayOfYearStatistics(monitoringLocationId, monthDay, validDate);
     if (sequence !== requestSequence) return;
-    render(streamflowCondition(observation, stats.quantities), monthDay);
+    publish(streamflowCondition(observation, stats.quantities), monthDay);
   } catch (error) {
     if (sequence !== requestSequence) return;
     console.warn("Seasonal streamflow context unavailable", error);
-    conditionCard.dataset.condition = "unavailable";
-    conditionLabel.textContent = "Seasonal context unavailable";
-    conditionDetail.textContent = "USGS day-of-year statistics could not be loaded";
+    publishUnavailable();
   }
 }
 
@@ -101,7 +120,5 @@ async function main() {
 
 main().catch((error) => {
   console.warn("Seasonal streamflow context unavailable", error);
-  conditionCard.dataset.condition = "unavailable";
-  conditionLabel.textContent = "Seasonal context unavailable";
-  conditionDetail.textContent = "USGS day-of-year statistics could not be loaded";
+  publishUnavailable();
 });
