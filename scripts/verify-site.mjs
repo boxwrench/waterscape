@@ -58,11 +58,10 @@ try {
   // Video tier: no 3D offer.
   assert.equal(await page.isVisible("#explore"), false);
 
-  // Live tier: the iframe opens at the shoreline viewpoint and reports frame times.
+  // Live tier: the page opens straight into 3D at the shoreline viewpoint and reports frame times.
   const live = await browser.newPage({ viewport: { width: 1280, height: 800 } });
   await live.goto(`${base}/?tier=live&quality=low`);
   await live.waitForSelector("#explore", { state: "visible" });
-  await live.click("#explore");
   const frame = await (await live.waitForSelector("#liveFrame")).contentFrame();
   await frame.waitForFunction(() => window.waterscapeDiagnostics?.ready, null, { timeout: 120000 });
   await live.waitForFunction(() => window.waterscapeJourney.live?.frameTimes.length > 0, null, {
@@ -88,12 +87,14 @@ try {
   assert.equal(await live.isVisible("#livePreset"), true);
   await live.selectOption("#livePreset", "midday");
   await frame.waitForFunction(() => window.waterscapeDiagnostics?.preset === "midday");
+  // Changing stop while live opens the next stop live.
+  await live.keyboard.press("ArrowRight");
+  await live.waitForSelector('#liveFrame[src*="reservoir=san_antonio"]');
+  // Back to video closes the renderer and later stops stay on video.
   await live.click("#explore");
   assert.equal(await live.$("#liveFrame"), null);
-  // Changing stop while live also closes the renderer.
-  await live.click("#explore");
-  await live.waitForSelector("#liveFrame");
-  await live.keyboard.press("ArrowRight");
+  await live.keyboard.press("ArrowLeft");
+  await live.waitForTimeout(300);
   assert.equal(await live.$("#liveFrame"), null);
   await live.close();
 
@@ -101,9 +102,7 @@ try {
   const failing = await browser.newPage({ viewport: { width: 1280, height: 800 } });
   await failing.route("**/data/calaveras/terrain.bin.gz", (r) => r.abort());
   await failing.goto(`${base}/?tier=live`);
-  await failing.waitForSelector("#explore", { state: "visible" });
-  await failing.click("#explore");
-  await failing.waitForSelector("#liveFrame");
+  await failing.waitForSelector("#liveFrame", { state: "attached" });
   await failing.waitForFunction(
     () => !document.getElementById("liveFrame") && !document.getElementById("stage").classList.contains("live"),
     null,

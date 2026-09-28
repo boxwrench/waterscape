@@ -3,7 +3,8 @@
 import { liveCapable } from "./device.js";
 import { poseAt } from "./flyover-path.js";
 const $ = (id) => document.getElementById(id);
-const state = { stops: [], index: 0, live: null };
+// preferLive: open each stop in live 3D (on when WebGPU is available, off after "Back to video").
+const state = { stops: [], index: 0, live: null, preferLive: false };
 window.waterscapeJourney = state;
 const dataUrl = (id, file) => `./data/${id}/${file}`;
 
@@ -134,6 +135,7 @@ addEventListener("message", (e) => {
   if (e.origin !== location.origin || e.source !== $("liveFrame")?.contentWindow || !state.live)
     return;
   if (e.data?.type === "waterscape:failed") {
+    state.preferLive = false;
     leaveLive();
     return;
   }
@@ -163,13 +165,17 @@ function show(i) {
     .querySelectorAll("li")
     .forEach((li, j) => li.classList.toggle("active", j === i));
   history.replaceState(null, "", `${location.search}#stop=${stop.id}`);
+  if (state.preferLive) enterLive();
 }
 
 $("flyover").addEventListener("playing", () => $("stage").classList.add("playing"));
 $("flyover").addEventListener("error", () => $("stage").classList.add("video-failed"));
 $("prev").onclick = () => show(state.index - 1);
 $("next").onclick = () => show(state.index + 1);
-$("explore").onclick = () => (state.live ? leaveLive() : enterLive());
+$("explore").onclick = () => {
+  state.preferLive = !state.live;
+  state.live ? leaveLive() : enterLive();
+};
 $("slowBack").onclick = leaveLive;
 $("livePreset").value = new URLSearchParams(location.search).get("preset") || "golden";
 $("livePreset").onchange = () =>
@@ -202,4 +208,11 @@ addEventListener("hashchange", showFromHash);
 await loadJourney();
 renderMap();
 showFromHash();
-liveCapable().then((ok) => ($("explore").hidden = !ok));
+// Capable browsers open straight into live 3D; the video plays until its first frame.
+liveCapable().then((ok) => {
+  $("explore").hidden = !ok;
+  if (ok && !state.live) {
+    state.preferLive = true;
+    enterLive();
+  }
+});
