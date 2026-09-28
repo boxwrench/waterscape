@@ -60,12 +60,14 @@ export async function loadPlaceManifest(url, fetchImpl = fetch) {
   return Object.freeze(manifest);
 }
 
-export async function loadPlaceFromRegistry({ registryUrl, riverPack, placeId, fetchImpl = fetch }) {
+export async function loadPlaceFromRegistry({ registryUrl, riverPack, placeId, fetchImpl = fetch, baseUrl = null }) {
   const registry = await loadPlaceRegistry(registryUrl, fetchImpl),
     entry = findPlaceEntry(registry, riverPack, placeId);
   if (!entry) throw new Error(`Unknown River Pulse place: ${riverPack}/${placeId}`);
 
-  const manifestUrl = new URL(entry.manifest, new URL(registryUrl, "https://river-pulse.local/")).toString(),
+  const runtimeBase = baseUrl ?? (typeof location !== "undefined" ? location.href : "https://river-pulse.local/"),
+    registryAbsolute = new URL(registryUrl, runtimeBase),
+    manifestUrl = new URL(entry.manifest, registryAbsolute).toString(),
     manifest = await loadPlaceManifest(manifestUrl, fetchImpl);
   if (manifest.id !== entry.id || manifest.river_pack !== entry.river_pack)
     throw new Error(`Registry/manifest identity mismatch for ${riverPack}/${placeId}`);
