@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="./hacienda-label.css">
   <link rel="stylesheet" href="./hacienda-flow.css">
   <link rel="stylesheet" href="./hacienda-time.css">
+  <link rel="stylesheet" href="./hacienda-river.css">
 </head>
 <body>
   <canvas id="scene" aria-label="Interactive 3D terrain around Hacienda Bridge on the Russian River"></canvas>
@@ -79,6 +80,20 @@
           <strong id="condition-label">Checking historical context…</strong>
         </div>
         <small id="condition-detail">USGS day-of-year statistics</small>
+      </div>
+
+      <div class="river-display-control" aria-label="River display">
+        <div class="river-display-heading">
+          <div>
+            <span class="micro-label">River display</span>
+            <strong>Illustrative corridor</strong>
+          </div>
+          <small id="river-mode-note" class="river-mode-note">Width responds to selected discharge; it is not measured bank width.</small>
+        </div>
+        <div class="river-mode-buttons" role="group" aria-label="River corridor representation">
+          <button id="river-width-mode" class="river-mode-button active" type="button" aria-pressed="true">Flow width</button>
+          <button id="river-color-mode" class="river-mode-button" type="button" aria-pressed="false">Season color</button>
+        </div>
       </div>
 
       <div class="history-card" aria-live="polite">
