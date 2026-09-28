@@ -11,6 +11,7 @@ const canvas = document.querySelector("#scene"),
   inspectTitle = document.querySelector("#inspect-title"),
   sourceDetail = document.querySelector("#source-detail"),
   gaugeId = document.querySelector("#gauge-id"),
+  gaugeWorldLabel = document.querySelector("#gauge-world-label"),
   sceneState = document.querySelector("#scene-state"),
   loading = document.querySelector("#loading"),
   errorBox = document.querySelector("#error"),
@@ -82,7 +83,10 @@ async function main() {
   if (!navigator.gpu) throw new Error("WebGPU is required for the live terrain prototype.");
 
   const [terrain, source] = await Promise.all([loadRiverTerrain(TERRAIN_BASE), fetchJson(SOURCE_URL)]);
-  gaugeId.textContent = `${source.gauge?.agency ?? "USGS"} ${source.gauge?.id ?? "11467000"}`;
+  const gaugeAgency = source.gauge?.agency ?? "USGS",
+    gaugeNumber = source.gauge?.id ?? "11467000";
+  gaugeId.textContent = `${gaugeAgency} ${gaugeNumber}`;
+  gaugeWorldLabel.querySelector("span").textContent = `${gaugeAgency} ${gaugeNumber}`;
   sourceDetail.textContent =
     `${terrain.meta.source}. Horizontal reference ${terrain.meta.crs}; vertical reference ${terrain.meta.verticalDatum}. ` +
     `Scene coordinates preserve the absolute elevation relationship; no reservoir water-level assumption is used.`;
@@ -112,6 +116,21 @@ async function main() {
     sun = new THREE.DirectionalLight(0xffefd0, 3.4);
   sun.position.set(-3000, 5000, 1500);
   scene.add(hemi, sun);
+
+  // The configured anchor is the USGS Hacienda gauge, so it is local (0, 0) by construction.
+  const gaugeGround = terrain.ground(0, 0),
+    gaugeMaterial = new THREE.MeshBasicNodeMaterial({ color: 0x8bd7bd }),
+    gaugeBeacon = new THREE.Group(),
+    gaugePost = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 13, 10), gaugeMaterial),
+    gaugeRing = new THREE.Mesh(new THREE.TorusGeometry(4.2, 0.18, 10, 40), gaugeMaterial);
+  gaugePost.position.y = 6.5;
+  gaugeRing.position.y = 13;
+  gaugeRing.rotation.x = Math.PI / 2;
+  gaugeBeacon.add(gaugePost, gaugeRing);
+  gaugeBeacon.position.set(0, gaugeGround + 1, 0);
+  scene.add(gaugeBeacon);
+  const gaugeLabelPoint = new THREE.Vector3(0, gaugeGround + 16, 0),
+    gaugeProjection = new THREE.Vector3();
 
   const markerMaterial = new THREE.MeshBasicNodeMaterial({ color: 0x8bd7bd }),
     marker = new THREE.Mesh(new THREE.SphereGeometry(3.2, 20, 12), markerMaterial);
@@ -207,6 +226,19 @@ async function main() {
       elevation.textContent = `${terrain.elevation(state.y).toFixed(1)} m NAVD88`;
       agl.textContent = `${Math.round(state.y - terrain.ground(state.x, state.z))} m`;
     }
+
+    gaugeProjection.copy(gaugeLabelPoint).project(camera);
+    const gaugeVisible =
+      gaugeProjection.z > -1 &&
+      gaugeProjection.z < 1 &&
+      Math.abs(gaugeProjection.x) < 1.08 &&
+      Math.abs(gaugeProjection.y) < 1.08;
+    gaugeWorldLabel.classList.toggle("visible", gaugeVisible);
+    if (gaugeVisible) {
+      gaugeWorldLabel.style.left = `${(gaugeProjection.x * 0.5 + 0.5) * innerWidth}px`;
+      gaugeWorldLabel.style.top = `${(-gaugeProjection.y * 0.5 + 0.5) * innerHeight}px`;
+    }
+
     renderer.render(scene, camera);
   });
 }
