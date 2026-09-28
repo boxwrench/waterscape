@@ -1,9 +1,10 @@
 import * as THREE from "../../vendor/three/three.webgpu.js";
 import { fly, viewRay } from "../../renderer/engine/camera.js";
-import { fetchLatestContinuous } from "../adapters/usgs.js";
+import { fetchDailyValues, fetchLatestContinuous } from "../adapters/usgs.js";
 import { riverState } from "../data-model/river-state.js";
 import { latestAtOrBeforePolicy } from "../data-model/selection.js";
 import { observedFlowStatus } from "../visual-bindings/flow-status.js";
+import { dailyHydrograph } from "../visual-bindings/hydrograph.js";
 import { loadRiverTerrain } from "./terrain.js";
 import { buildRiverTerrainGrid } from "./terrain-mesh.js";
 
@@ -19,6 +20,13 @@ const canvas = document.querySelector("#scene"),
   flowValue = document.querySelector("#flow-value"),
   flowTime = document.querySelector("#flow-time"),
   flowQuality = document.querySelector("#flow-quality"),
+  historyLine = document.querySelector("#history-line"),
+  historyArea = document.querySelector("#history-area"),
+  historyEmpty = document.querySelector("#history-empty"),
+  historyStatus = document.querySelector("#history-status"),
+  historyStart = document.querySelector("#history-start"),
+  historyRange = document.querySelector("#history-range"),
+  historyEnd = document.querySelector("#history-end"),
   sceneState = document.querySelector("#scene-state"),
   loading = document.querySelector("#loading"),
   errorBox = document.querySelector("#error"),
@@ -81,11 +89,47 @@ function formatLatLon([lat, lon]) {
   return `${lat.toFixed(5)}°, ${lon.toFixed(5)}°`;
 }
 
+function formatDate(iso) {
+  const date = new Date(iso);
+  if (!Number.isFinite(date.getTime())) return iso;
+  return new Intl.DateTimeFormat("en-US", { timeZone: "UTC", month: "short", day: "numeric" }).format(date);
+}
+
+function dateOnly(date) {
+  return date.toISOString().slice(0, 10);
+}
+
 function setFlowPresentation(presentation) {
   flowValue.textContent = presentation.headline;
   flowTime.textContent = presentation.detail;
   flowQuality.className = `flow-quality ${presentation.kind}`;
   flowQuality.textContent = presentation.badge;
+}
+
+function setHistoryPresentation(graph) {
+  window.riverPulseHistory = graph;
+  if (graph.kind !== "series") {
+    historyLine.setAttribute("d", "");
+    historyArea.setAttribute("d", "");
+    historyEmpty.hidden = false;
+    historyStatus.textContent = "No eligible values";
+    historyStart.textContent = "—";
+    historyRange.textContent = "—";
+    historyEnd.textContent = "—";
+    return;
+  }
+
+  const bottom = 84,
+    first = graph.points[0],
+    last = graph.points.at(-1),
+    areaPath = `M${first.x.toFixed(2)},${bottom} ${graph.path.replace(/^M/, "L")} L${last.x.toFixed(2)},${bottom} Z`;
+  historyLine.setAttribute("d", graph.path);
+  historyArea.setAttribute("d", areaPath);
+  historyEmpty.hidden = true;
+  historyStatus.textContent = `${graph.points.length} daily values`;
+  historyStart.textContent = formatDate(graph.first_time);
+  historyRange.textContent = `${Math.round(graph.min).toLocaleString()}–${Math.round(graph.max).toLocaleString()} ft³/s`;
+  historyEnd.textContent = formatDate(graph.last_time);
 }
 
 async function updateObservedFlow(monitoringLocationId) {
@@ -107,7 +151,6 @@ async function updateObservedFlow(monitoringLocationId) {
       }),
       presentation = observedFlowStatus(state, monitoringLocationId);
 
-    // Exposed for inspection/debugging; the page renders the presentation, not raw API records.
     window.riverPulseState = state;
     window.riverPulseFlowPresentation = presentation;
     setFlowPresentation(presentation);
@@ -119,6 +162,20 @@ async function updateObservedFlow(monitoringLocationId) {
       headline: "Flow data unavailable",
       detail: "Terrain remains available; USGS request could not be completed",
     });
+  }
+}
+
+async function updateRecentHistory(monitoringLocationId) {
+  const end = new Date(),
+    start = new Date(end.getTime() - 44 * 24 * 60 * 60 * 1000);
+  try {
+    const result = await fetchDailyValues(monitoringLocationId, dateOnly(start), dateOnly(end)),
+      graph = dailyHydrograph(result.quantities, { width: 320, height: 86, padding: 7 });
+    setHistoryPresentation(graph);
+  } catch (error) {
+    console.warn("Historical flow unavailable", error);
+    setHistoryPresentation({ kind: "empty", points: [], path: "", min: null, max: null, first_time: null, last_time: null });
+    historyStatus.textContent = "History offline";
   }
 }
 
@@ -139,12 +196,14 @@ async function main() {
   gaugeWorldLabel.querySelector("span").textContent = `${gaugeAgency} ${gaugeNumber}`;
   sourceDetail.textContent =
     `${terrain.meta.source}. Horizontal reference ${terrain.meta.crs}; vertical reference ${terrain.meta.verticalDatum}. ` +
-    `Scene coordinates preserve the absolute elevation relationship; no reservoir water-level assumption is used.`;
+    `Scene coordinates preserve the absolute elevation relationship; no reservoir water-level assumption is used. ` +
+    `Flow values use USGS Water Data; recent history is the USGS daily mean discharge statistic.`;
   status.textContent = "Terrain ready";
   sceneState.textContent = "Terrain loaded";
 
-  // Flow is intentionally independent of terrain startup: network/data failure must not prevent exploration.
+  // Hydrology is intentionally independent of terrain startup: network/data failure must not prevent exploration.
   updateObservedFlow(monitoringLocationId);
+  updateRecentHistory(monitoringLocationId);
 
   const renderer = new THREE.WebGPURenderer({ canvas, antialias: true });
   await renderer.init();
