@@ -37,21 +37,11 @@ The category is a derived contextual presentation based on an unchanged current 
 
 For historical browsing, a completed USGS daily mean can be compared with the day-of-year statistics for that historical calendar date. That historical daily mean remains a `derived_statistic`; River Pulse does not relabel it as an observation.
 
-## Corridor color mode
+## Corridor color binding
 
-Seasonal condition is one of the first map-scale river display modes. In **Seasonal color** mode, the selected condition class may drive the color of the river corridor/reach while the underlying discharge and statistics remain unchanged.
+The Hacienda map-scale river prototype now uses this condition as one optional spatial encoding. In `Season color` mode, the selected condition class chooses the corridor palette while the apparent corridor width stays fixed. This is a presentation mapping only: it does not alter the discharge Quantity, the historical statistics, or RiverState.
 
-This is intentionally separate from the planned **Flow width** mode. A user may view the same RiverState through either encoding:
-
-```text
-selected discharge + day-of-year statistics
-                ↓
-          RiverState
-             ↙   ↘
- relative width   seasonal-condition color
-```
-
-The color mode communicates the USGS-derived condition class. It does not imply a measured change in channel geometry, depth, velocity, or water-surface elevation.
+`Flow width` is a separate display mode. It uses the same selected discharge plus the day-of-year thresholds to drive an illustrative apparent width instead of condition color. Keeping these modes separate avoids making one river graphic carry two competing encodings at once.
 
 ## API status
 
