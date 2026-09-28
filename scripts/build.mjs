@@ -30,6 +30,7 @@ for (const file of [
     "river-pulse/renderer/hacienda.html",
     "river-pulse/renderer/hacienda.css",
     "river-pulse/renderer/hacienda-label.css",
+    "river-pulse/renderer/hacienda-flow.css",
     "LICENSE",
     "THIRD_PARTY_NOTICES.md",
     "vendor/cuda-webshader/LICENSE",
