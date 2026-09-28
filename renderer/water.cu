@@ -679,7 +679,8 @@ __device__ float3 terrainShade(const float4 *T, const float4 *L, float3 p, float
   // Grey-green sage and coyote brush on steep, open, sunny ground.
   float sage = smooth(.60f, .72f, noise(p.x * .045f + 3.0f, p.z * .045f)) * steep *
                (1.0f - density);
-  float3 oak = season == 0 ? v3(.030f, .085f, .030f) : v3(.040f, .075f, .032f);
+  // Olive, to meet the oak meshes' leaves where the crowns take over.
+  float3 oak = season == 0 ? v3(.040f, .082f, .032f) : v3(.050f, .074f, .036f);
   // Drawdown ring: pale bare bank just above the waterline, darker where recently wet.
   float ring = 1.0f - smooth(3.0f, 6.0f, p.y);
   float wet = 1.0f - smooth(.2f, .9f, p.y);
@@ -697,8 +698,10 @@ __device__ float3 terrainShade(const float4 *T, const float4 *L, float3 p, float
   float3 groundLit = prod(ground, add(mul(sunC, groundSun),
                                       add(mul(skyC, (.38f + .30f * n.y) * baked.y),
                                           mul(bounce, .25f * (1.0f - n.y)))));
+  // Near oak meshes let more light through than the analytic crowns imply: lighter shadows.
+  float shadowDepth = meshNear > 0.0f ? lerp(.35f, .6f, smooth(meshNear * .85f, meshNear, distance)) : .6f;
   if (given.w > 0.0f)
-    groundLit = mul(v3(given.x, given.y, given.z), 1.0f - .6f * castShadow);
+    groundLit = mul(v3(given.x, given.y, given.z), 1.0f - shadowDepth * castShadow);
   // Crowns: lit on the sun side, deep inside the foliage on the other.
   float clumps = .70f + .60f * noise(crownX * 1.1f, crownZ * 1.1f);
   float crownSun = fmaxf(0, dot3(crownN, sun)) * shadow * lerp(clumps, 1.0f, farBlend);
