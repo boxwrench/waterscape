@@ -7,6 +7,7 @@
   <title>River Pulse — Hacienda Bridge</title>
   <link rel="stylesheet" href="./hacienda.css">
   <link rel="stylesheet" href="./hacienda-label.css">
+  <link rel="stylesheet" href="./hacienda-flow.css">
 </head>
 <body>
   <canvas id="scene" aria-label="Interactive 3D terrain around Hacienda Bridge on the Russian River"></canvas>
@@ -28,7 +29,7 @@
 
     <nav class="mode-nav" aria-label="Data view">
       <button class="mode active" type="button" aria-pressed="true">Terrain</button>
-      <button class="mode" type="button" disabled title="Flow data integration is the next vertical slice">Flow</button>
+      <button class="mode" type="button" disabled title="Observed flow is being connected before the full flow visualization is enabled">Flow</button>
       <button class="mode" type="button" disabled title="Forecast integration follows the observed-flow path">Forecast</button>
     </nav>
 
@@ -48,7 +49,7 @@
       </div>
       <h1 id="place-title">Hacienda Bridge</h1>
       <p class="place-subtitle">Russian River · near Guerneville, California</p>
-      <p class="place-intro">Explore the real terrain around one of the river's long-running stream gauges. Hydrology will plug into this same scene without changing the terrain package.</p>
+      <p class="place-intro">Explore the real terrain around one of the river's long-running stream gauges. Hydrology plugs into this same scene without changing the terrain package.</p>
 
       <div class="gauge-strip">
         <div>
@@ -59,6 +60,16 @@
           <span class="micro-label">Scene</span>
           <strong id="scene-state">Terrain loaded</strong>
         </div>
+      </div>
+
+      <div class="flow-peek" aria-live="polite">
+        <div class="flow-icon" aria-hidden="true"><i></i><i></i><i></i></div>
+        <div class="flow-copy">
+          <span class="micro-label">Observed discharge</span>
+          <strong id="flow-value">Checking USGS…</strong>
+          <small id="flow-time">Latest continuous observation</small>
+        </div>
+        <span id="flow-quality" class="flow-quality checking">Checking</span>
       </div>
 
       <div class="view-buttons" aria-label="Camera views">
@@ -106,12 +117,12 @@
     <div class="time-preview">
       <div class="deck-heading">
         <span class="micro-label">River time</span>
-        <strong>Observed data path comes next</strong>
+        <strong>Observed data path is now connected; historical context comes next</strong>
       </div>
       <div class="timeline-shell" aria-label="Future historical to forecast timeline">
         <span class="timeline-label past">History</span>
         <span class="timeline-line"><i></i></span>
-        <span class="timeline-now">Terrain</span>
+        <span class="timeline-now">Now</span>
         <span class="timeline-line future"><i></i></span>
         <span class="timeline-label forecast">Forecast</span>
       </div>
