@@ -32,7 +32,9 @@ models — is the [work queue](docs/roadmap/README.md); agents start with [`AGEN
 The goal: grass that moves in the breeze and real oak trees — no flat, low-quality texture from
 knee height to the horizon — on NVIDIA as the showcase and still smooth on integrated graphics.
 
-1. **Oaks**
+1. **Oaks** — first version on branch `land-l2` (baked oak meshes plus impostors, with 3D trees
+   and grass toggles); not live yet: the downloads need shrinking and the shadows need L2b.
+   Originally planned as:
    - California coast live, blue and valley oak variants — ez-tree presets tuned toward real
      silhouettes, or authored in Blender — baked into `data/biomes/diablo-oak/`.
    - Full meshes with leaf cards near the camera, octahedral impostors far away; placement from
@@ -44,6 +46,14 @@ knee height to the horizon — on NVIDIA as the showcase and still smooth on int
    - Preset polish: calmer far-water reflections under the brighter horizon, per-preset water
      tint.
    - Flyover videos and posters re-rendered with the new land (they still show spring green).
+
+## A PC-only Ultra tier
+
+An opt-in quality level for screenshots and people with a strong GPU (never chosen
+automatically): denser curved grass with seed heads and wildflowers, light glowing through
+backlit blades, anti-aliasing on the land, real sun shadow maps for trees and grass, full-detail
+oaks to ~400 m, native resolution, and a photo mode that pauses, hides the interface and saves a
+2× PNG.
 
 ## Then: the journey grows
 
