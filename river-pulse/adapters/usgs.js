@@ -2,6 +2,8 @@ import { quantity } from "../data-model/quantity.js";
 
 export const USGS_API_ROOT = "https://api.waterdata.usgs.gov/ogcapi/v1";
 export const DISCHARGE_PARAMETER_CODE = "00060";
+export const GAGE_HEIGHT_PARAMETER_CODE = "00065";
+export const STREAM_LEVEL_NAVD88_PARAMETER_CODE = "63160";
 export const DAILY_MEAN_STATISTIC_ID = "00003";
 
 export function latestContinuousUrl(monitoringLocationId, parameterCode = DISCHARGE_PARAMETER_CODE) {
@@ -50,6 +52,18 @@ function numericValue(properties) {
   return { hasValue, value };
 }
 
+function phenomenonForParameter(parameterCode) {
+  if (parameterCode === DISCHARGE_PARAMETER_CODE) return "discharge";
+  if (parameterCode === GAGE_HEIGHT_PARAMETER_CODE) return "gage_height";
+  if (parameterCode === STREAM_LEVEL_NAVD88_PARAMETER_CODE) return "water_surface_elevation";
+  return `usgs:${parameterCode}`;
+}
+
+function verticalDatumForParameter(parameterCode, properties) {
+  if (parameterCode === STREAM_LEVEL_NAVD88_PARAMETER_CODE) return "NAVD88";
+  return properties.vertical_datum ?? null;
+}
+
 function commonProvenance(feature, properties, retrievalTime, dataset) {
   return {
     agency: "U.S. Geological Survey",
@@ -73,7 +87,7 @@ export function parseLatestContinuousFeature(feature, { retrievalTime = new Date
   if (!Number.isFinite(validMs)) throw new Error(`USGS feature has invalid time: ${p.time}`);
 
   const { hasValue, value } = numericValue(p),
-    phenomenon = p.parameter_code === DISCHARGE_PARAMETER_CODE ? "discharge" : `usgs:${p.parameter_code}`,
+    phenomenon = phenomenonForParameter(p.parameter_code),
     timeSeriesId = p.time_series_id ?? p.timeseries_id ?? feature.id ?? "unknown-series";
   return quantity({
     quantity_id: `usgs:${p.monitoring_location_id}:${p.parameter_code}:${timeSeriesId}:${new Date(validMs).toISOString()}`,
@@ -104,6 +118,7 @@ export function parseLatestContinuousFeature(feature, { retrievalTime = new Date
       monitoring_location_id: p.monitoring_location_id,
       geometry: feature.geometry ?? null,
       horizontal_crs: "OGC:CRS84",
+      vertical_datum: verticalDatumForParameter(p.parameter_code, p),
     },
   });
 }
@@ -119,7 +134,7 @@ export function parseDailyFeature(feature, { retrievalTime = new Date().toISOStr
   const { hasValue, value } = numericValue(p),
     statisticId = p.statistic_id ?? null,
     timeSeriesId = p.time_series_id ?? p.timeseries_id ?? feature.id ?? "unknown-series",
-    phenomenon = p.parameter_code === DISCHARGE_PARAMETER_CODE ? "discharge" : `usgs:${p.parameter_code}`;
+    phenomenon = phenomenonForParameter(p.parameter_code);
 
   return quantity({
     quantity_id: `usgs-daily:${p.monitoring_location_id}:${p.parameter_code}:${statisticId ?? "none"}:${timeSeriesId}:${p.time}`,
@@ -150,6 +165,7 @@ export function parseDailyFeature(feature, { retrievalTime = new Date().toISOStr
       monitoring_location_id: p.monitoring_location_id,
       geometry: feature.geometry ?? null,
       horizontal_crs: "OGC:CRS84",
+      vertical_datum: verticalDatumForParameter(p.parameter_code, p),
     },
   });
 }
