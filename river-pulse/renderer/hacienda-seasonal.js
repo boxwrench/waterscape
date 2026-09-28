@@ -6,6 +6,10 @@ const conditionLabel = document.querySelector("#condition-label"),
   conditionCard = document.querySelector("#seasonal-condition"),
   SOURCE_URL = "../data/russian_river/places/hacienda_bridge/source.json";
 
+let sourceConfig = null,
+  requestSequence = 0,
+  debounceTimer = null;
+
 function zonedDateParts(date, timeZone) {
   const parts = new Intl.DateTimeFormat("en-US", {
       timeZone,
@@ -20,16 +24,18 @@ function zonedDateParts(date, timeZone) {
   };
 }
 
-async function waitForCurrentObservation(monitoringLocationId, timeoutMs = 6000) {
-  const start = performance.now();
-  while (performance.now() - start < timeoutMs) {
-    const q = window.riverPulseState?.selected_quantities?.find(
-      (candidate) => candidate.feature_id === monitoringLocationId && candidate.phenomenon === "discharge",
-    );
-    if (q) return q;
-    await new Promise((resolve) => setTimeout(resolve, 80));
+function datePartsForState(state, observation, timeZone) {
+  if (observation?.method?.method_id === "usgs_daily_mean") {
+    const validDate = observation.time.valid_start.slice(0, 10);
+    return { validDate, monthDay: validDate.slice(5) };
   }
-  return null;
+  return zonedDateParts(new Date(state.request.valid_time), timeZone);
+}
+
+function selectedDischarge(state, monitoringLocationId) {
+  return state?.selected_quantities?.find(
+    (candidate) => candidate.feature_id === monitoringLocationId && candidate.phenomenon === "discharge",
+  ) ?? null;
 }
 
 function render(condition, monthDay) {
@@ -41,27 +47,28 @@ function render(condition, monthDay) {
   window.riverPulseSeasonalCondition = condition;
 }
 
-async function main() {
+async function updateForState(state) {
+  if (!sourceConfig || !state) return;
+  const { monitoringLocationId, timeZone } = sourceConfig,
+    observation = selectedDischarge(state, monitoringLocationId),
+    { validDate, monthDay } = datePartsForState(state, observation, timeZone),
+    sequence = ++requestSequence;
+
+  if (!observation) {
+    render(streamflowCondition(null, []), monthDay);
+    return;
+  }
+
+  conditionCard.dataset.condition = "checking";
+  conditionLabel.textContent = "Checking historical context…";
+  conditionDetail.textContent = `USGS day-of-year statistics for ${monthDay}`;
+
   try {
-    const sourceResponse = await fetch(SOURCE_URL);
-    if (!sourceResponse.ok) throw new Error(`Source manifest ${sourceResponse.status}`);
-    const source = await sourceResponse.json(),
-      agency = source.gauge?.agency ?? "USGS",
-      site = source.gauge?.id ?? "11467000",
-      monitoringLocationId = `${agency}-${site}`,
-      timeZone = source.timeZone ?? "America/Los_Angeles",
-      { validDate, monthDay } = zonedDateParts(new Date(), timeZone),
-      observation = await waitForCurrentObservation(monitoringLocationId);
-
-    if (!observation) {
-      render(streamflowCondition(null, []), monthDay);
-      return;
-    }
-
-    const stats = await fetchDayOfYearStatistics(monitoringLocationId, monthDay, validDate),
-      condition = streamflowCondition(observation, stats.quantities);
-    render(condition, monthDay);
+    const stats = await fetchDayOfYearStatistics(monitoringLocationId, monthDay, validDate);
+    if (sequence !== requestSequence) return;
+    render(streamflowCondition(observation, stats.quantities), monthDay);
   } catch (error) {
+    if (sequence !== requestSequence) return;
     console.warn("Seasonal streamflow context unavailable", error);
     conditionCard.dataset.condition = "unavailable";
     conditionLabel.textContent = "Seasonal context unavailable";
@@ -69,4 +76,32 @@ async function main() {
   }
 }
 
-main();
+function scheduleUpdate(state) {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => updateForState(state), 180);
+}
+
+async function main() {
+  const sourceResponse = await fetch(SOURCE_URL);
+  if (!sourceResponse.ok) throw new Error(`Source manifest ${sourceResponse.status}`);
+  const source = await sourceResponse.json(),
+    agency = source.gauge?.agency ?? "USGS",
+    site = source.gauge?.id ?? "11467000";
+  sourceConfig = {
+    monitoringLocationId: `${agency}-${site}`,
+    timeZone: source.timeZone ?? "America/Los_Angeles",
+  };
+
+  window.addEventListener("river-pulse-state-change", (event) => scheduleUpdate(event.detail?.state));
+
+  // The time controller may have emitted its initial state before this module attached.
+  // Reading the shared selected state makes startup order deterministic either way.
+  if (window.riverPulseState) scheduleUpdate(window.riverPulseState);
+}
+
+main().catch((error) => {
+  console.warn("Seasonal streamflow context unavailable", error);
+  conditionCard.dataset.condition = "unavailable";
+  conditionLabel.textContent = "Seasonal context unavailable";
+  conditionDetail.textContent = "USGS day-of-year statistics could not be loaded";
+});

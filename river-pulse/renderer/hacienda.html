@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="./hacienda.css">
   <link rel="stylesheet" href="./hacienda-label.css">
   <link rel="stylesheet" href="./hacienda-flow.css">
+  <link rel="stylesheet" href="./hacienda-time.css">
 </head>
 <body>
   <canvas id="scene" aria-label="Interactive 3D terrain around Hacienda Bridge on the Russian River"></canvas>
@@ -65,7 +66,7 @@
       <div class="flow-peek" aria-live="polite">
         <div class="flow-icon" aria-hidden="true"><i></i><i></i><i></i></div>
         <div class="flow-copy">
-          <span class="micro-label">Observed discharge</span>
+          <span class="micro-label">Discharge at selected time</span>
           <strong id="flow-value">Checking USGS…</strong>
           <small id="flow-time">Latest continuous observation</small>
         </div>
@@ -98,6 +99,7 @@
             </defs>
             <path id="history-area" class="history-area" d=""></path>
             <path id="history-line" class="history-line" d=""></path>
+            <circle id="history-cursor" class="history-cursor" cx="0" cy="0" r="3.1" hidden></circle>
           </svg>
           <div class="chart-empty" id="history-empty" hidden>No eligible daily values in this window</div>
         </div>
@@ -153,12 +155,15 @@
     <div class="time-preview">
       <div class="deck-heading">
         <span class="micro-label">River time</span>
-        <strong>Observed + seasonal context + recent history are connected; interactive time comes next</strong>
+        <strong id="timeline-heading">Drag through recent daily history or return to live conditions</strong>
       </div>
-      <div class="timeline-shell" aria-label="Future historical to forecast timeline">
+      <div class="timeline-shell" aria-label="Historical to current river timeline">
         <span class="timeline-label past">History</span>
-        <span class="timeline-line"><i></i></span>
-        <span class="timeline-now">Now</span>
+        <label class="timeline-range-wrap">
+          <span class="sr-only">Selected river time</span>
+          <input id="time-range" class="time-range" type="range" min="0" max="1" value="1" step="1" disabled>
+        </label>
+        <span id="time-selection-label" class="timeline-now">Now</span>
         <span class="timeline-line future"><i></i></span>
         <span class="timeline-label forecast">Forecast</span>
       </div>
@@ -181,6 +186,7 @@
 
   <div id="error" class="error glass" hidden></div>
   <script type="module" src="./hacienda.js"></script>
+  <script type="module" src="./hacienda-time.js"></script>
   <script type="module" src="./hacienda-seasonal.js"></script>
 </body>
 </html>
