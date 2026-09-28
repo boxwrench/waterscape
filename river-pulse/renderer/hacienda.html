@@ -29,7 +29,7 @@
 
     <nav class="mode-nav" aria-label="Data view">
       <button class="mode active" type="button" aria-pressed="true">Terrain</button>
-      <button class="mode" type="button" disabled title="Observed flow is being connected before the full flow visualization is enabled">Flow</button>
+      <button class="mode" type="button" disabled title="Observed flow is connected; spatial flow rendering is still being built">Flow</button>
       <button class="mode" type="button" disabled title="Forecast integration follows the observed-flow path">Forecast</button>
     </nav>
 
@@ -70,6 +70,34 @@
           <small id="flow-time">Latest continuous observation</small>
         </div>
         <span id="flow-quality" class="flow-quality checking">Checking</span>
+      </div>
+
+      <div class="history-card" aria-live="polite">
+        <div class="history-heading">
+          <div>
+            <span class="micro-label">Recent river history</span>
+            <strong>Daily mean discharge</strong>
+          </div>
+          <span id="history-status">Loading 45 days…</span>
+        </div>
+        <div class="chart-shell">
+          <svg id="history-chart" viewBox="0 0 320 86" role="img" aria-label="Recent daily mean discharge hydrograph">
+            <defs>
+              <linearGradient id="history-fill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="currentColor" stop-opacity=".25"></stop>
+                <stop offset="100%" stop-color="currentColor" stop-opacity="0"></stop>
+              </linearGradient>
+            </defs>
+            <path id="history-area" class="history-area" d=""></path>
+            <path id="history-line" class="history-line" d=""></path>
+          </svg>
+          <div class="chart-empty" id="history-empty" hidden>No eligible daily values in this window</div>
+        </div>
+        <div class="history-foot">
+          <span id="history-start">—</span>
+          <span id="history-range">—</span>
+          <span id="history-end">—</span>
+        </div>
       </div>
 
       <div class="view-buttons" aria-label="Camera views">
@@ -117,7 +145,7 @@
     <div class="time-preview">
       <div class="deck-heading">
         <span class="micro-label">River time</span>
-        <strong>Observed data path is now connected; historical context comes next</strong>
+        <strong>Observed + recent daily history are connected; interactive time comes next</strong>
       </div>
       <div class="timeline-shell" aria-label="Future historical to forecast timeline">
         <span class="timeline-label past">History</span>
