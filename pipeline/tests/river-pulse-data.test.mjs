@@ -6,11 +6,12 @@ import {
   DISCHARGE_PARAMETER_CODE,
   latestContinuousUrl,
   parseLatestContinuous,
+  parseLatestContinuousFeature,
 } from "../../river-pulse/adapters/usgs.js";
 
-function observed(time, value = 100) {
+function observed(time, value = 100, id = `q:${time}:${value}`) {
   return quantity({
-    quantity_id: `q:${time}`,
+    quantity_id: id,
     feature_id: "USGS-11467000",
     phenomenon: "discharge",
     value,
@@ -19,6 +20,27 @@ function observed(time, value = 100) {
     time: { valid_start: time },
     source_approval: "provisional",
   });
+}
+
+function usgsFeature(overrides = {}) {
+  return {
+    id: "record-1",
+    type: "Feature",
+    geometry: { type: "Point", coordinates: [-122.9277, 38.5085] },
+    properties: {
+      time_series_id: "series-1",
+      monitoring_location_id: "USGS-11467000",
+      parameter_code: DISCHARGE_PARAMETER_CODE,
+      statistic_id: "00011",
+      time: "2026-09-13T18:00:00+00:00",
+      value: "142",
+      unit_of_measure: "ft^3/s",
+      approval_status: "Provisional",
+      qualifier: "None",
+      last_modified: "2026-09-13T18:07:00+00:00",
+      ...overrides,
+    },
+  };
 }
 
 test("scientific quantity carries no presentation metadata", () => {
@@ -41,6 +63,16 @@ test("latest-at-or-before never selects a future observation", () => {
   assert.equal(result.age_ms, 5 * 60 * 1000);
 });
 
+test("latest-at-or-before breaks equal-time ties by quantity identity, not input order", () => {
+  const time = "2026-09-27T12:00:00Z",
+    a = observed(time, 101, "a"),
+    b = observed(time, 102, "b"),
+    first = latestAtOrBefore([b, a], "2026-09-27T12:05:00Z"),
+    second = latestAtOrBefore([a, b], "2026-09-27T12:05:00Z");
+  assert.equal(first.quantity.quantity_id, "a");
+  assert.equal(second.quantity.quantity_id, "a");
+});
+
 test("latest-at-or-before exposes stale data rather than silently using it", () => {
   const q = observed("2026-09-27T10:00:00Z", 80),
     result = latestAtOrBefore([q], "2026-09-27T12:00:00Z", { maximumAgeMs: 30 * 60 * 1000 });
@@ -53,40 +85,35 @@ test("selection policy records its deterministic rule", () => {
   const policy = latestAtOrBeforePolicy({ maximumAgeMs: 15 * 60 * 1000 });
   assert.equal(policy.id, "latest-at-or-before");
   assert.equal(policy.future_values, "forbidden");
+  assert.equal(policy.tie_break, "quantity_id_ascending");
   assert.equal(policy.maximum_age_ms, 15 * 60 * 1000);
 });
 
 test("USGS adapter normalizes latest-continuous discharge without inventing as-of time", () => {
-  const payload = {
-    type: "FeatureCollection",
-    features: [
-      {
-        id: "record-1",
-        type: "Feature",
-        geometry: { type: "Point", coordinates: [-122.9277, 38.5085] },
-        properties: {
-          time_series_id: "series-1",
-          monitoring_location_id: "USGS-11467000",
-          parameter_code: DISCHARGE_PARAMETER_CODE,
-          statistic_id: "00011",
-          time: "2026-09-13T18:00:00+00:00",
-          value: "142",
-          unit_of_measure: "ft^3/s",
-          approval_status: "Provisional",
-          qualifier: "None",
-          last_modified: "2026-09-13T18:07:00+00:00",
-        },
-      },
-    ],
-  };
-  const [q] = parseLatestContinuous(payload, { retrievalTime: "2026-09-27T12:00:00Z" });
+  const payload = { type: "FeatureCollection", features: [usgsFeature()] },
+    [q] = parseLatestContinuous(payload, { retrievalTime: "2026-09-27T12:00:00Z" });
   assert.equal(q.feature_id, "USGS-11467000");
   assert.equal(q.phenomenon, "discharge");
   assert.equal(q.value, 142);
   assert.equal(q.unit, "ft^3/s");
   assert.equal(q.source_approval, "provisional");
   assert.equal(q.time.as_of_time, null);
+  assert.equal(q.provenance.source_feature_id, "USGS-11467000");
   assert.equal(q.provenance.last_modified, "2026-09-13T18:07:00+00:00");
+});
+
+test("USGS adapter preserves source qualifier flags and normalizes approval case", () => {
+  const q = parseLatestContinuousFeature(usgsFeature({ approval_status: "APPROVED", qualifier: ["Ice", "A"] }));
+  assert.equal(q.source_approval, "approved");
+  assert.deepEqual(q.source_flags, ["Ice", "A"]);
+  assert.equal(q.method.method_id, "usgs_continuous");
+});
+
+test("USGS adapter rejects a non-finite reported value", () => {
+  assert.throws(
+    () => parseLatestContinuousFeature(usgsFeature({ value: "not-a-number" })),
+    /non-finite value/,
+  );
 });
 
 test("USGS adapter uses the modern v1 latest-continuous endpoint", () => {
