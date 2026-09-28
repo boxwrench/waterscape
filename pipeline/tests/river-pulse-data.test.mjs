@@ -3,8 +3,12 @@ import assert from "node:assert/strict";
 import { quantity } from "../../river-pulse/data-model/quantity.js";
 import { latestAtOrBefore, latestAtOrBeforePolicy } from "../../river-pulse/data-model/selection.js";
 import {
+  DAILY_MEAN_STATISTIC_ID,
   DISCHARGE_PARAMETER_CODE,
+  dailyValuesUrl,
   latestContinuousUrl,
+  parseDailyFeature,
+  parseDailyValues,
   parseLatestContinuous,
   parseLatestContinuousFeature,
 } from "../../river-pulse/adapters/usgs.js";
@@ -38,6 +42,27 @@ function usgsFeature(overrides = {}) {
       approval_status: "Provisional",
       qualifier: "None",
       last_modified: "2026-09-13T18:07:00+00:00",
+      ...overrides,
+    },
+  };
+}
+
+function dailyFeature(overrides = {}) {
+  return {
+    id: "daily-1",
+    type: "Feature",
+    geometry: { type: "Point", coordinates: [-122.9277, 38.5085] },
+    properties: {
+      time_series_id: "daily-series-1",
+      monitoring_location_id: "USGS-11467000",
+      parameter_code: DISCHARGE_PARAMETER_CODE,
+      statistic_id: DAILY_MEAN_STATISTIC_ID,
+      time: "2026-09-12",
+      value: "151",
+      unit_of_measure: "ft^3/s",
+      approval_status: "Approved",
+      qualifier: null,
+      last_modified: "2026-09-13T06:00:00+00:00",
       ...overrides,
     },
   };
@@ -116,10 +141,39 @@ test("USGS adapter rejects a non-finite reported value", () => {
   );
 });
 
-test("USGS adapter uses the modern v1 latest-continuous endpoint", () => {
-  const url = new URL(latestContinuousUrl("USGS-11467000"));
-  assert.equal(url.pathname, "/ogcapi/v1/collections/latest-continuous/items");
-  assert.equal(url.searchParams.get("monitoring_location_id"), "USGS-11467000");
-  assert.equal(url.searchParams.get("parameter_code"), "00060");
-  assert.equal(url.searchParams.get("f"), "json");
+test("USGS daily values are derived statistics, not instantaneous observations", () => {
+  const q = parseDailyFeature(dailyFeature(), { retrievalTime: "2026-09-27T12:00:00Z" });
+  assert.equal(q.feature_id, "USGS-11467000");
+  assert.equal(q.phenomenon, "discharge");
+  assert.equal(q.value, 151);
+  assert.equal(q.evidence_type, "derived_statistic");
+  assert.equal(q.method.method_id, "usgs_daily_mean");
+  assert.equal(q.method.statistic_id, "00003");
+  assert.equal(q.time.valid_start, "2026-09-12T00:00:00.000Z");
+  assert.equal(q.time.valid_end, "2026-09-13T00:00:00.000Z");
+  assert.equal(q.source_approval, "approved");
+});
+
+test("USGS daily parser preserves stable input order as normalized quantities", () => {
+  const payload = {
+      type: "FeatureCollection",
+      features: [dailyFeature({ time: "2026-09-11", value: "149" }), dailyFeature()],
+    },
+    quantities = parseDailyValues(payload, { retrievalTime: "2026-09-27T12:00:00Z" });
+  assert.deepEqual(quantities.map((q) => q.value), [149, 151]);
+});
+
+test("USGS adapter uses modern v1 continuous and daily endpoints", () => {
+  const current = new URL(latestContinuousUrl("USGS-11467000")),
+    daily = new URL(dailyValuesUrl("USGS-11467000", "2026-08-15", "2026-09-28"));
+  assert.equal(current.pathname, "/ogcapi/v1/collections/latest-continuous/items");
+  assert.equal(current.searchParams.get("monitoring_location_id"), "USGS-11467000");
+  assert.equal(current.searchParams.get("parameter_code"), "00060");
+  assert.equal(current.searchParams.get("f"), "json");
+
+  assert.equal(daily.pathname, "/ogcapi/v1/collections/daily/items");
+  assert.equal(daily.searchParams.get("monitoring_location_id"), "USGS-11467000");
+  assert.equal(daily.searchParams.get("parameter_code"), "00060");
+  assert.equal(daily.searchParams.get("statistic_id"), "00003");
+  assert.equal(daily.searchParams.get("datetime"), "2026-08-15/2026-09-28");
 });
