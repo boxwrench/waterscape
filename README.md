@@ -27,9 +27,15 @@ River Pulse deliberately has two water presentation scales:
 - **authored-place / hero** — higher-fidelity local water at places such as Hacienda and Jenner,
   where optics, current cues, foam, caustics and place-specific composition can be much richer.
 
-Both consume the same selected scientific state, but they are not forced through one renderer.
-An illustrative width or flow effect is kept distinct from measured bank geometry, depth,
-water-surface elevation, or local velocity unless a source/model supports those quantities.
+The first corridor prototype is now implemented at Hacienda: DWR/NHD river geometry places a
+terrain-draped animated ribbon, the selected discharge can widen/narrow its apparent corridor,
+and the same river can instead show the selected USGS seasonal-condition class by color. A UI
+toggle switches between those two encodings.
+
+Both presentation scales consume the same selected scientific state, but they are not forced
+through one renderer. An illustrative width or flow effect is kept distinct from measured bank
+geometry, depth, water-surface elevation, or local velocity unless a source/model supports those
+quantities.
 
 River Pulse design and implementation notes live in [`docs/river-pulse/`](docs/river-pulse/).
 
@@ -90,15 +96,14 @@ URL options: `?reservoir=<id>`, `?preset=morning|midday|golden`, `?quality=low|m
 | `renderer/explore.*` | The live 3D page: controls, input and readouts |
 | `renderer/engine/` | The engine: `waterscape.js` (runtime, kernels, frame), `body.js`, `camera.js`, `quality.js`, `presets.js` |
 | `renderer/land/` | three.js land pass: terrain mesh, depth → distance pack |
-| `renderer/water.cu` | All Waterscape still-water simulation and image formation (CUDA, shared with the native host) |
+| `renderer/water.cu` | All water simulation and image formation (CUDA, shared with the native host) |
 | `data/<id>/` | One folder per water body: `source.json` (inputs), terrain, cameras, story, land profile, flyover, poster |
-| `river-pulse/` | Experimental river data model, adapters, authored-place packages and renderer work |
 | `data/biomes/<biome>/` | Reusable assets per landscape type (`diablo-oak` today) |
 | `data/tours/<tour>.json` | Journeys: ordered stops |
-| `pipeline/` | Builds and checks water bodies plus River Pulse terrain/hydrography tooling on the experiment branch |
+| `pipeline/` | Builds and checks water bodies: `build.py`, `render-flyover.mjs`, `validate-bundles.mjs` |
 | `vendor/` | cuda-webshader and three.js, vendored (the site loads nothing from CDNs) |
 | `Native/` | Optional native Windows CUDA host (developer tool) |
-| `docs/` | [Architecture](docs/architecture.md), [make a waterscape](docs/make-a-waterscape.md), [River Pulse notes](docs/river-pulse/IMPLEMENTATION_NOTES.md), design history; see also the [roadmap](ROADMAP.md) |
+| `docs/` | [Architecture](docs/architecture.md), [make a waterscape](docs/make-a-waterscape.md), design history; see also the [roadmap](ROADMAP.md) |
 
 ## Tests
 
@@ -111,20 +116,17 @@ drives Edge through Playwright: FFT correctness, optics, zero readbacks in the f
 ripples, viewpoints, presets, resizing, quality tiers and the journey. Pipeline tests:
 `python -m pytest pipeline/tests -q`.
 
-The River Pulse branch adds tests for river terrain/georeferencing, hydrology adapters and
-selection, seasonal-condition mappings, package/registry behavior, and real Hacienda build
-artifacts in CI.
-
 ## Scope
 
-**Waterscape itself remains a still-water system** — one water level inside a shoreline.
-Landforms and shorelines come from lidar (~10 m); everything finer is procedural or from shared
-biome assets. Lidar flattens water, so the bed is modelled as banks falling about 1:3 to the
-chosen basin depth, and the water level is the level at survey time. Outside the lidar crop the
-land falls away under painted far ridges.
+Waterscape itself remains a still-water product: one water level inside a shoreline. Landforms
+and shorelines come from lidar (~10 m); everything finer is procedural or from shared biome
+assets. Lidar flattens water, so the bed is modelled as banks falling about 1:3 to the chosen
+basin depth, and the water level is the level at survey time. Outside the lidar crop the land
+falls away under painted far ridges.
 
-River Pulse is the separate river experiment in this repository. It reuses infrastructure where
-appropriate but does not reinterpret those still-water assumptions as river science.
+River Pulse is the separate river experiment described above; its river-specific quantities,
+selection policies, corridor rendering, and authored-place work do not change Waterscape's
+reservoir semantics.
 
 ## Credits and licences
 
