@@ -20,11 +20,11 @@ function zonedDateParts(date, timeZone) {
   };
 }
 
-async function waitForCurrentObservation(timeoutMs = 6000) {
+async function waitForCurrentObservation(monitoringLocationId, timeoutMs = 6000) {
   const start = performance.now();
   while (performance.now() - start < timeoutMs) {
     const q = window.riverPulseState?.selected_quantities?.find(
-      (candidate) => candidate.feature_id === "USGS-11467000" && candidate.phenomenon === "discharge",
+      (candidate) => candidate.feature_id === monitoringLocationId && candidate.phenomenon === "discharge",
     );
     if (q) return q;
     await new Promise((resolve) => setTimeout(resolve, 80));
@@ -36,7 +36,7 @@ function render(condition, monthDay) {
   conditionCard.dataset.condition = condition.kind;
   conditionLabel.textContent = condition.label;
   conditionDetail.textContent = condition.rankable
-    ? `${condition.detail} · ${condition.sample_count} historical daily values for ${monthDay}`
+    ? `${condition.detail} · ${condition.sample_count} historical day-of-year observations for ${monthDay}`
     : condition.detail;
   window.riverPulseSeasonalCondition = condition;
 }
@@ -51,7 +51,7 @@ async function main() {
       monitoringLocationId = `${agency}-${site}`,
       timeZone = source.timeZone ?? "America/Los_Angeles",
       { validDate, monthDay } = zonedDateParts(new Date(), timeZone),
-      observation = await waitForCurrentObservation();
+      observation = await waitForCurrentObservation(monitoringLocationId);
 
     if (!observation) {
       render(streamflowCondition(null, []), monthDay);
