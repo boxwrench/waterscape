@@ -19,11 +19,11 @@
       "label": "West ridge"
     },
     "shore": {
-      "x": -740,
-      "z": 300,
-      "above": 1.6,
+      "x": -790.9,
+      "z": 270.8,
+      "above": 1.4,
       "yaw": 1.571,
-      "pitch": -0.04,
+      "pitch": -0.42,
       "speed": 4,
       "label": "Shoreline"
     }

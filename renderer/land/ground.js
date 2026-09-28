@@ -5,7 +5,7 @@
 import * as THREE from "../../vendor/three/three.webgpu.js";
 import {
   Fn, texture, uniform, positionWorld, normalWorld, vec2, vec3, float, mix, smoothstep, dot,
-  max, normalize, clamp, mx_noise_float,
+  max, normalize, clamp, mx_noise_float, sin,
 } from "../../vendor/three/three.tsl.js";
 
 // Mean linear luminance of each texture (measured once), so its detail can modulate the tuned
@@ -71,7 +71,13 @@ export function createGroundMaterial(terrain, biomeBase, biome) {
       spring = mix(vec3(0.13, 0.3, 0.03), vec3(0.3, 0.46, 0.06), macro),
       summer = mix(vec3(0.3, 0.21, 0.075), vec3(0.5, 0.37, 0.15), macro),
       grass = mix(spring, summer, u.season).mul(detail.mul(0.55).add(0.45)),
-      soil = antiTile(tex.soil.colour, xz, 3.1).rgb.mul(1.25),
+      // Bank soil: two photo soils in patches, large-scale tint, and faint "bathtub rings" —
+      // bands left along a reservoir's drawdown zone by past water levels.
+      soilMix = smoothstep(-0.3, 0.3, mx_noise_float(vec3(xz.mul(0.03), 11))),
+      soilPhoto = mix(antiTile(tex.soil.colour, xz, 3.1).rgb, antiTile(tex.ochre.colour, xz, 3.7).rgb, soilMix),
+      rings = sin(p.y.mul(9.0).add(mx_noise_float(vec3(xz.mul(0.02), 13)).mul(2.0))).mul(0.5).add(0.5),
+      soilTint = mx_noise_float(vec3(xz.mul(0.008), 17)).mul(0.25).add(1.0),
+      soil = soilPhoto.mul(1.25).mul(soilTint).mul(rings.mul(0.22).add(0.86)),
       rock = antiTile(tex.rock.colour, xz, 4.3).rgb.mul(2.1);
     // Rock on steep ground and spur crests; soil on the drawdown bank and in patches.
     const rockW = smoothstep(0.34, 0.55, slope.add(macro.sub(0.5).mul(0.25)))

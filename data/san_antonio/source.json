@@ -14,5 +14,34 @@
   "size": [
     870,
     950
-  ]
+  ],
+  "viewpoints": {
+    "overlook": {
+      "x": 533,
+      "z": 1681,
+      "above": 3.0,
+      "yaw": -0.307,
+      "pitch": -0.112,
+      "speed": 40,
+      "label": "South ridge"
+    },
+    "ridge": {
+      "x": -1989,
+      "z": 1088,
+      "above": 3.0,
+      "yaw": 1.07,
+      "pitch": -0.048,
+      "speed": 40,
+      "label": "Southwest ridge"
+    },
+    "shore": {
+      "x": 177.7,
+      "z": 435.1,
+      "above": 1.4,
+      "yaw": 0.0,
+      "pitch": -0.42,
+      "speed": 4,
+      "label": "Shoreline"
+    }
+  }
 }

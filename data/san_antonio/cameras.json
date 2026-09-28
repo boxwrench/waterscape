@@ -19,11 +19,11 @@
       "label": "Southwest ridge"
     },
     "shore": {
-      "x": 141,
-      "z": 855,
-      "above": 1.6,
-      "yaw": -0.164,
-      "pitch": -0.04,
+      "x": 177.7,
+      "z": 435.1,
+      "above": 1.4,
+      "yaw": 0.0,
+      "pitch": -0.42,
       "speed": 4,
       "label": "Shoreline"
     }

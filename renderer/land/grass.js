@@ -8,11 +8,12 @@ import {
   mix, smoothstep, dot, max, normalize, fract, sin, cos, mx_noise_float, time, uv, select,
 } from "../../vendor/three/three.tsl.js";
 
-// Blades per 1 m cell and field radius (m) per quality tier (0 low, 1 medium, 2 high).
+// Blades per 1 m cell, field radius (m) and blade width scale per quality tier (0 low, 1 medium,
+// 2 high). Lower tiers draw fewer, wider blades so the sward still covers the ground.
 export const GRASS_TIERS = [
-  { radius: 20, perCell: 10 },
-  { radius: 35, perCell: 16 },
-  { radius: 50, perCell: 24 },
+  { radius: 22, perCell: 14, widthScale: 2.2 },
+  { radius: 35, perCell: 18, widthScale: 1.4 },
+  { radius: 50, perCell: 24, widthScale: 1 },
 ];
 const CELL = 1;
 
@@ -28,6 +29,7 @@ export function createGrass(terrain, terrainTex, lightTex, lightUniforms) {
       radius: uniform(maxTier.radius),
       side: uniform(maxSide),
       perCell: uniform(maxTier.perCell),
+      widthScale: uniform(1),
     },
     windDir = vec2(0.94, 0.34);
 
@@ -54,10 +56,10 @@ export function createGrass(terrain, terrainTex, lightTex, lightUniforms) {
       light = texture(lightTex, gridUv(x, z)).level(0),
       d = vec2(x, z).sub(u.camPos).length(),
       // Fewer, shorter blades toward the edge; none in the water or on the bare bank.
-      keep = hash(worldCell.add(5.1), kf).lessThan(float(1).sub(smoothstep(u.radius.mul(0.45), u.radius, d))),
+      keep = hash(worldCell.add(5.1), kf).lessThan(float(1).sub(smoothstep(u.radius.mul(0.6), u.radius, d))),
       onLand = smoothstep(4, 7, g.x).mul(smoothstep(1, 4, g.y)),
       height = hash(worldCell.add(2.7), kf).mul(0.45).add(0.3).mul(onLand).mul(select(keep, float(1), float(0))),
-      width = hash(worldCell.add(9.4), kf).pow(2).mul(0.05).add(0.02),
+      width = hash(worldCell.add(9.4), kf).pow(2).mul(0.05).add(0.02).mul(u.widthScale),
       // A resting lean (grass is rarely upright) in the blade's own random direction.
       leanDir = hash(worldCell.add(6.6), kf).mul(6.2832),
       lean = hash(worldCell.add(1.9), kf).mul(0.35),
@@ -113,6 +115,7 @@ export function createGrass(terrain, terrainTex, lightTex, lightUniforms) {
       u.radius.value = t.radius;
       u.side.value = side;
       u.perCell.value = t.perCell;
+      u.widthScale.value = t.widthScale;
       mesh.count = side * side * t.perCell;
     },
     update(state) {

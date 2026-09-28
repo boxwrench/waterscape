@@ -29,6 +29,15 @@
         "ground/rock_color.jpg",
         "ground/rock_normal.jpg"
       ]
+    },
+    "ochre": {
+      "ambientcg": "Ground105",
+      "licence": "CC0 1.0, ambientCG",
+      "source": "https://ambientcg.com/get?file=Ground105_1K-JPG.zip",
+      "files": [
+        "ground/ochre_color.jpg",
+        "ground/ochre_normal.jpg"
+      ]
     }
   }
 }
