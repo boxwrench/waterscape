@@ -1,7 +1,8 @@
 # Instructions for coding agents
 
 Read this whole file before starting any task. Then read the task file you were given
-(in `docs/roadmap/tasks/`) and follow it step by step.
+(in `docs/roadmap/tasks/`) and follow it step by step. For the latest state of the project,
+see `docs/HANDOFF.md`.
 
 ## What this project is
 
