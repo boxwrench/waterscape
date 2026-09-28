@@ -105,11 +105,12 @@ try {
   await page.waitForTimeout(150);
   const ripple = await page.evaluate(() => window.waterscapeLab.inspect());
   assert.ok(ripple.ripplePeak > 0.00001, "tap must generate ripples");
+  const shoreX = await page.evaluate(() => window.waterscapeLab.state.x);
   await page.keyboard.down("KeyW");
   await page.waitForTimeout(400);
   await page.keyboard.up("KeyW");
   // The shoreline view looks east, so flying forward increases x.
-  assert.ok((await page.evaluate(() => window.waterscapeLab.state.x)) > -739.9);
+  assert.ok((await page.evaluate(() => window.waterscapeLab.state.x)) > shoreX + 0.1);
   await page.waitForTimeout(300);
   const readout = await page.evaluate(() => ({
     camera: document.getElementById("elevCamera").textContent,
