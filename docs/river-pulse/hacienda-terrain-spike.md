@@ -1,185 +1,117 @@
 # River Pulse — Hacienda terrain spike
 
+## Status
+
+**Terrain spike passed.** The branch now builds a real Hacienda Bridge-area USGS 3DEP crop in CI, verifies its river-specific schema, loads it through the River Pulse browser terrain path, and packages the live Hacienda prototype without changing Waterscape reservoir semantics.
+
+The spike established that River Pulse can stand on Waterscape's geospatial/rendering foundation **without pretending a river is a reservoir**.
+
+Follow-on work has already begun on top of this result: normalized USGS flow quantities, deterministic time selection, RiverState, visual bindings, recent daily history, and the scene-first Hacienda UI.
+
 ## Goal
 
 Prove that Waterscape's mature California terrain/WebGPU path can support a river authored place **without importing reservoir assumptions**.
 
-This is intentionally a bounded spike. It does not implement RiverState, gauge history, forecast models, currents, or final water rendering yet.
+This was intentionally a bounded spike. It did not require realistic river water, currents, forecasts, or Jenner.
 
-## Success criteria
+## Result against success criteria
 
-The spike is successful when all of the following are true:
+1. **PASS — real 3DEP crop.** CI fetches the configured Hacienda crop through the existing USGS elevation path.
+2. **PASS — absolute elevation.** The river terrain bundle stores absolute NAVD88 elevation rather than height relative to one water surface.
+3. **PASS — no reservoir detector.** `build_river_terrain.py` does not call `detect_water()` and does not create a reservoir centroid or `waterLevel`.
+4. **PASS — browser loader.** `river-pulse/renderer/terrain.js` decodes the river terrain schema independently of the reservoir loader.
+5. **PASS — WebGPU terrain path.** The Hacienda page renders the generated terrain through Three.js WebGPU.
+6. **PASS — navigation.** The existing Waterscape flight-camera contract works against River Pulse terrain clearance.
+7. **PASS — geospatial readout.** Local positions map back to latitude/longitude and NAVD88 elevation; terrain points can be inspected.
+8. **PASS — metadata.** The bundle records CRS, vertical datum, source, schema version, anchor, cell size, and source service.
+9. **PASS — Waterscape isolation.** Existing reservoir source/build/runtime semantics are unchanged; River Pulse is additive on this branch.
 
-1. A real Hacienda Bridge-area USGS 3DEP crop can be fetched through the existing elevation path.
-2. The generated terrain bundle retains absolute elevation and geospatial metadata rather than defining all heights relative to one detected water surface.
-3. No reservoir flat-water detector or reservoir centroid is required.
-4. The browser can load the bundle with an adapted terrain loader.
-5. The existing Three.js/WebGPU land pass can render the terrain.
-6. The existing flight camera can navigate the scene with terrain clearance.
-7. Scene positions can round-trip to useful latitude/longitude and elevation readouts.
-8. The package records CRS, vertical datum, source, build metadata, and schema version.
-9. Existing Waterscape reservoir behavior remains unchanged.
-
-## Non-goals
-
-Do not add these to the spike:
-
-- realistic river surface
-- current simulation
-- foam
-- hydraulic depth or velocity
-- gauge ingestion
-- historical timeline
-- Jenner
-- NOAA forecasts
-- new shared library extraction
-- production LOD/streaming
-
-The spike should answer one question: **can River Pulse stand on Waterscape's geospatial/rendering foundation without pretending a river is a reservoir?**
-
-## Proposed implementation shape
-
-Keep existing Waterscape code intact and add a River Pulse experimental path on `river-pulse/bootstrap`.
-
-Suggested structure:
+## Implemented shape
 
 ```text
+pipeline/
+  build_river_terrain.py
+
 river-pulse/
-  README.md
-  pipeline/
-    build_terrain.py
   data/
     russian_river/
       places/
         hacienda_bridge/
           source.json
-          terrain.json
-          terrain.bin.gz
+          # terrain.json + terrain.bin.gz are generated
   renderer/
     terrain.js
+    terrain-mesh.js
     hacienda.html
     hacienda.js
+    hacienda.css
 ```
 
-The exact folder names may change if a smaller integration with existing modules is cleaner. Avoid premature framework extraction.
+The implementation deliberately avoided creating a shared framework before proving a reusable seam.
 
-## Terrain contract for the spike
+## Terrain contract
 
-The bundle should preserve absolute source meaning.
-
-Candidate metadata:
-
-```json
-{
-  "schemaVersion": "river-pulse-terrain-0.1",
-  "name": "Hacienda Bridge",
-  "source": "USGS National Map 3D Elevation Program (3DEP)",
-  "bboxLonLat": [0, 0, 0, 0],
-  "crs": "EPSG:...",
-  "verticalDatum": "NAVD88 metres (3DEP)",
-  "width": 0,
-  "height": 0,
-  "cell": [0, 0],
-  "originUTM": [0, 0],
-  "gridOrigin": [0, 0],
-  "channels": {
-    "elevation": {}
-  }
-}
-```
-
-For this spike, a single elevation channel is sufficient unless retaining an additional terrain derivative materially simplifies rendering. Do not carry `waterLevel`, reservoir shoreline distance, or reservoir valley channels just because Waterscape currently has them.
-
-## Coordinate convention
-
-Prefer compatibility with the existing renderer where practical:
+The generated bundle uses:
 
 ```text
-x = east in local metres
-z = south in local metres
+schemaVersion: river-pulse-terrain-0.1
+source: USGS National Map 3D Elevation Program (3DEP)
+CRS: projected UTM for the configured place
+verticalDatum: NAVD88 metres (3DEP)
+verticalOrigin.type: absolute
+channels: elevation
+```
+
+It does **not** carry Waterscape's reservoir `waterLevel`, signed shoreline-distance channel, or synthetic basin semantics.
+
+The local scene retains the useful Waterscape convention:
+
+```text
+x = east in metres
+z = south in metres
 y = vertical metres
 ```
 
-Unlike Waterscape, `y=0` must not implicitly mean the reservoir surface.
+The local x/z origin is pinned to the configured Hacienda/USGS gauge anchor. Absolute vertical meaning remains recoverable from bundle metadata.
 
-Choose and document a local vertical origin for numerical/rendering convenience while preserving the absolute NAVD88 transformation in metadata. A scene-local offset is acceptable; losing the absolute relation is not.
+## Verification
 
-## Work sequence
+Automated coverage checks:
 
-### T1 — Reuse geospatial primitives
+- deterministic elevation packing/decoding
+- absolute vertical metadata
+- absence of reservoir water semantics
+- non-square cell handling
+- UTM georeference
+- terrain picking / camera clearance contract
+- generic GPU cell representation
+- river terrain mesh construction
+- real Hacienda 3DEP build in the draft-PR CI path
+- generated schema / datum / `waterLevel` absence
+- existing Waterscape validation and build
 
-Use or adapt:
+## Follow-on vertical path
 
-- `pipeline/dem.py::fetch_dem`
-- `pipeline/geo.py`
-
-Do not call `detect_water()`.
-
-### T2 — Emit river-compatible terrain
-
-Create the smallest deterministic encoder that stores the Hacienda crop and enough metadata to reconstruct absolute elevations.
-
-Retain reproducible gzip behavior (`mtime=0`) if the existing packing path is reused.
-
-### T3 — Browser loader
-
-Adapt the Waterscape terrain loader so it can distinguish the new terrain schema without changing current reservoir loading.
-
-Required methods for the spike:
+The project has moved beyond the terrain spike in this same branch:
 
 ```text
-sample elevation
-ground(x,z)
-latLon(x,z)
-elevation(sceneY)
-pick(...)
-GPU terrain buffer
+USGS source
+    ↓
+source adapter
+    ↓
+normalized Quantity
+    ↓
+deterministic selection policy
+    ↓
+RiverState
+    ↓
+visual binding
+    ↓
+Hacienda UI / hydrograph
 ```
 
-### T4 — Render land
+Recent daily mean discharge is represented as a derived statistic rather than an instantaneous observation. Current-flow selection refuses future observations and marks data stale rather than silently presenting an old reading as current.
 
-Reuse the existing Three.js/WebGPU land pass if possible.
+## Next spatial step
 
-If the land pass currently assumes `ground()` returns zero over reservoir water, isolate that assumption rather than changing existing Waterscape semantics globally.
-
-### T5 — Navigate
-
-Reuse `renderer/engine/camera.js` where its contract is genuinely terrain-generic.
-
-Create one or two pinned Hacienda camera poses manually for the spike. Do not run reservoir viewpoint search.
-
-### T6 — Evidence and validation
-
-Add a focused validator/test that confirms:
-
-- terrain metadata schema
-- expected CRS/datum fields
-- finite decoded elevations
-- local ↔ lat/lon sanity
-- no reservoir `waterLevel` requirement
-- existing Waterscape validation/tests remain unaffected
-
-## Stop conditions
-
-Stop and revise the design if any of these appear:
-
-- existing `Terrain` semantics are too tightly coupled to a zero-elevation reservoir surface to adapt safely
-- the land pass cannot consume absolute/offset terrain without invasive reservoir-specific changes
-- one terrain crop is impractically large enough that tiling must be solved before Hacienda can render
-- the proposed bundle cannot preserve the vertical datum/elevation relationship clearly
-
-If one of these occurs, record the failure and choose a smaller generic seam rather than forcing reuse.
-
-## After the spike
-
-Only after the terrain path succeeds:
-
-1. add real Russian River hydrography/reach geometry as a separate layer
-2. add one Hacienda gauge adapter
-3. implement normalized Quantity + deterministic time selection
-4. drive one simple visual binding from discharge
-5. add chart/evidence inspection
-6. snapshot and verify offline replay
-7. then evaluate current-field and high-detail water techniques
-
-The first water experiment should compare River Pulse's current-field need against the candidate references listed in `implementation-contract.md`, while treating Waterscape's existing optics as a rendering resource rather than a hydrologic model.
+Add authoritative river/reach geometry as a separate layer, then connect a river-specific current/water renderer. Waterscape's optics remain a candidate rendering resource; its reservoir water simulation does not become River Pulse hydrodynamics by default.
