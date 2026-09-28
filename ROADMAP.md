@@ -4,6 +4,9 @@ Where Waterscape is going, in rough order. Each step gets its own design spec an
 implementation plan in [`docs/design/`](docs/design/) before it is built; this page is the
 map, not the contract.
 
+The roadmap broken into agent-sized tasks — including fully spelled-out tasks for small local
+models — is the [work queue](docs/roadmap/README.md); agents start with [`AGENTS.md`](AGENTS.md).
+
 ## Shipped
 
 - **Journey + video tier** — Calaveras and San Antonio reservoirs (Hetch Hetchy Regional Water
