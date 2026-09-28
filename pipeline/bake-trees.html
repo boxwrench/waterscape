@@ -1,0 +1,60 @@
+<!doctype html>
+<!-- Tree bake page (pipeline only, never shipped): pipeline/bake-trees.mjs opens it in Edge,
+     calls window.bake(variants) and writes the returned geometry and textures to the biome. -->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "../vendor/three/three.webgpu.js",
+          "ez-tree": "../node_modules/@dgreenheck/ez-tree/build/ez-tree.es.js"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <script type="module">
+      import * as THREE from "three";
+      import { Tree } from "ez-tree";
+      // Deep-merge plain objects so a variant only lists the options it changes.
+      const merge = (target, patch) => {
+        for (const [k, v] of Object.entries(patch ?? {}))
+          if (v && typeof v === "object" && !Array.isArray(v)) merge((target[k] ??= {}), v);
+          else target[k] = v;
+        return target;
+      };
+      const pack = (geometry) => ({
+        position: Array.from(geometry.attributes.position.array),
+        normal: Array.from(geometry.attributes.normal.array),
+        uv: Array.from(geometry.attributes.uv.array),
+        index: Array.from(geometry.index.array),
+      });
+      const imageSrc = (map) => map?.image?.src ?? null;
+      window.bake = async (variants) => {
+        const out = { variants: [], textures: {} };
+        for (const v of variants) {
+          const tree = new Tree();
+          tree.loadPreset(v.preset);
+          merge(tree.options, v.options);
+          tree.options.seed = v.seed;
+          tree.generate();
+          const box = new THREE.Box3().setFromObject(tree.leavesMesh);
+          out.variants.push({
+            id: v.id,
+            branches: pack(tree.branchesMesh.geometry),
+            leaves: pack(tree.leavesMesh.geometry),
+            height: box.max.y,
+            crownRadius: Math.max(box.max.x - box.min.x, box.max.z - box.min.z) / 2,
+            crownCentre: [(box.max.x + box.min.x) / 2, (box.max.z + box.min.z) / 2],
+          });
+          out.textures.bark ??= imageSrc(tree.branchesMesh.material.map);
+          out.textures.barkNormal ??= imageSrc(tree.branchesMesh.material.normalMap);
+          out.textures.leaf ??= imageSrc(tree.leavesMesh.material.map);
+        }
+        return out;
+      };
+      window.ready = true;
+    </script>
+  </body>
+</html>

@@ -588,7 +588,10 @@ __device__ float2 bakedLight(const float4 *T, const float4 *B, int stride, float
 // pass already lit the ground (three.js); only trees and their shadows are added here.
 __device__ float3 terrainShade(const float4 *T, const float4 *L, float3 p, float3 rd, float distance, int season,
                                int shadowSteps, float treeNear, const float4 *B, int bakeStride,
-                               float4 given, float time) {
+                               float4 given, float meshNear, float time) {
+  // given.w 3: a three.js tree mesh — shaded already; only the air in between is added.
+  if (given.w > 2.5f)
+    return aerial(L, v3(given.x, given.y, given.z), distance);
   float3 sun = lightSun(L), n = terrainNormal(T, p.x, p.z, distance);
   float footprint = distance * .0015f;
   float4 cell = terrainSample(T, p.x, p.z);
@@ -661,6 +664,9 @@ __device__ float3 terrainShade(const float4 *T, const float4 *L, float3 p, float
     }
   }
   float canopy = lerp(crown.x, fminf(1.0f, density * .9f), farBlend);
+  // Inside meshNear the oaks are three.js meshes; the crowns fade in just before it.
+  if (meshNear > 0.0f)
+    canopy *= smooth(meshNear * .85f, meshNear, distance);
   float3 crownN = norm(mix3(v3(crown.y, crown.z, crown.w), n, farBlend));
   // Cast shadows: a crown ~7 m up shades the ground away from the sun.
   float castShadow = 0.0f;
@@ -708,7 +714,7 @@ __device__ float3 environment(const float4 *T, const float4 *L, float3 ro, float
   float t = terrainTrace(T, ro, rd, steps, 16000.0f);
   if (t > 0)
     return terrainShade(T, L, add(ro, mul(rd, t)), rd, t, season, 0, 0.0f, T, 0,
-                        make_float4(0.0f, 0.0f, 0.0f, 0.0f), time);
+                        make_float4(0.0f, 0.0f, 0.0f, 0.0f), 0.0f, time);
   return sky(L, rd, season, time);
 }
 __device__ float floorDepth(const float4 *T, float x, float z, float depth, float slope) {
@@ -774,7 +780,8 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
                              const float4 *baked, float4 *hdr, int width,
                              int height, float camX, float camZ, float camY, float yaw, float pitch, float centerX,
                              float centerZ, float depth, float bankSlope, float time, int view, int season,
-                             int quality, int landPass, int bakeStride) {
+                             int quality, int landPass, int bakeStride,
+                             float meshNear) {
   int ix = (int)(blockIdx.x * blockDim.x + threadIdx.x),
       iy = (int)(blockIdx.y * blockDim.y + threadIdx.y);
   if (ix >= width || iy >= height)
@@ -797,20 +804,20 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
   if (landPass) {
     float4 l = land[iy * width + ix];
     landT = l.w < 0.0f ? -l.w : -1.0f;
-    // Grass is marked a million metres further (pack.js): no tree crown over it.
-    float grass = landT > 5.0e5f ? 1.0f : 0.0f;
-    if (grass > 0.0f)
-      landT -= 1.0e6f;
-    // landPass 2: the land pass shaded the ground and grass (three.js).
+    // Markers from pack.js, past any real distance: grass +1e6 m (no crown over it), tree
+    // meshes +2e6 m (already shaded; nothing added).
+    float kind = landT > 1.5e6f ? 2.0f : (landT > 5.0e5f ? 1.0f : 0.0f);
+    landT -= kind * 1.0e6f;
+    // landPass 2: the land pass shaded the ground, grass and near trees (three.js).
     if (landPass == 2)
-      given = make_float4(l.x, l.y, l.z, 1.0f + grass);
+      given = make_float4(l.x, l.y, l.z, 1.0f + kind);
   } else
     landT = terrainTrace(terrain, ro, rd, traceSteps, 16000.0f);
   if (landT > 0) {
     float3 lp = add(ro, mul(rd, landT));
     lp.y = terrainHeight(terrain, lp.x, lp.z);
     col = terrainShade(terrain, light, lp, rd, landT, season, shadowSteps, treeNear, baked,
-                       bakeStride, given, time);
+                       bakeStride, given, meshNear, time);
   }
   if (rd.y < .0015f) {
     float3 wd = norm(v3(rd.x, fminf(rd.y, -.0015f), rd.z));
