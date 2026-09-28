@@ -403,13 +403,14 @@ __device__ float shoreDistance(const float4 *T, float x, float z) {
 }
 // Lidar flattens water, so the bed is modelled: the banks keep dropping at about 1:3 until
 // the basin floor. `depth` is the interface's basin depth.
-__device__ float bedDepth(float offshore, float depth) {
-  return fminf(depth, .08f + .35f * offshore);
+// Water depth `offshore` metres from the shoreline: a bank falling `slope` m per m to `depth`.
+__device__ float bedDepth(float offshore, float depth, float slope) {
+  return fminf(depth, .08f + slope * offshore);
 }
 __device__ float terrainHeight(const float4 *T, float x, float z) {
   float4 s = terrainSample(T, x, z);
   if (s.y < 0)
-    return -bedDepth(-s.y, 40.0f);
+    return -bedDepth(-s.y, 40.0f, .35f);
   // Sub-grid relief the 10 m lidar grid cannot hold, faded out at the waterline.
   float detail = 2.2f * (fbm(x * .045f + 5.0f, z * .045f) - .5f) +
                  .5f * (noise(x * .21f, z * .21f) - .5f);
@@ -710,11 +711,11 @@ __device__ float3 environment(const float4 *T, const float4 *L, float3 ro, float
                         make_float4(0.0f, 0.0f, 0.0f, 0.0f), time);
   return sky(L, rd, season, time);
 }
-__device__ float floorDepth(const float4 *T, float x, float z, float depth) {
+__device__ float floorDepth(const float4 *T, float x, float z, float depth, float slope) {
   // Floor meets the surface at the waterline so the bank shows through shallow water.
   float offshore = fmaxf(0, -shoreDistance(T, x, z));
   float fade = smooth(0.0f, 12.0f, offshore);
-  return bedDepth(offshore, depth) + .18f * (noise(x * .12f, z * .12f) - .5f) * fade +
+  return bedDepth(offshore, depth, slope) + .18f * (noise(x * .12f, z * .12f) - .5f) * fade +
          .08f * (noise(x * .55f + 7, z * .55f + 7) - .5f) * fade;
 }
 __device__ float3 stone(const float4 *peb, float x, float z, float footprint) {
@@ -734,7 +735,7 @@ __device__ float3 stone(const float4 *peb, float x, float z, float footprint) {
 // false shadows onto its own neighbours.
 __device__ float bakeHeight(const float4 *T, float x, float z) {
   float4 s = terrainSample(T, x, z);
-  return s.y < 0 ? -bedDepth(-s.y, 40.0f) : s.x - .25f * fmaxf(0.0f, terrainOutside(T, x, z));
+  return s.y < 0 ? -bedDepth(-s.y, 40.0f, .35f) : s.x - .25f * fmaxf(0.0f, terrainOutside(T, x, z));
 }
 __global__ void bake_light(const float4 *terrain, const float4 *light, float4 *out, int stride) {
   int ix = (int)(blockIdx.x * blockDim.x + threadIdx.x),
@@ -772,7 +773,7 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
                              const float4 *pebbles, const float4 *terrain, const float4 *light, const float4 *land,
                              const float4 *baked, float4 *hdr, int width,
                              int height, float camX, float camZ, float camY, float yaw, float pitch, float centerX,
-                             float centerZ, float depth, float time, int view, int season,
+                             float centerZ, float depth, float bankSlope, float time, int view, int season,
                              int quality, int landPass, int bakeStride) {
   int ix = (int)(blockIdx.x * blockDim.x + threadIdx.x),
       iy = (int)(blockIdx.y * blockDim.y + threadIdx.y);
@@ -843,10 +844,10 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
                        .00001f);
     float3 spec = mul(SUN, fminf(12000, D * Vis * fresnel(dot3(h, v)) * nl));
     float3 tr = refract3(wd, n, 1 / 1.3335f);
-    float dist = (-floorDepth(terrain, P.x, P.z, depth) - P.y) / tr.y;
+    float dist = (-floorDepth(terrain, P.x, P.z, depth, bankSlope) - P.y) / tr.y;
     float3 FP = add(P, mul(tr, dist));
     for (int i = 0; i < 2; i++) {
-      dist = (-floorDepth(terrain, FP.x, FP.z, depth) - P.y) / tr.y;
+      dist = (-floorDepth(terrain, FP.x, FP.z, depth, bankSlope) - P.y) / tr.y;
       FP = add(P, mul(tr, dist));
     }
     dist = fmaxf(0, dist);

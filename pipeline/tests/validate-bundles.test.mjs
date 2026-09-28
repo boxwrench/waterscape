@@ -112,3 +112,12 @@ test("a biome's listed ground files must exist", async () => {
   assert.deepEqual(await validateBiomes(root), ["biome b: missing ground/grass_normal.jpg"]);
   await rm(root, { recursive: true });
 });
+
+test("water depth needs positive numbers and a source", async () => {
+  const dir = await bundle({ "land.json": { water: { maxDepth: -3, bankSlope: 0.25, maxDepthSource: "x" } } });
+  assert.deepEqual(await validateBundle(dir), [
+    "test: land.json water.maxDepth must be a positive number",
+    "test: land.json water.maxDepthSource must be an https URL",
+  ]);
+  await rm(path.dirname(dir), { recursive: true });
+});

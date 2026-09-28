@@ -1,7 +1,6 @@
 // The explore page: controls, input and readouts around the engine (renderer/engine/).
 import { formatElevation, formatLatLon } from "./terrain.js";
 import { QualityGovernor, TIER_NAMES, forcedTier, startingLevel } from "./engine/quality.js";
-import { PRESETS } from "./engine/presets.js";
 import { loadBody, viewpoint } from "./engine/body.js";
 import { fly, viewRay } from "./engine/camera.js";
 import { createWaterscape } from "./engine/waterscape.js";
@@ -42,16 +41,14 @@ function fail(e) {
   if (embedded) parent.postMessage({ type: "waterscape:failed", reservoir: bodyId }, location.origin);
 }
 function labels() {
-  for (const id of ["energy", "depth", "exposure"])
-    $(id + "Value").textContent = Number($(id).value).toFixed(1) + (id === "depth" ? " m" : "");
+  $("energyValue").textContent = Number($("energy").value).toFixed(1);
 }
-for (const id of ["energy", "depth", "exposure"]) $(id).oninput = labels;
-// The controls are the source of truth; the engine reads a copy each frame.
+$("energy").oninput = labels;
+// The controls are the source of truth; the engine reads a copy each frame. Depth comes from the
+// water body (land.json) and exposure from the light preset, so neither is a control.
 function syncSettings() {
   Object.assign(ws.settings, {
     energy: +$("energy").value,
-    depth: +$("depth").value,
-    exposure: +$("exposure").value,
     view: +$("view").value,
     season: +$("season").value,
     glare: $("glare").checked,
@@ -89,7 +86,6 @@ function selectViewpoint(name) {
   ws.state.viewpoint = name;
   Object.assign(ws.state, viewpoint(body, name));
   $("energy").value = name === "shore" ? 0.3 : 0.38;
-  $("depth").value = 18;
   document
     .querySelectorAll("[data-preset]")
     .forEach((b) => b.classList.toggle("active", b.dataset.preset === name));
@@ -107,11 +103,9 @@ function buildViewpoints() {
     }),
   );
 }
-// Lighting preset: the engine writes the light; the page mirrors exposure and the picker.
+// Lighting preset: the engine writes the light (and exposure); the page mirrors the picker.
 function applyPreset(name) {
   const chosen = ws.setPreset(name);
-  $("exposure").value = String(PRESETS[chosen].exposure);
-  labels();
   $("preset").value = chosen;
 }
 // The journey's live view picks presets from outside the iframe.

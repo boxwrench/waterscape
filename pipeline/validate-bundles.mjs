@@ -51,6 +51,12 @@ export async function validateBundle(dir) {
     errors.push(`${id}: land.json defaultPreset ${land.defaultPreset} is not in its presets`);
   if (!["spring", "summer"].includes(land.defaultSeason))
     errors.push(`${id}: land.json defaultSeason ${land.defaultSeason} is not spring or summer`);
+  if (land.water) {
+    for (const key of ["maxDepth", "bankSlope"])
+      if (!(land.water[key] > 0)) errors.push(`${id}: land.json water.${key} must be a positive number`);
+    if (!/^https:\/\//.test(land.water.maxDepthSource ?? ""))
+      errors.push(`${id}: land.json water.maxDepthSource must be an https URL`);
+  }
   const biomeFile = path.join(path.dirname(dir), "biomes", source.biome ?? "", "biome.json");
   await stat(biomeFile).catch(() =>
     errors.push(`${id}: biome ${source.biome} has no data/biomes/${source.biome}/biome.json`),

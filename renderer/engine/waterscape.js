@@ -31,7 +31,16 @@ export async function createWaterscape(
       frames: 0,
     },
     // The page's controls: wave energy, basin depth (m), exposure, debug view, season, glare.
-    settings = { energy: 0.38, depth: 18, exposure: 0.8, view: 0, season: 1, glare: true },
+    // Depth and bank slope come from the water body (land.json "water"); exposure from the preset.
+    settings = {
+      energy: 0.38,
+      depth: body.land.water?.maxDepth ?? 18,
+      bankSlope: body.land.water?.bankSlope ?? 0.35,
+      exposure: 0.8,
+      view: 0,
+      season: 1,
+      glare: true,
+    },
     diag = {
       ready: false,
       errors: [],
@@ -295,6 +304,7 @@ export async function createWaterscape(
           centerX,
           centerZ,
           depth: settings.depth,
+          bankSlope: settings.bankSlope,
           time: state.time,
           view: settings.view,
           season: settings.season,
