@@ -1,5 +1,7 @@
 // Turns three.js's land render (colour + depth) into the float4-per-pixel buffer the water
 // kernel reads: rgb = colour, w = -(distance along the pixel's camera ray), 0 where no land.
+// Grass (colour alpha < 0.5) is marked by pushing w a million metres further (past any real
+// distance); the kernel then skips the procedural tree crowns for that pixel.
 // The ray matches ray() in water.cu (vertical half-FOV atan(0.62487)).
 const WGSL = /* wgsl */ `
 @group(0) @binding(0) var colorTex: texture_2d<f32>;
@@ -20,7 +22,7 @@ fn main(@builtin(global_invocation_id) id: vec3u) {
     let sy = 1.0 - 2.0 * (f32(id.y) + 0.5) / f32(p.height);
     let a = f32(p.width) / f32(p.height);
     let len = sqrt(1.0 + (sx * a * 0.62487) * (sx * a * 0.62487) + (sy * 0.62487) * (sy * 0.62487));
-    w = -zv * len;
+    w = -zv * len - select(0.0, 1.0e6, c.a < 0.5);
   }
   land[id.y * p.width + id.x] = vec4f(c.rgb, w);
 }`;

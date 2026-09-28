@@ -99,6 +99,8 @@ export function createGroundMaterial(terrain, biomeBase, biome) {
     material,
     terrainTex,
     lightTex,
+    // Light uniforms shared with the grass (grass.js).
+    uniforms: u,
     // Match the preset the water kernel uses (renderer/engine/presets.js).
     setLight(preset, season) {
       u.sun.value.set(...preset.sun);

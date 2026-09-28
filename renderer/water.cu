@@ -697,7 +697,8 @@ __device__ float3 terrainShade(const float4 *T, const float4 *L, float3 p, float
   float crownSun = fmaxf(0, dot3(crownN, sun)) * shadow * lerp(clumps, 1.0f, farBlend);
   float3 crownLit = prod(oak, add(mul(sunC, .15f + .85f * crownSun),
                                   mul(skyC, (.45f + .25f * crownN.y) * baked.y)));
-  float3 lit = mix3(groundLit, crownLit, canopy * (1.0f - ring));
+  // given.w 2: a grass blade in front of the ground — trees shade it but never cover it.
+  float3 lit = mix3(groundLit, crownLit, canopy * (1.0f - ring) * (given.w > 1.5f ? 0.0f : 1.0f));
   return aerial(L, lit, distance);
 }
 // Reflected / environment lookup: terrain if the ray hits it, otherwise the sky.
@@ -795,9 +796,13 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
   if (landPass) {
     float4 l = land[iy * width + ix];
     landT = l.w < 0.0f ? -l.w : -1.0f;
+    // Grass is marked a million metres further (pack.js): no tree crown over it.
+    float grass = landT > 5.0e5f ? 1.0f : 0.0f;
+    if (grass > 0.0f)
+      landT -= 1.0e6f;
     // landPass 2: the land pass shaded the ground and grass (three.js).
     if (landPass == 2)
-      given = make_float4(l.x, l.y, l.z, 1.0f);
+      given = make_float4(l.x, l.y, l.z, 1.0f + grass);
   } else
     landT = terrainTrace(terrain, ro, rd, traceSteps, 16000.0f);
   if (landT > 0) {
