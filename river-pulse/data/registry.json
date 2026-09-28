@@ -1,0 +1,33 @@
+{
+  "schema_version": "river-pulse-registry-0.1",
+  "places": [
+    {
+      "river_pack": "russian_river",
+      "id": "hacienda_bridge",
+      "name": "Hacienda Bridge",
+      "hydrologic_context": "river_reach",
+      "manifest": "russian_river/places/hacienda_bridge/place.json",
+      "supported_capabilities": [
+        "forecast_discharge",
+        "historical_discharge",
+        "historical_statistics",
+        "observed_discharge",
+        "precipitation_context",
+        "seasonal_streamflow_condition"
+      ]
+    },
+    {
+      "river_pack": "russian_river",
+      "id": "jenner",
+      "name": "Jenner Estuary",
+      "hydrologic_context": "estuary",
+      "manifest": "russian_river/places/jenner/place.json",
+      "supported_capabilities": [
+        "estuary_context",
+        "observed_water_surface_elevation",
+        "precipitation_context",
+        "upstream_discharge_context"
+      ]
+    }
+  ]
+}
