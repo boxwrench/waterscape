@@ -14,3 +14,9 @@ Playwright is a development dependency used for browser validation and is not sh
 Copyright © 2010-2025 three.js authors; see `vendor/three/LICENSE`. The sky model in
 `renderer/water.cu` (`sky()`) is ported from three.js's `SkyMesh` (MIT), itself based
 on Preetham et al. 1999 and the work of Simon Wallner, Martin Upitis and zz85.
+
+## Ground textures
+
+`data/biomes/*/ground/` are resized from ambientCG materials (https://ambientcg.com), CC0 1.0
+Universal; each biome's `biome.json` records the asset ids and download URLs (Grass004,
+Ground109, Rock030 for `diablo-oak`).

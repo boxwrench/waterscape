@@ -60,6 +60,20 @@ export async function validateBundle(dir) {
   return errors;
 }
 
+// Biomes (data/biomes/<biome>/biome.json): every file a biome lists must exist.
+export async function validateBiomes(root) {
+  const dir = path.join(root, "data", "biomes"),
+    errors = [];
+  for (const d of await readdir(dir, { withFileTypes: true })) {
+    if (!d.isDirectory()) continue;
+    const biome = JSON.parse(await readFile(path.join(dir, d.name, "biome.json"), "utf8"));
+    for (const layer of Object.values(biome.ground ?? {}))
+      for (const file of layer.files ?? [])
+        await stat(path.join(dir, d.name, file)).catch(() => errors.push(`biome ${d.name}: missing ${file}`));
+  }
+  return errors;
+}
+
 // Tours (data/tours/<tour>.json): ordered stops, each an existing water body.
 export async function validateTours(root) {
   const dir = path.join(root, "data", "tours"),
@@ -83,7 +97,7 @@ export async function validateAll(root) {
   const dirs = (await readdir(path.join(root, "data"), { withFileTypes: true }))
     .filter((d) => d.isDirectory() && !["biomes", "tours"].includes(d.name))
     .map((d) => path.join(root, "data", d.name));
-  return [...(await Promise.all(dirs.map(validateBundle))).flat(), ...(await validateTours(root))];
+  return [...(await Promise.all(dirs.map(validateBundle))).flat(), ...(await validateTours(root)), ...(await validateBiomes(root))];
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

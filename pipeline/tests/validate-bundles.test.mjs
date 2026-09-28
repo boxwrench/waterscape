@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtemp, mkdir, writeFile, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { REQUIRED, validateBundle, validateTours } from "../validate-bundles.mjs";
+import { REQUIRED, validateBiomes, validateBundle, validateTours } from "../validate-bundles.mjs";
 
 const view = { x: 0, z: 0, above: 3, yaw: 0, pitch: -0.1, speed: 40, label: "View" };
 const good = {
@@ -98,5 +98,17 @@ test("tour stops must name existing bodies", async () => {
   await writeFile(path.join(root, "data", "tours", "t.json"),
     JSON.stringify({ title: "T", stops: [{ id: "calaveras", caption: "c" }, { id: "nowhere", caption: "n" }] }));
   assert.deepEqual(await validateTours(root), ["tour t: no bundle for stop nowhere"]);
+  await rm(root, { recursive: true });
+});
+
+test("a biome's listed ground files must exist", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "biomes-"));
+  await mkdir(path.join(root, "data", "biomes", "b", "ground"), { recursive: true });
+  await writeFile(path.join(root, "data", "biomes", "b", "ground", "grass_color.jpg"), "");
+  await writeFile(path.join(root, "data", "biomes", "b", "biome.json"), JSON.stringify({
+    id: "b", name: "B", description: "x",
+    ground: { grass: { files: ["ground/grass_color.jpg", "ground/grass_normal.jpg"] } },
+  }));
+  assert.deepEqual(await validateBiomes(root), ["biome b: missing ground/grass_normal.jpg"]);
   await rm(root, { recursive: true });
 });

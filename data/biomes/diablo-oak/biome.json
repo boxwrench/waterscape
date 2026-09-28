@@ -1,5 +1,34 @@
 {
   "id": "diablo-oak",
   "name": "Diablo Range oak woodland",
-  "description": "Rolling annual grassland, gold most of the year and green after winter rain, with coast live, blue and valley oaks in ravines, on north-facing slopes and in groves. Assets for its ground, grass and oaks are added by the land sub-projects."
+  "description": "Rolling annual grassland, gold most of the year and green after winter rain, with coast live, blue and valley oaks in ravines, on north-facing slopes and in groves. Assets for its ground, grass and oaks are added by the land sub-projects.",
+  "ground": {
+    "grass": {
+      "ambientcg": "Grass004",
+      "licence": "CC0 1.0, ambientCG",
+      "source": "https://ambientcg.com/get?file=Grass004_1K-JPG.zip",
+      "files": [
+        "ground/grass_color.jpg",
+        "ground/grass_normal.jpg"
+      ]
+    },
+    "soil": {
+      "ambientcg": "Ground109",
+      "licence": "CC0 1.0, ambientCG",
+      "source": "https://ambientcg.com/get?file=Ground109_1K-JPG.zip",
+      "files": [
+        "ground/soil_color.jpg",
+        "ground/soil_normal.jpg"
+      ]
+    },
+    "rock": {
+      "ambientcg": "Rock030",
+      "licence": "CC0 1.0, ambientCG",
+      "source": "https://ambientcg.com/get?file=Rock030_1K-JPG.zip",
+      "files": [
+        "ground/rock_color.jpg",
+        "ground/rock_normal.jpg"
+      ]
+    }
+  }
 }
