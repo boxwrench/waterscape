@@ -1,7 +1,9 @@
 import * as THREE from "../../vendor/three/three.webgpu.js";
 import { fly, viewRay } from "../../renderer/engine/camera.js";
 import { fetchLatestContinuous } from "../adapters/usgs.js";
-import { latestAtOrBefore } from "../data-model/selection.js";
+import { riverState } from "../data-model/river-state.js";
+import { latestAtOrBeforePolicy } from "../data-model/selection.js";
+import { observedFlowStatus } from "../visual-bindings/flow-status.js";
 import { loadRiverTerrain } from "./terrain.js";
 import { buildRiverTerrainGrid } from "./terrain-mesh.js";
 
@@ -25,7 +27,8 @@ const canvas = document.querySelector("#scene"),
   TERRAIN_BASE = "../data/russian_river/places/hacienda_bridge/terrain",
   SOURCE_URL = "../data/russian_river/places/hacienda_bridge/source.json";
 
-const keys = new Set();
+const keys = new Set(),
+  currentFlowPolicy = latestAtOrBeforePolicy({ maximumAgeMs: 45 * 60 * 1000 });
 let dragging = false,
   downX = 0,
   downY = 0,
@@ -78,59 +81,44 @@ function formatLatLon([lat, lon]) {
   return `${lat.toFixed(5)}°, ${lon.toFixed(5)}°`;
 }
 
-function formatUnit(unit) {
-  if (unit === "ft^3/s") return "ft³/s";
-  return unit ?? "";
-}
-
-function formatObservationTime(iso) {
-  const d = new Date(iso);
-  if (!Number.isFinite(d.getTime())) return iso;
-  return new Intl.DateTimeFormat("en-US", {
-    timeZone: "UTC",
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    timeZoneName: "short",
-  }).format(d);
-}
-
-function setFlowQuality(kind, label) {
-  flowQuality.className = `flow-quality ${kind}`;
-  flowQuality.textContent = label;
+function setFlowPresentation(presentation) {
+  flowValue.textContent = presentation.headline;
+  flowTime.textContent = presentation.detail;
+  flowQuality.className = `flow-quality ${presentation.kind}`;
+  flowQuality.textContent = presentation.badge;
 }
 
 async function updateObservedFlow(monitoringLocationId) {
   try {
     const result = await fetchLatestContinuous(monitoringLocationId),
-      now = new Date().toISOString(),
-      selection = latestAtOrBefore(result.quantities, now, { maximumAgeMs: 45 * 60 * 1000 });
+      validTime = new Date().toISOString(),
+      selection = currentFlowPolicy.select(result.quantities, validTime),
+      state = riverState({
+        validTime,
+        features: { gauges: [{ id: monitoringLocationId }] },
+        selections: [
+          {
+            feature_id: monitoringLocationId,
+            phenomenon: "discharge",
+            policy_id: currentFlowPolicy.id,
+            result: selection,
+          },
+        ],
+      }),
+      presentation = observedFlowStatus(state, monitoringLocationId);
 
-    if (selection.status === "selected") {
-      const q = selection.quantity;
-      flowValue.textContent = `${Number(q.value).toLocaleString()} ${formatUnit(q.unit)}`;
-      flowTime.textContent = `${formatObservationTime(q.time.valid_start)} · ${q.source_approval}`;
-      setFlowQuality("current", "Current");
-      return;
-    }
-
-    if (selection.reason === "stale" && selection.stale_quantity) {
-      const q = selection.stale_quantity;
-      flowValue.textContent = "No current reading";
-      flowTime.textContent = `Latest ${Number(q.value).toLocaleString()} ${formatUnit(q.unit)} · ${formatObservationTime(q.time.valid_start)}`;
-      setFlowQuality("stale", "Stale");
-      return;
-    }
-
-    flowValue.textContent = "No observation available";
-    flowTime.textContent = "USGS latest-continuous returned no discharge record";
-    setFlowQuality("unavailable", "Missing");
+    // Exposed for inspection/debugging; the page renders the presentation, not raw API records.
+    window.riverPulseState = state;
+    window.riverPulseFlowPresentation = presentation;
+    setFlowPresentation(presentation);
   } catch (error) {
     console.warn("Observed flow unavailable", error);
-    flowValue.textContent = "Flow data unavailable";
-    flowTime.textContent = "Terrain remains available; USGS request could not be completed";
-    setFlowQuality("unavailable", "Offline");
+    setFlowPresentation({
+      kind: "unavailable",
+      badge: "Offline",
+      headline: "Flow data unavailable",
+      detail: "Terrain remains available; USGS request could not be completed",
+    });
   }
 }
 
