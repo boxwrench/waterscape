@@ -9,7 +9,7 @@ import {
 import { oaksNear } from "./oak-placement.js";
 
 // Near-oak range (m) per quality tier; the kernel fades its crowns in just inside this.
-export const TREE_RANGE = [60, 100, 200];
+export const TREE_RANGE = [40, 100, 200];
 // Full-detail oaks within this distance (m) on medium and high; the lighter "-far" bake beyond it
 // and everywhere on low.
 const NEAR_DETAIL = 50;

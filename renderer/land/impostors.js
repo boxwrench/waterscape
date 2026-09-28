@@ -13,7 +13,7 @@ import {
 import { OAK_CELL } from "./oak-placement.js";
 
 // Impostor range (m) per quality tier.
-export const IMPOSTOR_RANGE = [500, 900, 1500];
+export const IMPOSTOR_RANGE = [350, 900, 1500];
 const TAU = Math.PI * 2;
 
 export function createImpostors(terrain, biome, biomeBase, ground, speciesOrder) {
