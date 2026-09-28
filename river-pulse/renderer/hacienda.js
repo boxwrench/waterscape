@@ -1,5 +1,5 @@
 import * as THREE from "../../vendor/three/three.webgpu.js";
-import { fly } from "../../renderer/engine/camera.js";
+import { fly, viewRay } from "../../renderer/engine/camera.js";
 import { loadRiverTerrain } from "./terrain.js";
 import { buildRiverTerrainGrid } from "./terrain-mesh.js";
 
@@ -7,26 +7,46 @@ const canvas = document.querySelector("#scene"),
   status = document.querySelector("#status"),
   coords = document.querySelector("#coords"),
   elevation = document.querySelector("#elevation"),
+  agl = document.querySelector("#agl"),
+  inspectTitle = document.querySelector("#inspect-title"),
+  sourceDetail = document.querySelector("#source-detail"),
+  gaugeId = document.querySelector("#gauge-id"),
+  sceneState = document.querySelector("#scene-state"),
+  loading = document.querySelector("#loading"),
   errorBox = document.querySelector("#error"),
   overviewButton = document.querySelector("#overview"),
   bridgeButton = document.querySelector("#bridge"),
-  TERRAIN_BASE = "../data/russian_river/places/hacienda_bridge/terrain";
+  TERRAIN_BASE = "../data/russian_river/places/hacienda_bridge/terrain",
+  SOURCE_URL = "../data/russian_river/places/hacienda_bridge/source.json";
 
 const keys = new Set();
 let dragging = false,
+  downX = 0,
+  downY = 0,
   lastX = 0,
-  lastY = 0;
+  lastY = 0,
+  selected = null;
 
 function fail(error) {
   console.error(error);
   status.textContent = "Terrain unavailable";
+  sceneState.textContent = "Build required";
+  loading.classList.add("ready");
   errorBox.hidden = false;
   errorBox.textContent =
     `Hacienda terrain could not be loaded.\n\n${String(error)}\n\n` +
     "Generate it with:\npython pipeline/build_river_terrain.py river-pulse/data/russian_river/places/hacienda_bridge/source.json";
 }
 
+function setActiveView(kind) {
+  overviewButton.classList.toggle("active", kind === "overview");
+  bridgeButton.classList.toggle("active", kind === "bridge");
+}
+
 function pose(state, terrain, kind) {
+  selected = null;
+  inspectTitle.textContent = "Camera position";
+  setActiveView(kind);
   if (kind === "bridge") {
     Object.assign(state, {
       x: -120,
@@ -52,18 +72,30 @@ function formatLatLon([lat, lon]) {
   return `${lat.toFixed(5)}°, ${lon.toFixed(5)}°`;
 }
 
+async function fetchJson(url) {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`${response.status} ${url}`);
+  return response.json();
+}
+
 async function main() {
-  if (!navigator.gpu) throw new Error("WebGPU is required for the live terrain spike.");
-  const terrain = await loadRiverTerrain(TERRAIN_BASE);
-  status.textContent = `${terrain.meta.source} · ${terrain.meta.verticalDatum}`;
+  if (!navigator.gpu) throw new Error("WebGPU is required for the live terrain prototype.");
+
+  const [terrain, source] = await Promise.all([loadRiverTerrain(TERRAIN_BASE), fetchJson(SOURCE_URL)]);
+  gaugeId.textContent = `${source.gauge?.agency ?? "USGS"} ${source.gauge?.id ?? "11467000"}`;
+  sourceDetail.textContent =
+    `${terrain.meta.source}. Horizontal reference ${terrain.meta.crs}; vertical reference ${terrain.meta.verticalDatum}. ` +
+    `Scene coordinates preserve the absolute elevation relationship; no reservoir water-level assumption is used.`;
+  status.textContent = "Terrain ready";
+  sceneState.textContent = "Terrain loaded";
 
   const renderer = new THREE.WebGPURenderer({ canvas, antialias: true });
   await renderer.init();
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xa8bfd0);
-  scene.fog = new THREE.FogExp2(0xa8bfd0, 0.00018);
+  scene.background = new THREE.Color(0xa9bec7);
+  scene.fog = new THREE.FogExp2(0xa8bdc3, 0.00016);
 
   const grid = buildRiverTerrainGrid(terrain),
     geometry = new THREE.BufferGeometry();
@@ -72,14 +104,19 @@ async function main() {
   geometry.computeVertexNormals();
   geometry.computeBoundingSphere();
 
-  const material = new THREE.MeshStandardNodeMaterial({ color: 0x70865a, roughness: 0.92, metalness: 0 });
+  const material = new THREE.MeshStandardNodeMaterial({ color: 0x718559, roughness: 0.94, metalness: 0 });
   const land = new THREE.Mesh(geometry, material);
   scene.add(land);
 
-  const hemi = new THREE.HemisphereLight(0xdcecff, 0x6e5a3d, 2.0),
-    sun = new THREE.DirectionalLight(0xfff2d6, 3.2);
+  const hemi = new THREE.HemisphereLight(0xd9e9ee, 0x67573f, 2.1),
+    sun = new THREE.DirectionalLight(0xffefd0, 3.4);
   sun.position.set(-3000, 5000, 1500);
   scene.add(hemi, sun);
+
+  const markerMaterial = new THREE.MeshBasicNodeMaterial({ color: 0x8bd7bd }),
+    marker = new THREE.Mesh(new THREE.SphereGeometry(3.2, 20, 12), markerMaterial);
+  marker.visible = false;
+  scene.add(marker);
 
   const camera = new THREE.PerspectiveCamera(64, 1, 1, 50000);
   camera.rotation.order = "YXZ";
@@ -96,8 +133,14 @@ async function main() {
   addEventListener("resize", resize);
   resize();
 
-  overviewButton.addEventListener("click", () => pose(state, terrain, "overview"));
-  bridgeButton.addEventListener("click", () => pose(state, terrain, "bridge"));
+  overviewButton.addEventListener("click", () => {
+    marker.visible = false;
+    pose(state, terrain, "overview");
+  });
+  bridgeButton.addEventListener("click", () => {
+    marker.visible = false;
+    pose(state, terrain, "bridge");
+  });
 
   addEventListener("keydown", (event) => {
     keys.add(event.code);
@@ -107,8 +150,8 @@ async function main() {
 
   canvas.addEventListener("pointerdown", (event) => {
     dragging = true;
-    lastX = event.clientX;
-    lastY = event.clientY;
+    downX = lastX = event.clientX;
+    downY = lastY = event.clientY;
     canvas.setPointerCapture(event.pointerId);
   });
   canvas.addEventListener("pointermove", (event) => {
@@ -119,13 +162,31 @@ async function main() {
     lastY = event.clientY;
   });
   canvas.addEventListener("pointerup", (event) => {
+    const moved = Math.hypot(event.clientX - downX, event.clientY - downY);
     dragging = false;
     canvas.releasePointerCapture(event.pointerId);
+    if (moved > 5) return;
+
+    const sx = (event.clientX / innerWidth) * 2 - 1,
+      sy = 1 - (event.clientY / innerHeight) * 2,
+      ray = viewRay(sx, sy, camera.aspect, state.yaw, state.pitch),
+      hit = terrain.pick(state.x, state.y, state.z, ray[0], ray[1], ray[2]);
+    if (!hit) return;
+    selected = hit;
+    inspectTitle.textContent = "Selected terrain";
+    marker.position.set(hit.x, hit.y + 2.2, hit.z);
+    marker.visible = true;
   });
-  canvas.addEventListener("wheel", (event) => {
-    state.speed = Math.max(2, Math.min(250, state.speed * Math.exp(-event.deltaY * 0.001)));
-    event.preventDefault();
-  }, { passive: false });
+  canvas.addEventListener(
+    "wheel",
+    (event) => {
+      state.speed = Math.max(2, Math.min(250, state.speed * Math.exp(-event.deltaY * 0.001)));
+      event.preventDefault();
+    },
+    { passive: false },
+  );
+
+  loading.classList.add("ready");
 
   let previous = performance.now();
   renderer.setAnimationLoop(() => {
@@ -137,8 +198,15 @@ async function main() {
     camera.position.set(state.x, state.y, state.z);
     camera.rotation.set(state.pitch, -state.yaw, 0);
 
-    coords.textContent = formatLatLon(terrain.latLon(state.x, state.z));
-    elevation.textContent = `${terrain.elevation(state.y).toFixed(1)} m NAVD88 · ${Math.round(state.y - terrain.ground(state.x, state.z))} m AGL`;
+    if (selected) {
+      coords.textContent = formatLatLon(terrain.latLon(selected.x, selected.z));
+      elevation.textContent = `${selected.elevation.toFixed(1)} m NAVD88`;
+      agl.textContent = "Terrain surface";
+    } else {
+      coords.textContent = formatLatLon(terrain.latLon(state.x, state.z));
+      elevation.textContent = `${terrain.elevation(state.y).toFixed(1)} m NAVD88`;
+      agl.textContent = `${Math.round(state.y - terrain.ground(state.x, state.z))} m`;
+    }
     renderer.render(scene, camera);
   });
 }
