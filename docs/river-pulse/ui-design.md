@@ -41,6 +41,8 @@ A first-class corridor representation may use:
 
 Relative width and seasonal color are different encodings. The interface should allow a simple display toggle such as `Flow width` / `Seasonal color` rather than forcing both encodings simultaneously.
 
+The first Hacienda corridor prototype now implements that pattern: a terrain-draped ribbon placed from DWR/NHD river geometry, animated sheen/flow traces, and a live `Flow width` / `Season color` toggle driven by the selected RiverState and seasonal condition.
+
 An illustrative width is not a measured bank edge, channel width, or water-surface extent. That distinction belongs in the visual binding and inspector.
 
 ### Authored-place / hero
@@ -163,5 +165,6 @@ The Hacienda branch currently establishes:
 - USGS seasonal-condition context
 - direct terrain inspection and provenance
 - authoritative river geometry as a separate layer
+- animated corridor river with relative-flow-width and seasonal-color display modes
 
-The next visual step is to make the river itself first-class: a map-scale animated corridor with relative-flow-width and seasonal-color display modes, followed separately by a higher-detail authored-place water treatment. Do not fill unsupported hydraulic quantities merely to make either renderer look complete.
+The next step is visual evaluation and tuning of this map-scale river treatment before moving separately into higher-detail authored-place water. Do not fill unsupported hydraulic quantities merely to make either renderer look complete.
