@@ -2,6 +2,8 @@
 
 These are product/function references to revisit after the v0.1 Hacienda vertical slice. They are not dependencies and do not expand the v0.1 acceptance criteria.
 
+The map-scale corridor river is now part of the active Hacienda prototype rather than a future-function item. This file stays focused on later product expansion beyond that current slice.
+
 ## California Water Watch
 
 Official site: https://cww.water.ca.gov/
