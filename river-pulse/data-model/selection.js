@@ -44,3 +44,40 @@ export function latestAtOrBeforePolicy({ maximumAgeMs }) {
     },
   };
 }
+
+export function coveringInterval(quantities, requestedValidTime) {
+  const requestedMs = Date.parse(requestedValidTime);
+  if (!Number.isFinite(requestedMs)) throw new Error(`Invalid requested time: ${requestedValidTime}`);
+
+  let chosen = null;
+  for (const q of quantities) {
+    if (q.availability !== "present" || !q.time?.valid_start || !q.time?.valid_end) continue;
+    const startMs = Date.parse(q.time.valid_start),
+      endMs = Date.parse(q.time.valid_end);
+    if (!Number.isFinite(startMs) || !Number.isFinite(endMs) || endMs <= startMs) continue;
+    // Intervals are [start, end): midnight belongs to the new daily interval, not both days.
+    if (requestedMs < startMs || requestedMs >= endMs) continue;
+    if (isPreferred(q, chosen)) chosen = q;
+  }
+
+  if (!chosen)
+    return { quantity: null, status: "missing", reason: "no_covering_interval", age_ms: null };
+
+  return {
+    quantity: chosen,
+    status: "selected",
+    reason: "covering_interval",
+    age_ms: requestedMs - Date.parse(chosen.time.valid_start),
+  };
+}
+
+export function coveringIntervalPolicy() {
+  return {
+    id: "covering-interval",
+    interval_semantics: "start-inclusive-end-exclusive",
+    tie_break: "latest_valid_start_then_quantity_id_ascending",
+    select(quantities, requestedValidTime) {
+      return coveringInterval(quantities, requestedValidTime);
+    },
+  };
+}
