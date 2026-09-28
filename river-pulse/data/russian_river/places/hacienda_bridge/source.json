@@ -2,6 +2,7 @@
   "id": "hacienda_bridge",
   "name": "Hacienda Bridge",
   "river": "Russian River",
+  "timeZone": "America/Los_Angeles",
   "anchor": [
     38.508482040255636,
     -122.9277345330354
