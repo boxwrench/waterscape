@@ -1,10 +1,12 @@
 import * as THREE from "../../vendor/three/three.webgpu.js";
 import { fly, viewRay } from "../../renderer/engine/camera.js";
+import { fetchMajorRiverGeometry, RUSSIAN_RIVER_NAME } from "../adapters/dwr-hydrography.js";
 import { fetchDailyValues, fetchLatestContinuous } from "../adapters/usgs.js";
 import { riverState } from "../data-model/river-state.js";
 import { latestAtOrBeforePolicy } from "../data-model/selection.js";
 import { observedFlowStatus } from "../visual-bindings/flow-status.js";
 import { dailyHydrograph } from "../visual-bindings/hydrograph.js";
+import { buildRiverCenterlineSegments } from "./river-centerline.js";
 import { loadRiverTerrain } from "./terrain.js";
 import { buildRiverTerrainGrid } from "./terrain-mesh.js";
 
@@ -179,6 +181,41 @@ async function updateRecentHistory(monitoringLocationId) {
   }
 }
 
+async function addRiverCenterline(scene, terrain) {
+  try {
+    const outWkid = 32600 + Number(terrain.meta.utmZone),
+      result = await fetchMajorRiverGeometry(RUSSIAN_RIVER_NAME, { outWkid }),
+      mapped = buildRiverCenterlineSegments(result.layer, terrain, { lift: 2.2, margin: 60 });
+    if (!mapped.segment_count) {
+      console.warn("Russian River centerline returned no segments inside the Hacienda terrain extent");
+      return;
+    }
+
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute("position", new THREE.BufferAttribute(mapped.positions, 3));
+    const material = new THREE.LineBasicMaterial({
+        color: 0x72d2df,
+        transparent: true,
+        opacity: 0.92,
+        depthWrite: false,
+      }),
+      line = new THREE.LineSegments(geometry, material);
+    line.renderOrder = 2;
+    scene.add(line);
+
+    window.riverPulseHydrography = Object.freeze({
+      source: result.layer,
+      mapped,
+      representation: "DWR NHD cartographic centerline overlay; not channel width, depth, or water surface",
+    });
+    sceneState.textContent = "Terrain + river";
+    sourceDetail.textContent +=
+      " Russian River centerline uses California DWR NHD Major Rivers; the line is a cartographic centerline, not measured channel width, depth, or water-surface geometry.";
+  } catch (error) {
+    console.warn("River centerline unavailable", error);
+  }
+}
+
 async function fetchJson(url) {
   const response = await fetch(url);
   if (!response.ok) throw new Error(`${response.status} ${url}`);
@@ -223,6 +260,7 @@ async function main() {
   const material = new THREE.MeshStandardNodeMaterial({ color: 0x718559, roughness: 0.94, metalness: 0 });
   const land = new THREE.Mesh(geometry, material);
   scene.add(land);
+  addRiverCenterline(scene, terrain);
 
   const hemi = new THREE.HemisphereLight(0xd9e9ee, 0x67573f, 2.1),
     sun = new THREE.DirectionalLight(0xffefd0, 3.4);
