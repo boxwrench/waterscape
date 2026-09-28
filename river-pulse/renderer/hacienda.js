@@ -4,9 +4,13 @@ import { fetchMajorRiverGeometry, RUSSIAN_RIVER_NAME } from "../adapters/dwr-hyd
 import { fetchDailyValues, fetchLatestContinuous } from "../adapters/usgs.js";
 import { riverState } from "../data-model/river-state.js";
 import { latestAtOrBeforePolicy } from "../data-model/selection.js";
+import {
+  CORRIDOR_DISPLAY_MODES,
+} from "../visual-bindings/corridor-water.js";
 import { observedFlowStatus } from "../visual-bindings/flow-status.js";
 import { dailyHydrograph } from "../visual-bindings/hydrograph.js";
 import { buildRiverCenterlineSegments } from "./river-centerline.js";
+import { createRiverCorridorVisual } from "./river-corridor-visual.js";
 import { loadRiverTerrain } from "./terrain.js";
 import { buildRiverTerrainGrid } from "./terrain-mesh.js";
 
@@ -29,6 +33,9 @@ const canvas = document.querySelector("#scene"),
   historyStart = document.querySelector("#history-start"),
   historyRange = document.querySelector("#history-range"),
   historyEnd = document.querySelector("#history-end"),
+  riverWidthMode = document.querySelector("#river-width-mode"),
+  riverColorMode = document.querySelector("#river-color-mode"),
+  riverModeNote = document.querySelector("#river-mode-note"),
   sceneState = document.querySelector("#scene-state"),
   loading = document.querySelector("#loading"),
   errorBox = document.querySelector("#error"),
@@ -44,7 +51,9 @@ let dragging = false,
   downY = 0,
   lastX = 0,
   lastY = 0,
-  selected = null;
+  selected = null,
+  corridorVisual = null,
+  riverDisplayMode = CORRIDOR_DISPLAY_MODES.FLOW_WIDTH;
 
 function fail(error) {
   console.error(error);
@@ -60,6 +69,19 @@ function fail(error) {
 function setActiveView(kind) {
   overviewButton.classList.toggle("active", kind === "overview");
   bridgeButton.classList.toggle("active", kind === "bridge");
+}
+
+function setRiverDisplayMode(mode) {
+  riverDisplayMode = mode;
+  const widthActive = mode === CORRIDOR_DISPLAY_MODES.FLOW_WIDTH;
+  riverWidthMode.classList.toggle("active", widthActive);
+  riverColorMode.classList.toggle("active", !widthActive);
+  riverWidthMode.setAttribute("aria-pressed", String(widthActive));
+  riverColorMode.setAttribute("aria-pressed", String(!widthActive));
+  riverModeNote.textContent = widthActive
+    ? "Width responds to selected discharge; it is not measured bank width."
+    : "Color follows the USGS seasonal-condition class; corridor width stays illustrative.";
+  corridorVisual?.setMode(mode);
 }
 
 function pose(state, terrain, kind) {
@@ -155,6 +177,7 @@ async function updateObservedFlow(monitoringLocationId) {
 
     window.riverPulseState = state;
     window.riverPulseFlowPresentation = presentation;
+    corridorVisual?.applyState(state);
     setFlowPresentation(presentation);
   } catch (error) {
     console.warn("Observed flow unavailable", error);
@@ -181,7 +204,7 @@ async function updateRecentHistory(monitoringLocationId) {
   }
 }
 
-async function addRiverCenterline(scene, terrain) {
+async function addRiverCorridor(scene, terrain) {
   try {
     const outWkid = 32600 + Number(terrain.meta.utmZone),
       result = await fetchMajorRiverGeometry(RUSSIAN_RIVER_NAME, { outWkid }),
@@ -191,28 +214,26 @@ async function addRiverCenterline(scene, terrain) {
       return;
     }
 
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute("position", new THREE.BufferAttribute(mapped.positions, 3));
-    const material = new THREE.LineBasicMaterial({
-        color: 0x72d2df,
-        transparent: true,
-        opacity: 0.92,
-        depthWrite: false,
-      }),
-      line = new THREE.LineSegments(geometry, material);
-    line.renderOrder = 2;
-    scene.add(line);
+    corridorVisual = createRiverCorridorVisual({
+      scene,
+      terrain,
+      mapped,
+      initialMode: riverDisplayMode,
+    });
+    corridorVisual.applyState(window.riverPulseState ?? null);
+    corridorVisual.applyCondition(window.riverPulseSeasonalCondition ?? null);
 
     window.riverPulseHydrography = Object.freeze({
       source: result.layer,
       mapped,
-      representation: "DWR NHD cartographic centerline overlay; not channel width, depth, or water surface",
+      representation: "DWR NHD cartographic centerline used to place an illustrative animated river corridor",
     });
-    sceneState.textContent = "Terrain + river";
+    window.riverPulseCorridorVisual = corridorVisual;
+    sceneState.textContent = "Terrain + flowing river";
     sourceDetail.textContent +=
-      " Russian River centerline uses California DWR NHD Major Rivers; the line is a cartographic centerline, not measured channel width, depth, or water-surface geometry.";
+      " Russian River placement uses California DWR NHD Major Rivers. The animated corridor is an illustrative visual binding: its apparent width, sheen, and motion are not measured bank width, depth, stage, inundation extent, or local velocity.";
   } catch (error) {
-    console.warn("River centerline unavailable", error);
+    console.warn("River corridor unavailable", error);
   }
 }
 
@@ -238,6 +259,11 @@ async function main() {
   status.textContent = "Terrain ready";
   sceneState.textContent = "Terrain loaded";
 
+  riverWidthMode.addEventListener("click", () => setRiverDisplayMode(CORRIDOR_DISPLAY_MODES.FLOW_WIDTH));
+  riverColorMode.addEventListener("click", () => setRiverDisplayMode(CORRIDOR_DISPLAY_MODES.SEASONAL_COLOR));
+  window.addEventListener("river-pulse-state-change", (event) => corridorVisual?.applyState(event.detail?.state));
+  window.addEventListener("river-pulse-condition-change", (event) => corridorVisual?.applyCondition(event.detail?.condition));
+
   // Hydrology is intentionally independent of terrain startup: network/data failure must not prevent exploration.
   updateObservedFlow(monitoringLocationId);
   updateRecentHistory(monitoringLocationId);
@@ -260,7 +286,7 @@ async function main() {
   const material = new THREE.MeshStandardNodeMaterial({ color: 0x718559, roughness: 0.94, metalness: 0 });
   const land = new THREE.Mesh(geometry, material);
   scene.add(land);
-  addRiverCenterline(scene, terrain);
+  addRiverCorridor(scene, terrain);
 
   const hemi = new THREE.HemisphereLight(0xd9e9ee, 0x67573f, 2.1),
     sun = new THREE.DirectionalLight(0xffefd0, 3.4);
@@ -363,6 +389,7 @@ async function main() {
       dt = Math.min(0.05, (now - previous) / 1000);
     previous = now;
     fly(state, { keys, cruise: false }, dt, terrain);
+    corridorVisual?.update(now / 1000);
 
     camera.position.set(state.x, state.y, state.z);
     camera.rotation.set(state.pitch, -state.yaw, 0);
