@@ -1,0 +1,293 @@
+
+> waterscape@1.0.0 test
+> node --test "pipeline/tests/*.test.mjs" && node pipeline/validate-bundles.mjs && node scripts/verify.mjs && node scripts/verify-site.mjs
+
+✔ starts and ends on the first and last keys (0.4644ms)
+✔ eases in and out but moves steadily through the middle (0.1414ms)
+✔ turns the short way across ±π (0.083ms)
+✔ three presets, suns above the horizon and normalised (0.8444ms)
+✔ preset buffer layout matches the shader's six float4s (0.1383ms)
+✔ unknown or unoffered presets fall back to the bundle default (0.0804ms)
+✔ starting level: NVIDIA high, everything else medium (0.7407ms)
+✔ forced tier names (0.0938ms)
+✔ slow frames step down one level at a time, after settling and a 2 s window (1.0071ms)
+✔ fast frames step up once only (16.2792ms)
+✔ struggling only at the cheapest level above 60 ms (0.2337ms)
+✔ grid points follow the lidar; offshore sinks on a 1:3 bank; border drops (0.9292ms)
+✔ false easting sits on the zone's central meridian (0.4384ms)
+✔ bundles without utmZone are zone 10 (0.1101ms)
+✔ a complete bundle has no errors (14.2434ms)
+✔ a missing file is reported (4.4164ms)
+✔ a fact without an https source is reported (5.0888ms)
+✔ flyover keys must end at the duration (5.3477ms)
+✔ land.json must match the terrain biome and name known presets (9.4629ms)
+✔ land.json defaultSeason must be spring or summer (7.3295ms)
+✔ the body's biome must exist and agree across files (7.6354ms)
+✔ tour stops must name existing bodies (3.6535ms)
+✔ a biome's listed ground files must exist (5.5925ms)
+✔ vendored three.js r186 has only relative imports (16.1117ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 677.8731
+Bundles valid.
+{
+  "fft": {
+    "maxError": 3.882331766069669e-7,
+    "roundtripError": 2.980232238769531e-7,
+    "modes": 5,
+    "axes": 2,
+    "cascades": 3,
+    "complexFields": 2
+  },
+  "model": {
+    "center": -335.24237562290074,
+    "overlook": 959.0460566961494,
+    "ridge": 919.0482290820945,
+    "shoreline": -29.460648573382034,
+    "waterLevel": 223.7,
+    "overlookElevation": 360.70813945715923,
+    "centerLatLon": [
+      37.472608030037705,
+      -121.81815953185885
+    ]
+  },
+  "readout": {
+    "camera": "226 m · 742 ft · 3 m up",
+    "position": "37°28′12.0″N 121°49′35.6″W",
+    "water": "224 m · 734 ft",
+    "link": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer"
+  },
+  "tiers": {
+    "lowMedianMs": 4.149999976158142
+  },
+  "optics": {
+    "causticMean": [
+      0.9922328628599644,
+      0.9922315664589405,
+      0.9922297112643719
+    ],
+    "hdrFinite": true,
+    "glareFinite": true,
+    "psfEnergy": [
+      1.0000001192092896,
+      1.000000238418579,
+      0.9999998807907104
+    ]
+  },
+  "noReadback": 0,
+  "first": {
+    "finite": true,
+    "min": -0.3680235743522644,
+    "max": 0.5278598666191101,
+    "rms": 0.10103752129736673,
+    "ripplePeak": 0,
+    "adapter": {
+      "vendor": "nvidia",
+      "architecture": "blackwell",
+      "device": "",
+      "description": "",
+      "features": [
+        "core-features-and-limits",
+        "subgroup-size-control",
+        "subgroups",
+        "float32-filterable",
+        "shader-f16",
+        "timestamp-query"
+      ],
+      "timestampQuery": true,
+      "limits": {
+        "maxComputeInvocationsPerWorkgroup": 1024,
+        "maxComputeWorkgroupStorageSize": 16384,
+        "maxStorageBufferBindingSize": 268435456
+      }
+    },
+    "errors": [],
+    "stats": {
+      "pipelineCompiles": 21,
+      "pipelineCacheHits": 0,
+      "bindGroupsCreated": 2628,
+      "submissions": 92,
+      "dispatches": 2628,
+      "uniformBytesUploaded": 596608,
+      "dataBytesUploaded": 35043456,
+      "readbackBytes": 34242560
+    }
+  },
+  "ripple": {
+    "finite": true,
+    "min": -0.27275899052619934,
+    "max": 0.3971286118030548,
+    "rms": 0.07620793699788754,
+    "ripplePeak": 0.010299463756382465,
+    "adapter": {
+      "vendor": "nvidia",
+      "architecture": "blackwell",
+      "device": "",
+      "description": "",
+      "features": [
+        "core-features-and-limits",
+        "subgroup-size-control",
+        "subgroups",
+        "float32-filterable",
+        "shader-f16",
+        "timestamp-query"
+      ],
+      "timestampQuery": true,
+      "limits": {
+        "maxComputeInvocationsPerWorkgroup": 1024,
+        "maxComputeWorkgroupStorageSize": 16384,
+        "maxStorageBufferBindingSize": 268435456
+      }
+    },
+    "errors": [],
+    "stats": {
+      "pipelineCompiles": 21,
+      "pipelineCacheHits": 0,
+      "bindGroupsCreated": 6246,
+      "submissions": 212,
+      "dispatches": 6246,
+      "uniformBytesUploaded": 1417936,
+      "dataBytesUploaded": 35043456,
+      "readbackBytes": 38436864
+    }
+  },
+  "distant": {
+    "finite": true,
+    "min": -0.3854566812515259,
+    "max": 0.3717687726020813,
+    "rms": 0.07596580900017971,
+    "ripplePeak": 0,
+    "adapter": {
+      "vendor": "nvidia",
+      "architecture": "blackwell",
+      "device": "",
+      "description": "",
+      "features": [
+        "core-features-and-limits",
+        "subgroup-size-control",
+        "subgroups",
+        "float32-filterable",
+        "shader-f16",
+        "timestamp-query"
+      ],
+      "timestampQuery": true,
+      "limits": {
+        "maxComputeInvocationsPerWorkgroup": 1024,
+        "maxComputeWorkgroupStorageSize": 16384,
+        "maxStorageBufferBindingSize": 268435456
+      }
+    },
+    "errors": [],
+    "stats": {
+      "pipelineCompiles": 21,
+      "pipelineCacheHits": 0,
+      "bindGroupsCreated": 15455,
+      "submissions": 514,
+      "dispatches": 15455,
+      "uniformBytesUploaded": 3515920,
+      "dataBytesUploaded": 35043456,
+      "readbackBytes": 42631168
+    }
+  },
+  "overlook": {
+    "finite": true,
+    "min": -0.3875102400779724,
+    "max": 0.42243796586990356,
+    "rms": 0.09185822217877992,
+    "ripplePeak": 0,
+    "adapter": {
+      "vendor": "nvidia",
+      "architecture": "blackwell",
+      "device": "",
+      "description": "",
+      "features": [
+        "core-features-and-limits",
+        "subgroup-size-control",
+        "subgroups",
+        "float32-filterable",
+        "shader-f16",
+        "timestamp-query"
+      ],
+      "timestampQuery": true,
+      "limits": {
+        "maxComputeInvocationsPerWorkgroup": 1024,
+        "maxComputeWorkgroupStorageSize": 16384,
+        "maxStorageBufferBindingSize": 268435456
+      }
+    },
+    "errors": [],
+    "stats": {
+      "pipelineCompiles": 21,
+      "pipelineCacheHits": 0,
+      "bindGroupsCreated": 18674,
+      "submissions": 620,
+      "dispatches": 18674,
+      "uniformBytesUploaded": 4248496,
+      "dataBytesUploaded": 35043456,
+      "readbackBytes": 46825472
+    }
+  },
+  "controls": {
+    "pause": true,
+    "reset": true,
+    "viewpoints": true,
+    "season": true,
+    "resize": true,
+    "debugViews": true,
+    "glareToggle": true,
+    "pngExport": true
+  },
+  "diagnostics": {
+    "ready": true,
+    "errors": [],
+    "state": {
+      "x": -1500,
+      "y": 140.00813945715925,
+      "z": -3000,
+      "yaw": 2.69,
+      "pitch": -0.12,
+      "speed": 40,
+      "quality": 2,
+      "preset": "golden",
+      "viewpoint": "overlook",
+      "time": 20,
+      "playing": false,
+      "frames": 304
+    },
+    "frames": 304,
+    "cascades": [
+      4.6,
+      37,
+      293
+    ],
+    "fftSize": 256,
+    "location": "Calaveras Reservoir",
+    "coordinates": [
+      37.472608030037705,
+      -121.81815953185885
+    ],
+    "preset": "golden",
+    "land": {
+      "shared": true,
+      "error": null
+    },
+    "quality": {
+      "tier": 2,
+      "width": 1152,
+      "auto": false,
+      "vendor": "nvidia",
+      "struggling": false
+    },
+    "width": 1152,
+    "height": 720,
+    "frameMs": 6.680000007152557,
+    "readbackBytes": 42631168
+  },
+  "browserErrors": []
+}
+Journey checks passed.

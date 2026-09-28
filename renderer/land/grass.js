@@ -57,7 +57,10 @@ export function createGrass(terrain, terrainTex, lightTex, lightUniforms) {
       keep = hash(worldCell.add(5.1), kf).lessThan(float(1).sub(smoothstep(u.radius.mul(0.45), u.radius, d))),
       onLand = smoothstep(4, 7, g.x).mul(smoothstep(1, 4, g.y)),
       height = hash(worldCell.add(2.7), kf).mul(0.45).add(0.3).mul(onLand).mul(select(keep, float(1), float(0))),
-      width = hash(worldCell.add(9.4), kf).mul(0.025).add(0.035),
+      width = hash(worldCell.add(9.4), kf).pow(2).mul(0.05).add(0.02),
+      // A resting lean (grass is rarely upright) in the blade's own random direction.
+      leanDir = hash(worldCell.add(6.6), kf).mul(6.2832),
+      lean = hash(worldCell.add(1.9), kf).mul(0.35),
       angle = hash(worldCell.add(4.2), kf).mul(6.2832),
       phase = hash(worldCell.add(8.8), kf).mul(6.2832),
       t = positionLocal.y,
@@ -67,10 +70,11 @@ export function createGrass(terrain, terrainTex, lightTex, lightUniforms) {
       bend = t.mul(t).mul(height).mul(float(0.18).add(gust.mul(0.75)).add(flutter)),
       side = positionLocal.x.mul(width).mul(float(1).sub(t.mul(0.9)));
     vShade.assign(vec4(light.x, light.y, hash(worldCell.add(3.3), kf), 0));
+    const rest = t.mul(t).mul(height).mul(lean);
     return vec3(
-      x.add(side.mul(cos(angle))).add(windDir.x.mul(bend)),
-      g.x.add(t.mul(height)).sub(bend.mul(bend).mul(0.6)),
-      z.add(side.mul(sin(angle))).add(windDir.y.mul(bend)),
+      x.add(side.mul(cos(angle))).add(windDir.x.mul(bend)).add(cos(leanDir).mul(rest)),
+      g.x.add(t.mul(height)).sub(bend.mul(bend).mul(0.6)).sub(rest.mul(rest).mul(0.5)),
+      z.add(side.mul(sin(angle))).add(windDir.y.mul(bend)).add(sin(leanDir).mul(rest)),
     );
   })();
 
@@ -87,8 +91,10 @@ export function createGrass(terrain, terrainTex, lightTex, lightUniforms) {
       n = normalize(vec3(0, 1, 0)),
       sunLit = lightUniforms.sunColor.mul(max(dot(n, lightUniforms.sun), 0).mul(0.75).add(0.25).mul(shade.x)),
       skyLit = lightUniforms.fill.mul(float(0.6).mul(shade.y)),
-      occlusion = mix(float(0.45), float(1), t);
-    return albedo.mul(sunLit.add(skyLit)).mul(occlusion);
+      occlusion = mix(float(0.4), float(1), t),
+      // Per-blade brightness (0.75-1.2) so the sward is not a uniform carpet.
+      variation = shade.z.mul(0.45).add(0.75);
+    return albedo.mul(sunLit.add(skyLit)).mul(occlusion).mul(variation);
   })();
 
   const material = new THREE.MeshBasicNodeMaterial({ side: THREE.DoubleSide });
