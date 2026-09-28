@@ -3,29 +3,131 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>River Pulse — Hacienda Bridge terrain spike</title>
+  <meta name="theme-color" content="#0a1716">
+  <title>River Pulse — Hacienda Bridge</title>
   <link rel="stylesheet" href="./hacienda.css">
 </head>
 <body>
   <canvas id="scene" aria-label="Interactive 3D terrain around Hacienda Bridge on the Russian River"></canvas>
-  <header class="hud">
-    <div>
-      <p class="eyebrow">River Pulse · terrain spike</p>
-      <h1>Hacienda Bridge</h1>
-      <p id="status">Loading USGS 3DEP terrain…</p>
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="crosshair" aria-hidden="true"><span></span></div>
+
+  <header class="topbar">
+    <div class="brand" aria-label="River Pulse">
+      <span class="pulse-mark" aria-hidden="true"><i></i></span>
+      <div>
+        <span class="brand-name">River Pulse</span>
+        <span class="brand-sub">Russian River</span>
+      </div>
     </div>
-    <div class="readout" aria-live="polite">
-      <span id="coords">—</span>
-      <span id="elevation">—</span>
+
+    <nav class="mode-nav" aria-label="Data view">
+      <button class="mode active" type="button" aria-pressed="true">Terrain</button>
+      <button class="mode" type="button" disabled title="Flow data integration is the next vertical slice">Flow</button>
+      <button class="mode" type="button" disabled title="Forecast integration follows the observed-flow path">Forecast</button>
+    </nav>
+
+    <div class="source-pill" title="Terrain source and vertical datum">
+      <span class="source-dot" aria-hidden="true"></span>
+      <span id="source-short">USGS 3DEP</span>
+      <span class="source-separator">·</span>
+      <span>NAVD88</span>
     </div>
   </header>
-  <aside class="help">
-    <strong>Explore</strong>
-    <span>WASD move · E/Q rise/fall · arrows or drag look · Shift boosts</span>
-    <button id="overview" type="button">Overview</button>
-    <button id="bridge" type="button">Bridge</button>
-  </aside>
-  <div id="error" class="error" hidden></div>
+
+  <main class="interface">
+    <section class="place-card glass" aria-labelledby="place-title">
+      <div class="place-kicker">
+        <span>Authored place</span>
+        <span class="prototype-badge">Prototype</span>
+      </div>
+      <h1 id="place-title">Hacienda Bridge</h1>
+      <p class="place-subtitle">Russian River · near Guerneville, California</p>
+      <p class="place-intro">Explore the real terrain around one of the river's long-running stream gauges. Hydrology will plug into this same scene without changing the terrain package.</p>
+
+      <div class="gauge-strip">
+        <div>
+          <span class="micro-label">Gauge</span>
+          <strong id="gauge-id">USGS 11467000</strong>
+        </div>
+        <div>
+          <span class="micro-label">Scene</span>
+          <strong id="scene-state">Terrain loaded</strong>
+        </div>
+      </div>
+
+      <div class="view-buttons" aria-label="Camera views">
+        <button id="overview" class="view-button active" type="button">
+          <span class="button-index">01</span>
+          <span><strong>Overview</strong><small>Read the valley</small></span>
+        </button>
+        <button id="bridge" class="view-button" type="button">
+          <span class="button-index">02</span>
+          <span><strong>Bridge</strong><small>Drop into the reach</small></span>
+        </button>
+      </div>
+    </section>
+
+    <section class="inspector glass" aria-label="Terrain inspector">
+      <div class="panel-heading">
+        <div>
+          <span class="micro-label">Inspect</span>
+          <strong id="inspect-title">Camera position</strong>
+        </div>
+        <span class="inspect-hint">Click terrain</span>
+      </div>
+      <dl class="readout-grid" aria-live="polite">
+        <div>
+          <dt>Latitude / longitude</dt>
+          <dd id="coords">—</dd>
+        </div>
+        <div>
+          <dt>Elevation</dt>
+          <dd id="elevation">—</dd>
+        </div>
+        <div>
+          <dt>Height above ground</dt>
+          <dd id="agl">—</dd>
+        </div>
+      </dl>
+      <details class="provenance">
+        <summary>Data provenance</summary>
+        <p id="source-detail">Loading terrain metadata…</p>
+      </details>
+    </section>
+  </main>
+
+  <footer class="control-deck glass">
+    <div class="time-preview">
+      <div class="deck-heading">
+        <span class="micro-label">River time</span>
+        <strong>Observed data path comes next</strong>
+      </div>
+      <div class="timeline-shell" aria-label="Future historical to forecast timeline">
+        <span class="timeline-label past">History</span>
+        <span class="timeline-line"><i></i></span>
+        <span class="timeline-now">Terrain</span>
+        <span class="timeline-line future"><i></i></span>
+        <span class="timeline-label forecast">Forecast</span>
+      </div>
+    </div>
+    <div class="controls-copy">
+      <span><kbd>WASD</kbd> move</span>
+      <span><kbd>E/Q</kbd> altitude</span>
+      <span><kbd>drag</kbd> look</span>
+      <span><kbd>shift</kbd> boost</span>
+    </div>
+  </footer>
+
+  <div id="loading" class="loading-screen">
+    <div class="loading-pulse" aria-hidden="true"><i></i><b></b></div>
+    <div>
+      <strong>Entering the Russian River</strong>
+      <span id="status">Loading USGS 3DEP terrain…</span>
+    </div>
+  </div>
+
+  <div id="error" class="error glass" hidden></div>
   <script type="module" src="./hacienda.js"></script>
 </body>
 </html>
