@@ -18,10 +18,16 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
       - run: npm ci
+      - run: pip install numpy scipy Pillow pytest
       - run: node --check renderer/explore.js
+      - run: node --check river-pulse/renderer/hacienda.js
       - run: npm run check
       - run: node --test "pipeline/tests/*.test.mjs"
+      - run: python -m pytest pipeline/tests -q
       - run: node pipeline/validate-bundles.mjs
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
