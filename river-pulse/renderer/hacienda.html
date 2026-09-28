@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>River Pulse — Hacienda Bridge terrain spike</title>
+  <link rel="stylesheet" href="./hacienda.css">
+</head>
+<body>
+  <canvas id="scene" aria-label="Interactive 3D terrain around Hacienda Bridge on the Russian River"></canvas>
+  <header class="hud">
+    <div>
+      <p class="eyebrow">River Pulse · terrain spike</p>
+      <h1>Hacienda Bridge</h1>
+      <p id="status">Loading USGS 3DEP terrain…</p>
+    </div>
+    <div class="readout" aria-live="polite">
+      <span id="coords">—</span>
+      <span id="elevation">—</span>
+    </div>
+  </header>
+  <aside class="help">
+    <strong>Explore</strong>
+    <span>WASD move · E/Q rise/fall · arrows or drag look · Shift boosts</span>
+    <button id="overview" type="button">Overview</button>
+    <button id="bridge" type="button">Bridge</button>
+  </aside>
+  <div id="error" class="error" hidden></div>
+  <script type="module" src="./hacienda.js"></script>
+</body>
+</html>
