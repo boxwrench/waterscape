@@ -14,3 +14,16 @@ User-authorized scope: fix the reviewed production assets, station isolation and
 ## Boundaries
 
 No edits to vendor modules or the protected Waterscape water/runtime files. Do not claim completed hydraulic simulation, new surveyed assets or finished Jenner rendering. Browser test fixtures must be labeled test fixtures and kept out of production data.
+
+## Result
+
+- Status: done
+- Commit: c724ccf
+- Checks: `node --test pipeline/tests/*.test.mjs` — 23 test files passed, fail 0.
+- Checks: `/tmp/river-pulse-checks/bin/python -m pytest pipeline/tests -q` — 21 passed.
+- Checks: `node pipeline/validate-bundles.mjs` — Bundles valid.
+- Checks: `npm run check` — all shader kernels compiled through present.
+- Checks: `npm run build` — Built Pages with 72 browser modules, shared CUDA source and licensed assets.
+- Checks: `node scripts/verify-river-pulse.mjs` with an installed Chromium override — browser checks passed for production assets, WebGL2 fallback, timeline, evidence, cameras/layers, mobile, data outage and GPU failure.
+- Checks: `git diff --check` — no whitespace errors.
+- Notes: Reviewed desktop, evidence, mobile and expanded mobile-history screenshots. Browser interaction tests use labeled synthetic hydrology fixtures with real terrain from the successful bootstrap CI artifact. Generated terrain remains untracked; CI regenerates it. Existing Waterscape end-to-end Edge tests were not rerun; its unit, bundle and shader checks passed. Native WebGPU performance remains hardware-dependent; the browser suite exercises WebGL2 fallback. The branch is intended for review against `river-pulse/bootstrap`, not a direct merge to main.
