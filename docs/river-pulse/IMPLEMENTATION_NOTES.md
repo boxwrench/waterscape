@@ -11,6 +11,30 @@ This is the short running record of conclusions we do **not** want to rediscover
 - **Hacienda and Jenner must use the same authored-place/package mechanism.** No place-specific engine changes should be required to load either one.
 - **Hacienda discharge must not be promoted into unsupported Jenner estuary state.** It does not by itself establish Jenner water level, mouth condition, or local current direction.
 - **Game techniques are valid implementation tools.** Camera systems, replay, state machines, progression, interaction, objectives, time controls, discovery, and other game mechanisms are in scope when useful.
+- **Visual quality is first-class.** River Pulse may use expressive simulation/facsimile techniques when they clearly communicate the intended quantity or condition and do not silently claim unsupported hydraulic meaning.
+
+## Two visual regimes
+
+River Pulse deliberately uses different river/water representations at different viewing scales. They consume the same RiverState through visual bindings, but they do not need to share one rendering solution.
+
+### Corridor / overhead view
+
+Purpose: make a long river readable and expressive at map scale.
+
+- Use an animated river corridor/ribbon rather than forcing literal close-water rendering across many miles.
+- Width may vary to communicate **relative discharge/flow state**. That width is illustrative unless supported by measured/modelled bank geometry or water-surface extent.
+- Seasonal-condition color is a separate presentation mode using the USGS condition classes already implemented.
+- Width and seasonal color should be independently understandable and may be exposed as a user toggle rather than combining every encoding at once.
+- Directional motion, restrained particles, surface texture, or similar cues may make flow legible, but they do not become measured local velocity by appearance alone.
+
+### Authored-place / hero view
+
+Purpose: make Hacienda, Jenner, and later authored reaches feel like real places at close range.
+
+- Prioritize high-quality water optics and believable local behavior: current cues, reflections/refraction, surface detail, foam, caustics where useful, shoreline/structure relationships, lighting, and authored composition.
+- Hero water may use a local facsimile tuned to the phenomenon being communicated; it is not required to use the same geometry or shader as the corridor ribbon.
+- Local apparent width, level, current direction, or turbulence only become factual when an appropriate source/model supports them. Otherwise the visual binding must describe the representation as illustrative/contextual.
+- Waterscape optics are a strong candidate resource for this scale, while its still-reservoir hydrodynamic assumptions remain separate.
 
 ## Verified USGS behavior
 
@@ -47,6 +71,7 @@ This is the short running record of conclusions we do **not** want to rediscover
 - Do not hard-code the current year into historical labels or timeline display logic.
 - Do not collapse source quality into one enum. Availability, approval, estimation flags, freshness, and original source flags are independent.
 - Do not let a rendering technique inherit scientific meaning from the demo it came from. A current field, shader, caustic effect, particle system, or wave texture is only a representation until connected to supported quantities/models.
+- Do not force corridor and authored-place water through one renderer merely for architectural neatness; their visual jobs and scale constraints differ.
 
 ## Useful references to keep in view
 
