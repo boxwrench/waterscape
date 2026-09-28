@@ -57,7 +57,7 @@ Calaveras, San Antonio and San Andreas are not in CDEC, so they have no timeline
 
 | ID | Task | Who | Needs | Status |
 |---|---|---|---|---|
-| L1 | Ground materials and wind grass ([brief](capable-agent-briefs.md#l1-ground-and-grass)) | capable | — | next |
+| L1 | Ground materials and wind grass ([brief](capable-agent-briefs.md#l1-ground-and-grass)) | capable | — | in progress (Claude, branch `land-l1`) |
 | L2 | California oaks ([brief](capable-agent-briefs.md#l2-oaks)) | capable | L1 | later |
 | L3 | Light and tuning, re-rendered flyovers ([brief](capable-agent-briefs.md#l3-light-and-tuning)) | capable | L2 | later |
 
