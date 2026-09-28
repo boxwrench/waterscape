@@ -1,16 +1,17 @@
-// Land pass: three.js draws the lidar terrain on the CUDA WebShader runtime's own GPUDevice,
-// then pack.js hands the water kernel a per-pixel land distance. Foundation only: the land's
-// colour is still shaded by the kernel (terrainShade), so the mesh material is plain black.
+// Land pass: three.js draws and shades the lidar terrain (ground.js) on the CUDA WebShader
+// runtime's own GPUDevice, then pack.js hands the water kernel each pixel's colour and land
+// distance. The kernel adds trees, haze and water (landPass 2).
 import * as THREE from "../../vendor/three/three.webgpu.js";
 import { buildTerrainGrid } from "./terrain-mesh.js";
 import { createPack } from "./pack.js";
+import { createGroundMaterial } from "./ground.js";
 
 const NEAR = 1,
   FAR = 40000,
   // Same vertical field of view as ray() in water.cu.
   FOV_Y = (2 * Math.atan(0.62487) * 180) / Math.PI;
 
-export async function createLandPass(rt, terrain) {
+export async function createLandPass(rt, terrain, { biome, biomeBase }) {
   const renderer = new THREE.WebGPURenderer({
     canvas: document.createElement("canvas"),
     device: rt.device,
@@ -23,9 +24,12 @@ export async function createLandPass(rt, terrain) {
     geometry = new THREE.BufferGeometry();
   geometry.setAttribute("position", new THREE.BufferAttribute(grid.positions, 3));
   geometry.setIndex(new THREE.BufferAttribute(grid.indices, 1));
+  geometry.computeVertexNormals();
   geometry.computeBoundingSphere();
-  const scene = new THREE.Scene();
-  scene.add(new THREE.Mesh(geometry, new THREE.MeshBasicNodeMaterial({ color: 0x000000 })));
+  const ground = createGroundMaterial(terrain, biomeBase, biome),
+    scene = new THREE.Scene();
+  scene.add(new THREE.Mesh(geometry, ground.material));
+  renderer.initTexture(ground.lightTex);
 
   const camera = new THREE.PerspectiveCamera(FOV_Y, 1, NEAR, FAR);
   camera.rotation.order = "YXZ";
@@ -37,6 +41,20 @@ export async function createLandPass(rt, terrain) {
 
   return {
     shared,
+    // 2: this pass shades the ground; the water kernel adds trees, haze and water.
+    mode: 2,
+    setLight: ground.setLight,
+    setSeason: ground.setSeason,
+    // Copy bake_light's output (rows of `stride` float4s) into the ground's light texture.
+    updateLight(bakeBuffer, stride) {
+      const enc = rt.device.createCommandEncoder({ label: "baked light" });
+      enc.copyBufferToTexture(
+        { buffer: bakeBuffer.gpuBuffer, bytesPerRow: stride * 16, rowsPerImage: terrain.height },
+        { texture: renderer.backend.get(ground.lightTex).texture },
+        [terrain.width, terrain.height],
+      );
+      rt.device.queue.submit([enc.finish()]);
+    },
     get buffer() {
       return buffer;
     },

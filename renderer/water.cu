@@ -571,9 +571,23 @@ __device__ float4 oakRayHit(float3 p, float3 rd, float3 n, float density, float 
   *hitBack = fmaxf(best, 0.0f);
   return make_float4(cover, bestN.x, bestN.y, bestN.z);
 }
+// Baked sun visibility (.x) and sky openness (.y) from bake_light, bilinear at (x, z).
+__device__ float2 bakedLight(const float4 *T, const float4 *B, int stride, float x, float z) {
+  float4 g = T[0];
+  float cell = T[1].x;
+  float u = fminf(fmaxf((x - g.z) / cell, 0.0f), g.x - 1.001f),
+        v = fminf(fmaxf((z - g.w) / cell, 0.0f), g.y - 1.001f);
+  int iu = (int)u, iv = (int)v, i = iv * stride + iu;
+  float fu = u - (float)iu, fv = v - (float)iv;
+  float4 b = mix4(mix4(B[i], B[i + 1], fu), mix4(B[i + stride], B[i + stride + 1], fu), fv);
+  return make_float2(b.x, b.y);
+}
 // treeNear: distance within which trees get individual 3D crown tests (0 = never; reflections).
+// B/bakeStride: baked light (bakeStride 0 = none: march shadows instead). given.w > 0: the land
+// pass already lit the ground (three.js); only trees and their shadows are added here.
 __device__ float3 terrainShade(const float4 *T, const float4 *L, float3 p, float3 rd, float distance, int season,
-                               int shadowSteps, float treeNear, float time) {
+                               int shadowSteps, float treeNear, const float4 *B, int bakeStride,
+                               float4 given, float time) {
   float3 sun = lightSun(L), n = terrainNormal(T, p.x, p.z, distance);
   float footprint = distance * .0015f;
   float4 cell = terrainSample(T, p.x, p.z);
@@ -667,18 +681,22 @@ __device__ float3 terrainShade(const float4 *T, const float4 *L, float3 p, float
   ground = mix3(ground, bank, ring);
   ground = mix3(ground, mul(bank, .45f), wet);
   // Lighting: sun with terrain shadows, sky dome, warm bounce.
-  float shadow = shadowSteps > 0 ? terrainShadow(T, add(p, mul(n, .6f)), sun, shadowSteps) : 1.0f;
+  float2 baked = bakeStride > 0 ? bakedLight(T, B, bakeStride, p.x, p.z) : make_float2(1.0f, 1.0f);
+  float shadow = bakeStride > 0 ? baked.x
+                                : (shadowSteps > 0 ? terrainShadow(T, add(p, mul(n, .6f)), sun, shadowSteps) : 1.0f);
   float3 sunC = lightRad(L), skyC = lightFill(L),
          bounce = v3(.20f, .16f, .08f);
   float groundSun = fmaxf(0, dot3(n, sun)) * shadow * (1.0f - .85f * castShadow);
   float3 groundLit = prod(ground, add(mul(sunC, groundSun),
-                                      add(mul(skyC, .38f + .30f * n.y),
+                                      add(mul(skyC, (.38f + .30f * n.y) * baked.y),
                                           mul(bounce, .25f * (1.0f - n.y)))));
+  if (given.w > 0.0f)
+    groundLit = mul(v3(given.x, given.y, given.z), 1.0f - .6f * castShadow);
   // Crowns: lit on the sun side, deep inside the foliage on the other.
   float clumps = .70f + .60f * noise(crownX * 1.1f, crownZ * 1.1f);
   float crownSun = fmaxf(0, dot3(crownN, sun)) * shadow * lerp(clumps, 1.0f, farBlend);
   float3 crownLit = prod(oak, add(mul(sunC, .15f + .85f * crownSun),
-                                  mul(skyC, .45f + .25f * crownN.y)));
+                                  mul(skyC, (.45f + .25f * crownN.y) * baked.y)));
   float3 lit = mix3(groundLit, crownLit, canopy * (1.0f - ring));
   return aerial(L, lit, distance);
 }
@@ -687,7 +705,8 @@ __device__ float3 environment(const float4 *T, const float4 *L, float3 ro, float
                               int season, float time) {
   float t = terrainTrace(T, ro, rd, steps, 16000.0f);
   if (t > 0)
-    return terrainShade(T, L, add(ro, mul(rd, t)), rd, t, season, 0, 0.0f, time);
+    return terrainShade(T, L, add(ro, mul(rd, t)), rd, t, season, 0, 0.0f, T, 0,
+                        make_float4(0.0f, 0.0f, 0.0f, 0.0f), time);
   return sky(L, rd, season, time);
 }
 __device__ float floorDepth(const float4 *T, float x, float z, float depth) {
@@ -706,11 +725,54 @@ __device__ float3 stone(const float4 *peb, float x, float z, float footprint) {
   float3 col = v3(lerp(a.x, b.x, m), lerp(a.y, b.y, m), lerp(a.z, b.z, m));
   return mix3(col, v3(.20f, .18f, .14f), smooth(.015f, .16f, footprint));
 }
+// Baked terrain light for the three.js land pass (renderer/land/): per lidar cell, soft sun
+// visibility for the current preset (.x) and sky openness (.y, horizon-based ambient
+// occlusion). Rows are `stride` float4s long so the buffer copies straight into a texture.
+// Re-run when the light preset changes; far longer and finer than the per-pixel shadow.
+// Baked against the lidar surface alone: sub-grid relief is finer than a cell and would cast
+// false shadows onto its own neighbours.
+__device__ float bakeHeight(const float4 *T, float x, float z) {
+  float4 s = terrainSample(T, x, z);
+  return s.y < 0 ? -bedDepth(-s.y, 40.0f) : s.x - .25f * fmaxf(0.0f, terrainOutside(T, x, z));
+}
+__global__ void bake_light(const float4 *terrain, const float4 *light, float4 *out, int stride) {
+  int ix = (int)(blockIdx.x * blockDim.x + threadIdx.x),
+      iy = (int)(blockIdx.y * blockDim.y + threadIdx.y);
+  float4 g = terrain[0];
+  if (ix >= (int)g.x || iy >= (int)g.y)
+    return;
+  float cell = terrain[1].x, x = g.z + (float)ix * cell, z = g.w + (float)iy * cell;
+  float3 sun = lightSun(light),
+         n = norm(v3(bakeHeight(terrain, x - cell, z) - bakeHeight(terrain, x + cell, z), 2.0f * cell,
+                     bakeHeight(terrain, x, z - cell) - bakeHeight(terrain, x, z + cell))),
+         p = add(v3(x, bakeHeight(terrain, x, z), z), mul(n, 1.0f));
+  float vis = 1.0f, t = 10.0f;
+  for (int i = 0; i < 48; i++) {
+    float3 q = add(p, mul(sun, t));
+    float h = q.y - bakeHeight(terrain, q.x, q.z);
+    vis = fminf(vis, 6.0f * h / t);
+    if (vis < 0.0f || t > 6000.0f)
+      break;
+    t += fmaxf(6.0f, h * .5f);
+  }
+  // Sky openness: mean cosine of the horizon over 8 azimuths within ~400 m.
+  float open = 0.0f;
+  for (int k = 0; k < 8; k++) {
+    float a = (float)k * .7853982f, dx = cosf(a), dz = sinf(a), rise = 0.0f;
+    for (int j = 1; j <= 8; j++) {
+      float d = (float)(j * j) * 6.0f;
+      rise = fmaxf(rise, (bakeHeight(terrain, x + dx * d, z + dz * d) - p.y) / d);
+    }
+    open += 1.0f - rise / sqrtf(1.0f + rise * rise);
+  }
+  out[iy * stride + ix] = make_float4(smooth(0.0f, 1.0f, vis), open / 8.0f, 0.0f, 0.0f);
+}
 __global__ void render_water(const float4 *surface, const float4 *rip, const float4 *caustics,
-                             const float4 *pebbles, const float4 *terrain, const float4 *light, const float4 *land, float4 *hdr, int width,
+                             const float4 *pebbles, const float4 *terrain, const float4 *light, const float4 *land,
+                             const float4 *baked, float4 *hdr, int width,
                              int height, float camX, float camZ, float camY, float yaw, float pitch, float centerX,
                              float centerZ, float depth, float time, int view, int season,
-                             int quality, int landPass) {
+                             int quality, int landPass, int bakeStride) {
   int ix = (int)(blockIdx.x * blockDim.x + threadIdx.x),
       iy = (int)(blockIdx.y * blockDim.y + threadIdx.y);
   if (ix >= width || iy >= height)
@@ -729,15 +791,20 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
   // native host, today's height-field trace. Snap to the shader's surface, which adds
   // sub-grid relief the mesh lacks, so shading and shadows start on the ground.
   float landT = -1.0f;
+  float4 given = make_float4(0.0f, 0.0f, 0.0f, 0.0f);
   if (landPass) {
-    float w = land[iy * width + ix].w;
-    landT = w < 0.0f ? -w : -1.0f;
+    float4 l = land[iy * width + ix];
+    landT = l.w < 0.0f ? -l.w : -1.0f;
+    // landPass 2: the land pass shaded the ground and grass (three.js).
+    if (landPass == 2)
+      given = make_float4(l.x, l.y, l.z, 1.0f);
   } else
     landT = terrainTrace(terrain, ro, rd, traceSteps, 16000.0f);
   if (landT > 0) {
     float3 lp = add(ro, mul(rd, landT));
     lp.y = terrainHeight(terrain, lp.x, lp.z);
-    col = terrainShade(terrain, light, lp, rd, landT, season, shadowSteps, treeNear, time);
+    col = terrainShade(terrain, light, lp, rd, landT, season, shadowSteps, treeNear, baked,
+                       bakeStride, given, time);
   }
   if (rd.y < .0015f) {
     float3 wd = norm(v3(rd.x, fminf(rd.y, -.0015f), rd.z));

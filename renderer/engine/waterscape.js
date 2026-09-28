@@ -72,7 +72,23 @@ export async function createWaterscape(
 
   const source = await (await fetch(new URL("../water.cu", import.meta.url))).text(),
     terrainCells = rt.createBuffer(terrain.gpuCells()),
-    lightBuf = rt.createBuffer(24 * 4);
+    lightBuf = rt.createBuffer(24 * 4),
+    // Baked terrain light (bake_light): rows padded to 256 bytes so they copy into a texture.
+    bakeStride = Math.ceil(terrain.width / 16) * 16,
+    bakeBuf = rt.createBuffer(bakeStride * terrain.height * 16);
+
+  // Sun visibility and sky openness for the current preset, shared by the kernel and the
+  // three.js ground. Cheap on the GPU; re-run whenever the light changes.
+  function rebake() {
+    if (!k.bake_light) return;
+    rt.batch()
+      .dispatch(
+        k.bake_light.bind({ terrain: terrainCells, light: lightBuf, out: bakeBuf }, { stride: bakeStride }),
+        [Math.ceil(terrain.width / 8), Math.ceil(terrain.height / 8), 1],
+      )
+      .submit();
+    landPass?.updateLight(bakeBuf, bakeStride);
+  }
 
   // Lighting preset: the shader reads six float4s (sun, radiance, fill, sky, haze, clouds).
   function setPreset(name) {
@@ -80,19 +96,13 @@ export async function createWaterscape(
     const p = PRESETS[state.preset];
     rt.write(lightBuf, presetBuffer(p));
     settings.exposure = p.exposure;
+    landPass?.setLight(p, settings.season);
+    rebake();
     diag.preset = state.preset;
     return state.preset;
   }
   setPreset(null);
 
-  // Land from three.js on our device; if it cannot start, keep the traced land.
-  try {
-    landPass = await createLandPass(rt, terrain);
-    diag.land = { shared: landPass.shared, error: null };
-  } catch (e) {
-    landPass = null;
-    diag.land = { shared: false, error: String(e) };
-  }
 
   for (const name of [...source.matchAll(/__global__ void (\w+)/g)].map((m) => m[1])) {
     onProgress(`Compiling ${name.replaceAll("_", " ")}…`);
@@ -103,6 +113,18 @@ export async function createWaterscape(
         : [8, 8, 1],
     });
   }
+  // Land from three.js on our device; if it cannot start, keep the traced land.
+  try {
+    landPass = await createLandPass(rt, terrain, {
+      biome: body.biome,
+      biomeBase: new URL(`../../data/biomes/${terrain.meta.biome}/`, import.meta.url),
+    });
+    diag.land = { shared: landPass.shared, error: null };
+  } catch (e) {
+    landPass = null;
+    diag.land = { shared: false, error: String(e) };
+  }
+  setPreset(state.preset);
   lensKernel = rt.createBuffer(3 * 65536 * 16);
   lensFFT = [rt.createBuffer(3 * 65536 * 16), rt.createBuffer(3 * 65536 * 16)];
   seed = rt.createBuffer(3 * 65536 * 8);
@@ -238,6 +260,7 @@ export async function createWaterscape(
     rt.device.queue.submit([enc.finish()]);
   }
   function render() {
+    landPass?.setSeason(settings.season);
     landPass?.render(state);
     const batch = rt.batch(),
       grid = [width / 8, height / 8, 1];
@@ -258,6 +281,7 @@ export async function createWaterscape(
           terrain: terrainCells,
           light: lightBuf,
           land: landPass ? landPass.buffer : terrainCells,
+          baked: bakeBuf,
           hdr,
         },
         {
@@ -275,7 +299,8 @@ export async function createWaterscape(
           view: settings.view,
           season: settings.season,
           quality: state.quality,
-          landPass: landPass ? 1 : 0,
+          landPass: landPass ? landPass.mode : 0,
+          bakeStride,
         },
       ),
       grid,
