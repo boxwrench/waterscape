@@ -72,6 +72,14 @@
         <span id="flow-quality" class="flow-quality checking">Checking</span>
       </div>
 
+      <div id="seasonal-condition" class="seasonal-condition" data-condition="checking" aria-live="polite">
+        <div>
+          <span class="micro-label">Seasonal condition</span>
+          <strong id="condition-label">Checking historical context…</strong>
+        </div>
+        <small id="condition-detail">USGS day-of-year statistics</small>
+      </div>
+
       <div class="history-card" aria-live="polite">
         <div class="history-heading">
           <div>
@@ -145,7 +153,7 @@
     <div class="time-preview">
       <div class="deck-heading">
         <span class="micro-label">River time</span>
-        <strong>Observed + recent daily history are connected; interactive time comes next</strong>
+        <strong>Observed + seasonal context + recent history are connected; interactive time comes next</strong>
       </div>
       <div class="timeline-shell" aria-label="Future historical to forecast timeline">
         <span class="timeline-label past">History</span>
@@ -173,5 +181,6 @@
 
   <div id="error" class="error glass" hidden></div>
   <script type="module" src="./hacienda.js"></script>
+  <script type="module" src="./hacienda-seasonal.js"></script>
 </body>
 </html>
