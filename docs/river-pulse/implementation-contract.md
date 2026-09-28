@@ -8,6 +8,8 @@ The **Russian River** is the reference river. The first authored places are **Ha
 
 The Russian River is the first **content package**, not an application-specific special case.
 
+Visual quality is a first-class requirement. River Pulse may use expressive simulation and facsimile techniques when the visual binding states what they represent and does not silently promote them into unsupported hydraulic measurements.
+
 ## Hard architectural boundary
 
 ```text
@@ -99,7 +101,7 @@ spatial
 
 Presentation metadata belongs on the binding between a quantity and a visual effect, not on the quantity itself.
 
-The same discharge observation may drive an exact numeric label, a proportional comparison ribbon, an illustrative current field, foam, or surface turbulence while retaining one unchanged scientific identity.
+The same discharge observation may drive an exact numeric label, a proportional comparison ribbon, an illustrative current field, foam, surface turbulence, or an illustrative corridor width while retaining one unchanged scientific identity.
 
 Example:
 
@@ -116,6 +118,28 @@ note: >
   Surface behavior communicates relative discharge. It does not represent measured
   local velocity unless a supporting hydraulic model supplies that quantity.
 ```
+
+## Visual scale contract
+
+River Pulse intentionally uses different visual systems at different scales.
+
+### Corridor / overhead representation
+
+The long-range river view prioritizes readability, motion, and comparison across miles. It may use an animated river corridor/ribbon bound to RiverState.
+
+Initial presentation modes may include:
+
+- **relative-flow width** — the corridor widens/narrows according to a declared discharge comparison/mapping;
+- **seasonal-condition color** — the corridor uses the USGS day-of-year condition class;
+- directional texture/particles or other motion cues that communicate downstream flow.
+
+These are presentation mappings. An illustrative ribbon width is not a measured bank edge, channel width, inundation polygon, water-surface elevation, depth, or local velocity unless a source/model explicitly supplies that quantity. Width and seasonal color should be independently selectable so the user can inspect the same RiverState through different visual encodings.
+
+### Authored-place / hero representation
+
+Close-range authored places prioritize high-quality local water appearance and believable place-specific behavior. Hacienda and Jenner may use detailed surface rendering, reflections/refraction, attenuation, caustics, foam, local current cues, interaction, and authored geometry/camera composition.
+
+The hero renderer is not required to share the corridor renderer's geometry or shader. Both consume scientific/model state through visual bindings. Local apparent width, level, current direction, turbulence, depth, or shoreline position remain illustrative/contextual until supported by an appropriate observation or model.
 
 ## Time model
 
@@ -280,6 +304,8 @@ Every factual representation must expose enough information to answer:
 - What quality/flags apply?
 - How is the scene representing it?
 
+For illustrative geometry/behavior, inspection must also make clear what visual quantity is being encoded and what the effect does **not** claim to measure.
+
 ## Candidate implementation resources
 
 These are implementation leads, not dependencies. Each must be evaluated for portability, licensing, performance, and fit before adoption.
@@ -301,7 +327,7 @@ Resource-use rule:
 
 ### A1 — River corridor
 
-Russian River terrain and hydrography load with multiple gauge features.
+Russian River terrain and hydrography load with multiple gauge features. The corridor can render the river as a distinct data-driven visual layer without treating cartographic centerline geometry as literal banks.
 
 ### A2 — End-to-end data path
 
@@ -317,7 +343,7 @@ source
 → scene + chart
 ```
 
-Scene and hydrograph update from the same selected quantities.
+Scene and hydrograph update from the same selected quantities. A presentation-mode change (for example width vs seasonal color) changes only the visual binding/output, not the selected scientific quantity.
 
 ### A3 — Evidence inspection
 
@@ -343,6 +369,8 @@ Do not block v0.1 on:
 - complete NOAA forecast integration
 - perfect hydraulic water depth
 - physically calculated local velocity everywhere
+- literal measured bank/width changes when only discharge is available
+- one universal water renderer across corridor and authored-place scales
 - runtime third-party remote pack loading
 - every Russian River gauge
 - a second polished river
@@ -366,9 +394,11 @@ deterministic time policy
       ↓
 RiverState
       ↓
-one visual binding
+visual bindings
       ↓
 scene + hydrograph + exact label
+      ↓
+river corridor display mode
       ↓
 inspect provenance + mapping
       ↓
@@ -377,4 +407,4 @@ save snapshot
 offline reload
 ```
 
-Before writing new rendering infrastructure, complete the bounded Waterscape reuse audit and Hacienda terrain spike documented beside this contract.
+The terrain/hydrography foundation and hydrology path are now established on the branch. The next visual work should make the river itself first-class at corridor scale, then develop authored-place hero water as a separate rendering problem rather than forcing one solution across both scales.
