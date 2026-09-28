@@ -26,6 +26,9 @@ Purpose: make a long river readable and expressive at map scale.
 - Seasonal-condition color is a separate presentation mode using the USGS condition classes already implemented.
 - Width and seasonal color should be independently understandable and may be exposed as a user toggle rather than combining every encoding at once.
 - Directional motion, restrained particles, surface texture, or similar cues may make flow legible, but they do not become measured local velocity by appearance alone.
+- **First corridor implementation exists on the Hacienda branch.** California DWR NHD Major Rivers supplies placement; a terrain-draped ribbon, animated sheen, and moving flow traces provide the visual. The width/color toggle is live and follows the selected RiverState/seasonal condition.
+- The first width mapping is deliberately a rendering parameter: selected discharge is log-normalized between the returned 10th and 90th day-of-year thresholds, mapping to a 12–42 m apparent corridor and saturating beyond those anchors. Seasonal-color mode uses a fixed 24 m corridor. These metres are **not** bank geometry or inundation extent.
+- Flow traces use local terrain slope as a visual downstream cue and scale their motion with the same relative-flow mapping; this is not measured local velocity.
 
 ### Authored-place / hero view
 
