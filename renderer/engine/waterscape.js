@@ -42,6 +42,8 @@ export async function createWaterscape(
       glare: true,
       // Oak meshes and impostors (false: the shader's procedural crowns everywhere).
       trees: true,
+      // The wind-blown grass field around the camera.
+      grass: true,
     },
     diag = {
       ready: false,
@@ -273,6 +275,7 @@ export async function createWaterscape(
   function render() {
     landPass?.setSeason(settings.season);
     landPass?.setTrees?.(settings.trees);
+    landPass?.setGrass?.(settings.grass);
     landPass?.render(state);
     const batch = rt.batch(),
       grid = [width / 8, height / 8, 1];

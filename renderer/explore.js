@@ -53,6 +53,7 @@ function syncSettings() {
     season: +$("season").value,
     glare: $("glare").checked,
     trees: $("trees").checked,
+    grass: $("grass").checked,
   });
 }
 function intro() {

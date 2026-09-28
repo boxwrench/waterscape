@@ -64,6 +64,10 @@ export async function createLandPass(rt, terrain, { biome, biomeBase }) {
       ground.setSeason(s);
     },
     // Within this distance the oaks are meshes; the kernel draws crowns beyond it.
+    // Show or hide the grass field.
+    setGrass(on) {
+      grass.mesh.visible = on;
+    },
     // Show or hide the oak meshes and impostors; hidden, the kernel draws crowns everywhere.
     setTrees(on) {
       treesOn = on;
