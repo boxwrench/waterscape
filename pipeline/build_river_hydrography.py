@@ -2,7 +2,9 @@
 
 The source is the public USGS 3DHP Flowline FeatureServer. Geometry is requested in WGS84,
 then projected into the same local x-east / z-south metre frame used by the River Pulse
-terrain bundle. This script does not infer hydraulic width, depth, or velocity.
+terrain bundle. All Flowline feature types are retained: broad rivers can be represented by
+Waterbody Connector flowlines rather than ordinary River flowlines. This script does not infer
+hydraulic width, depth, or velocity.
 
 Usage:
 
@@ -43,7 +45,7 @@ OUT_FIELDS = [
 
 def query_url(bbox):
     params = {
-        "where": "featuretype=1",
+        "where": "1=1",
         "geometry": ",".join(str(v) for v in bbox),
         "geometryType": "esriGeometryEnvelope",
         "inSR": "4326",
@@ -100,7 +102,8 @@ def localize_feature(feature, origin_e, origin_n, zone):
     return {
         "id": str(properties.get("id3dhp") or feature.get("id") or "unknown"),
         "name": properties.get("gnisidlabel"),
-        "featureType": properties.get("featuretypelabel") or "River",
+        "featureType": properties.get("featuretypelabel") or "Unknown Flowline",
+        "featureTypeCode": properties.get("featuretype"),
         "mainstemId": properties.get("mainstemid"),
         "flowDirection": properties.get("flowdirectionlabel"),
         "streamOrder": properties.get("streamorder"),
@@ -133,7 +136,7 @@ def build_document(config, payload, query):
         "anchor": config["anchor"],
         "crs": f"EPSG:326{zone:02d}",
         "coordinateFrame": "local metres: x east, z south; origin at configured anchor",
-        "featureFilter": "3DHP Flowline featuretype=1 (River), intersecting configured bbox",
+        "featureFilter": "all 3DHP Flowline feature types intersecting configured bbox",
         "features": features,
     }
 
@@ -155,13 +158,16 @@ def build(source_path):
     url, payload = fetch_geojson(config["bbox"])
     document = build_document(config, payload, url)
     if not document["features"]:
-        raise ValueError(f"{config['id']}: 3DHP returned no river flowlines inside configured bbox")
+        raise ValueError(f"{config['id']}: 3DHP returned no flowlines inside configured bbox")
     output = source_path.parent / "hydrography.json"
     output.write_text(json.dumps(document, indent=2, separators=(",", ": ")) + "\n")
     named = sorted({f["name"] for f in document["features"] if f.get("name")})
-    print(f"{config['id']}: wrote {len(document['features'])} 3DHP river flowlines to {output}")
+    types = sorted({f["featureType"] for f in document["features"] if f.get("featureType")})
+    print(f"{config['id']}: wrote {len(document['features'])} 3DHP flowlines to {output}")
     if named:
-        print(f"{config['id']}: named rivers: {', '.join(named[:12])}")
+        print(f"{config['id']}: named features: {', '.join(named[:12])}")
+    if types:
+        print(f"{config['id']}: flowline types: {', '.join(types)}")
 
 
 if __name__ == "__main__":
