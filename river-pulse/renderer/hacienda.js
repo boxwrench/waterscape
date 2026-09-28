@@ -1,5 +1,7 @@
 import * as THREE from "../../vendor/three/three.webgpu.js";
 import { fly, viewRay } from "../../renderer/engine/camera.js";
+import { fetchLatestContinuous } from "../adapters/usgs.js";
+import { latestAtOrBefore } from "../data-model/selection.js";
 import { loadRiverTerrain } from "./terrain.js";
 import { buildRiverTerrainGrid } from "./terrain-mesh.js";
 
@@ -12,6 +14,9 @@ const canvas = document.querySelector("#scene"),
   sourceDetail = document.querySelector("#source-detail"),
   gaugeId = document.querySelector("#gauge-id"),
   gaugeWorldLabel = document.querySelector("#gauge-world-label"),
+  flowValue = document.querySelector("#flow-value"),
+  flowTime = document.querySelector("#flow-time"),
+  flowQuality = document.querySelector("#flow-quality"),
   sceneState = document.querySelector("#scene-state"),
   loading = document.querySelector("#loading"),
   errorBox = document.querySelector("#error"),
@@ -73,6 +78,62 @@ function formatLatLon([lat, lon]) {
   return `${lat.toFixed(5)}°, ${lon.toFixed(5)}°`;
 }
 
+function formatUnit(unit) {
+  if (unit === "ft^3/s") return "ft³/s";
+  return unit ?? "";
+}
+
+function formatObservationTime(iso) {
+  const d = new Date(iso);
+  if (!Number.isFinite(d.getTime())) return iso;
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: "UTC",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZoneName: "short",
+  }).format(d);
+}
+
+function setFlowQuality(kind, label) {
+  flowQuality.className = `flow-quality ${kind}`;
+  flowQuality.textContent = label;
+}
+
+async function updateObservedFlow(monitoringLocationId) {
+  try {
+    const result = await fetchLatestContinuous(monitoringLocationId),
+      now = new Date().toISOString(),
+      selection = latestAtOrBefore(result.quantities, now, { maximumAgeMs: 45 * 60 * 1000 });
+
+    if (selection.status === "selected") {
+      const q = selection.quantity;
+      flowValue.textContent = `${Number(q.value).toLocaleString()} ${formatUnit(q.unit)}`;
+      flowTime.textContent = `${formatObservationTime(q.time.valid_start)} · ${q.source_approval}`;
+      setFlowQuality("current", "Current");
+      return;
+    }
+
+    if (selection.reason === "stale" && selection.stale_quantity) {
+      const q = selection.stale_quantity;
+      flowValue.textContent = "No current reading";
+      flowTime.textContent = `Latest ${Number(q.value).toLocaleString()} ${formatUnit(q.unit)} · ${formatObservationTime(q.time.valid_start)}`;
+      setFlowQuality("stale", "Stale");
+      return;
+    }
+
+    flowValue.textContent = "No observation available";
+    flowTime.textContent = "USGS latest-continuous returned no discharge record";
+    setFlowQuality("unavailable", "Missing");
+  } catch (error) {
+    console.warn("Observed flow unavailable", error);
+    flowValue.textContent = "Flow data unavailable";
+    flowTime.textContent = "Terrain remains available; USGS request could not be completed";
+    setFlowQuality("unavailable", "Offline");
+  }
+}
+
 async function fetchJson(url) {
   const response = await fetch(url);
   if (!response.ok) throw new Error(`${response.status} ${url}`);
@@ -84,7 +145,8 @@ async function main() {
 
   const [terrain, source] = await Promise.all([loadRiverTerrain(TERRAIN_BASE), fetchJson(SOURCE_URL)]);
   const gaugeAgency = source.gauge?.agency ?? "USGS",
-    gaugeNumber = source.gauge?.id ?? "11467000";
+    gaugeNumber = source.gauge?.id ?? "11467000",
+    monitoringLocationId = `${gaugeAgency}-${gaugeNumber}`;
   gaugeId.textContent = `${gaugeAgency} ${gaugeNumber}`;
   gaugeWorldLabel.querySelector("span").textContent = `${gaugeAgency} ${gaugeNumber}`;
   sourceDetail.textContent =
@@ -92,6 +154,9 @@ async function main() {
     `Scene coordinates preserve the absolute elevation relationship; no reservoir water-level assumption is used.`;
   status.textContent = "Terrain ready";
   sceneState.textContent = "Terrain loaded";
+
+  // Flow is intentionally independent of terrain startup: network/data failure must not prevent exploration.
+  updateObservedFlow(monitoringLocationId);
 
   const renderer = new THREE.WebGPURenderer({ canvas, antialias: true });
   await renderer.init();
