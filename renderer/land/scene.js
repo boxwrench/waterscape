@@ -7,6 +7,7 @@ import { createPack } from "./pack.js";
 import { createGroundMaterial } from "./ground.js";
 import { createGrass } from "./grass.js";
 import { createTrees } from "./trees.js";
+import { createImpostors } from "./impostors.js";
 
 const NEAR = 1,
   FAR = 40000,
@@ -37,6 +38,10 @@ export async function createLandPass(rt, terrain, { biome, biomeBase }) {
   // Oak meshes near the camera (none if the biome has no baked trees).
   const trees = await createTrees(terrain, biome, biomeBase, ground);
   if (trees) scene.add(trees.group);
+  // Photographed oaks from the mesh range out to the impostor range.
+  const impostors = trees ? createImpostors(terrain, biome, biomeBase, ground, trees.species) : null;
+  if (impostors) scene.add(impostors.mesh);
+  let treeRange = 0;
   let season = 1;
   renderer.initTexture(ground.lightTex);
 
@@ -59,7 +64,7 @@ export async function createLandPass(rt, terrain, { biome, biomeBase }) {
     },
     // Within this distance the oaks are meshes; the kernel draws crowns beyond it.
     get treeRange() {
-      return trees ? trees.range : 0;
+      return treeRange;
     },
     // Copy bake_light's output (rows of `stride` float4s) into the ground's light texture.
     updateLight(bakeBuffer, stride) {
@@ -90,6 +95,7 @@ export async function createLandPass(rt, terrain, { biome, biomeBase }) {
       if (state.quality !== grassTier) grass.setTier((grassTier = state.quality));
       grass.update(state);
       trees?.update(state, season);
+      treeRange = impostors ? impostors.update(state, trees.range) : (trees?.range ?? 0);
       camera.position.set(state.x, state.y, state.z);
       camera.rotation.set(state.pitch, -state.yaw, 0);
       renderer.setRenderTarget(target);

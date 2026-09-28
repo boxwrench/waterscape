@@ -9,19 +9,12 @@ import {
 import { oaksNear } from "./oak-placement.js";
 
 // Near-oak range (m) per quality tier; the kernel fades its crowns in just inside this.
-export const TREE_RANGE = [80, 150, 250];
+export const TREE_RANGE = [60, 100, 200];
 // Full-detail oaks within this distance (m) on medium and high; the lighter "-far" bake beyond it
 // and everywhere on low.
 const NEAR_DETAIL = 50;
 const MAX_TREES = 4000;
 
-// Leaf tint per species (multiplies the leaf texture): coast live deep green, blue oak
-// grey-blue, valley oak lighter yellow-green; summer dulls all three.
-const TINT = {
-  "coast-live": [[0.4, 0.52, 0.32], [0.44, 0.49, 0.32]],
-  blue: [[0.54, 0.6, 0.55], [0.58, 0.58, 0.5]],
-  valley: [[0.56, 0.68, 0.38], [0.6, 0.6, 0.38]],
-};
 
 async function loadVariant(biomeBase, v) {
   const buffer = await (await fetch(new URL(v.file, biomeBase))).arrayBuffer(),
@@ -127,7 +120,7 @@ export async function createTrees(terrain, biome, biomeBase, ground) {
       );
       m.b.setMatrixAt(i, m4);
       m.l.setMatrixAt(i, m4);
-      colour.setRGB(...TINT[s][season ? 1 : 0]).multiplyScalar(0.9 + 0.2 * site.pick);
+      colour.setRGB(...biome.trees.tints[s][season ? "summer" : "spring"]).multiplyScalar(0.9 + 0.2 * site.pick);
       m.l.setColorAt(i, colour);
       m.b.count = m.l.count = i + 1;
     }
@@ -139,6 +132,8 @@ export async function createTrees(terrain, biome, biomeBase, ground) {
 
   return {
     group,
+    // Species in the order the impostor sheet's rows follow.
+    species,
     // Recompute the near oaks when the camera has moved a fifth of the range, or on a tier or
     // season change.
     update(state, seasonNow) {

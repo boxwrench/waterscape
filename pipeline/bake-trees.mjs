@@ -18,7 +18,8 @@ await mkdir(treesDir, { recursive: true });
 
 const server = createStaticServer(root);
 await new Promise((r) => server.listen(0, "127.0.0.1", r));
-const browser = await chromium.launch({ channel: "msedge", headless: true });
+// Not headless: the impostor photographs need WebGPU.
+const browser = await chromium.launch({ channel: "msedge", headless: false, args: ["--enable-unsafe-webgpu"] });
 try {
   const page = await browser.newPage();
   await page.goto(`http://127.0.0.1:${server.address().port}/pipeline/bake-trees.html`);
@@ -79,7 +80,21 @@ try {
     await writeFile(path.join(biomeDir, file), Buffer.from(data, "base64"));
     textures[name] = file;
   }
-  manifest.trees = { ...manifest.trees, baked: out, textures, generator: "ez-tree 1.1.0 (MIT), pipeline/bake-trees.mjs" };
+  // Impostor sheets from the full-detail variants (one row each), spring-tinted per species.
+  const spec = manifest.trees.impostors,
+    rowsFor = manifest.trees.variants,
+    sheets = await page.evaluate(
+      ([ids, s]) => window.impostors(ids, s),
+      [rowsFor.map((v) => v.id), { ...spec, tints: rowsFor.map((v) => manifest.trees.tints[v.species].spring) }],
+    );
+  for (const kind of ["albedo", "normal"]) {
+    const file = `trees/impostor-${kind}.png`;
+    await writeFile(path.join(biomeDir, file), Buffer.from(sheets[kind].split(",")[1], "base64"));
+    textures[`impostor${kind[0].toUpperCase()}${kind.slice(1)}`] = file;
+  }
+  const impostors = { ...spec, rows: sheets.rows.map((r) => ({ ...r, species: rowsFor.find((v) => v.id === r.id).species })) };
+  console.log(`${biome}: impostor sheets ${spec.frames} frames x ${sheets.rows.length} trees`);
+  manifest.trees = { ...manifest.trees, baked: out, textures, impostors, generator: "ez-tree 1.1.0 (MIT), pipeline/bake-trees.mjs" };
   await writeFile(manifestPath, JSON.stringify(manifest, null, 2) + "\n");
 } finally {
   await browser.close();
