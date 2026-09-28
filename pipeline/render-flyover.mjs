@@ -43,6 +43,8 @@ try {
   );
   const errors = await page.evaluate(() => window.waterscapeDiagnostics.errors);
   if (errors.length) throw new Error(errors.join("\n"));
+  // The video shows only the render: no GPU chip.
+  await page.addStyleTag({ content: ".gpu { display: none !important; }" });
   await page.evaluate(() => {
     const q = document.getElementById("quality");
     q.value = "1536";

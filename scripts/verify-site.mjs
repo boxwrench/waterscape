@@ -58,7 +58,7 @@ try {
   // Video tier: no 3D offer.
   assert.equal(await page.isVisible("#explore"), false);
 
-  // Live tier: the iframe opens at the flyover pose and reports frame times.
+  // Live tier: the iframe opens at the shoreline viewpoint and reports frame times.
   const live = await browser.newPage({ viewport: { width: 1280, height: 800 } });
   await live.goto(`${base}/?tier=live&quality=low`);
   await live.waitForSelector("#explore", { state: "visible" });

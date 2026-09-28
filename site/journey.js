@@ -98,14 +98,17 @@ function enterLive() {
   const stop = state.stops[state.index],
     video = $("flyover");
   if (!stop.cameras?.flyover) return;
-  const pose = poseAt(stop.cameras.flyover, video.currentTime || 0),
+  // Live 3D opens at the shoreline (the explorer's default) when the bundle has one, else where
+  // the video is.
+  const shore = stop.cameras.viewpoints?.shore,
+    pose = shore ?? poseAt(stop.cameras.flyover, video.currentTime || 0),
     frame = document.createElement("iframe");
   frame.id = "liveFrame";
   frame.title = `${stop.story?.name ?? stop.id}, live 3D`;
   const forcedQuality = new URLSearchParams(location.search).get("quality");
   frame.src =
-    `./renderer/explore.html?reservoir=${encodeURIComponent(stop.id)}&embed=1&pose=` +
-    [pose.x, pose.y, pose.z, pose.yaw, pose.pitch].map((v) => v.toFixed(3)).join(",") +
+    `./renderer/explore.html?reservoir=${encodeURIComponent(stop.id)}&embed=1` +
+    (shore ? "" : "&pose=" + [pose.x, pose.y, pose.z, pose.yaw, pose.pitch].map((v) => v.toFixed(3)).join(",")) +
     (forcedQuality ? `&quality=${encodeURIComponent(forcedQuality)}` : "") +
     `&preset=${encodeURIComponent($("livePreset").value)}`;
   state.live = { id: stop.id, pose, frameTimes: [], firstFrame: false };
