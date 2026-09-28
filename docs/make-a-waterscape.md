@@ -93,12 +93,23 @@ records (USACE National Inventory of Dams, USGS, state water agencies, the opera
   "grass": { "spring": "green", "summer": "gold" },
   "presets": ["morning", "midday", "golden"],
   "defaultPreset": "golden",
-  "defaultSeason": "summer"
+  "defaultSeason": "summer",
+  "water": {
+    "maxDepth": 59.1,
+    "bankSlope": 0.25,
+    "maxDepthSource": "https://geospatial.sec.usace.army.mil/dls/rest/services/NID/National_Inventory_of_Dams_Public_Service/FeatureServer/0/query?where=NIDID%3D%27CA01546%27&outFields=HYDRAULIC_HEIGHT&f=json"
+  }
 }
 ```
 
 `presets` lists the light presets this place offers (`morning`, `midday`, `golden`);
 `defaultSeason` is `spring` or `summer`. `biome` must match `source.json`.
+
+`water` shapes the lake bed, which lidar cannot see: the bed falls from the shoreline by
+`bankSlope` metres per metre (0.25 gives a wide, clear shallow band) down to `maxDepth` metres.
+For a dammed reservoir use the dam's **hydraulic height** from the National Inventory of Dams
+(streambed to maximum water level), converted from feet to metres, and record the query URL in
+`maxDepthSource`. For a natural lake use a published maximum depth and its source.
 
 ## 5. Look at it
 
