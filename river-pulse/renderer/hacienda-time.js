@@ -21,14 +21,14 @@ function number(value) {
   return Number(value).toLocaleString("en-US", { maximumFractionDigits: 2 });
 }
 
-function formatDate(iso) {
+function formatDate(iso, { year = true } = {}) {
   const date = new Date(iso);
   if (!Number.isFinite(date.getTime())) return iso;
   return new Intl.DateTimeFormat("en-US", {
     timeZone: "UTC",
     month: "short",
     day: "numeric",
-    year: "numeric",
+    ...(year ? { year: "numeric" } : {}),
   }).format(date);
 }
 
@@ -129,9 +129,9 @@ async function main() {
     historyCursor.setAttribute("cx", point.x.toFixed(2));
     historyCursor.setAttribute("cy", point.y.toFixed(2));
     historyCursor.hidden = false;
-    selectionLabel.textContent = formatDate(q.time.valid_start).replace(", 2026", "");
+    selectionLabel.textContent = formatDate(q.time.valid_start, { year: false });
     selectionLabel.classList.add("history-selected");
-    timelineHeading.textContent = "Historical daily mean — release or keep scrubbing to compare dates";
+    timelineHeading.textContent = "Historical daily mean — scrub to compare dates";
     slider.setAttribute("aria-valuetext", formatDate(q.time.valid_start));
     setFlowPresentation(historicalPresentation(state));
     dispatchState(state, GAUGE_TIME_MODES.HISTORICAL_DAILY, featureId);
