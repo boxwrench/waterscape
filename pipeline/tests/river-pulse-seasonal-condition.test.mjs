@@ -55,6 +55,62 @@ function statsPayload(sampleCount = 84) {
   ];
 }
 
+function rawFeatureCollection(sampleCount = 84) {
+  return {
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "Feature",
+        geometry: { type: "Point", coordinates: [-122.9277, 38.5085] },
+        properties: {
+          monitoring_location_id: "USGS-11467000",
+          monitoring_location_name: "RUSSIAN R A HACIENDA BRIDGE NR GUERNEVILLE CA",
+          data: JSON.stringify([
+            {
+              parameter_code: "00060",
+              unit_of_measure: "ft^3/s",
+              parent_time_series_id: "daily-mean-series",
+              values: [
+                {
+                  start_date: "09-27",
+                  end_date: "09-27",
+                  interval_type: "day",
+                  value: "40",
+                  sample_count: sampleCount,
+                  approval_status: "approved",
+                  computation_id: "minimum-id",
+                  computation: "minimum",
+                },
+                {
+                  start_date: "09-27",
+                  end_date: "09-27",
+                  interval_type: "day",
+                  values: ["60", "80", "120", "180", "240", "280", "310"],
+                  percentiles: ["5", "10", "25", "50", "75", "90", "95"],
+                  sample_count: sampleCount,
+                  approval_status: "approved",
+                  computation_id: "percentile-id",
+                  computation: "percentile",
+                },
+                {
+                  start_date: "09-27",
+                  end_date: "09-27",
+                  interval_type: "day",
+                  value: "410",
+                  sample_count: sampleCount,
+                  approval_status: "approved",
+                  computation_id: "maximum-id",
+                  computation: "maximum",
+                },
+              ],
+            },
+          ]),
+        },
+      },
+    ],
+  };
+}
+
 test("day-of-year statistics URL requests the official seasonal threshold inputs", () => {
   const url = new URL(dayOfYearStatisticsUrl("USGS-11467000", "09-27"));
   assert.equal(url.origin, "https://api.waterdata.usgs.gov");
@@ -81,6 +137,24 @@ test("USGS observationNormals normalize to derived scientific quantities", () =>
   assert.equal(p25.time.valid_start, "2026-09-27T00:00:00.000Z");
   assert.equal(p25.provenance.beta, true);
   assert.equal("presentation" in p25, false);
+});
+
+test("raw statistics FeatureCollection follows the official nested data shape", () => {
+  const quantities = parseDayOfYearStatistics(rawFeatureCollection(), {
+    validDate: "2026-09-27",
+    retrievalTime: "2026-09-27T18:05:00Z",
+  });
+  assert.equal(quantities.length, 9);
+  const minimum = quantities.find((q) => q.method.computation === "minimum"),
+    p90 = quantities.find((q) => q.method.percentile === 90),
+    maximum = quantities.find((q) => q.method.computation === "maximum");
+  assert.equal(minimum.method.percentile, 0);
+  assert.equal(minimum.method.time_of_year, "09-27");
+  assert.equal(p90.value, 280);
+  assert.equal(p90.method.computation_id, "percentile-id");
+  assert.equal(p90.source_approval, "approved");
+  assert.deepEqual(p90.spatial.geometry.coordinates, [-122.9277, 38.5085]);
+  assert.equal(maximum.method.percentile, 100);
 });
 
 test("streamflow condition follows USGS day-of-year category thresholds", () => {
