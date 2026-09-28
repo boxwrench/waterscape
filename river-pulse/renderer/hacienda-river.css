@@ -1,0 +1,80 @@
+.river-display-control {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 12px 13px;
+  border: 1px solid rgba(207, 237, 231, 0.12);
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(14, 38, 36, 0.68), rgba(10, 30, 30, 0.42));
+}
+
+.river-display-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.river-display-heading strong {
+  display: block;
+  margin-top: 2px;
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+}
+
+.river-mode-note {
+  max-width: 205px;
+  color: rgba(226, 241, 237, 0.62);
+  font-size: 10px;
+  line-height: 1.35;
+  text-align: right;
+}
+
+.river-mode-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+  padding: 4px;
+  border: 1px solid rgba(218, 245, 240, 0.11);
+  border-radius: 11px;
+  background: rgba(4, 17, 18, 0.44);
+}
+
+.river-mode-button {
+  min-height: 34px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(228, 244, 240, 0.58);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: color 150ms ease, background 150ms ease, box-shadow 150ms ease;
+}
+
+.river-mode-button:hover {
+  color: rgba(241, 252, 249, 0.9);
+  background: rgba(105, 190, 181, 0.08);
+}
+
+.river-mode-button.active,
+.river-mode-button[aria-pressed="true"] {
+  color: #e9fffa;
+  background: linear-gradient(180deg, rgba(70, 155, 151, 0.34), rgba(45, 116, 117, 0.24));
+  box-shadow: inset 0 0 0 1px rgba(148, 226, 215, 0.16), 0 5px 16px rgba(0, 0, 0, 0.12);
+}
+
+@media (max-width: 700px) {
+  .river-display-heading {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .river-mode-note {
+    max-width: none;
+    text-align: left;
+  }
+}
