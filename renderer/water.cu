@@ -736,11 +736,13 @@ __device__ float3 terrainShade(const float4 *T, const float4 *L, float3 p, float
   // Contact zone: ground the ebb covered in the last couple of seconds is darker, drying out.
   if (fabsf(shore) < 8.0f && energy > 0.0f) {
     float sw = contactShore(shore, p.x, p.z), wetted = 0.0f;
+    // Metres up the 1:10 bank the ebb reached; a damp band a couple of metres wide behind it.
+    float band = 2.0f + 1.5f * noise(p.x * .15f, p.z * .15f);
     for (int k = 0; k < 4; k++) {
-      float reach = contactEbb(sw, p.x, p.z, time - .6f * (float)k, energy);
-      wetted = fmaxf(wetted, (1.0f - .22f * (float)k) * smooth(.02f, -.01f, p.y - reach));
+      float reach = 10.0f * contactEbb(sw, p.x, p.z, time - .6f * (float)k, energy);
+      wetted = fmaxf(wetted, (1.0f - .22f * (float)k) * smooth(band, 0.0f, sw - reach));
     }
-    groundLit = mul(groundLit, 1.0f - .45f * wetted);
+    groundLit = mul(groundLit, 1.0f - .5f * wetted);
   }
   // given.w 2: a grass blade in front of the ground — trees shade it but never cover it.
   float3 lit = mix3(groundLit, crownLit, canopy * (1.0f - ring) * (given.w > 1.5f ? 0.0f : 1.0f));
