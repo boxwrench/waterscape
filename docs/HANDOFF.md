@@ -1,4 +1,4 @@
-# Handoff — 2026-09-28
+# Handoff — 2026-09-29
 
 Where things stand, for whoever picks this up next (person or agent). The plan lives in
 `ROADMAP.md` and `docs/roadmap/README.md`; this file is the snapshot of "what just happened
@@ -43,10 +43,25 @@ caustics, ripples and deeper water beyond. Real reservoir data supplies the mean
 Keep the existing opening cameras; do not prioritize tree-heavy compositions, grass,
 shadows or Ultra over water/data/startup work.
 
-D1 is complete on `task/D1`, awaiting review (not deployed): compact source-linked supply and capacity, expandable
+D1 is deployed (shipped with G1 in `9489555`, at the user's request; D1 itself was not
+separately reviewed): compact source-linked supply and capacity, expandable
 reservoir/scene details, acquisition-year labeling for the sampled USGS point, and a clear
 distinction between terrain data and modeled bed/waves. Sources were re-fetched; no
 current storage claim is added. See [task](roadmap/tasks/D1-reservoir-context.md).
+
+## G1 deployed (grass)
+
+`9489555`, deployed at the user's request. The grass field is now tufts of 5 splayed blades
+(4 / 10 / 14 tufts per m² on low / medium / high), clumped into patches by a slow noise, with
+wider blades and a lighter root shadow. Only `renderer/land/grass.js` changed. Green and gold are
+the existing Season control (gold default). A "stylized" Breath-of-the-Wild-like option was
+tried and removed at the user's request. See [task](roadmap/tasks/G1-tufted-grass.md).
+
+**Open, deferred as polish:** `node scripts/verify.mjs` fails its low-tier frame-time check
+(`low tier median … ms > 33 ms at 768 px`; 52–70 ms on an integrated Intel GPU). It also fails on
+the pre-G1 code, so it is not caused by G1, but medium/high now draw more blades: re-measure on
+the target hardware and tune `GRASS_TIERS`. CI does not run `verify.mjs`, so it did not block the
+deploy, and `verify-site.mjs` did not run behind it.
 
 ## Known issues
 
