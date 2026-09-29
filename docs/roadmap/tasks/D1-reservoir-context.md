@@ -54,3 +54,22 @@ Fetched 2026-09-28; individual numerical facts retain their existing query/repor
   sediment loss is the only change in the capacity estimate.
 
 No data fetch failed or required value was missing. No new current-storage claim is made.
+
+## Result
+
+- Status: done
+- Commit: 81d1022
+- Checks:
+  - `npm test` — `Journey checks passed.` (29 unit tests passed, bundles valid, renderer
+    checks passed on NVIDIA; this run is not comparable to the earlier Intel timing).
+  - `npm run test:site` — `Journey checks passed.` after the final live/mobile previews
+    and scrollbar styling. Covers both reservoirs, legacy stories, keyboard disclosure,
+    scrolling, source links, narrow/short screens, and existing live/failure behavior.
+  - `npm run build` — `Built Pages with 57 browser modules, shared CUDA source and licensed assets.`
+  - `git diff --check` — exit 0; no whitespace errors (LF/CRLF conversion notices only).
+- Notes: Reviewed desktop, portrait-mobile and short-landscape screenshots, plus live
+  desktop/mobile water views. Temporary captures are under the test's logged
+  `waterscape-d1-*` directory, not in Git. Restored generated renderer preview PNGs.
+  Cameras, shaders, renderer, terrain and media assets are unchanged. D1 is committed on
+  its branch, not merged, pushed or deployed. The roadmap prioritizes reservoir context,
+  startup profiling, then Crystal Springs/storage history; landscape detail is secondary.
