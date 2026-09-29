@@ -73,3 +73,19 @@ total fell by about 41%; media completion and machine load can vary between runs
 initialization measured 13,071 ms cold and 12,817 ms on the next stop. Profile that phase
 before attributing its entire cost to compilation or choosing persistent renderer reuse.
 The current changes preserve the per-stop lifecycle and hosting.
+
+## Result
+
+- Status: done
+- Commit: f2da5e6
+- Checks:
+  - `npm test` — `Journey checks passed.` (28 unit tests passed; renderer low-tier median
+    30.37 ms against the existing 33 ms budget; delayed startup/detail and navigation checks passed).
+  - `npm run build` — `Built Pages with 57 browser modules, shared CUDA source and licensed assets.`
+  - `node scripts/measure-startup.mjs` — `Startup measurements complete.` (before/after above).
+  - `git diff --check` — exit 0, no whitespace errors (Git emitted LF/CRLF conversion notices).
+- Notes: Changes are on `task/P1`, not merged, pushed or deployed. Protected engine/shader
+  and vendor files are unchanged. Test-generated preview PNG changes were restored to keep
+  this task focused. Detailed tree failures warn once per variant and retain its far mesh
+  for the current scene. Engine initialization is still the main local startup cost; the
+  roadmap records profiling as P1b and opening composition/baseline shoreline polish as next.
