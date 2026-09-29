@@ -52,6 +52,7 @@ function renderMap() {
 }
 
 function renderCard(stop, i) {
+  $("fullControls").href = `./renderer/explore.html?reservoir=${encodeURIComponent(stop.id)}`;
   $("stopIndex").textContent = `Stop ${i + 1} of ${state.stops.length} · ${stop.caption}`;
   $("stopName").textContent = stop.story?.name ?? stop.id;
   $("operator").textContent = stop.story?.operator ?? "";
