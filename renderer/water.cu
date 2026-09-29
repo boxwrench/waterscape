@@ -798,7 +798,7 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
   float treeNear = quality >= 2 ? 260.0f : (quality == 1 ? 160.0f : 80.0f);
   float3 rd = ray(sx, sy, (float)width / (float)height, yaw, pitch),
          ro = v3(camX, camY, camZ), sun = lightSun(light),
-         SUN = mul(lightRad(light), 2.9f), col = sky(light, rd, season, time);
+         SUN = mul(lightRad(light), 2.9f), col = v3(0, 0, 0);
   // Land along this pixel: from three.js's land pass (w < 0: land at -w, 0: sky), or, in the
   // native host, today's height-field trace. Snap to the shader's surface, which adds
   // sub-grid relief the mesh lacks, so shading and shadows start on the ground.
@@ -816,12 +816,7 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
       given = make_float4(l.x, l.y, l.z, 1.0f + kind);
   } else
     landT = terrainTrace(terrain, ro, rd, traceSteps, 16000.0f);
-  if (landT > 0) {
-    float3 lp = add(ro, mul(rd, landT));
-    lp.y = terrainHeight(terrain, lp.x, lp.z);
-    col = terrainShade(terrain, light, lp, rd, landT, season, shadowSteps, treeNear, baked,
-                       bakeStride, given, meshNear, time);
-  }
+  bool hitWater = false;
   if (rd.y < .0015f) {
     float3 wd = norm(v3(rd.x, fminf(rd.y, -.0015f), rd.z));
     float t = -camY / wd.y;
@@ -834,6 +829,7 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
     a = water(surface, rip, P.x, P.z, centerX, centerZ, t);
     bool onReservoir = shoreDistance(terrain, P.x, P.z) < -.5f && (landT < 0 || t < landT);
     if (onReservoir) {
+    hitWater = true;
     float3 n = norm(v3(-a.y, 1, -a.z)), v = mul(wd, -1);
     float nv = dot3(n, v);
     if (nv < .02f) {
@@ -904,6 +900,17 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
     if (view == 2)
       col = add(mul(n, .5f), v3(.5f, .5f, .5f));
     }
+  }
+  // Shade only the visible surface. Water replaces the bed's colour completely;
+  // calculating terrain and sky first spent work on values that were discarded.
+  if (!hitWater) {
+    if (landT > 0) {
+      float3 lp = add(ro, mul(rd, landT));
+      lp.y = terrainHeight(terrain, lp.x, lp.z);
+      col = terrainShade(terrain, light, lp, rd, landT, season, shadowSteps, treeNear, baked,
+                         bakeStride, given, meshNear, time);
+    } else
+      col = sky(light, rd, season, time);
   }
   float mu = dot3(rd, sun);
   col = add(col, mul(SUN, 18 * smooth(.99996f, .999985f, mu)));
