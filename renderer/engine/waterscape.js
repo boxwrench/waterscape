@@ -318,6 +318,7 @@ export async function createWaterscape(
           landPass: landPass ? landPass.mode : 0,
           bakeStride,
           meshNear: landPass?.treeRange ?? 0,
+          energy: settings.energy,
         },
       ),
       grid,

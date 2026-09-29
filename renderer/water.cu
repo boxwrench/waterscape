@@ -407,16 +407,42 @@ __device__ float shoreDistance(const float4 *T, float x, float z) {
 __device__ float bedDepth(float offshore, float depth, float slope) {
   return fminf(depth, .08f + slope * offshore);
 }
+// Shoreline contact (Illustrative). Within 8 m of the lidar shoreline the bank is modelled
+// here, so the waterline is wherever the surface meets it, not a contour of the 10 m grid.
+// Warped shore distance: the lidar contour moved up to ~2.5 m either way at 4-40 m scales.
+__device__ float contactShore(float shore, float x, float z) {
+  return shore + 2.8f * (.9f * (noise(x * .025f + 31.0f, z * .025f - 17.0f) - .5f) +
+                         .6f * (noise(x * .09f - 5.0f, z * .09f + 11.0f) - .5f) +
+                         .3f * (noise(x * .31f + 2.0f, z * .31f + 7.0f) - .5f));
+}
+// The contact bank: 1:10 through the waterline with a few centimetres of relief, blended
+// into `outside` (the lidar bank or modelled bed) between 5 and 8 m from the shoreline.
+__device__ float contactHeight(float shore, float x, float z, float outside) {
+  float k = smooth(5.0f, 8.0f, fabsf(shore));
+  if (k >= 1.0f)
+    return outside;
+  float bank = .1f * contactShore(shore, x, z) + .06f * (noise(x * 1.7f, z * 1.7f) - .5f) +
+               .03f * (noise(x * 4.3f + 9.0f, z * 4.3f) - .5f);
+  return lerp(bank, outside, k);
+}
+// Ebb and flow at the bank (m): a slow swash running shoreward, its phase broken along the
+// shore so the edge never pulses in unison. Scales with the wave energy control.
+__device__ float contactEbb(float s, float x, float z, float time, float energy) {
+  float phase = .9f * s - 1.0f * time + 6.0f * noise(x * .012f + 3.0f, z * .012f - 8.0f),
+        group = .6f + .4f * noise(x * .03f - time * .05f, z * .03f);
+  return .08f * energy * group * (sinf(phase) + .25f * sinf(2.0f * phase + 1.0f));
+}
 __device__ float terrainHeight(const float4 *T, float x, float z) {
   float4 s = terrainSample(T, x, z);
   if (s.y < 0)
-    return -bedDepth(-s.y, 40.0f, .35f);
+    return contactHeight(s.y, x, z, -bedDepth(-s.y, 40.0f, .35f));
   // Sub-grid relief the 10 m lidar grid cannot hold, faded out at the waterline.
   float detail = 2.2f * (fbm(x * .045f + 5.0f, z * .045f) - .5f) +
                  .5f * (noise(x * .21f, z * .21f) - .5f);
   // Past the edge of the survey the clamped lookup would smear the last row into a plateau;
   // let the land fall away under the haze so the painted far ridges take over instead.
-  return s.x + detail * smooth(0.0f, 25.0f, s.y) - .25f * fmaxf(0.0f, terrainOutside(T, x, z));
+  return contactHeight(s.y, x, z,
+                       s.x + detail * smooth(0.0f, 25.0f, s.y) - .25f * fmaxf(0.0f, terrainOutside(T, x, z)));
 }
 __device__ float terrainTrace(const float4 *T, float3 ro, float3 rd, int steps,
                               float maxDistance) {
@@ -588,7 +614,7 @@ __device__ float2 bakedLight(const float4 *T, const float4 *B, int stride, float
 // pass already lit the ground (three.js); only trees and their shadows are added here.
 __device__ float3 terrainShade(const float4 *T, const float4 *L, float3 p, float3 rd, float distance, int season,
                                int shadowSteps, float treeNear, const float4 *B, int bakeStride,
-                               float4 given, float meshNear, float time) {
+                               float4 given, float meshNear, float time, float energy) {
   // given.w 3: a three.js tree mesh — shaded already; only the air in between is added.
   if (given.w > 2.5f)
     return aerial(L, v3(given.x, given.y, given.z), distance);
@@ -707,6 +733,17 @@ __device__ float3 terrainShade(const float4 *T, const float4 *L, float3 p, float
   float crownSun = fmaxf(0, dot3(crownN, sun)) * shadow * lerp(clumps, 1.0f, farBlend);
   float3 crownLit = prod(oak, add(mul(sunC, .15f + .85f * crownSun),
                                   mul(skyC, (.45f + .25f * crownN.y) * baked.y)));
+  // Contact zone: ground the ebb covered in the last couple of seconds is darker, drying out.
+  if (fabsf(shore) < 8.0f && energy > 0.0f) {
+    float sw = contactShore(shore, p.x, p.z), wetted = 0.0f;
+    // Metres up the 1:10 bank the ebb reached; a damp band a couple of metres wide behind it.
+    float band = 2.0f + 1.5f * noise(p.x * .15f, p.z * .15f);
+    for (int k = 0; k < 4; k++) {
+      float reach = 10.0f * contactEbb(sw, p.x, p.z, time - .6f * (float)k, energy);
+      wetted = fmaxf(wetted, (1.0f - .22f * (float)k) * smooth(band, 0.0f, sw - reach));
+    }
+    groundLit = mul(groundLit, 1.0f - .5f * wetted);
+  }
   // given.w 2: a grass blade in front of the ground — trees shade it but never cover it.
   float3 lit = mix3(groundLit, crownLit, canopy * (1.0f - ring) * (given.w > 1.5f ? 0.0f : 1.0f));
   return aerial(L, lit, distance);
@@ -717,15 +754,16 @@ __device__ float3 environment(const float4 *T, const float4 *L, float3 ro, float
   float t = terrainTrace(T, ro, rd, steps, 16000.0f);
   if (t > 0)
     return terrainShade(T, L, add(ro, mul(rd, t)), rd, t, season, 0, 0.0f, T, 0,
-                        make_float4(0.0f, 0.0f, 0.0f, 0.0f), 0.0f, time);
+                        make_float4(0.0f, 0.0f, 0.0f, 0.0f), 0.0f, time, 0.0f);
   return sky(L, rd, season, time);
 }
 __device__ float floorDepth(const float4 *T, float x, float z, float depth, float slope) {
   // Floor meets the surface at the waterline so the bank shows through shallow water.
-  float offshore = fmaxf(0, -shoreDistance(T, x, z));
+  float shore = shoreDistance(T, x, z), offshore = fmaxf(0, -shore);
   float fade = smooth(0.0f, 12.0f, offshore);
-  return bedDepth(offshore, depth, slope) + .18f * (noise(x * .12f, z * .12f) - .5f) * fade +
-         .08f * (noise(x * .55f + 7, z * .55f + 7) - .5f) * fade;
+  return -contactHeight(shore, x, z,
+                        -(bedDepth(offshore, depth, slope) + .18f * (noise(x * .12f, z * .12f) - .5f) * fade +
+                          .08f * (noise(x * .55f + 7, z * .55f + 7) - .5f) * fade));
 }
 __device__ float3 stone(const float4 *peb, float x, float z, float footprint) {
   float k = noise(x * .85f, z * .85f) * 8, ia = floorf(k), f = frac(k), u = x / .78f * 1024,
@@ -784,7 +822,7 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
                              int height, float camX, float camZ, float camY, float yaw, float pitch, float centerX,
                              float centerZ, float depth, float bankSlope, float time, int view, int season,
                              int quality, int landPass, int bakeStride,
-                             float meshNear) {
+                             float meshNear, float energy) {
   int ix = (int)(blockIdx.x * blockDim.x + threadIdx.x),
       iy = (int)(blockIdx.y * blockDim.y + threadIdx.y);
   if (ix >= width || iy >= height)
@@ -802,7 +840,7 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
   // Land along this pixel: from three.js's land pass (w < 0: land at -w, 0: sky), or, in the
   // native host, today's height-field trace. Snap to the shader's surface, which adds
   // sub-grid relief the mesh lacks, so shading and shadows start on the ground.
-  float landT = -1.0f;
+  float landT = -1.0f, landKind = 0.0f;
   float4 given = make_float4(0.0f, 0.0f, 0.0f, 0.0f);
   if (landPass) {
     float4 l = land[iy * width + ix];
@@ -811,6 +849,7 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
     // meshes +2e6 m (already shaded; nothing added).
     float kind = landT > 1.5e6f ? 2.0f : (landT > 5.0e5f ? 1.0f : 0.0f);
     landT -= kind * 1.0e6f;
+    landKind = kind;
     // landPass 2: the land pass shaded the ground, grass and near trees (three.js).
     if (landPass == 2)
       given = make_float4(l.x, l.y, l.z, 1.0f + kind);
@@ -827,7 +866,31 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
     }
     float3 P = v3(camX + wd.x * t, camY + wd.y * t, camZ + wd.z * t);
     a = water(surface, rip, P.x, P.z, centerX, centerZ, t);
-    bool onReservoir = shoreDistance(terrain, P.x, P.z) < -.5f && (landT < 0 || t < landT);
+    float shoreP = shoreDistance(terrain, P.x, P.z);
+    bool onReservoir = shoreP < -.5f && (landT < 0 || t < landT);
+    // Contact zone: water where the surface stands above the modelled bank. Waves settle
+    // to nothing as the depth does; the ebb lifts and lowers the mean surface.
+    if (fabsf(shoreP) < 8.0f) {
+      float bank = shoreP > 0 ? terrainHeight(terrain, P.x, P.z)
+                              : -floorDepth(terrain, P.x, P.z, depth, bankSlope),
+            settle = smooth(0.0f, 1.5f, -bank);
+      a.x *= settle;
+      a.y *= settle;
+      a.z *= settle;
+      float surfaceY = a.x + contactEbb(contactShore(shoreP, P.x, P.z), P.x, P.z, time, energy);
+      // Plain ground from the land pass hides the water only where the shader's own bank
+      // rises into the ray; its 10 m triangles would otherwise cut the waterline straight.
+      bool hidden = landT > 0 && t >= landT;
+      if (hidden && landKind == 0.0f) {
+        float3 H = add(ro, mul(rd, landT));
+        if (fabsf(shoreDistance(terrain, H.x, H.z)) < 8.0f && H.y > terrainHeight(terrain, H.x, H.z))
+          hidden = false;
+      }
+      onReservoir = surfaceY > bank && !hidden;
+      // Bank above the surface here: shade this bank, in the land pass's colour from just behind.
+      if (!onReservoir && !hidden)
+        landT = t;
+    }
     if (onReservoir) {
     hitWater = true;
     float3 n = norm(v3(-a.y, 1, -a.z)), v = mul(wd, -1);
@@ -908,7 +971,7 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
       float3 lp = add(ro, mul(rd, landT));
       lp.y = terrainHeight(terrain, lp.x, lp.z);
       col = terrainShade(terrain, light, lp, rd, landT, season, shadowSteps, treeNear, baked,
-                         bakeStride, given, meshNear, time);
+                         bakeStride, given, meshNear, time, energy);
     } else
       col = sky(light, rd, season, time);
   }

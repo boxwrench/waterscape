@@ -8,6 +8,15 @@ and what's next".
 
 https://boxwrench.github.io/waterscape/ (GitHub Pages deploys on every push to `main`).
 
+## Shoreline contact — 2026-09-29
+
+B1 replaced the straight, grid-aligned waterline with an organic edge. Within ~8 m of the
+shoreline `water.cu` models the bank itself and shows water where the surface stands above
+it; a slow ebb (scaled by wave energy) moves the edge, and a damp band trails it. Illustrative
+binding, recorded in [Making Water Visible](making-water-visible.md). Flyovers were not
+re-recorded (they fly too high for the change to show). See
+[B1](roadmap/tasks/B1-shoreline-contact.md).
+
 ## README imagery — 2026-09-29
 
 R3 refreshed the README with actual Calaveras North ridge and Shoreline screenshots,
