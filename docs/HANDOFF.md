@@ -8,6 +8,13 @@ and what's next".
 
 https://boxwrench.github.io/waterscape/ (GitHub Pages deploys on every push to `main`).
 
+## R1 stopping point — 2026-09-29
+
+Implementation and local verification are complete at `58674ce`. Both preview videos/posters
+were refreshed. The user asked to wrap up and switch models; the authorized push is the final
+action of this session. Next session should check the Pages workflow and hosted asset versions
+before claiming the latest site is live. See R1 Result below for checks and the comparison script.
+
 ## R1 umbrella integration — 2026-09-29
 
 The user explicitly authorized merging and pushing the combined work, overriding the default
