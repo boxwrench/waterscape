@@ -4,6 +4,10 @@
 real water systems. Public data supplies the evidence; scientific state and explicit visual
 bindings connect that evidence to landscapes, charts, animation and interaction.
 
+A curated [Waterscape resource library](resources/README.md) tracks useful web graphics,
+simulation, rendering and visual-development references, including the upstream licence
+status for each resource.
+
 | Experience | What it shows | Status |
 |---|---|---|
 | [Reservoirs](https://boxwrench.github.io/waterscape/) | Calaveras and San Antonio: lidar landscapes, sourced context and modeled water optics | Live journey and WebGPU explorer |
@@ -89,6 +93,7 @@ URL options: `?reservoir=<id>`, `?preset=morning|midday|golden`, `?quality=low|m
 | Path | What it is |
 |---|---|
 | `river-pulse/` | River-specific adapters, scientific state, visual bindings, renderer and place packages |
+| `resources/` | Curated web graphics, simulation, rendering and workflow references with upstream licence status |
 | `docs/making-water-visible.md` | Shared principles: binding class is separate from scientific provenance |
 | `docs/river-pulse/` | River-specific implementation contract, reuse audit and roadmap notes |
 | `index.html`, `site/` | The journey page (videos, facts, "Explore in 3D") |
