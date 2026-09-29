@@ -40,3 +40,14 @@ https://tympanus.net/codrops/2025/02/04/how-to-make-the-fluffiest-grass-with-thr
   close/overhead, season, tier, toggle and performance checks; no visual approval
   is claimed. The trial uses six/three/two splayed cards by distance, chunk culling,
   and the upstream MIT grass mask. Videos remain unchanged pending acceptance.
+
+### Firefox preview follow-up
+
+At the user's request to see the trial, downloaded Firefox Nightly 159.0a1 into
+`/tmp/fluffy-grass/` and opened a separate temporary profile with WebGPU enabled.
+The live renderer starts successfully: `ready: true`, `errors: []`, shared land
+device, and zero frame-loop readback bytes. Visually inspected the high-tier,
+spring-green close-up at the north ridge; alpha-cutout clumps render correctly.
+The browser is left open for the user. Screenshot: `/tmp/fluffy-grass/preview.png`.
+All-tier, overhead, gold and toggle checks and the full Edge suite remain unverified;
+this preview does not constitute completion of the original verification checklist.
