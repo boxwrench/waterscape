@@ -41,10 +41,10 @@ All changes are in `renderer/water.cu` except one kernel parameter
 ### 1. One near-shore bank function
 
 A new device function, the **contact zone** bank, applies where
-`|shoreDistance| < ZONE` (`ZONE` ≈ 6 m):
+`|shoreDistance| < ZONE` (`ZONE` = 8 m; 6 m in the first draft):
 
 - a warped shore distance `s' = s + warp(x, z)`, where `warp` is two or three octaves of
-  the existing `noise`, amplitude at most **1.5 m** (below the 10 m source resolution), at
+  the existing `noise`, amplitude at most **2.5 m** (below the 10 m source resolution; 1.5 m read as straight from 30 m away), at
   scales of roughly 4–40 m;
 - a gentle slope near the edge (about 1:10 over the first few metres), blending into the
   existing modeled bed (`bedDepth`, `bankSlope`) offshore and into the lidar height inland
@@ -105,7 +105,7 @@ work to near the camera, then drop the wet band. Performance wins over the effec
   **Illustrative**, state **Modeled / interactive** (driven by the hand-set wave energy,
   not measured wind or water level).
 - The "Water surface and shoreline — Exact" row gets a note: the drawn edge follows the
-  bundle's derived shoreline to within about 1.5 m of illustrative relief plus the ebb.
+  bundle's derived shoreline to within about 2.5 m of illustrative relief plus the ebb.
 
 ## Out of scope
 
