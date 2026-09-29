@@ -13,3 +13,30 @@ https://tympanus.net/codrops/2025/02/04/how-to-make-the-fluffiest-grass-with-thr
    green and gold, all quality tiers, and the Grass toggle. Record browser limitations.
 5. Commit the trial and this task's result. Leave flyover re-recording until the
    user accepts the visual trial; do not push or merge.
+
+## Result
+- Status: blocked (implementation committed; visual verification incomplete)
+- Commit: a327069
+- Checks:
+  - `npm test`, first run: `8 bundle problem(s)` — initial shared asset location
+    was interpreted as a reservoir; moved the assets into the existing biome.
+  - `npm test`, second run: unit tests `ℹ fail 0` (29 passed); `Bundles valid.`;
+    browser stage failed with the exact error:
+    ```text
+    browserType.launch: Chromium distribution 'msedge' is not found at /opt/microsoft/msedge/msedge
+    Run "npx playwright install msedge"
+    ```
+  - `npm run build`: `Built Pages with 57 browser modules, shared CUDA source and licensed assets.`
+  - `node --check renderer/land/grass.js`: exit 0, no output.
+  - `git diff --check`: exit 0, no output.
+  - Firefox 142.0.1 WebGPU probe with `dom.webgpu.enabled=true` failed:
+    ```text
+    page.evaluate: WebGPU is only available on Windows, and in Nightly and Early Beta builds on other platforms.
+    ```
+- Notes: User requested Firefox instead of Chrome for WebGPU. Playwright Firefox
+  was installed, but its Linux release build cannot provide the GPU adapter.
+  Edge installation also needs unavailable sudo credentials. Stopped under the
+  two-failed-check rule. Use Firefox Nightly for the remaining shader/runtime,
+  close/overhead, season, tier, toggle and performance checks; no visual approval
+  is claimed. The trial uses six/three/two splayed cards by distance, chunk culling,
+  and the upstream MIT grass mask. Videos remain unchanged pending acceptance.
