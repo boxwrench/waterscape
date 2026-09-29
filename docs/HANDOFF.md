@@ -8,6 +8,35 @@ and what's next".
 
 https://boxwrench.github.io/waterscape/ (GitHub Pages deploys on every push to `main`).
 
+## R1 umbrella integration — 2026-09-29
+
+The user explicitly authorized merging and pushing the combined work, overriding the default
+agent rule for this task. Remote main's [Making Water Visible](making-water-visible.md)
+principles and the supplied `river-pulse/bootstrap` history are integrated with G2 and P2.
+
+- **One repo/build:** existing reservoir URLs remain; `/river-pulse/` opens Hacienda.
+  Navigation joins the experiences. River-specific adapters/state/visual bindings/data stay
+  in `river-pulse/`; root vendor, camera/projection utilities, pipeline and scripts are shared.
+  The completed `task/river-pulse-ui` controls and scientific-selection fixes are also
+  included following the request to publish the latest interface.
+- **River Pulse is a prototype:** real Hacienda terrain, discharge/history and seasonal
+  context. Jenner is a place manifest and water-level adapter contract, not a 3D scene.
+  Current/forecast capabilities do not promise current availability. River water/current
+  simulation is not built, and reservoir water must not be presented as river hydrodynamics.
+- **Deployment:** Hacienda's sourced 3DEP payload is committed. Build validates river
+  packages and includes all timeline/seasonal modules and styles. CI runs Python tests,
+  registry freshness and built-page checks as well as the existing reservoir checks.
+- **G2 accepted:** Codrops-style grass clumps with texture cutouts, chunk culling and distance
+  LOD. MIT texture and licence are included. Spring and gold use the existing season control.
+- **P2:** defer sky/terrain shading that water overwrites. Three deterministic comparison
+  views matched byte-for-byte; measured GPU pass work fell 14–16% on local Firefox. This is
+  not a Windows FPS measurement. Windows Chrome/Edge remain the target; no Firefox workaround
+  was added. See [P2](roadmap/tasks/P2-render-cost.md).
+
+The older sections below retain historical context. R1 supersedes their single-experience
+scope; G2 supersedes G1's blade counts. See [R1](roadmap/tasks/R1-waterscape-umbrella.md) for
+the final publication result and checks.
+
 - **Front page** (`index.html`, `site/journey.js`): WebGPU browsers open straight into live 3D
   at each reservoir's **Shoreline** viewpoint; the flyover keeps playing until the first
   live-frame report. "Back to video" is remembered for later stops. The embedded 3D hides

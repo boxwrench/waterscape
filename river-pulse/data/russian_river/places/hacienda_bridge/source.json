@@ -1,0 +1,26 @@
+{
+  "id": "hacienda_bridge",
+  "name": "Hacienda Bridge",
+  "river": "Russian River",
+  "timeZone": "America/Los_Angeles",
+  "anchor": [
+    38.508482040255636,
+    -122.9277345330354
+  ],
+  "anchorSource": "https://waterdata.usgs.gov/monitoring-location/USGS-11467000/",
+  "gauge": {
+    "agency": "USGS",
+    "id": "11467000",
+    "name": "RUSSIAN R A HACIENDA BRIDGE NR GUERNEVILLE CA"
+  },
+  "bbox": [
+    -122.96,
+    38.49,
+    -122.90,
+    38.53
+  ],
+  "size": [
+    600,
+    450
+  ]
+}

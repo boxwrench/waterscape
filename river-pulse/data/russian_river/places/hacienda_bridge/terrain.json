@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "river-pulse-terrain-0.1",
+  "id": "hacienda_bridge",
+  "name": "Hacienda Bridge",
+  "source": "USGS National Map 3D Elevation Program (3DEP), public domain",
+  "sourceService": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer",
+  "sourceConfig": "source.json",
+  "bboxLonLat": [
+    -122.96,
+    38.49,
+    -122.9,
+    38.53
+  ],
+  "anchor": [
+    38.508482040255636,
+    -122.9277345330354
+  ],
+  "crs": "EPSG:32610",
+  "utmZone": 10,
+  "verticalDatum": "NAVD88 metres (3DEP)",
+  "verticalOrigin": {
+    "type": "absolute",
+    "datum": "NAVD88",
+    "units": "metres"
+  },
+  "encoding": "gzip; 1 planar uint16 elevation channel; rows delta-coded from the row above",
+  "width": 600,
+  "height": 450,
+  "cell": [
+    9.872111459097068,
+    9.8721114590971
+  ],
+  "originUTM": [
+    506300.6563501957,
+    4262237.082070801
+  ],
+  "gridOrigin": [
+    -3153.6229456759174,
+    -2385.0021827472374
+  ],
+  "channels": {
+    "elevation": {
+      "offset": -250.0,
+      "scale": 0.05
+    }
+  }
+}

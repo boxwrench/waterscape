@@ -1,8 +1,37 @@
 # Architecture
 
-Waterscape is a static site. The journey page (`index.html`, `site/`) plays each stop's
-flyover video and fact card; "Explore in 3D" embeds the live page
-(`renderer/explore.html?reservoir=<id>&embed=1`) in an iframe.
+Waterscape is one static-site repository with multiple water-system experiences. Its shared
+principle is [Making Water Visible](making-water-visible.md): **reality → scientific state →
+visual bindings → interactive world**. Provenance belongs to scientific state; the exact,
+derived, illustrative or setting class belongs to each visual binding.
+
+## Experience boundaries
+
+- **Reservoirs:** existing `index.html`, `site/`, `renderer/`, and `data/` retain their URLs
+  and still-water semantics. The root opens the reservoir journey, with navigation to River Pulse.
+- **River Pulse:** `river-pulse/` contains `adapters/`, `data-model/`, `visual-bindings/`,
+  `renderer/`, and `data/`. `/river-pulse/` opens the Hacienda prototype. Jenner is currently a
+  manifest/data contract, not a selectable 3D scene.
+- **Shared infrastructure:** one `vendor/`, `pipeline/`, `scripts/`, npm install and Pages
+  build. River Pulse already imports the root camera utilities and inverse UTM helper. Python
+  river builders reuse elevation acquisition and projection, not reservoir detection.
+- **Shared doctrine, separate scientific models:** river elevations remain absolute; river
+  discharge is not converted into reservoir levels or assumed local velocity. Keep each
+  experience's data package and validator separate until a stable shared contract is proven.
+
+Do not maintain a complete Waterscape clone inside River Pulse, or move every path into an
+`apps/` framework just to make the directory tree symmetrical. Extract a shared module when
+both experiences actually use the same behavior. Future experiences can follow the River Pulse
+boundary; this is one repository, not a collection of nested repositories or submodules.
+
+The Pages build follows browser imports from all HTML module entries and explicitly copies
+styles, static assets and both data roots. `validate-river-packages.mjs` rejects missing or
+malformed terrain and stale registries before publication. Hacienda terrain is a committed
+USGS artifact; rebuilding it is deliberate, not a deployment-time network dependency.
+
+The reservoir journey embeds the live page
+(`renderer/explore.html?reservoir=<id>&embed=1`) in an iframe. River Pulse has an independent
+scene and time selection UI; the existing reservoir engine is not its river-flow model.
 
 ## Data flow
 

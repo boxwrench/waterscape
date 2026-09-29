@@ -8,12 +8,14 @@
     "start": "node scripts/serve.mjs",
     "build": "node scripts/build.mjs",
     "check": "node scripts/check.mjs",
-    "validate": "node pipeline/validate-bundles.mjs",
-    "test": "node --test \"pipeline/tests/*.test.mjs\" && node pipeline/validate-bundles.mjs && node scripts/verify.mjs && node scripts/verify-site.mjs",
+    "validate": "node pipeline/validate-bundles.mjs && node pipeline/validate-river-packages.mjs",
+    "test": "node --test \"pipeline/tests/*.test.mjs\" && npm run validate && node scripts/verify.mjs && node scripts/verify-site.mjs",
     "test:site": "node scripts/verify-site.mjs",
     "bundle": "python pipeline/build.py",
     "flyover": "node pipeline/render-flyover.mjs",
-    "test:pipeline": "python -m pytest pipeline/tests -q"
+    "test:pipeline": "python -m pytest pipeline/tests -q",
+    "test:unit": "node --test \"pipeline/tests/*.test.mjs\"",
+    "test:build": "npm run build && node scripts/verify-build.mjs"
   },
   "devDependencies": {
     "playwright": "1.56.1",

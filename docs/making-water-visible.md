@@ -167,9 +167,11 @@ underlying state or a visual binding changes.
 - **Setting evidence.** The current Diablo Range biome is intentionally plausible, but the
   species mix and default-season assumptions are not yet source-cited at the same level as the
   scientific data. The doctrine above is the target standard for future biome profiles.
-- **Other water systems.** Rivers, watersheds, aqueducts, groundwater, treatment plants,
-  floodplains, estuaries and distribution networks can share the architecture. Build the generic
-  machinery only when a second kind of system exists.
+- **Other water systems.** River Pulse now provides an initial river experience within this
+  repository: Hacienda terrain, gauge observations, time selection and visual bindings, with
+  a Jenner place/data contract. River hydrodynamics are not implemented. Watersheds, aqueducts,
+  groundwater, treatment plants, floodplains and distribution networks remain future
+  experiences. Extract shared machinery only where these experiences prove a common need.
 
 ## Vision
 

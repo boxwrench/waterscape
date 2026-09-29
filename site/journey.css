@@ -53,6 +53,16 @@ body {
   letter-spacing: 1px;
   color: var(--muted);
 }
+.experiences {
+  display: flex;
+  gap: 16px;
+  margin-top: 6px;
+  font-size: 12px;
+  letter-spacing: 0;
+}
+.experiences a { color: var(--ink); text-underline-offset: 4px; }
+.experiences [aria-current] { text-decoration: none; color: var(--muted); }
+.experiences span { font-size: 10px; color: var(--muted); }
 #card {
   position: fixed;
   left: 38px;
@@ -203,7 +213,7 @@ button:disabled {
     left: 16px;
   }
   #systemMap {
-    top: 70px;
+    top: 100px;
     left: 16px;
     right: 16px;
   }

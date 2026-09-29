@@ -1,0 +1,51 @@
+{
+  "schema_version": "river-pulse-place-0.1",
+  "minimum_engine_version": "0.1.0",
+  "id": "hacienda_bridge",
+  "river_pack": "russian_river",
+  "name": "Hacienda Bridge",
+  "hydrologic_context": "river_reach",
+  "anchor": {
+    "latitude": 38.508482040255636,
+    "longitude": -122.9277345330354
+  },
+  "time_zone": "America/Los_Angeles",
+  "horizontal_crs": "EPSG:32610",
+  "vertical_datum": "NAVD88",
+  "terrain_source": "source.json",
+  "supported_capabilities": [
+    "observed_discharge",
+    "historical_discharge",
+    "historical_statistics",
+    "seasonal_streamflow_condition",
+    "forecast_discharge",
+    "precipitation_context"
+  ],
+  "data_bindings": [
+    {
+      "id": "hacienda_discharge",
+      "adapter": "usgs_water_data",
+      "feature_id": "USGS-11467000",
+      "parameter_code": "00060",
+      "phenomenon": "discharge"
+    },
+    {
+      "id": "russian_river_centerline",
+      "adapter": "dwr_nhd_major_rivers",
+      "feature_name": "Russian River",
+      "phenomenon": "river_centerline"
+    }
+  ],
+  "visual_bindings": [
+    "observed_flow_status",
+    "daily_hydrograph",
+    "seasonal_streamflow_condition",
+    "categorical_centerline_overlay"
+  ],
+  "references": [
+    {
+      "label": "USGS 11467000 monitoring location",
+      "url": "https://waterdata.usgs.gov/monitoring-location/USGS-11467000/"
+    }
+  ]
+}

@@ -1,12 +1,17 @@
 # Waterscape
 
-**Hydrology, simulated.** Real lakes and reservoirs, rebuilt from public lidar and public
-records, and brought to life in the browser. Each water body becomes a stop on a journey: a
-pre-rendered flyover that plays on any device, and — in Chrome or Edge with WebGPU — a live 3D
-scene where the water is simulated and lit in real time and you can fly anywhere over the land.
+**Making water visible.** Waterscape is an umbrella for explorable visual representations of
+real water systems. Public data supplies the evidence; scientific state and explicit visual
+bindings connect that evidence to landscapes, charts, animation and interaction.
 
-**Live:** https://boxwrench.github.io/waterscape/ — starting with the Hetch Hetchy Regional
-Water System (Calaveras and San Antonio reservoirs). What comes next is in the [roadmap](ROADMAP.md).
+| Experience | What it shows | Status |
+|---|---|---|
+| [Reservoirs](https://boxwrench.github.io/waterscape/) | Calaveras and San Antonio: lidar landscapes, sourced context and modeled water optics | Live journey and WebGPU explorer |
+| [River Pulse](https://boxwrench.github.io/waterscape/river-pulse/) | Russian River at Hacienda Bridge: terrain, a cartographic river centerline, USGS discharge and recent history | Prototype; river water/current simulation is not implemented |
+
+Jenner has an authored place manifest and water-level adapter coverage; it does not yet have
+an explorable scene. Supported capabilities in a manifest are not promises of current data
+availability.
 
 ![Calaveras Reservoir in live 3D](previews/calaveras-overlook.png)
 
@@ -25,7 +30,7 @@ scientific claim must trace to a source, calculation or clearly identified illus
 interpretation. The full principle is in
 [docs/making-water-visible.md](docs/making-water-visible.md).
 
-## How a frame is made
+## How a reservoir frame is made
 
 - **Land** — the water body's USGS 3DEP lidar is a triangle mesh drawn by
   [three.js](https://threejs.org) on the page's WebGPU device.
@@ -39,7 +44,7 @@ interpretation. The full principle is in
   ~30 fps; a chip shows the GPU in use and how to switch a laptop to its faster one.
 - **Everyone else** — browsers without WebGPU get the flyover video and the same facts.
 
-## Make your own waterscape
+## Add a reservoir
 
 Any US lake, reservoir or pond with 3DEP lidar coverage can become a stop:
 
@@ -64,7 +69,12 @@ npm start
 ```
 
 Open **http://localhost:5173/** for the journey, or
-**http://localhost:5173/renderer/explore.html?reservoir=calaveras** for live 3D.
+**http://localhost:5173/renderer/explore.html?reservoir=calaveras** for reservoir 3D,
+or **http://localhost:5173/river-pulse/** for the River Pulse prototype.
+
+Both experiences share one install and server. Hacienda terrain is committed, so starting
+River Pulse does not require a fresh USGS download. Live gauge/history/centerline requests
+need network access and explicitly show unavailable data when a source fails.
 
 In live 3D: drag or arrow keys to look; W/A/S/D to fly, E/Q up and down; scroll sets speed,
 Shift boosts (speed also grows with height above the ground). Click water for ripples, Space
@@ -78,6 +88,9 @@ URL options: `?reservoir=<id>`, `?preset=morning|midday|golden`, `?quality=low|m
 
 | Path | What it is |
 |---|---|
+| `river-pulse/` | River-specific adapters, scientific state, visual bindings, renderer and place packages |
+| `docs/making-water-visible.md` | Shared principles: binding class is separate from scientific provenance |
+| `docs/river-pulse/` | River-specific implementation contract, reuse audit and roadmap notes |
 | `index.html`, `site/` | The journey page (videos, facts, "Explore in 3D") |
 | `renderer/explore.*` | The live 3D page: controls, input and readouts |
 | `renderer/engine/` | The engine: `waterscape.js` (runtime, kernels, frame), `body.js`, `camera.js`, `quality.js`, `presets.js` |
@@ -94,8 +107,17 @@ URL options: `?reservoir=<id>`, `?preset=morning|midday|golden`, `?quality=low|m
 ## Tests
 
 ```
+npm run test:unit
+npm run validate
+npm run test:build
 npm test
 ```
+
+The first three checks cover both experiences without launching a GPU browser. Python pipeline
+checks (including river terrain and registry generation) require `numpy scipy Pillow pytest`:
+`python -m pytest pipeline/tests -q`. CI runs these checks plus shader compilation. The full
+`npm test` additionally launches Edge for the reservoir browser suite; Windows Chrome/Edge
+are the primary live-3D targets.
 
 Serves itself, compiles all 20 CUDA kernels, validates every water body, biome and tour, and
 drives Edge through Playwright: FFT correctness, optics, zero readbacks in the frame loop,
@@ -104,11 +126,18 @@ ripples, viewpoints, presets, resizing, quality tiers and the journey. Pipeline 
 
 ## Scope
 
-Still water only — one water level inside a shoreline. Landforms and shorelines come from
+The **reservoir renderer** models still water only — one water level inside a shoreline. Landforms and shorelines come from
 lidar (~10 m); everything finer is procedural or from shared biome assets. Lidar flattens
 water, so the bed is modelled as banks falling about 1:3 to the chosen basin depth, and the
 water level is the level at survey time. Outside the lidar crop the land falls away under
 painted far ridges.
+
+River Pulse keeps absolute river elevation, spatial gauge state, source quality and explicit
+time-selection policies separate from that reservoir model. It reuses utilities where the
+contracts already match; reservoir waves and synthetic beds are not river hydrodynamics.
+See [repository architecture](docs/architecture.md) and the
+[River Pulse guide](river-pulse/README.md). Future water-system experiences can add their own
+state and visual bindings under the same umbrella without a speculative shared framework.
 
 ## Credits and licences
 

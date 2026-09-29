@@ -6,9 +6,11 @@ see `docs/HANDOFF.md`.
 
 ## What this project is
 
-Waterscape rebuilds real US lakes and reservoirs from public data and shows them in the
-browser: a journey of flyover videos plus a live 3D renderer (WebGPU). Each water body is one
-folder in `data/<id>/`. See `README.md` and `docs/architecture.md`.
+Waterscape is an umbrella for visual representations of water-system data. Read
+`docs/making-water-visible.md` before adding a data source, scientific claim or visual binding.
+Reservoirs use `renderer/`, `site/` and `data/<id>/`; River Pulse uses `river-pulse/` for
+river-specific adapters, state, visual bindings, scenes and data. Both share root vendor,
+pipeline/build tooling and tests. See `README.md` and `docs/architecture.md`.
 
 ## Setup (once)
 
@@ -26,6 +28,8 @@ Microsoft Edge must be installed (the browser tests use it).
 | Unit tests | `node --test "pipeline/tests/*.test.mjs"` | `ℹ fail 0` |
 | Python tests | `python -m pytest pipeline/tests -q` | `N passed`, no `failed` |
 | Data checks | `node pipeline/validate-bundles.mjs` | `Bundles valid.` |
+| River data checks | `node pipeline/validate-river-packages.mjs` | `River packages valid.` |
+| Built assets | `npm run test:build` | `Built experience pages and river assets valid.` |
 | Everything | `npm test` | ends with `Journey checks passed.` |
 | Build the site | `npm run build` | `Built Pages with …` |
 | Local server | `npm start` | then open http://localhost:5173/ |
@@ -43,7 +47,7 @@ Microsoft Edge must be installed (the browser tests use it).
    If a fetch fails or the value is missing, stop and report — do not guess.
 4. **Never edit `vendor/`, `renderer/water.cu` or `renderer/engine/waterscape.js`** unless the
    task file explicitly says so.
-5. **Browser code has no external imports.** Every `import` in `renderer/`, `site/` must be a
+5. **Browser code has no external imports.** Every `import` in `renderer/`, `site/`, `river-pulse/` must be a
    relative path (`./x.js`, `../y.js`). No CDNs.
 6. **Run every check the task lists and read its output.** If a check fails, fix only what the
    task covers and run it again. If it fails twice, stop and report the exact output.

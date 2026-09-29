@@ -11,6 +11,17 @@ Landscape detail supports that experience. Do not move opening cameras to showca
 The roadmap broken into agent-sized tasks — including fully spelled-out tasks for small local
 models — is the [work queue](docs/roadmap/README.md); agents start with [`AGENTS.md`](AGENTS.md).
 
+## Waterscape umbrella
+
+Follow [Making Water Visible](docs/making-water-visible.md). Waterscape encompasses several
+visual representations of water data, each keeping its scientific state and visual bindings
+explicit. Reservoirs and [River Pulse](river-pulse/README.md) share one repository and build.
+River Pulse currently connects Hacienda terrain, discharge/history and seasonal context;
+Jenner is a data package. River-current optics and wider corridor coverage remain future work.
+The detailed river contract is in [docs/river-pulse/](docs/river-pulse/implementation-contract.md).
+
+The roadmap below describes the **reservoir experience**, rather than limiting the umbrella.
+
 ## Shipped
 
 - **Journey + video tier** — Calaveras and San Antonio reservoirs (Hetch Hetchy Regional Water
@@ -126,8 +137,8 @@ A compact Scene panel in live 3D and in the journey's live view:
 - Far water can look speckled (white sky vs. green hill reflections) at the Shoreline view.
 - The optional native Windows host is not rebuilt with each change.
 
-## Not planned
+## Outside the reservoir renderer
 
-Rivers and coasts (Waterscape models still water with one level inside a shoreline);
+River and coastal hydrodynamics (separate experience models, starting with River Pulse);
 elevation sources outside the US; accounts or any server-side component; a continuous
 multi-reservoir world.
