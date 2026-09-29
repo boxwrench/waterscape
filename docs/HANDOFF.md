@@ -8,6 +8,16 @@ and what's next".
 
 https://boxwrench.github.io/waterscape/ (GitHub Pages deploys on every push to `main`).
 
+## Repository cleanup — 2026-09-29
+
+PR #3's resource library is merged at `d94595c`; its CI and the local merged build passed.
+Superseded River Pulse PRs #1 and #2 are closed. Only remote `main` remains; the old
+branch heads are preserved as `archive/river-pulse-bootstrap-2026-09-29` (`4a4f04c`)
+and `archive/river-pulse-ui-2026-09-29` (`1f7acf9`). The bootstrap archive includes
+additional corridor-water prototype commits that were **not** integrated into R1.
+They remain available for a separate task; the published interface retains R1's behavior.
+R2's Full controls links are deployed at `934a511`.
+
 ## R1 publication verified — 2026-09-29
 
 Implementation and local verification are complete at `58674ce`; publication commit
