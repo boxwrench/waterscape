@@ -6,13 +6,15 @@ slight ebb and flow tied to wave energy, without slowing the renderer.
 
 1. Explicitly permitted edits: `renderer/water.cu` (contact-zone bank function, edge
    test, ebb, wave damping, wet band) and `renderer/engine/waterscape.js` (pass
-   `settings.energy` to `render_water` only). Do not edit `vendor/`, `pipeline/dem.py`,
+   `settings.energy` to `render_water` only) and `Native/main.cu` (append that argument
+   to its `render_water` call only). Plan:
+   [shoreline contact plan](../../design/plans/2026-09-29-shoreline-contact.md). Do not edit `vendor/`, `pipeline/dem.py`,
    the bundles or `renderer/land/ground.js`.
-2. Measure `render_water` GPU time on `main` first (P2 method: temporary instrumentation,
-   not shipped) at the Shoreline, ridge and overlook viewpoints on all three tiers.
+2. Timing is light by user request: median `diag.frameMs` at the Shoreline viewpoint,
+   medium tier, on `main` and on the branch.
 3. Implement per the design. Tune at each reservoir's Shoreline viewpoint.
-4. Re-measure. The change passes only if `render_water` stays within measurement noise
-   (target ≤ 2 %). If not, reduce per the design's fallback order and re-measure.
+4. Re-measure. If the branch is clearly slower, reduce per the design's fallback order
+   and re-measure.
 5. Add the Shoreline contact row and the shoreline note to
    `docs/making-water-visible.md`.
 6. Run `node --test "pipeline/tests/*.test.mjs"`, `node pipeline/validate-bundles.mjs`,
