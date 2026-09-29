@@ -27,7 +27,7 @@ terrain/hydrography assets, refreshed reservoir preview media, and scoped fixes 
 renderer/vendor implementations remain untouched by this task.
 
 ## Result
-- Status: blocked — implementation complete; final hosted verification deferred at the user's request to wrap up and switch models.
+- Status: done — implementation, publication and hosted verification complete.
 - Commit: 58674ce (integration), 2235e80 (bootstrap integration).
 - Checks: `npm run test:unit` — 25 test files passed, fail 0.
 - Checks: `node --test --test-isolation=none 'pipeline/tests/*.test.mjs'` — 95 passed, fail 0.
@@ -40,4 +40,6 @@ renderer/vendor implementations remain untouched by this task.
 - Checks: Firefox WebGPU smoke against dist — both scenes ready; reservoir diagnostics and console had no errors. Desktop/mobile River Pulse screenshots reviewed.
 - Checks: Refreshed both reservoir flyovers and posters with Firefox; ffprobe confirms each 1280x720, 300 frames, 10 seconds.
 - Notes: Full reservoir Edge end-to-end suite was not rerun because Edge is unavailable locally. Windows Chrome/Edge performance remains unmeasured. Original nested checkout preserved at `/tmp/waterscape-river-pulse-import-20260929`.
-- Next: After the authorized push, check the Pages workflow and live assets. `/tmp/waterscape-r1-live-assets.mjs <commit>` compares deployed cards, controls, grass, water shader, preview videos and river assets against dist. No further work should run until the user resumes.
+- Checks: `gh run view 36626334290 --json headSha,status,conclusion,jobs,url` — completed, success; build and deploy passed for publication commit `13a83e2`.
+- Checks: `node /tmp/waterscape-r1-live-assets.mjs 13a83e2` — all 13 assets matched; final line: MATCH river-pulse/data/russian_river/places/hacienda_bridge/hydrography.json.
+- Notes: Hosted verification completed on resuming. The latest integrated site is live at https://boxwrench.github.io/waterscape/.

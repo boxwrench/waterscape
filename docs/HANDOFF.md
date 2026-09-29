@@ -8,12 +8,15 @@ and what's next".
 
 https://boxwrench.github.io/waterscape/ (GitHub Pages deploys on every push to `main`).
 
-## R1 stopping point — 2026-09-29
+## R1 publication verified — 2026-09-29
 
-Implementation and local verification are complete at `58674ce`. Both preview videos/posters
-were refreshed. The user asked to wrap up and switch models; the authorized push is the final
-action of this session. Next session should check the Pages workflow and hosted asset versions
-before claiming the latest site is live. See R1 Result below for checks and the comparison script.
+Implementation and local verification are complete at `58674ce`; publication commit
+`13a83e2` is live. [Pages run 36626334290](https://github.com/boxwrench/waterscape/actions/runs/36626334290)
+passed both build and deploy jobs. On resuming, all 13 assets checked by
+`/tmp/waterscape-r1-live-assets.mjs 13a83e2` matched the verified local build byte-for-byte,
+including reservoir controls, grass, water shader, both flyovers and River Pulse interface,
+terrain and hydrography. R1 is complete. Windows Chrome/Edge performance remains unmeasured;
+see the R1 Result for the local checks and limitations.
 
 ## R1 umbrella integration — 2026-09-29
 
