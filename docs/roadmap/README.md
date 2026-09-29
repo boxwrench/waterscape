@@ -41,7 +41,7 @@ Ultra are secondary. Track dependencies still apply; storage history needs Cryst
 
 | ID | Task | Who | Needs | Status |
 |---|---|---|---|---|
-| B1 | [Organic shoreline contact with ebb and flow](tasks/B1-shoreline-contact.md) | capable | — | in progress on task/B1 |
+| B1 | [Organic shoreline contact with ebb and flow](tasks/B1-shoreline-contact.md) | capable | — | merged 2026-09-29 |
 
 ## Track P — first visit and delivery
 
