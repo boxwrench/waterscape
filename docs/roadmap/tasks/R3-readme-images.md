@@ -13,3 +13,11 @@ Shoreline, while publishing the repository cleanup.
    run `git diff --check`.
 5. Record results and commit with this task title. Publish the verified documentation
    update as part of the user's requested repository resolution; verify GitHub content.
+
+## Result
+- Status: done
+- Commit: 032d3b0
+- Checks: `node /tmp/waterscape-r3-capture.mjs` — Both authored views captured; no page console errors.
+- Checks: Python 3/Pillow PNG and README verification — README image order and paths valid; both PNGs are 1440x900.
+- Checks: `git diff --check` — exit 0, no output.
+- Notes: Both screenshots visually reviewed. Captured from the actual local Firefox WebGPU renderer at high quality, golden-hour light, summer-gold season and fixed wave time 5; controls hidden. Windows Chrome/Edge performance was not measured. No renderer, camera, data or flyover changes.

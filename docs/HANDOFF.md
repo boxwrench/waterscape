@@ -8,6 +8,13 @@ and what's next".
 
 https://boxwrench.github.io/waterscape/ (GitHub Pages deploys on every push to `main`).
 
+## README imagery — 2026-09-29
+
+R3 refreshed the README with actual Calaveras North ridge and Shoreline screenshots,
+in that order. Both are 1440x900, captured at high quality with golden-hour light and
+summer-gold season. Controls are hidden; the renderer and authored viewpoints are unchanged.
+See [R3](roadmap/tasks/R3-readme-images.md).
+
 ## Repository cleanup — 2026-09-29
 
 PR #3's resource library is merged at `d94595c`; its CI and the local merged build passed.
@@ -17,6 +24,8 @@ and `archive/river-pulse-ui-2026-09-29` (`1f7acf9`). The bootstrap archive inclu
 additional corridor-water prototype commits that were **not** integrated into R1.
 They remain available for a separate task; the published interface retains R1's behavior.
 R2's Full controls links are deployed at `934a511`.
+Cleanup-record Pages workflow `36629221268` passed build and deploy. The earlier
+resource-library merge deployment was superseded by this successful run.
 
 ## R1 publication verified — 2026-09-29
 
