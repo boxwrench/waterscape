@@ -17,7 +17,9 @@ const MAX_TREES = 4000;
 
 
 async function loadVariant(biomeBase, v) {
-  const buffer = await (await fetch(new URL(v.file, biomeBase))).arrayBuffer(),
+  const response = await fetch(new URL(v.file, biomeBase));
+  if (!response.ok) throw new Error(`${response.status} ${v.file}`);
+  const buffer = await response.arrayBuffer(),
     part = (p) => {
       const n = p.vertexCount,
         f = new Float32Array(buffer, p.offset, n * 8),
@@ -34,7 +36,13 @@ async function loadVariant(biomeBase, v) {
 export async function createTrees(terrain, biome, biomeBase, ground) {
   const baked = biome.trees?.baked ?? [];
   if (!baked.length) return null;
-  const variants = await Promise.all(baked.map((v) => loadVariant(biomeBase, v))),
+  // Species and variation order come from the full-detail metadata, regardless of which
+  // geometry has arrived. A biome without far variants keeps its original loading behavior.
+  const fullVariants = baked.filter((v) => !v.id.endsWith("-far")),
+    definitions = new Map(baked.map((v) => [v.id, v])),
+    initial = fullVariants.map((v) => definitions.get(`${v.id}-far`) ?? v),
+    deferred = fullVariants.filter((v) => definitions.has(`${v.id}-far`)),
+    variants = await Promise.all(initial.map((v) => loadVariant(biomeBase, v))),
     tex = (file, colour) => {
       const t = new THREE.TextureLoader().load(new URL(file, biomeBase).href);
       t.wrapS = t.wrapT = THREE.RepeatWrapping;
@@ -76,26 +84,27 @@ export async function createTrees(terrain, biome, biomeBase, ground) {
   })();
 
   const group = new THREE.Group(),
-    meshes = variants.map((v) => {
+    makeMesh = (v) => {
       const b = new THREE.InstancedMesh(v.branches, barkMat, MAX_TREES),
         l = new THREE.InstancedMesh(v.leaves, leafMat, MAX_TREES);
       l.instanceColor = new THREE.InstancedBufferAttribute(new Float32Array(MAX_TREES * 3), 3);
       for (const m of [b, l]) {
+        m.name = v.id;
         m.count = 0;
         m.frustumCulled = false;
         group.add(m);
       }
       return { v, b, l };
-    });
+    },
+    meshes = variants.map(makeMesh);
   const bySpecies = {},
     byId = {};
-  for (const m of meshes) {
-    byId[m.v.id] = m;
-    if (!m.v.id.endsWith("-far")) (bySpecies[m.v.species] ??= []).push(m);
-  }
+  for (const m of meshes) byId[m.v.id] = m;
+  for (const v of fullVariants) (bySpecies[v.species] ??= []).push(v);
   const species = Object.keys(bySpecies);
 
   let last = null,
+    detailRequested = false,
     range = TREE_RANGE[2],
     season = 1;
   const m4 = new THREE.Matrix4(),
@@ -109,7 +118,7 @@ export async function createTrees(terrain, biome, biomeBase, ground) {
         list = bySpecies[s],
         full = list[Math.floor(site.turn * 997) % list.length],
         near = tier > 0 && Math.hypot(site.x - x, site.z - z) < NEAR_DETAIL,
-        m = near ? full : (byId[`${full.v.id}-far`] ?? full),
+        m = (near && byId[full.id]) || byId[`${full.id}-far`] || byId[full.id],
         i = m.b.count;
       if (i >= MAX_TREES) continue;
       const k = site.radius / m.v.crownRadius;
@@ -137,6 +146,20 @@ export async function createTrees(terrain, biome, biomeBase, ground) {
     // Recompute the near oaks when the camera has moved a fifth of the range, or on a tier or
     // season change.
     update(state, seasonNow) {
+      // The first frame uses lightweight trees. Low never requests the detailed set; a
+      // later tier upgrade can request it once. Each successful variant becomes available
+      // on the next rebuild; a failed variant retains its far mesh for this scene.
+      if (state.frames > 0 && state.quality > 0 && !detailRequested) {
+        detailRequested = true;
+        for (const v of deferred) {
+          loadVariant(biomeBase, v).then((variant) => {
+            const mesh = makeMesh(variant);
+            meshes.push(mesh);
+            byId[v.id] = mesh;
+            last = null;
+          }).catch((error) => console.warn(`Keeping lightweight tree ${v.id}: ${error.message}`));
+        }
+      }
       const r = TREE_RANGE[Math.max(0, Math.min(2, state.quality))];
       // (Near/far detail switches at NEAR_DETAIL, so rebuild at least every 10 m of travel.)
       if (!last || r !== range || seasonNow !== season || Math.hypot(state.x - last.x, state.z - last.z) > Math.min(10, r * 0.2)) {

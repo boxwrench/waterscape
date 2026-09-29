@@ -221,24 +221,27 @@ async function frame(now) {
       Object.assign(diag.quality, { tier: state.quality, width: ws.width, struggling: !!governor?.struggling });
       $("loading").hidden = true;
       $("status").textContent = state.playing ? liveLabel() : "PAUSED";
+      const firstFrame = diag.startup.firstFrameMs === null;
+      if (firstFrame) diag.startup.firstFrameMs = performance.now();
       if (state.frames % 15 === 0) {
         const speed = state.speed * boost;
         $("metrics").textContent =
           `${Math.round(1 / dt)} FPS · ${ws.width} × ${ws.height} · SPEED ${speed < 100 ? speed.toFixed(1) : Math.round(speed).toLocaleString()} m/s · ${formatElevation(body.terrain.elevation(state.y))}`;
         survey();
         updateGpu();
-        if (embedded)
-          parent.postMessage(
-            {
-              type: "waterscape:frame",
-              ms: diag.frameMs,
-              reservoir: bodyId,
-              tier: state.quality,
-              struggling: diag.quality.struggling,
-            },
-            location.origin,
-          );
       }
+      // Hand off immediately after the first completed frame, then keep periodic telemetry.
+      if (embedded && (firstFrame || state.frames % 15 === 0))
+        parent.postMessage(
+          {
+            type: "waterscape:frame",
+            ms: diag.frameMs,
+            reservoir: bodyId,
+            tier: state.quality,
+            struggling: diag.quality.struggling,
+          },
+          location.origin,
+        );
     }
     requestAnimationFrame(frame);
   } catch (e) {
@@ -261,8 +264,10 @@ $("capture").onclick = async () => {
   });
 };
 try {
-  const progress = (text) => ($("loadText").textContent = text);
+  const progress = (text) => ($("loadText").textContent = text),
+    bodyStarted = performance.now();
   body = await loadBody(bodyId, progress);
+  const bodyLoaded = performance.now();
   ws = await createWaterscape(canvas, body, {
     onError: fail,
     onProgress: progress,
@@ -272,6 +277,11 @@ try {
   // From here the engine's diagnostics are the page's; load errors carry over.
   ws.diag.errors.push(...diag.errors);
   diag = window.waterscapeDiagnostics = ws.diag;
+  diag.startup = {
+    bodyMs: bodyLoaded - bodyStarted,
+    engineMs: performance.now() - bodyLoaded,
+    firstFrameMs: null, // milliseconds since this iframe's navigation, including module loading
+  };
   const vendor = ws.rt.describe().vendor,
     forced = forcedTier(q.get("quality"));
   if (forced === null) {

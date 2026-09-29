@@ -7,6 +7,8 @@ const $ = (id) => document.getElementById(id);
 const state = { stops: [], index: 0, live: null, preferLive: false };
 window.waterscapeJourney = state;
 const dataUrl = (id, file) => `./data/${id}/${file}`;
+let capabilityKnown = false,
+  prefetchTimer = null;
 
 async function json(url) {
   const r = await fetch(url);
@@ -82,16 +84,26 @@ function showMedia(stop) {
 }
 
 function prefetch(i) {
+  clearTimeout(prefetchTimer);
   document.querySelectorAll("link[data-prefetch]").forEach((l) => l.remove());
   const next = state.stops[i + 1];
   if (!next) return;
-  for (const file of ["poster.jpg", "flyover.mp4"]) {
+  const add = (file) => {
     const link = document.createElement("link");
     link.rel = "prefetch";
     link.href = dataUrl(next.id, file);
     link.dataset.prefetch = "";
     document.head.append(link);
-  }
+  };
+  add("poster.jpg");
+  // Wait for the mode decision and established playback before speculative video traffic.
+  // A live visitor only needs the next poster; switching modes/stops cancels this timer.
+  const video = $("flyover");
+  if (!capabilityKnown || state.preferLive || state.live || video.paused || video.readyState < 3) return;
+  prefetchTimer = setTimeout(() => {
+    if (state.index === i && !state.preferLive && !state.live && !video.paused)
+      add("flyover.mp4");
+  }, 1500);
 }
 
 
@@ -114,7 +126,7 @@ function enterLive() {
     `&preset=${encodeURIComponent($("livePreset").value)}`;
   state.live = { id: stop.id, pose, frameTimes: [], firstFrame: false };
   $("stage").append(frame);
-  video.pause();
+  prefetch(state.index);
   $("explore").textContent = "Back to video";
   $("slowNotice").hidden = true;
   $("livePreset").hidden = false;
@@ -129,6 +141,7 @@ function leaveLive() {
   $("livePreset").hidden = true;
   $("explore").textContent = "Explore in 3D";
   $("flyover").play().catch(() => {});
+  prefetch(state.index);
 }
 
 addEventListener("message", (e) => {
@@ -143,6 +156,7 @@ addEventListener("message", (e) => {
   if (!state.live.firstFrame) {
     state.live.firstFrame = true;
     $("stage").classList.add("live");
+    $("flyover").pause();
   }
   state.live.frameTimes.push(e.data.ms);
   // The renderer already adapts its quality; it says "struggling" only when its cheapest
@@ -168,7 +182,10 @@ function show(i) {
   if (state.preferLive) enterLive();
 }
 
-$("flyover").addEventListener("playing", () => $("stage").classList.add("playing"));
+$("flyover").addEventListener("playing", () => {
+  $("stage").classList.add("playing");
+  prefetch(state.index);
+});
 $("flyover").addEventListener("error", () => $("stage").classList.add("video-failed"));
 $("prev").onclick = () => show(state.index - 1);
 $("next").onclick = () => show(state.index + 1);
@@ -176,7 +193,10 @@ $("explore").onclick = () => {
   state.preferLive = !state.live;
   state.live ? leaveLive() : enterLive();
 };
-$("slowBack").onclick = leaveLive;
+$("slowBack").onclick = () => {
+  state.preferLive = false;
+  leaveLive();
+};
 $("livePreset").value = new URLSearchParams(location.search).get("preset") || "golden";
 $("livePreset").onchange = () =>
   $("liveFrame")?.contentWindow.postMessage(
@@ -210,9 +230,10 @@ renderMap();
 showFromHash();
 // Capable browsers open straight into live 3D; the video plays until its first frame.
 liveCapable().then((ok) => {
+  capabilityKnown = true;
   $("explore").hidden = !ok;
   if (ok && !state.live) {
     state.preferLive = true;
     enterLive();
-  }
+  } else prefetch(state.index);
 });

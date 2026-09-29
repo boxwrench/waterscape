@@ -24,6 +24,25 @@ merged into `main`. A human reviews and merges each `task/<id>` branch.
 3. When it reports done, review the branch (`git log main..task/<id>`, `git diff main`) and run
    `npm test` yourself before merging.
 
+## Current priority
+
+P1 is complete on its review branch; after merge, opening composition and baseline
+shoreline polish (P2, L2b, L1b) are next.
+Journey context and one additional shared-biome reservoir follow: W1/W2 unlock T1/T2's
+sourced storage history. Ultra follows the baseline experience. Track dependencies below
+still apply; in particular the storage timeline needs Crystal Springs.
+
+## Track P — first visit and delivery
+
+| ID | Task | Who | Needs | Status |
+|---|---|---|---|---|
+| P1 | [Faster first scene and smoother stop transitions](tasks/P1-first-scene.md) | capable | L2 | done on task/P1; awaiting human merge |
+| P1b | Profile remaining engine initialization (~13 s locally); measure compilation/allocation/baking before deciding on renderer reuse | capable | P1 | follow-up candidate |
+| P2 | Compose both opening shoreline views with water and trees in frame; judge L2b/L1b from those views | capable | P1 | next |
+
+Keep GitHub Pages for P1. Measure before considering renderer reuse, compact geometry,
+versioned long-lived asset caching or a different host.
+
 ## Track W — more water bodies (Hetch Hetchy system)
 
 | ID | Task | Who | Needs | Status |
@@ -59,8 +78,8 @@ Calaveras, San Antonio and San Andreas are not in CDEC, so they have no timeline
 |---|---|---|---|---|
 | L1 | Ground materials and wind grass ([brief](capable-agent-briefs.md#l1-ground-and-grass)) | capable | — | done 2026-09-28 |
 | L1b | Grass refinement: blades read pixelated or sparse at 1152 px (thin blades alias without MSAA in the land pass); try MSAA or alpha-to-coverage on the land target, wider far blades, denser near field; golden-hour shade too muddy, backlit glow ([brief](capable-agent-briefs.md#l1-ground-and-grass)) | capable | L1 | later |
-| L2 | California oaks ([brief](capable-agent-briefs.md#l2-oaks)): baked ez-tree oak meshes near the camera, photographed impostors to 250 m–1.5 km, 3D trees and grass toggles | capable | L1 | live 2026-09-28: works, "just ok"; ~11 MB of tree data to shrink (half floats) |
-| L2b | Real tree shadows: render oaks and grass from the sun into a shadow map sampled by ground and grass (today's soft blobs from the old procedural crowns do not match the 3D trees) | capable | L2 | next |
+| L2 | California oaks ([brief](capable-agent-briefs.md#l2-oaks)): baked ez-tree oak meshes near the camera, photographed impostors to 250 m–1.5 km, 3D trees and grass toggles | capable | L1 | live 2026-09-28: works, "just ok"; 9.8 MB geometry, staging in P1 |
+| L2b | Real tree shadows: render oaks and grass from the sun into a shadow map sampled by ground and grass (today's soft blobs from the old procedural crowns do not match the 3D trees) | capable | L2 | after P1/opening composition |
 | U1 | PC-only Ultra tier (opt-in, never auto-picked): denser curved grass with seed heads and flowers, backlit glow, land-pass anti-aliasing, shadow maps, full-detail oaks to ~400 m, native resolution, photo mode (pause, hide UI, 2× PNG) | capable | L2b | proposed |
 | L3 | Light and tuning, re-rendered flyovers ([brief](capable-agent-briefs.md#l3-light-and-tuning)) | capable | L2 | later |
 

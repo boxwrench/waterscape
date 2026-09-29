@@ -27,14 +27,38 @@ models — is the [work queue](docs/roadmap/README.md); agents start with [`AGEN
   any US location, the engine split from its page, and a
   [make-your-own guide](docs/make-a-waterscape.md).
 
-## Next: land that holds up up close
+## Next: a faster, better first visit
+
+1. **P1 — Faster first scene and smoother stop transitions**
+   ([task](docs/roadmap/tasks/P1-first-scene.md)): complete on `task/P1`, awaiting human merge.
+   Flyovers keep moving until the first live frame; lightweight trees load first, with detail
+   requested after the first frame on medium/high. Next-video prefetch waits for video-only
+   playback. Low-tier tree geometry drops from 9.8 MB to 1.2 MB. Local first handoff measured
+   16.1 → 14.6 s; next stop 15.6 → 14.2 s (single samples, not a production benchmark).
+   Keep GitHub Pages. Engine initialization still takes about 13 s locally; profile that
+   phase before deciding whether to reuse the renderer across stops.
+2. **Opening composition and shoreline polish** — frame shoreline, trees and water together
+   at both current stops. Finish real tree shadows (L2b) and grass refinement (L1b), judged
+   from these opening views. Establish one convincing baseline scene before adding Ultra.
+3. **A journey with more context** — explain how the stops connect within the water system,
+   with sourced facts. Add Crystal Springs through W1/W2 to prove the shared-biome workflow
+   and enable the existing T1/T2 CDEC storage timeline. Recorded storage and estimated water
+   levels must remain visibly distinct; water-level reconstruction remains T3.
+4. **Expand after the baseline works** — additional reservoirs and an opt-in Ultra tier.
+
+Delivery follow-ups are evidence-driven: compact tree encoding, versioned shared assets
+and longer cache lifetimes, then hosting changes only if measured traffic or load times
+justify them. Startup download time and GPU frame time are separate budgets.
+
+## Land that holds up up close
 
 The goal: grass that moves in the breeze and real oak trees — no flat, low-quality texture from
 knee height to the horizon — on NVIDIA as the showcase and still smooth on integrated graphics.
 
 1. **Oaks** — first version live (baked oak meshes plus impostors, with 3D trees and grass
-   toggles; the explorer opens at the shoreline). Still to do: shrink the ~11 MB of tree data
-   (half floats) and real shadows (L2b).
+   toggles; the explorer opens at the shoreline). The current geometry is 9.8 MB, of which
+   1.2 MB is the lightweight set. P1 stages those downloads; compact encoding is a later
+   option. Real shadows remain L2b.
    Originally planned as:
    - California coast live, blue and valley oak variants — ez-tree presets tuned toward real
      silhouettes, or authored in Blender — baked into `data/biomes/diablo-oak/`.
@@ -46,17 +70,19 @@ knee height to the horizon — on NVIDIA as the showcase and still smooth on int
    - Per-tier budgets for grass count, tree range and shadows, tuned on Intel and NVIDIA.
    - Preset polish: calmer far-water reflections under the brighter horizon, per-preset water
      tint.
-   - Flyover videos and posters re-rendered with the new land (they still show spring green).
+   - Flyover videos and posters were re-rendered with the new land; refresh again after
+     shoreline composition and lighting changes.
 
 ## A PC-only Ultra tier
 
-An opt-in quality level for screenshots and people with a strong GPU (never chosen
+After the first-visit and baseline shoreline work, an opt-in quality level for screenshots
+and people with a strong GPU (never chosen
 automatically): denser curved grass with seed heads and wildflowers, light glowing through
 backlit blades, anti-aliasing on the land, real sun shadow maps for trees and grass, full-detail
 oaks to ~400 m, native resolution, and a photo mode that pauses, hides the interface and saves a
 2× PNG.
 
-## Then: the journey grows
+## The journey grows
 
 4. **Water level and timeline** — monthly storage from CDEC; water levels above the lidar
    survey level filled from the dam line (USACE National Inventory of Dams); a month timeline
@@ -91,7 +117,6 @@ A compact Scene panel in live 3D and in the journey's live view:
 - On integrated graphics the low tier is close to its 33 ms budget when the laptop is warm or
   other 3D tabs are open.
 - Far water can look speckled (white sky vs. green hill reflections) at the Shoreline view.
-- Flyover videos predate the summer-gold default and the new sky.
 - The optional native Windows host is not rebuilt with each change.
 
 ## Not planned
