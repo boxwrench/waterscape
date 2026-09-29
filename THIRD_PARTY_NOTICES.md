@@ -20,3 +20,12 @@ on Preetham et al. 1999 and the work of Simon Wallner, Martin Upitis and zz85.
 `data/biomes/*/ground/` are resized from ambientCG materials (https://ambientcg.com), CC0 1.0
 Universal; each biome's `biome.json` records the asset ids and download URLs (Grass004,
 Ground109, Rock030 for `diablo-oak`).
+
+## Fluffy grass
+
+`data/biomes/diablo-oak/grass/fluffy-mask.jpg` is the unmodified `public/grass.jpeg` from
+https://github.com/thebenezer/FluffyGrass, snapshot
+`34745a1028067e90591bd388df60117edbefa23a`, copyright (c) 2023 Ebenezer, MIT
+licence (included in `data/biomes/diablo-oak/grass/LICENSE`). The splayed-card technique in
+`renderer/land/grass.js` follows the author's Codrops tutorial:
+https://tympanus.net/codrops/2025/02/04/how-to-make-the-fluffiest-grass-with-three-js/.
