@@ -66,6 +66,17 @@ test("flyover keys must end at the duration", async () => {
   assert.deepEqual(await validateBundle(dir), ["test: last flyover key must be at duration"]);
 });
 
+test("optional card summaries need sourced text and featured flags must be boolean", async () => {
+  const dir = await bundle({ "story.json": {
+    summary: { value: " ", source: "http://example.gov/" },
+    facts: [{ ...good["story.json"].facts[0], featured: "true" }],
+  } });
+  assert.deepEqual(await validateBundle(dir), [
+    "test: summary needs text", "test: summary has no https source", "test: fact 0 featured must be boolean",
+  ]);
+  await rm(path.dirname(dir), { recursive: true });
+});
+
 test("land.json must match the terrain biome and name known presets", async () => {
   const dir = await bundle({ "land.json": { biome: "sierra", presets: ["golden", "dusk"], defaultPreset: "midday" } });
   assert.deepEqual(await validateBundle(dir), [

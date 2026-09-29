@@ -3,11 +3,15 @@
   "name": "Calaveras Reservoir",
   "place": "Alameda and Santa Clara counties, east of Milpitas",
   "operator": "San Francisco Public Utilities Commission",
+  "summary": {
+    "value": "Part of the regional water supply for San Francisco and communities in Alameda, Santa Clara and San Mateo counties.",
+    "source": "https://www.sfpuc.gov/about-us/our-systems/surface-water-water-rain-and-snowmelt"
+  },
   "headline": "Rebuilt so it keeps holding water after a major earthquake on the fault beside it.",
   "facts": [
-    { "label": "Capacity", "value": "96,850 acre-feet", "source": "https://geospatial.sec.usace.army.mil/dls/rest/services/NID/National_Inventory_of_Dams_Public_Service/FeatureServer/0/query?where=NIDID%3D%27CA01546%27&outFields=MAX_STORAGE&f=json" },
+    { "label": "Listed capacity", "value": "96,850 acre-feet", "featured": true, "source": "https://geospatial.sec.usace.army.mil/dls/rest/services/NID/National_Inventory_of_Dams_Public_Service/FeatureServer/0/query?where=NIDID%3D%27CA01546%27&outFields=MAX_STORAGE&f=json" },
     { "label": "New dam", "value": "210 ft tall, completed 2018", "source": "https://geospatial.sec.usace.army.mil/dls/rest/services/NID/National_Inventory_of_Dams_Public_Service/FeatureServer/0/query?where=NIDID%3D%27CA01546%27&outFields=DAM_HEIGHT,YEAR_COMPLETED&f=json" },
     { "label": "Water system", "value": "Hetch Hetchy Regional Water System, serving 2.7 million people", "source": "https://www.sfpuc.gov/about-us/our-systems" },
-    { "label": "Surface at 2006 lidar survey", "value": "223.7 m (734 ft) above sea level", "source": "https://epqs.nationalmap.gov/v1/json?x=-121.81816&y=37.47261&units=Meters&wkid=4326&includeDate=true" }
+    { "label": "USGS reference · 2006", "value": "223.7 m (734 ft) above sea level", "source": "https://epqs.nationalmap.gov/v1/json?x=-121.81816&y=37.47261&units=Meters&wkid=4326&includeDate=true" }
   ]
 }

@@ -3,12 +3,16 @@
   "name": "San Antonio Reservoir",
   "place": "Alameda County, about three miles east-southeast of Sunol",
   "operator": "San Francisco Public Utilities Commission",
-  "headline": "Surveyed by the USGS in 2018: half a century of sediment had taken 1.5% of its storage.",
+  "summary": {
+    "value": "Part of the regional water supply for San Francisco and communities in Alameda, Santa Clara and San Mateo counties.",
+    "source": "https://www.sfpuc.gov/about-us/our-systems/surface-water-water-rain-and-snowmelt"
+  },
+  "headline": "Sediment has accumulated near the lowest intake; improved surveys also revised the reservoir's capacity estimate.",
   "facts": [
-    { "label": "Capacity", "value": "50,500 acre-feet as built", "source": "https://geospatial.sec.usace.army.mil/dls/rest/services/NID/National_Inventory_of_Dams_Public_Service/FeatureServer/0/query?where=NIDID%3D%27CA00132%27&outFields=MAX_STORAGE&f=json" },
-    { "label": "Dam", "value": "James H. Turner Dam, completed 1964", "source": "https://geospatial.sec.usace.army.mil/dls/rest/services/NID/National_Inventory_of_Dams_Public_Service/FeatureServer/0/query?where=NIDID%3D%27CA00132%27&outFields=NAME,YEAR_COMPLETED&f=json" },
+    { "label": "Original capacity", "value": "50,500 acre-feet as built", "featured": true, "source": "https://geospatial.sec.usace.army.mil/dls/rest/services/NID/National_Inventory_of_Dams_Public_Service/FeatureServer/0/query?where=NIDID%3D%27CA00132%27&outFields=MAX_STORAGE&f=json" },
+    { "label": "Dam (NID record)", "value": "James H. Turner Dam, completed 1964", "source": "https://geospatial.sec.usace.army.mil/dls/rest/services/NID/National_Inventory_of_Dams_Public_Service/FeatureServer/0/query?where=NIDID%3D%27CA00132%27&outFields=NAME,YEAR_COMPLETED&f=json" },
     { "label": "Lost to sediment, 1965–2018", "value": "733 acre-feet (1.5%)", "source": "https://www.usgs.gov/publications/storage-capacity-and-sedimentation-characteristics-san-antonio-reservoir-california" },
     { "label": "Water system", "value": "Hetch Hetchy Regional Water System, serving 2.7 million people", "source": "https://www.sfpuc.gov/about-us/our-systems" },
-    { "label": "Surface at 2021 lidar survey", "value": "141.7 m (465 ft) above sea level", "source": "https://epqs.nationalmap.gov/v1/json?x=-121.82922&y=37.57983&units=Meters&wkid=4326&includeDate=true" }
+    { "label": "USGS reference · 2021", "value": "141.7 m (465 ft) above sea level", "source": "https://epqs.nationalmap.gov/v1/json?x=-121.82922&y=37.57983&units=Meters&wkid=4326&includeDate=true" }
   ]
 }

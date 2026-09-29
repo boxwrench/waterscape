@@ -57,8 +57,25 @@ function renderCard(stop, i) {
   $("operator").textContent = stop.story?.operator ?? "";
   $("headline").textContent =
     stop.story?.headline ?? "Details for this stop are unavailable right now.";
-  $("facts").replaceChildren(
-    ...(stop.story?.facts ?? []).flatMap((fact) => {
+  $("supply").replaceChildren();
+  if (stop.story?.summary) {
+    const source = document.createElement("a");
+    source.textContent = "Source";
+    source.href = stop.story.summary.source;
+    source.target = "_blank";
+    source.rel = "noopener";
+    source.className = "context-source";
+    $("supply").append(stop.story.summary.value + " ", source);
+  } else $("supply").textContent = $("headline").textContent;
+  $("reservoirDetails").open = false;
+  $("reservoirDetails").hidden = !stop.story;
+  $("card").scrollTop = 0;
+  $("terrainSource").href = dataUrl(stop.id, "terrain.json");
+  const facts = stop.story?.facts ?? [],
+    featured = facts.some((f) => f.featured) ? facts.filter((f) => f.featured) : facts.slice(0, 1),
+    detail = facts.filter((f) => !featured.includes(f));
+  for (const [id, rows] of [["facts", featured], ["detailFacts", detail]]) $(id).replaceChildren(
+    ...rows.flatMap((fact) => {
       const dt = document.createElement("dt"),
         dd = document.createElement("dd"),
         a = document.createElement("a");
@@ -67,7 +84,7 @@ function renderCard(stop, i) {
       a.href = fact.source;
       a.target = "_blank";
       a.rel = "noopener";
-      a.title = "Source";
+      a.title = `Source: ${fact.label}`;
       dd.append(a);
       return [dt, dd];
     }),
@@ -204,6 +221,7 @@ $("livePreset").onchange = () =>
     location.origin,
   );
 addEventListener("keydown", (e) => {
+  if (e.target.closest?.("#card, #systemMap")) return;
   if (e.key === "ArrowRight" || e.key === "PageDown") show(state.index + 1);
   if (e.key === "ArrowLeft" || e.key === "PageUp") show(state.index - 1);
 });
@@ -211,6 +229,7 @@ let wheelLock = 0;
 addEventListener(
   "wheel",
   (e) => {
+    if (e.target.closest?.("#card, #systemMap")) return;
     if (Math.abs(e.deltaY) < 30 || performance.now() < wheelLock) return;
     wheelLock = performance.now() + 900;
     show(state.index + Math.sign(e.deltaY));

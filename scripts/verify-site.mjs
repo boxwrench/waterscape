@@ -1,6 +1,9 @@
 // Journey checks: cards, media, navigation, prefetch and failure fallback.
 import { chromium } from "playwright";
 import assert from "node:assert/strict";
+import { mkdtemp, readFile } from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
 import { createStaticServer } from "./serve.mjs";
 
 const server = createStaticServer();
@@ -20,7 +23,7 @@ try {
 
   // Stop 1: card, sourced facts, poster, playing video, next stop prefetched.
   assert.equal(await page.textContent("#stopName"), "Calaveras Reservoir");
-  const links = await page.$$eval("#facts a", (a) => a.map((x) => x.href));
+  const links = await page.$$eval(".facts a", (a) => a.map((x) => x.href));
   assert.ok(links.length >= 3 && links.every((h) => h.startsWith("https://")), JSON.stringify(links));
   await page.waitForFunction(() => document.getElementById("poster").naturalWidth > 0);
   await page.waitForFunction(() => document.getElementById("flyover").currentTime > 0.2, null, {
@@ -31,9 +34,33 @@ try {
   const prefetched = await page.$$eval("link[rel=prefetch]", (l) => l.map((x) => x.href));
   assert.ok(prefetched.some((h) => h.endsWith("data/san_antonio/flyover.mp4")), JSON.stringify(prefetched));
 
+  // Compact sourced context leaves the water visible; detail is keyboard-accessible.
+  const previewDir = await mkdtemp(path.join(os.tmpdir(), "waterscape-d1-"));
+  console.log(`Card previews: ${previewDir}`);
+  assert.match(await page.textContent("#supply"), /San Francisco.*Alameda.*Santa Clara.*San Mateo/);
+  assert.match(await page.getAttribute("#supply a", "href"), /^https:\/\/www.sfpuc.gov\//);
+  assert.equal(await page.locator("#facts dd").count(), 1);
+  assert.match(await page.textContent("#facts"), /96,850 acre-feet/);
+  assert.equal(await page.locator("#reservoirDetails").getAttribute("open"), null);
+  await page.screenshot({ path: path.join(previewDir, "desktop-compact.png") });
+  await page.focus("#reservoirDetails summary");
+  await page.keyboard.press("Enter");
+  assert.equal(await page.isVisible("#detailFacts"), true);
+  assert.match(await page.textContent("#detailFacts"), /USGS reference · 2006/);
+  assert.match(await page.textContent(".detail-body"), /not a depth survey or live measurements/);
+  assert.ok((await page.getAttribute("#terrainSource", "href")).endsWith("calaveras/terrain.json"));
+  await page.keyboard.press("PageDown");
+  assert.equal(await page.textContent("#stopName"), "Calaveras Reservoir", "reading does not change stops");
+  await page.screenshot({ path: path.join(previewDir, "desktop-details.png") });
+  await page.keyboard.press("Enter");
+  await page.click(".brand");
+
   // Navigation: keyboard, hash, map state, buttons at the ends.
   await page.keyboard.press("ArrowRight");
   assert.equal(await page.textContent("#stopName"), "San Antonio Reservoir");
+  assert.match(await page.textContent("#facts"), /50,500 acre-feet as built/);
+  assert.match(await page.textContent("#detailFacts"), /USGS reference · 2021/);
+  assert.equal(await page.locator("#reservoirDetails").getAttribute("open"), null);
   assert.equal(new URL(page.url()).hash, "#stop=san_antonio");
   assert.deepEqual(
     await page.$$eval("#systemMap li", (li) => li.map((x) => x.classList.contains("active"))),
@@ -58,6 +85,44 @@ try {
 
   // Video tier: no 3D offer.
   assert.equal(await page.isVisible("#explore"), false);
+
+  // Mobile and short screens: disclosures scroll within the card; controls remain reachable.
+  for (const viewport of [{ width: 390, height: 844 }, { width: 667, height: 375 }]) {
+    await page.setViewportSize(viewport);
+    await page.locator("#reservoirDetails summary").click();
+    const bounds = await page.evaluate(() => {
+      const card = document.getElementById("card"), rect = card.getBoundingClientRect();
+      return { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom,
+        width: innerWidth, height: innerHeight, scrollWidth: card.scrollWidth, clientWidth: card.clientWidth };
+    });
+    assert.ok(bounds.left >= 0 && bounds.right <= bounds.width && bounds.top >= 0 && bounds.bottom <= bounds.height,
+      JSON.stringify(bounds));
+    assert.ok(bounds.scrollWidth <= bounds.clientWidth, JSON.stringify(bounds));
+    await page.locator("#reservoirDetails summary").hover();
+    await page.mouse.wheel(0, 250);
+    await page.waitForFunction(() => document.getElementById("card").scrollTop > 0);
+    assert.equal(await page.textContent("#stopName"), "San Antonio Reservoir");
+    await page.screenshot({ path: path.join(previewDir, `details-${viewport.width}.png`) });
+    await page.locator("#prev").click();
+    assert.equal(await page.textContent("#stopName"), "Calaveras Reservoir");
+    assert.equal(await page.locator("#reservoirDetails").getAttribute("open"), null);
+    await page.screenshot({ path: path.join(previewDir, `compact-${viewport.width}.png`) });
+    await page.locator("#next").click();
+  }
+  await page.setViewportSize({ width: 1280, height: 800 });
+
+  // Existing/custom bundles without optional card metadata keep their headline and first fact.
+  const legacy = await browser.newPage(),
+    legacyStory = JSON.parse(await readFile("data/calaveras/story.json", "utf8"));
+  delete legacyStory.summary;
+  legacyStory.facts.forEach((f) => delete f.featured);
+  await legacy.route("**/data/calaveras/story.json", (r) => r.fulfill({ json: legacyStory }));
+  await legacy.goto(`${base}/?tier=video`);
+  await legacy.waitForFunction(() => document.getElementById("stopName").textContent.length > 0);
+  assert.equal(await legacy.textContent("#supply"), legacyStory.headline);
+  assert.equal(await legacy.locator("#facts dd").count(), 1);
+  assert.equal(await legacy.locator(".facts dd").count(), legacyStory.facts.length);
+  await legacy.close();
 
   // Live tier: the page opens straight into 3D at the shoreline viewpoint and reports frame times.
   const live = await browser.newPage({ viewport: { width: 1280, height: 800 } });
@@ -99,6 +164,16 @@ try {
   assert.ok(startup.bodyMs > 0 && startup.engineMs > 0 && startup.firstFrameMs > 0, JSON.stringify(startup));
   assert.ok(!requests.includes("/data/san_antonio/flyover.mp4"));
   // The journey forwards ?quality= and trusts the renderer's struggling flag, not raw frame times.
+  await live.screenshot({ path: path.join(previewDir, "live-water-desktop.png") });
+  await live.setViewportSize({ width: 390, height: 844 });
+  const liveBounds = await live.evaluate(() => {
+    const card = document.getElementById("card"), rect = card.getBoundingClientRect();
+    return { right: rect.right, width: innerWidth, scrollWidth: card.scrollWidth, clientWidth: card.clientWidth };
+  });
+  assert.ok(liveBounds.right <= liveBounds.width && liveBounds.scrollWidth <= liveBounds.clientWidth,
+    JSON.stringify(liveBounds));
+  await live.screenshot({ path: path.join(previewDir, "live-water-mobile.png") });
+  await live.setViewportSize({ width: 1280, height: 800 });
   assert.ok((await live.getAttribute("#liveFrame", "src")).includes("quality=low"));
   await frame.evaluate(() =>
     parent.postMessage({ type: "waterscape:frame", ms: 250, reservoir: "calaveras", tier: 0, struggling: false }, location.origin),
@@ -121,7 +196,7 @@ try {
     await r.continue().catch(() => {}); // navigation may cancel this held request
   });
   // Changing stop while live opens the next stop live.
-  await live.keyboard.press("ArrowRight");
+  await live.click("#next");
   await live.waitForSelector('#liveFrame[src*="reservoir=san_antonio"]', { state: "attached" });
   await live.evaluate(() => {
     for (const type of ["waterscape:frame", "waterscape:failed"])
@@ -136,7 +211,7 @@ try {
   await live.click("#explore");
   releaseNext();
   assert.equal(await live.$("#liveFrame"), null);
-  await live.keyboard.press("ArrowLeft");
+  await live.click("#prev");
   await live.waitForTimeout(300);
   assert.equal(await live.$("#liveFrame"), null);
   await live.waitForSelector('link[rel=prefetch][href$="san_antonio/flyover.mp4"]', { state: "attached" });

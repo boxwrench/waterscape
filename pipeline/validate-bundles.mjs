@@ -38,7 +38,15 @@ export async function validateBundle(dir) {
   for (const key of ["name", "operator", "headline"])
     if (!story[key]) errors.push(`${id}: story.json lacks ${key}`);
   if (!story.facts?.length) errors.push(`${id}: story.json has no facts`);
+  if (story.summary !== undefined) {
+    if (typeof story.summary?.value !== "string" || !story.summary.value.trim())
+      errors.push(`${id}: summary needs text`);
+    if (!/^https:\/\//.test(story.summary?.source ?? ""))
+      errors.push(`${id}: summary has no https source`);
+  }
   (story.facts ?? []).forEach((f, i) => {
+    if (f.featured !== undefined && typeof f.featured !== "boolean")
+      errors.push(`${id}: fact ${i} featured must be boolean`);
     if (!f.label || !f.value) errors.push(`${id}: fact ${i} needs a label and a value`);
     if (!/^https:\/\//.test(f.source ?? ""))
       errors.push(`${id}: fact ${i} (${f.label}) has no https source`);

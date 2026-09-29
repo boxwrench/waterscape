@@ -63,6 +63,11 @@ body {
   backdrop-filter: blur(20px);
   border: 1px solid var(--line);
   border-radius: 4px;
+  max-height: calc(100svh - 130px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #bcd3cf80 #173d4280;
 }
 .eyebrow {
   margin: 0 0 8px;
@@ -84,26 +89,62 @@ h1 {
   margin: 0 0 14px;
   font-size: 14px;
 }
-#facts {
+.supply {
+  margin: 0 0 14px;
+}
+.context-source {
+  font-size: 11px;
+}
+.facts {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
   gap: 5px 14px;
   margin: 0 0 16px;
   font-size: 12px;
 }
-#facts dt {
+.facts dt {
   color: var(--muted);
 }
-#facts dd {
+.facts dd {
   margin: 0;
 }
-#facts a {
+#card a {
   color: var(--ink);
   text-decoration: underline dotted #ffffff80;
   text-underline-offset: 3px;
 }
+#reservoirDetails {
+  margin-bottom: 14px;
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+}
+#reservoirDetails summary {
+  cursor: pointer;
+  padding: 4px 0;
+  color: var(--muted);
+}
+.detail-body {
+  padding-top: 12px;
+  font-size: 12px;
+}
+.detail-body p {
+  margin: 0 0 12px;
+}
+.detail-body h2 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 18px 0 8px;
+}
+.data-note {
+  color: var(--muted);
+}
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
 .nav {
   display: flex;
+  flex-wrap: wrap;
   gap: 6px;
 }
 button {
@@ -169,6 +210,7 @@ button:disabled {
   #card {
     left: 16px;
     bottom: 40px;
+    max-height: min(62svh, calc(100svh - 150px));
   }
   .credit {
     left: 16px;
@@ -197,4 +239,9 @@ button:disabled {
   margin-left: 6px;
   font: inherit;
   padding: 6px 8px;
+}
+@media (prefers-reduced-motion: reduce) {
+  #flyover {
+    transition: none;
+  }
 }

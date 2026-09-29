@@ -9,8 +9,8 @@ and what's next".
 https://boxwrench.github.io/waterscape/ (GitHub Pages deploys on every push to `main`).
 
 - **Front page** (`index.html`, `site/journey.js`): WebGPU browsers open straight into live 3D
-  at each reservoir's **Shoreline** viewpoint; the flyover is the fallback (P1 fixes its early
-  pause during live startup). "Back to video" is remembered for later stops. The embedded 3D hides
+  at each reservoir's **Shoreline** viewpoint; the flyover keeps playing until the first
+  live-frame report. "Back to video" is remembered for later stops. The embedded 3D hides
   the control panel.
 - **Explorer** (`renderer/explore.html`): full controls, opens at Shoreline too. Toggles for
   **3D trees** and **Grass**; auto quality low/medium/high (NVIDIA starts high, others medium).
@@ -21,9 +21,10 @@ https://boxwrench.github.io/waterscape/ (GitHub Pages deploys on every push to `
 - **Flyover videos and posters** (`data/<id>/flyover.mp4`, `poster.jpg`) were re-recorded with
   the new land via `npm run flyover -- <id>`.
 
-## Ready for review: P1 (not deployed)
+## P1 deployed
 
-`task/P1` keeps video playing until the first live frame, reports that frame immediately,
+Merged and deployed at the user's request as `ab96848`. P1 keeps video playing until the
+first live frame, reports that frame immediately,
 loads only far trees on low, and loads full detail after the first frame on medium/high.
 Detail failures retain far meshes. Next-video prefetch is deferred to video-only playback;
 both return-to-video controls preserve that preference across stops.
@@ -35,13 +36,24 @@ Tree geometry is 9,815,328 → 1,226,464 bytes (12 → 6 requests). These are lo
 not wire-transfer totals or a production network benchmark. Engine initialization still
 takes about 13 s; P1b proposes profiling this before changing the renderer lifecycle.
 
+## Current direction and D1
+
+The user explicitly prefers close shallow water as the central visual: visible bed,
+caustics, ripples and deeper water beyond. Real reservoir data supplies the meaning.
+Keep the existing opening cameras; do not prioritize tree-heavy compositions, grass,
+shadows or Ultra over water/data/startup work.
+
+D1 is complete on `task/D1`, awaiting review (not deployed): compact source-linked supply and capacity, expandable
+reservoir/scene details, acquisition-year labeling for the sampled USGS point, and a clear
+distinction between terrain data and modeled bed/waves. Sources were re-fetched; no
+current storage claim is added. See [task](roadmap/tasks/D1-reservoir-context.md).
+
 ## Known issues
 
 - **Shadows don't match the 3D trees.** Ground shadows are soft analytic blobs from the old
   procedural crowns. Fix is L2b (sun shadow map).
-- **Shoreline opening shot is mostly water.** `data/calaveras/cameras.json` → `shore` looks east
-  across open water, so the first view shows few oaks or grass. The user may want it moved to a
-  bank with trees in frame (same for `data/san_antonio/cameras.json`).
+- **Far-water reflections can look speckled.** Preserve the shallow-water foreground when
+  refining them. The water-dominant opening composition is intentional, not a defect.
 - **Intel integrated graphics:** low tier is ~27 ms at the overlook but ~37 ms at the shoreline
   (the water fills the frame; grass + trees only add ~2 ms). `scripts/verify.mjs` times the
   33 ms low-tier budget at the overlook on purpose. Frame times on the dev laptop drift a few
@@ -52,17 +64,12 @@ takes about 13 s; P1b proposes profiling this before changing the renderer lifec
 
 ## Next up (user's interest, roughly in order)
 
-1. **Review/merge P1** — complete on `task/P1`; see [task](roadmap/tasks/P1-first-scene.md).
-   Keep GitHub Pages and the per-stop iframe for now; profile the remaining engine startup
-   separately before choosing a reuse/caching design.
-2. **P2 opening composition, L2b shadows and L1b grass** — establish one convincing shoreline
-   view, then apply the standard to both stops. Judge the baseline before extending Ultra.
-3. **Journey context, W1/W2 and T1/T2** — explain the system, add Crystal Springs using the
-   shared biome, then show sourced storage history. Do not conflate storage with a measured
-   water elevation; level reconstruction remains T3.
-4. **U1 PC-only Ultra and further expansion** — still opt-in, never auto-picked. Compact
-   tree encoding, renderer reuse and hosting changes follow measurements rather than being
-   prerequisites for this pass.
+1. **D1 reservoir context** — compact information around the current water experience.
+2. **P1b startup profiling** — keep GitHub Pages and the per-stop iframe until measurements
+   support a different initialization/reuse design.
+3. **W1/W2 and T1/T2** — add Crystal Springs using the shared biome, then show sourced storage
+   history. Do not conflate storage with a measured water elevation; reconstruction is T3.
+4. **Water polish and further reservoirs** — landscape detail and U1 Ultra remain secondary.
 
 ## How to work on it
 

@@ -4,6 +4,10 @@ Where Waterscape is going, in rough order. Each step gets its own design spec an
 implementation plan in [`docs/design/`](docs/design/) before it is built; this page is the
 map, not the contract.
 
+**Direction:** shallow water is the visual centerpiece; real reservoir data gives it
+meaning. Preserve the close-up bed, caustics, ripples and transition to deeper water.
+Landscape detail supports that experience. Do not move opening cameras to showcase trees.
+
 The roadmap broken into agent-sized tasks — including fully spelled-out tasks for small local
 models — is the [work queue](docs/roadmap/README.md); agents start with [`AGENTS.md`](AGENTS.md).
 
@@ -26,34 +30,37 @@ models — is the [work queue](docs/roadmap/README.md); agents start with [`AGEN
 - **Engine and data architecture** — one folder per water body, shared biome assets, tours,
   any US location, the engine split from its page, and a
   [make-your-own guide](docs/make-a-waterscape.md).
+- **P1 loading improvements** — merged and deployed as `ab96848`: video keeps playing until
+  the first live-frame report, tree downloads are staged, and next-video prefetch is deferred.
+  Low-tier tree geometry fell from 9.8 MB to 1.2 MB. Local first handoff measured 16.1 → 14.6 s;
+  next stop 15.6 → 14.2 s (single samples, not a production benchmark).
 
-## Next: a faster, better first visit
+## Next: water and reservoir context
 
-1. **P1 — Faster first scene and smoother stop transitions**
-   ([task](docs/roadmap/tasks/P1-first-scene.md)): complete on `task/P1`, awaiting human merge.
-   Flyovers keep moving until the first live frame; lightweight trees load first, with detail
-   requested after the first frame on medium/high. Next-video prefetch waits for video-only
-   playback. Low-tier tree geometry drops from 9.8 MB to 1.2 MB. Local first handoff measured
-   16.1 → 14.6 s; next stop 15.6 → 14.2 s (single samples, not a production benchmark).
-   Keep GitHub Pages. Engine initialization still takes about 13 s locally; profile that
-   phase before deciding whether to reuse the renderer across stops.
-2. **Opening composition and shoreline polish** — frame shoreline, trees and water together
-   at both current stops. Finish real tree shadows (L2b) and grass refinement (L1b), judged
-   from these opening views. Establish one convincing baseline scene before adding Ultra.
-3. **A journey with more context** — explain how the stops connect within the water system,
-   with sourced facts. Add Crystal Springs through W1/W2 to prove the shared-biome workflow
-   and enable the existing T1/T2 CDEC storage timeline. Recorded storage and estimated water
-   levels must remain visibly distinct; water-level reconstruction remains T3.
-4. **Expand after the baseline works** — additional reservoirs and an opt-in Ultra tier.
+1. **D1 — Reservoir context around the water**
+   ([task](docs/roadmap/tasks/D1-reservoir-context.md)), complete on `task/D1` pending review:
+   compact, sourced supply and capacity
+   information, with other facts and an explanation of the scene in an expandable section.
+   Clearly separate terrain/reference elevation from modeled underwater bed and waves.
+   A point acquisition year is not a survey date for the entire terrain. Capacity is not
+   current storage. Keep the current water-focused cameras.
+2. **P1b — Profile remaining startup time** — engine initialization still takes about 13 s
+   locally. Measure compilation, allocation and baking before choosing caching or renderer
+   reuse. Keep GitHub Pages until evidence supports a hosting change.
+3. **Crystal Springs and sourced storage history** — W1/W2 adds another real reservoir using
+   the existing biome and unlocks T1/T2. Keep recorded storage distinct from estimated water
+   levels; reconstruction remains T3.
+4. **Water polish and further reservoirs** — refine distracting distant reflections while
+   preserving the shallow-water foreground. Trees, grass refinement and Ultra are secondary.
 
 Delivery follow-ups are evidence-driven: compact tree encoding, versioned shared assets
 and longer cache lifetimes, then hosting changes only if measured traffic or load times
 justify them. Startup download time and GPU frame time are separate budgets.
 
-## Land that holds up up close
+## Supporting landscape detail (later)
 
-The goal: grass that moves in the breeze and real oak trees — no flat, low-quality texture from
-knee height to the horizon — on NVIDIA as the showcase and still smooth on integrated graphics.
+Grass and oak improvements support the water experience and follow reservoir context and
+startup work. Keep their cost proportionate on integrated graphics.
 
 1. **Oaks** — first version live (baked oak meshes plus impostors, with 3D trees and grass
    toggles; the explorer opens at the shoreline). The current geometry is 9.8 MB, of which
@@ -75,7 +82,7 @@ knee height to the horizon — on NVIDIA as the showcase and still smooth on int
 
 ## A PC-only Ultra tier
 
-After the first-visit and baseline shoreline work, an opt-in quality level for screenshots
+After water, reservoir-data and startup priorities, an opt-in quality level for screenshots
 and people with a strong GPU (never chosen
 automatically): denser curved grass with seed heads and wildflowers, light glowing through
 backlit blades, anti-aliasing on the land, real sun shadow maps for trees and grass, full-detail

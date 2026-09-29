@@ -25,8 +25,20 @@
       <p class="eyebrow" id="stopIndex"></p>
       <h1 id="stopName"></h1>
       <p class="operator" id="operator"></p>
-      <p class="headline" id="headline"></p>
-      <dl id="facts"></dl>
+      <p class="supply" id="supply"></p>
+      <dl class="facts" id="facts"></dl>
+      <details id="reservoirDetails">
+        <summary>Reservoir &amp; scene details</summary>
+        <div class="detail-body">
+          <p class="headline" id="headline"></p>
+          <dl class="facts" id="detailFacts"></dl>
+          <p class="data-note">Capacity describes how much a reservoir can hold, not how much water is in it today. The population figure describes the whole regional system.</p>
+          <h2>About this scene</h2>
+          <p>Terrain and the fixed water elevation come from USGS elevation data. <a id="terrainSource" target="_blank" rel="noopener">View this scene's elevation data</a>.</p>
+          <p class="data-note">The USGS reference year belongs to the sampled water point; it does not date the entire terrain. The scene does not show today's water level.</p>
+          <p>The underwater bed, waves, ripples and light are modeled. They are a visual simulation, not a depth survey or live measurements.</p>
+        </div>
+      </details>
       <div class="nav">
         <button id="prev" aria-label="Previous stop">←</button
         ><button id="explore" hidden>Explore in 3D</button

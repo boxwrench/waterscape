@@ -84,6 +84,13 @@ records (USACE National Inventory of Dams, USGS, state water agencies, the opera
 }
 ```
 
+Optionally add `summary: { "value": "Who this reservoir serves.", "source": "https://…" }`
+to the story and `"featured": true` to a capacity fact. The compact card shows the summary
+and featured facts; other facts remain in **Reservoir & scene details**. Older stories use
+their headline and first fact. Keep capacity distinct from current storage. A USGS point
+acquisition year dates that sample, not necessarily the whole terrain crop. Retain a source
+beside every number, and distinguish modeled bed/waves from measured data.
+
 `data/<id>/land.json` sets the look:
 
 ```json
