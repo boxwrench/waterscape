@@ -60,14 +60,21 @@ quantity stays the same; the visualization decides how to communicate it.
 
 Every binding belongs to exactly one class:
 
-- **Exact**: directly represents a measured or calculated quantity (the lidar terrain; a
-  shoreline placed at a measured water level).
-- **Derived**: transformed from scientific state by a defined, documented mapping (a colour
-  ramp over shear stress).
+- **Exact**: directly presents a scientific quantity without an interpretive visual remapping
+  (terrain geometry that follows an elevation grid; a shoreline placed at the state's water
+  level).
+- **Derived**: transforms scientific state through a defined, documented visual mapping (a
+  colour ramp over shear stress; optics computed from the current water surface).
 - **Illustrative**: emphasizes a scientifically supported concept without claiming literal
   physical accuracy (corkscrew ribbons for a weak secondary current; amplified sediment).
 - **Setting**: makes no scientific claim. It is the world the water sits in: grass, trees,
   sky, light, clouds.
+
+**Binding class is separate from scientific provenance.** A quantity can itself be observed,
+derived, modeled or assumed, while its visual binding is still Exact if the visual directly
+represents that state. Keep the source, method and uncertainty on the quantity; keep the
+presentation class on the binding. This prevents an Exact binding from being mistaken for an
+Exact measurement.
 
 The first three give artistic freedom without weakening scientific integrity. The fourth is
 covered next.
@@ -89,15 +96,15 @@ They still matter, for two reasons:
    and beautiful is what makes a person stay long enough to see the water do something.
    Setting is part of the delivery of the data, not decoration beside it.
 2. **A setting still implies things.** Gold summer hills say something about the season and
-   climate. So a setting must be **aligned with reality somewhat**: it should be plausible for
-   the place, the season and the biome (species, colours, terrain cover), and it must never
-   contradict the data. It does not need per-blade or per-tree provenance.
+   climate. A setting should therefore be **plausible and evidence-informed** for the place,
+   season and biome (species, colours, terrain cover), and it must never contradict the data.
+   It does not need per-blade or per-tree provenance.
 
 Rules for Setting:
 
 - It makes no scientific claim and is not held to the "meaningful property" standard.
 - It must not contradict Observed reality (no green hills if the record says a dry gold
-  summer; no water where the lidar shows land).
+  summer; no water where the terrain shows land).
 - It should not compete with the water. It supports the story and does not carry it.
 - When a setting choice does state something about the place (a default season, a species mix),
   base it on a reasonable source for that place, and change it if the source disagrees.
@@ -129,27 +136,37 @@ the project be visually ambitious without confusing spectacle with evidence.
 
 ## In practice today
 
-| Element | Class | Note |
-|---|---|---|
-| Lidar terrain | Exact | USGS 3DEP; source in each bundle |
-| Facts and figures in `story.json`, `storage.json` | Exact | every number carries its fetched https source |
-| Water surface height | Exact / Derived | a fixed reference plane, y = 0, with land heights relative to it |
-| Waves, caustics, ripples | Illustrative | modeled, and not tied to measured wind or flow |
-| Basin depth and bed | Derived / Illustrative | modeled from the shoreline and the bundle's depth setting |
-| Grass, trees, sky, light presets | Setting | biome-plausible; gold summer is each bundle's default season |
+The binding class below describes the presentation. The state column describes where the thing
+being presented came from. Keeping those separate is important: a modeled quantity can have an
+Exact binding, while an observed quantity can be shown through a Derived binding.
 
-This table is our current reading, not an audit. Update it when a visual changes class.
+| Element | Binding class | Underlying state | Note |
+|---|---|---|---|
+| Terrain geometry above the waterline | Exact | Observed / processed | Directly follows the bundled USGS 3DEP elevation grid. The service export is bilinearly resampled to roughly 10 m cells and the bundle is quantized, so "Exact" means exact to the bundle grid, not raw lidar-point fidelity. |
+| Facts and figures in `story.json` | Exact | Reported | Each summary/fact carries an https source; the bundle validator requires the source URL. |
+| Water surface and shoreline | Exact | Derived from 3DEP | The rendered surface is exactly `y = 0` at the bundle's `waterLevel`. The pipeline detects the anchor-connected hydro-flattened region in 3DEP and rounds its level to 0.1 m. This is the DEM/survey-time water surface, not a live gauge level. |
+| FFT waves and click ripples | Illustrative | Modeled / interactive | The wave model is physically motivated and uses the depth setting, but wave energy is hand-controlled rather than driven by measured local wind; ripples are user-triggered. |
+| Refraction, reflections and caustics | Derived | Renderer state | Computed from the current water surface, light and bed through defined optical calculations. Their inputs can themselves be illustrative, modeled or Setting. |
+| Underwater bed | Derived | Modeled | Synthetic bathymetry from shoreline distance, `bankSlope` and a depth cap, with small procedural relief. `maxDepth` currently uses the dam's sourced hydraulic height as a proxy and `bankSlope` is an estimate; this is not observed bathymetry. |
+| Grass, trees, sky and light presets | Setting | Biome / presentation profile | Biome-plausible rather than individually observed. Both current bundles default to summer/gold terrain and hand-tuned light presets. |
+
+This table is an implementation reading, not a full scientific audit. Update it when either the
+underlying state or a visual binding changes.
 
 ## Not built yet
 
 - **Disclosure in the UI.** Viewers should be able to tell what is exact, derived, illustrative
-  or setting, and see any exaggeration factor (for example vertical exaggeration) where one
-  applies. Nothing does this yet.
+  or setting, see the provenance/method of the underlying state, and see any exaggeration factor
+  (for example vertical exaggeration) where one applies. Nothing does this yet.
 - **Enforcement.** A binding manifest per water body, checked by `pipeline/validate-bundles.mjs`
-  the way `story.json` sources are checked, would fail the build on an unlabeled visual.
-- **Time-driven data.** The clearest first test of this principle is a time control that moves
-  the shoreline with measured storage (the CDEC monthly records we already hold): the first
-  fully Exact and Derived visual.
+  the way `story.json` source URLs are checked, would fail the build on an unlabeled visual.
+- **Time-driven data.** A strong first test of this principle is a time control that moves the
+  shoreline from measured reservoir history. No `storage.json` or CDEC time series is committed
+  in the current bundles, and the storage/elevation-to-shoreline mapping must be defined before
+  assigning its final binding class.
+- **Setting evidence.** The current Diablo Range biome is intentionally plausible, but the
+  species mix and default-season assumptions are not yet source-cited at the same level as the
+  scientific data. The doctrine above is the target standard for future biome profiles.
 - **Other water systems.** Rivers, watersheds, aqueducts, groundwater, treatment plants,
   floodplains, estuaries and distribution networks can share the architecture. Build the generic
   machinery only when a second kind of system exists.
