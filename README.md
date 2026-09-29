@@ -10,6 +10,21 @@ Water System (Calaveras and San Antonio reservoirs). What comes next is in the [
 
 ![Calaveras Reservoir in live 3D](previews/calaveras-overlook.png)
 
+## Making water visible
+
+Water systems are hard to understand because their most important processes are invisible.
+Waterscape's guiding principle is to make them visible: *real data provides the backbone,
+science determines the relationships, and visual interpretation makes those relationships
+visible.* Every visual binding is one of four kinds: **exact** (directly presents a scientific
+quantity), **derived** (a defined visual transformation of scientific state), **illustrative**
+(emphasis of a supported concept without claiming literal physical accuracy) or **setting**
+(the grass, trees and sky that make people want to look, kept plausible for the place but
+carrying no scientific claim). Binding class describes the presentation; provenance and modeling
+status stay with the underlying state. Exaggeration is allowed when it clarifies, and every
+scientific claim must trace to a source, calculation or clearly identified illustrative
+interpretation. The full principle is in
+[docs/making-water-visible.md](docs/making-water-visible.md).
+
 ## How a frame is made
 
 - **Land** — the water body's USGS 3DEP lidar is a triangle mesh drawn by
