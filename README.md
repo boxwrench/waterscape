@@ -17,7 +17,9 @@ Jenner has an authored place manifest and water-level adapter coverage; it does 
 an explorable scene. Supported capabilities in a manifest are not promises of current data
 availability.
 
-![Calaveras Reservoir in live 3D](previews/calaveras-overlook.png)
+![Calaveras Reservoir from North ridge in live 3D](previews/calaveras-overlook.png)
+
+![Calaveras Reservoir shallow water from Shoreline in live 3D](previews/calaveras-shoreline.png)
 
 ## Making water visible
 
