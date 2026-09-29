@@ -26,7 +26,7 @@ boundary; this is one repository, not a collection of nested repositories or sub
 
 The Pages build follows browser imports from all HTML module entries and explicitly copies
 styles, static assets and both data roots. `validate-river-packages.mjs` rejects missing or
-malformed terrain and stale registries before publication. Hacienda terrain is a committed
+malformed terrain, missing centerlines and stale registries before publication. Hacienda terrain is a committed
 USGS artifact; rebuilding it is deliberate, not a deployment-time network dependency.
 
 The reservoir journey embeds the live page

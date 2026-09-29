@@ -46,6 +46,11 @@ This is the short running record of conclusions we do **not** want to rediscover
 
 ## Known traps already encountered
 
+- HTML module/style references are production build inputs. Timeline, seasonal and interface modules must ship even when the scene module does not import them. The build regression test and built-page browser test cover this.
+- Gauge resolution filters station, phenomenon, units and evidence before temporal selection. Explicit as-of requests exclude unknown or later availability; no availability cutoff is inferred from retrieval time.
+- UI data startup is independent of terrain/GPU startup. WebGL2 is a rendering fallback, and the timeline/evidence remain usable when graphics initialization fails.
+- Camera presets must face the configured anchor. River-line width and elevation colors are cartographic display choices, not measured channel width or land cover.
+
 - Do not depend on source API ordering when two records have the same timestamp; selection needs a deterministic tie-break.
 - Do not silently use stale observations as current state. Current-selection policies have an explicit maximum age and return missing/stale state when exceeded.
 - Do not hard-code the current year into historical labels or timeline display logic.

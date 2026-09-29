@@ -12,7 +12,7 @@ the default no-merge/no-push rule for this integration and publication.
 2. Keep River Pulse in `river-pulse/`, sharing root vendor, geospatial/camera utilities,
    build tooling and tests. Document this boundary and the umbrella principles.
 3. Fix the shared build to ship all River Pulse page modules/styles and real sourced
-   Hacienda terrain. Add package validation and navigation between experiences.
+   Hacienda terrain and hydrography. Add package validation and navigation between experiences.
    Keep Jenner labeled as a data package, not a completed scene. Do not invent data
    or change the scientific mappings as part of repository integration.
 4. Verify JS and Python tests, both data validators, registry freshness, shader
@@ -23,5 +23,5 @@ the default no-merge/no-push rule for this integration and publication.
    main, push normally (no force), and monitor GitHub Pages deployment.
 
 Scope includes repository/docs/build/CI/navigation/package validation, generated
-terrain assets, and scoped fixes needed for the combined site to load. Existing
+terrain/hydrography assets, refreshed reservoir preview media, and scoped fixes needed for the combined site to load. Existing
 renderer/vendor implementations remain untouched by this task.

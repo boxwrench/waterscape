@@ -23,9 +23,10 @@ principles and the supplied `river-pulse/bootstrap` history are integrated with 
   context. Jenner is a place manifest and water-level adapter contract, not a 3D scene.
   Current/forecast capabilities do not promise current availability. River water/current
   simulation is not built, and reservoir water must not be presented as river hydrodynamics.
-- **Deployment:** Hacienda's sourced 3DEP payload is committed. Build validates river
+- **Deployment:** Hacienda's sourced 3DEP terrain and 3DHP centerlines are committed. Build validates river
   packages and includes all timeline/seasonal modules and styles. CI runs Python tests,
-  registry freshness and built-page checks as well as the existing reservoir checks.
+  registry freshness, built-page checks and River Pulse browser interaction checks as well
+  as the existing reservoir checks.
 - **G2 accepted:** Codrops-style grass clumps with texture cutouts, chunk culling and distance
   LOD. MIT texture and licence are included. Spring and gold use the existing season control.
 - **P2:** defer sky/terrain shading that water overwrites. Three deterministic comparison

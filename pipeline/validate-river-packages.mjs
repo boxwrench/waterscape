@@ -43,6 +43,10 @@ export async function validateRiverPackages(root) {
       assert.match(terrain.sourceService, /^https:\/\//);
       assert.deepEqual([terrain.width, terrain.height], source.size);
       assert.ok(source.size.every((n) => Number.isInteger(n) && n >= 2));
+      const hydrography = await json(path.join(dir, "hydrography.json"));
+      assert.equal(hydrography.schemaVersion, "river-pulse-hydrography-0.1");
+      assert.ok(hydrography.source.startsWith("U.S. Geological Survey 3D Hydrography Program"));
+      assert.ok(hydrography.features.length > 0, "River centerline payload is empty");
       const bytes = gunzipSync(await readFile(path.join(dir, "terrain.bin.gz")));
       assert.equal(bytes.byteLength, terrain.width * terrain.height * 2, "River elevation payload size");
     }

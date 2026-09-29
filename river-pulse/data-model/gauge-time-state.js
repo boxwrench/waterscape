@@ -28,7 +28,18 @@ export function resolveGaugeDischargeState({
     throw new Error(`Unknown gauge time mode: ${mode}`);
   }
 
-  const result = policy.select(quantities, validTime);
+  const evidence =
+      mode === GAUGE_TIME_MODES.CURRENT_CONTINUOUS
+        ? "observation"
+        : "derived_statistic",
+    eligible = quantities.filter(
+      (q) =>
+        q.feature_id === featureId &&
+        q.phenomenon === "discharge" &&
+        q.unit === "ft^3/s" &&
+        q.evidence_type === evidence,
+    ),
+    result = policy.select(eligible, validTime, { asOfTime });
   return riverState({
     validTime,
     asOfTime,

@@ -27,3 +27,8 @@ test("deployment rejects truncated elevation data", async (t) => {
   await writeFile(path.join(dir, "river-pulse/data/russian_river/places/hacienda_bridge/terrain.bin.gz"), gzipSync(Buffer.alloc(2)));
   await assert.rejects(validateRiverPackages(dir), /River elevation payload size/);
 });
+test("deployment rejects missing river centerlines", async (t) => {
+  const dir = await fixture(t);
+  await rm(path.join(dir, "river-pulse/data/russian_river/places/hacienda_bridge/hydrography.json"));
+  await assert.rejects(validateRiverPackages(dir), /ENOENT/);
+});

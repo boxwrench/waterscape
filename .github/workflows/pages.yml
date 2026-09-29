@@ -33,6 +33,17 @@ jobs:
       - run: node pipeline/validate-river-packages.mjs
       - run: npm run build
       - run: node scripts/verify-build.mjs
+      - name: Install Chromium for River Pulse interface checks
+        run: npx playwright install --with-deps chromium
+      - name: Verify built River Pulse interface
+        run: node scripts/verify-river-pulse.mjs
+      - name: Upload River Pulse visual checks
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: river-pulse-visual-checks
+          path: previews/river-pulse-ui
+          if-no-files-found: ignore
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

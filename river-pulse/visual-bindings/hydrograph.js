@@ -25,11 +25,19 @@ export function dailyHydrograph(quantities, { width = 320, height = 86, padding 
       time: p.quantity.time.valid_start,
       quantity: p.quantity,
     })),
-    path = points.map((p, i) => `${i ? "L" : "M"}${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(" ");
+    segments = [];
+  for (const point of points) {
+    const segment = segments.at(-1), previous = segment?.at(-1);
+    // Do not draw a line or filled area across a missing daily interval.
+    if (!previous || Date.parse(point.time) > Date.parse(previous.quantity.time.valid_end)) segments.push([point]);
+    else segment.push(point);
+  }
+  const path = segments.map(segment => segment.map((p, i) => `${i ? "L" : "M"}${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(" ")).join(" ");
 
   return {
     kind: "series",
     points,
+    segments,
     path,
     min,
     max,

@@ -53,3 +53,9 @@ test("daily hydrograph explicitly returns empty state", () => {
     last_time: null,
   });
 });
+
+test("daily hydrograph breaks the line across missing days", () => {
+  const graph = dailyHydrograph([daily("2026-09-10", 100), daily("2026-09-13", 150)]);
+  assert.equal(graph.segments.length, 2);
+  assert.equal((graph.path.match(/M/g) ?? []).length, 2);
+});

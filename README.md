@@ -72,8 +72,8 @@ Open **http://localhost:5173/** for the journey, or
 **http://localhost:5173/renderer/explore.html?reservoir=calaveras** for reservoir 3D,
 or **http://localhost:5173/river-pulse/** for the River Pulse prototype.
 
-Both experiences share one install and server. Hacienda terrain is committed, so starting
-River Pulse does not require a fresh USGS download. Live gauge/history/centerline requests
+Both experiences share one install and server. Hacienda terrain and river centerlines are
+committed, so starting River Pulse does not require a fresh geometry download. Live gauge/history requests
 need network access and explicitly show unavailable data when a source fails.
 
 In live 3D: drag or arrow keys to look; W/A/S/D to fly, E/Q up and down; scroll sets speed,

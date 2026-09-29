@@ -15,3 +15,4 @@ data/*/terrain.bin
 .superpowers/
 .worktrees/
 previews/verification.json
+previews/river-pulse-ui/
