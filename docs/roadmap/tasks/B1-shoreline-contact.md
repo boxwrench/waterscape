@@ -42,3 +42,9 @@ slight ebb and flow tied to wave energy, without slowing the renderer.
   hit, it keeps the land pass's colour; shading it with the shader palette left a grey
   strip. Not checked: San Antonio, Windows Chrome/Edge timing, native host build, full
   `npm test` (Edge browser suite).
+- Follow-up (same day): San Antonio checked at two banks (irregular, moving edge; bed
+  visible through the shallows). The wet band was ~1 px wide when defined by height, so it
+  is now a 2–3.5 m damp band measured up the bank behind the ebb's recent reach (`a05ab16`).
+  Flyovers were re-recorded (headless Chrome, since Edge is not installed) but not
+  committed: both fly high above the hills, where the change is sub-pixel, so the new
+  videos matched the old ones.
