@@ -37,6 +37,12 @@ Ultra are secondary. Track dependencies still apply; storage history needs Cryst
 |---|---|---|---|---|
 | D1 | [Put reservoir context around the water experience](tasks/D1-reservoir-context.md) | capable | P1 | complete on task/D1; awaiting review |
 
+## Track B — water at the bank
+
+| ID | Task | Who | Needs | Status |
+|---|---|---|---|---|
+| B1 | [Organic shoreline contact with ebb and flow](tasks/B1-shoreline-contact.md) | capable | — | in progress on task/B1 |
+
 ## Track P — first visit and delivery
 
 | ID | Task | Who | Needs | Status |
