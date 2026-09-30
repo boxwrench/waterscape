@@ -17,9 +17,15 @@ with USGS discharge, history and seasonal context alongside the scene.
 | [Reservoirs](https://boxwrench.github.io/waterscape/) | Calaveras, San Antonio, Crystal Springs and San Andreas: lidar landscapes, sourced context, modeled water optics and aerial maps | Live journey and WebGPU explorer |
 | [River Pulse](https://boxwrench.github.io/waterscape/river-pulse/) | Hacienda Map with a flow-scaled water ribbon; authored gray steel bridge, rock outcrop, pebble beach and green reflective water; USGS discharge/history | Live prototype; illustrative water and authored setting, no local hydrodynamic model |
 
-Jenner has an authored place manifest and water-level adapter coverage; it does not yet have
-an explorable scene. Supported capabilities in a manifest are not promises of current data
-availability.
+**[Explore Jenner estuary →](https://boxwrench.github.io/waterscape/river-pulse/renderer/jenner.html)**
+[Scene notes](docs/river-pulse/jenner-scene.md), with Estuary lookout,
+River shore and Pacific beach. Photo-informed sand spit, Goat Rock, green coastal bluffs,
+green estuary water and teal Pacific surf; the separate USGS card reports NAVD88 water level
+at Highway 1. Open [Jenner locally](http://localhost:5173/river-pulse/renderer/jenner.html) after
+building and starting the server. Supported capabilities
+in a manifest are not promises of current data availability.
+
+![Jenner authored coastal preview: estuary, sand spit and Pacific surf](previews/jenner-estuary.png)
 
 ![Calaveras Reservoir from North ridge in live 3D](previews/calaveras-overlook.png)
 
@@ -96,6 +102,7 @@ npm start
 Open **http://localhost:5173/** for the journey, or
 **http://localhost:5173/renderer/explore.html?reservoir=calaveras** for reservoir 3D,
 or **http://localhost:5173/river-pulse/** for the River Pulse prototype.
+Jenner is at **http://localhost:5173/river-pulse/renderer/jenner.html** after `npm run build`.
 
 Both experiences share one install and server. Hacienda terrain and river centerlines are
 committed, so starting River Pulse does not require a fresh geometry download. Live gauge/history requests

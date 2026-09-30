@@ -7,7 +7,8 @@ This is the short running record of conclusions we do **not** want to rediscover
 - **One Waterscape repository.** River Pulse now lives in root `river-pulse/`, sharing the
   existing vendor, camera/geospatial utilities, pipeline, tests and Pages build. Its scientific
   model remains river-specific. Hacienda terrain is committed and deployment validates it;
-  Jenner is still a manifest/data contract rather than a ready scene.
+  Jenner has a photo-informed coastal scene with a separate NAVD88 water-level card (RP9),
+  using the same place loader; no surveyed coastal terrain or estuary model is implied.
 - **Scientific state and visual interpretation stay separate.** Source records normalize into scientific `Quantity` objects; visual bindings decide how those quantities affect scene, charts, labels, particles, surface activity, etc. Renderers do not redefine the science.
 - **Historical / Now / Forecast are UI concepts, not evidence types.** Evidence remains observation, derived statistic, or model output with its own valid time, issue time where applicable, method, quality, and provenance.
 - **Current discharge and historical discharge are intentionally different products.** Current uses continuous USGS observations. Historical timeline dates use USGS daily means, represented as `derived_statistic`, not instantaneous observations.

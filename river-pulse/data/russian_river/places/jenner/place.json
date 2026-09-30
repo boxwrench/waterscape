@@ -44,5 +44,11 @@
       "label": "USGS 11467270 Russian River at Highway 1 Bridge near Jenner",
       "url": "https://waterdata.usgs.gov/monitoring-location/USGS-11467270/"
     }
-  ]
+  ],
+  "authored_scene": {
+    "entry": "../../../../renderer/jenner.html",
+    "binding_class": "setting",
+    "surveyed": false,
+    "references": "setting/references.json"
+  }
 }

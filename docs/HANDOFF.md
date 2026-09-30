@@ -1,8 +1,41 @@
-# Handoff — 2026-09-29
+# Handoff — 2026-09-30
 
 Where things stand, for whoever picks this up next (person or agent). The plan lives in
 `ROADMAP.md` and `docs/roadmap/README.md`; this file is the snapshot of "what just happened
 and what's next".
+
+## Jenner publication — RP10
+
+The user accepted Jenner as "a good start" and explicitly requested updating, committing,
+merging and pushing. `task/RP10` integrates RP9 into the current main base in the isolated
+River Pulse worktree. README now has the public Jenner link and the scene/resource docs
+record acceptance. The known RP8 artifact-capture failure is addressed with a 90-second
+screenshot timeout and completed CSS transitions; existing runtime assertions are retained.
+Focused publication checks and the normal Pages workflow determine publication status;
+see [RP10](roadmap/tasks/RP10-publish-jenner.md). Separate reservoir work remains untouched.
+
+## Jenner estuary and Pacific shoreline — RP9
+
+`task/RP9` in `/tmp/waterscape-rp2` adds a complete local coastal page at
+`/river-pulse/renderer/jenner.html`, linked from Hacienda. Actual mouth/headlands photos
+inform gray-brown sand, green estuary, teal Pacific surf, Goat Rock, green bluffs, driftwood
+and inland woodland. Lookout, River shore and Pacific beach have bounded dry-ground cameras;
+mobile has a shoreline-facing Pacific composition and Explore. The small MIT Tidewater
+periodic-noise adaptation, original license and photo/resource credits are recorded in the
+Jenner package. No full FFT engine or upstream third-party assets are imported.
+
+The independent gauge card selects source USGS 11467270 / 63160 NAVD88 observations at
+Highway 1, with 45-minute freshness, future-value exclusion and explicit missing/stale
+records. The authored coast does not infer current mouth status, tide or local currents;
+Hacienda discharge is not converted to estuary state. Data survives graphics failure.
+See [scene notes](river-pulse/jenner-scene.md) and [task](roadmap/tasks/RP9-jenner-estuary.md).
+
+Verification is deliberately focused per the user: eight Jenner unit tests, built assets
+and the Jenner browser smoke; desktop/mobile screenshots were inspected against references.
+Software WebGL2 does not establish native GPU performance or WebGPU correctness. Existing
+Hacienda/reservoir rendering is preserved; the independently dirty `task/H1` checkout is
+untouched. Preview server port 5174 serves this isolated build. RP9 did not push/merge; the
+user subsequently accepted this baseline and authorized publication in RP10.
 
 ## River Pulse publication — RP8
 
@@ -15,7 +48,7 @@ the pinned CI Chromium. Pages deployment is blocked: the first CI run timed out 
 width; after elapsed-time easing fixed that, the second run timed out saving `authored-shallows-desktop.png`
 at browser-check line 208 (`page.screenshot: Timeout 30000ms exceeded.`), with page errors `[]`.
 Build/deploy run [36672469191](https://github.com/boxwrench/waterscape/actions/runs/36672469191)
-failed build and skipped deployment. The accepted visuals are not yet live. Per AGENTS.md's
+failed build and skipped deployment. The accepted visuals were not live at that point. Per AGENTS.md's
 two-failure rule and the user's request to avoid more checks, no further rerun or CI bypass
 was attempted. See [RP8](roadmap/tasks/RP8-publish-river-pulse.md) for the result. Its docs-only
 result commit skips CI to avoid another run; runtime code remains the locally verified build.

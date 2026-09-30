@@ -677,3 +677,12 @@ pre {
 }
 
 .compass[hidden] { display: none; }
+
+.header-actions .place-link { color: var(--cream, #f4f0df); font-size: 11px; text-decoration: none; padding: 9px 10px; }
+.header-actions .place-link:hover { text-decoration: underline; }
+@media (max-width: 600px) {
+  .topbar { gap: 8px; }
+  .brand { font-size: 10px; }
+  .header-actions button { font-size: 9px; padding: 8px 7px; }
+  .header-actions .place-link { font-size: 9px; padding: 6px; white-space: nowrap; }
+}

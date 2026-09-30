@@ -40,6 +40,7 @@ Terrain regeneration is an explicit data update, not a deployment dependency.
 This remains a prototype with real source terrain/data and an approximate authored Hacienda
 setting: gray steel bridge, left-pier rock outcrop, gray pebbles, grouped woodland, reflective
 green water and modeled bed. Surveyed bathymetry, locally resolved currents, water-level-driven
-shorelines and Jenner's renderer remain future work. Time selection changes scientific state
+shorelines remain future work. Jenner now adds a separate photo-informed coastal setting;
+see [Jenner scene notes](jenner-scene.md). Time selection changes scientific state
 and the Map width/category, not the authored beach shoreline. Native target GPU performance
 remains unmeasured; software WebGL2 checks do not establish a hardware frame-rate budget.
