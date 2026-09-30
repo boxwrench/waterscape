@@ -4,6 +4,16 @@ Where things stand, for whoever picks this up next (person or agent). The plan l
 `ROADMAP.md` and `docs/roadmap/README.md`; this file is the snapshot of "what just happened
 and what's next".
 
+## River Pulse publication — RP8
+
+The user authorized committing/pushing accepted RP2–RP7 work, a prominent README link and
+updated docs. `task/RP8` integrates current remote main (`1b44237`) into the isolated River
+Pulse worktree, preserving published reservoir work and leaving the dirty `task/H1` checkout
+untouched. Publication verification is in progress; see
+[RP8](roadmap/tasks/RP8-publish-river-pulse.md) for final commit/check/deployment evidence.
+The River Pulse sections below record historical local milestones; RP8's result supersedes
+their unpublished status once deployment is verified.
+
 ## Irregular blue Map water — RP7
 
 RP7 refines Map surface detail after the user spotted regular stripes: varied advected noise
@@ -91,6 +101,26 @@ The unfinished W2 checkout was preserved. This branch is for review; it is not p
 ## Live now
 
 https://boxwrench.github.io/waterscape/ (GitHub Pages deploys on every push to `main`).
+
+## Aerial map inset — 2026-09-29
+
+Each reservoir has `aerial.jpg` (USGS NAIP Plus, public domain, fetched by `pipeline/aerial.py`
+over exactly the terrain grid; source URL in `aerial.json`). `renderer/minimap.js` shows it with
+the camera marked in the explorer's elevation panel and beside the journey's stop list
+(following the flyover video or the live camera; hidden on phones). The photographs show
+suburbs east of Crystal Springs that the 3D scene draws as woodland. That is deliberate for
+now: scenes leave out man-made features. When they are added, the order is dams first, then
+adits and outlet structures, and roads and other buildings last, if at all (see ROADMAP).
+
+## Crystal Springs — 2026-09-29
+
+W1 (`pipeline/locate.py`) and W2 are done: Crystal Springs (both upper and lower lakes, via
+`extraAnchors`) with a new `peninsula-oak-fir` biome. `land.json` now drives a water body's
+look: summer grass palette, tree cover, species weights and stands, fog (with overcast for
+the Morning preset) and water optics (`renderer/engine/look.js`, light buffer L[6]–L[11]).
+Crystal Springs defaults to spring green, has a foggy overcast Morning and greener water.
+W3 adds San Andreas Lake with the same look; W4 puts both on the Hetch Hetchy tour (four stops). Flyovers here were rendered with headless Chrome (no Edge on the
+build machine). See [W2](roadmap/tasks/W2-crystal-springs.md).
 
 ## Shoreline contact — 2026-09-29
 

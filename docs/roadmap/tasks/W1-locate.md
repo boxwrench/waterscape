@@ -140,3 +140,14 @@ def test_anchor_is_the_middle_of_a_square():
    `git commit -m "W1: pipeline/locate.py drafts a source.json from a lake name"`.
 
 8. Add the **Result** section (see AGENTS.md) to this file and commit it.
+
+## Result
+- Status: done
+- Commit: 980c471
+- Checks:
+  - `python -m pytest pipeline/tests/test_locate.py -q`: `2 passed`.
+  - `python pipeline/locate.py "Calaveras Reservoir" diablo-oak`: anchor `[37.46421, -121.81646]`,
+    `nhdAreaKm2` 4.799.
+  - `python -m pytest pipeline/tests -q`: `23 passed`.
+- Notes: this machine has no `python`/pytest on PATH; checks ran in a scratch venv
+  (numpy, scipy, Pillow, pytest) with `python3`.

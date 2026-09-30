@@ -2,6 +2,8 @@
   "title": "Follow the water",
   "stops": [
     { "id": "calaveras", "caption": "Hetch Hetchy Regional Water System" },
-    { "id": "san_antonio", "caption": "Hetch Hetchy Regional Water System" }
+    { "id": "san_antonio", "caption": "Hetch Hetchy Regional Water System" },
+    { "id": "crystal_springs", "caption": "Hetch Hetchy Regional Water System" },
+    { "id": "san_andreas", "caption": "Hetch Hetchy Regional Water System" }
   ]
 }

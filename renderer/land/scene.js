@@ -14,7 +14,7 @@ const NEAR = 1,
   // Same vertical field of view as ray() in water.cu.
   FOV_Y = (2 * Math.atan(0.62487) * 180) / Math.PI;
 
-export async function createLandPass(rt, terrain, { biome, biomeBase }) {
+export async function createLandPass(rt, terrain, { biome, biomeBase, look }) {
   const renderer = new THREE.WebGPURenderer({
     canvas: document.createElement("canvas"),
     device: rt.device,
@@ -29,17 +29,17 @@ export async function createLandPass(rt, terrain, { biome, biomeBase }) {
   geometry.setIndex(new THREE.BufferAttribute(grid.indices, 1));
   geometry.computeVertexNormals();
   geometry.computeBoundingSphere();
-  const ground = createGroundMaterial(terrain, biomeBase, biome),
+  const ground = createGroundMaterial(terrain, biomeBase, biome, look),
     scene = new THREE.Scene();
   scene.add(new THREE.Mesh(geometry, ground.material));
-  const grass = createGrass(terrain, ground.terrainTex, ground.lightTex, ground.uniforms);
+  const grass = createGrass(terrain, ground.terrainTex, ground.lightTex, ground.uniforms, look);
   scene.add(grass.mesh);
   let grassTier = -1;
   // Oak meshes near the camera (none if the biome has no baked trees).
-  const trees = await createTrees(terrain, biome, biomeBase, ground);
+  const trees = await createTrees(terrain, biome, biomeBase, ground, look);
   if (trees) scene.add(trees.group);
   // Photographed oaks from the mesh range out to the impostor range.
-  const impostors = trees ? createImpostors(terrain, biome, biomeBase, ground, trees.species) : null;
+  const impostors = trees ? createImpostors(terrain, biome, biomeBase, ground, trees.species, look) : null;
   if (impostors) scene.add(impostors.mesh);
   let treeRange = 0,
     treesOn = true;

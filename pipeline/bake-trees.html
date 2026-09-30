@@ -35,7 +35,9 @@
       const imageSrc = (map) => map?.image?.src ?? null;
       const trees = {};
       window.bake = async (variants) => {
-        const out = { variants: [], textures: {} };
+        // Textures of the first species are the biome's; any other species' differing ones
+        // (a conifer's needles and bark) are kept under speciesTextures.
+        const out = { variants: [], textures: {}, speciesTextures: {} };
         for (const v of variants) {
           const tree = new Tree();
           tree.loadPreset(v.preset);
@@ -55,6 +57,9 @@
           out.textures.bark ??= imageSrc(tree.branchesMesh.material.map);
           out.textures.barkNormal ??= imageSrc(tree.branchesMesh.material.normalMap);
           out.textures.leaf ??= imageSrc(tree.leavesMesh.material.map);
+          const own = (out.speciesTextures[v.species] ??= {});
+          own.bark ??= imageSrc(tree.branchesMesh.material.map);
+          own.leaf ??= imageSrc(tree.leavesMesh.material.map);
         }
         return out;
       };

@@ -16,8 +16,12 @@ models — is the [work queue](docs/roadmap/README.md); agents start with [`AGEN
 Follow [Making Water Visible](docs/making-water-visible.md). Waterscape encompasses several
 visual representations of water data, each keeping its scientific state and visual bindings
 explicit. Reservoirs and [River Pulse](river-pulse/README.md) share one repository and build.
-River Pulse currently connects Hacienda terrain, discharge/history and seasonal context;
-Jenner is a data package. River-current optics and wider corridor coverage remain future work.
+River Pulse connects Hacienda terrain, discharge/history and seasonal context, with a blue
+flow-scaled Map ribbon and photo-informed Bridge/Hacienda Beach views. The gray steel bridge,
+rock outcrop, pebble beach, grouped woodland and green optical water form an accepted authored
+baseline. Width/motion are illustrative; local hydrodynamics and wider corridor coverage
+remain future work. Jenner is a data package. See
+[rendering and source notes](docs/river-pulse/authored-water.md).
 The detailed river contract is in [docs/river-pulse/](docs/river-pulse/implementation-contract.md).
 
 The roadmap below describes the **reservoir experience**, rather than limiting the umbrella.
@@ -41,10 +45,27 @@ The roadmap below describes the **reservoir experience**, rather than limiting t
 - **Engine and data architecture** — one folder per water body, shared biome assets, tours,
   any US location, the engine split from its page, and a
   [make-your-own guide](docs/make-a-waterscape.md).
+- **Crystal Springs and San Andreas (W1–W4)** — `pipeline/locate.py`; both Crystal Springs
+  lakes via `extraAnchors`; a Peninsula oak and Douglas-fir biome with sage summers, fir stands,
+  an overcast valley-fog Morning and greener water, all set per body in `land.json`; a
+  four-stop Hetch Hetchy tour.
+- **Shoreline contact (B1)** — organic waterline with a wave-energy ebb and a wet band.
+- **Aerial map inset** — USGS NAIP photograph per reservoir with the camera marked, in the
+  explorer and on the journey.
 - **P1 loading improvements** — merged and deployed as `ab96848`: video keeps playing until
   the first live-frame report, tree downloads are staged, and next-video prefetch is deferred.
   Low-tier tree geometry fell from 9.8 MB to 1.2 MB. Local first handoff measured 16.1 → 14.6 s;
   next stop 15.6 → 14.2 s (single samples, not a production benchmark).
+
+## Man-made features
+
+Reservoir scenes currently leave out everything man-made; land beyond the water is drawn as the biome
+even where aerial photographs show suburbs. When structures are added, in this order:
+
+1. **Dams** — the structure that makes each reservoir, sourced from the National Inventory of
+   Dams.
+2. **Adits and outlet structures** — intakes, towers and tunnel portals that move the water.
+3. **Roads and other buildings** — last, if at all.
 
 ## Next: water and reservoir context
 

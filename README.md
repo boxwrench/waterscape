@@ -8,10 +8,14 @@ A curated [Waterscape resource library](resources/README.md) tracks useful web g
 simulation, rendering and visual-development references, including the upstream licence
 status for each resource.
 
+**[Explore River Pulse at Hacienda Bridge →](https://boxwrench.github.io/waterscape/river-pulse/renderer/hacienda.html)**
+Switch between the blue animated Map river and photo-informed Bridge/Hacienda Beach views,
+with USGS discharge, history and seasonal context alongside the scene.
+
 | Experience | What it shows | Status |
 |---|---|---|
-| [Reservoirs](https://boxwrench.github.io/waterscape/) | Calaveras and San Antonio: lidar landscapes, sourced context and modeled water optics | Live journey and WebGPU explorer |
-| [River Pulse](https://boxwrench.github.io/waterscape/river-pulse/) | Russian River at Hacienda Bridge: terrain, a cartographic river centerline, USGS discharge and recent history | Prototype; river water/current simulation is not implemented |
+| [Reservoirs](https://boxwrench.github.io/waterscape/) | Calaveras, San Antonio, Crystal Springs and San Andreas: lidar landscapes, sourced context, modeled water optics and aerial maps | Live journey and WebGPU explorer |
+| [River Pulse](https://boxwrench.github.io/waterscape/river-pulse/) | Hacienda Map with a flow-scaled water ribbon; authored gray steel bridge, rock outcrop, pebble beach and green reflective water; USGS discharge/history | Live prototype; illustrative water and authored setting, no local hydrodynamic model |
 
 Jenner has an authored place manifest and water-level adapter coverage; it does not yet have
 an explorable scene. Supported capabilities in a manifest are not promises of current data
@@ -50,15 +54,30 @@ interpretation. The full principle is in
   ~30 fps; a chip shows the GPU in use and how to switch a laptop to its faster one.
 - **Everyone else** — browsers without WebGPU get the flyover video and the same facts.
 
+## River Pulse views
+
+Map keeps sourced terrain and river centerlines. Its blue water ribbon widens/narrows with
+selected discharge relative to the loaded history; seasonal condition colors the border.
+Ripple scale and motion are exaggerated. Width is a visual comparison, not measured banks,
+stage, inundation or velocity; zero/missing discharge stops motion.
+
+Bridge and Hacienda Beach use an approximate photo-informed local setting: gray steel span,
+left-pier rock, gray pebble shore and grouped woodland. Green water has reflections,
+refraction, modeled bed detail and approximate caustics. Shore movement stays near the water
+at eye height. Timeline changes preserve this static authored shoreline.
+See the [River Pulse guide](river-pulse/README.md) and
+[scene, sources and rendering notes](docs/river-pulse/authored-water.md).
+
 ## Add a reservoir
 
 Any US lake, reservoir or pond with 3DEP lidar coverage can become a stop:
 
-1. Create `data/<id>/source.json` — name, biome, a lon/lat box around the water and an
-   on-water anchor point.
-2. `python pipeline/build.py <id>` — downloads the lidar and writes the terrain and cameras.
+1. `python pipeline/locate.py "<NHD lake name>" <biome>` drafts `data/<id>/source.json` — name,
+   biome, a lon/lat box around the water and an on-water anchor point.
+2. `python pipeline/build.py <id>` — downloads the lidar and aerial photograph and writes the
+   terrain, cameras and map inset.
 3. Write `data/<id>/story.json` (facts, each with an https source) and `data/<id>/land.json`
-   (light presets, default season).
+   (the look: light presets, season, grass, trees, fog, water colour).
 4. `node pipeline/render-flyover.mjs <id>` — renders the flyover video and poster.
 5. Add the stop to a tour in `data/tours/`, run `npm test`, and publish with GitHub Pages.
 
@@ -82,7 +101,7 @@ Both experiences share one install and server. Hacienda terrain and river center
 committed, so starting River Pulse does not require a fresh geometry download. Live gauge/history requests
 need network access and explicitly show unavailable data when a source fails.
 
-In live 3D: drag or arrow keys to look; W/A/S/D to fly, E/Q up and down; scroll sets speed,
+In reservoir live 3D: drag or arrow keys to look; W/A/S/D to fly, E/Q up and down; scroll sets speed,
 Shift boosts (speed also grows with height above the ground). Click water for ripples, Space
 pauses, H hides the controls. The panel sets wave energy, basin depth, exposure, season,
 light, resolution and lens glare; PNG saves the frame.

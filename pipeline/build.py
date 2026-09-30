@@ -5,6 +5,7 @@
                   delta-coded; scales/offsets in terrain.json
   terrain.json    grid, datum, water level, origin, channel codecs, name, biome
   cameras.json    viewpoints (pinned in source.json or searched) and flyover keys
+  aerial.jpg/.json  NAIP orthoimagery for the map inset (pipeline/aerial.py)
 
 Local axes: x east, z south, y up from the reservoir surface, origin at the water centroid.
 Requires numpy, scipy, Pillow.  Usage:  python pipeline/build.py <id> [--native]
@@ -17,6 +18,7 @@ from pathlib import Path
 
 import numpy as np
 
+import aerial
 import cameras
 import dem as demlib
 import geo
@@ -30,13 +32,18 @@ def build(rid, native=False):
     anchor_lat, anchor_lon = config["anchor"]
     zone = geo.utm_zone(anchor_lon)
     dem, sx, sy, left, top = demlib.fetch_dem(rid, config["bbox"], config["size"], PIPELINE / ".cache", zone)
-    anchor_e, anchor_n = geo.utm(anchor_lat, anchor_lon, zone)
-    anchor_col = round((anchor_e - left) / sx - 0.5)
-    anchor_row = round((top - anchor_n) / sy - 0.5)
     h, w = dem.shape
-    if not (0 <= anchor_row < h and 0 <= anchor_col < w):
-        raise ValueError(f"{rid}: anchor {config['anchor']} falls outside the raster")
-    water, level = demlib.detect_water(dem, anchor=(anchor_row, anchor_col))
+
+    def cell_of(lat, lon):
+        e, n = geo.utm(lat, lon, zone)
+        row, col = round((top - n) / sy - 0.5), round((e - left) / sx - 0.5)
+        if not (0 <= row < h and 0 <= col < w):
+            raise ValueError(f"{rid}: anchor {[lat, lon]} falls outside the raster")
+        return row, col
+
+    # Optional "extraAnchors": more water at the same level, e.g. a lake split by a causeway.
+    extra = [cell_of(*a) for a in config.get("extraAnchors", [])]
+    water, level = demlib.detect_water(dem, anchor=cell_of(anchor_lat, anchor_lon), extra=extra)
     height, sdf, valley = demlib.channels(dem, water, level, sx)
     rows, cols = np.nonzero(water)
     origin_e = left + (float(cols.mean()) + 0.5) * sx
@@ -77,6 +84,7 @@ def build(rid, native=False):
     area = water.sum() * sx * sy / 1e6
     print(f"{rid}: water {level:.1f} m, {area:.2f} km2, grid {w}x{h} @ {sx:.2f} m, origin {grid_origin}")
     print(f"{rid}: viewpoints {', '.join(v['label'] for v in views.values())}")
+    aerial.fetch(rid)
 
 
 if __name__ == "__main__":

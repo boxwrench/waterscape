@@ -65,6 +65,12 @@ export async function validateBundle(dir) {
     if (!/^https:\/\//.test(land.water.maxDepthSource ?? ""))
       errors.push(`${id}: land.json water.maxDepthSource must be an https URL`);
   }
+  // Optional map inset (pipeline/aerial.py): its image must exist and its source be recorded.
+  const aerial = await readFile(path.join(dir, "aerial.json"), "utf8").then(JSON.parse, () => null);
+  if (aerial) {
+    await stat(path.join(dir, aerial.file ?? "")).catch(() => errors.push(`${id}: aerial.json names a missing image`));
+    if (!/^https:\/\//.test(aerial.source ?? "")) errors.push(`${id}: aerial.json source must be an https URL`);
+  }
   const biomeFile = path.join(path.dirname(dir), "biomes", source.biome ?? "", "biome.json");
   await stat(biomeFile).catch(() =>
     errors.push(`${id}: biome ${source.biome} has no data/biomes/${source.biome}/biome.json`),

@@ -31,6 +31,21 @@ D1 reservoir context comes first, then P1b startup profiling, then W1/W2 and T1/
 storage history. Preserve the shallow-water opening cameras. Landscape refinement and
 Ultra are secondary. Track dependencies still apply; storage history needs Crystal Springs.
 
+## Track RP — River Pulse
+
+The accepted Hacienda scene and Map ribbon are ready for publication as RP8. Local
+hydrodynamics, surveyed bed geometry and Jenner rendering remain future work.
+
+| ID | Task | Who | Needs | Status |
+|---|---|---|---|---|
+| RP2 | [Authored water](tasks/RP2-authored-water.md) | capable | R1 | complete; superseded by accepted RP5 composition |
+| RP3 | [Hacienda materials](tasks/RP3-hacienda-materials.md) | capable | RP2 | selected and integrated in RP4/RP5 |
+| RP4 | [Pebble beach and bank rocks](tasks/RP4-hacienda-bank-materials.md) | capable | RP3 | complete; refined in RP5 |
+| RP5 | [Hacienda authored scene](tasks/RP5-hacienda-authored-scene.md) | capable | RP4 | user accepted; historical browser race resolved in RP6 |
+| RP6 | [Flow-scaled Map water ribbon](tasks/RP6-map-water-ribbon.md) | capable | RP5 | complete; all scoped checks pass |
+| RP7 | [Irregular blue Map water](tasks/RP7-map-water-detail.md) | capable | RP6 | complete; all scoped checks pass |
+| RP8 | [Document and publish River Pulse](tasks/RP8-publish-river-pulse.md) | capable | RP7 | publication in progress |
+
 ## Track D — reservoir context
 
 | ID | Task | Who | Needs | Status |
@@ -58,10 +73,10 @@ versioned long-lived asset caching or a different host.
 
 | ID | Task | Who | Needs | Status |
 |---|---|---|---|---|
-| W1 | [`pipeline/locate.py`: draft a source.json from a lake name](tasks/W1-locate.md) | small | — | todo |
-| W2 | [Add Crystal Springs Reservoir](tasks/W2-crystal-springs.md) | small | W1 | todo |
-| W3 | [Add San Andreas Lake](tasks/W3-san-andreas.md) | small | W1 | todo |
-| W4 | [Add both to the Hetch Hetchy tour](tasks/W4-tour.md) | small | W2, W3 | todo |
+| W1 | [`pipeline/locate.py`: draft a source.json from a lake name](tasks/W1-locate.md) | small | — | done 2026-09-29 |
+| W2 | [Add Crystal Springs Reservoir](tasks/W2-crystal-springs.md) | small | W1 | done 2026-09-29, with Peninsula biome and morning fog |
+| W3 | [Add San Andreas Lake](tasks/W3-san-andreas.md) | small | W1 | done 2026-09-29 |
+| W4 | [Add both to the Hetch Hetchy tour](tasks/W4-tour.md) | small | W2, W3 | done 2026-09-29 |
 | H1 | Hetch Hetchy: Sierra granite + conifer biome, then the bundle ([brief](capable-agent-briefs.md#h1-hetch-hetchy)) | capable | L1, L2 | later |
 
 ## Track T — water level and timeline

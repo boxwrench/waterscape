@@ -14,9 +14,9 @@ test("three presets, suns above the horizon and normalised", () => {
   assert.ok(PRESETS.midday.sun[1] > 0.8);
 });
 
-test("preset buffer layout matches the shader's six float4s", () => {
+test("preset buffer layout matches the shader's twelve float4s", () => {
   const p = PRESETS.golden, b = presetBuffer(p);
-  assert.equal(b.length, 24);
+  assert.equal(b.length, 48);
   assert.deepEqual([...b.slice(0, 3)], p.sun.map(Math.fround));
   assert.equal(b[3], Math.fround(p.cloudCoverage));
   assert.equal(b[11], Math.fround(p.skyGain));

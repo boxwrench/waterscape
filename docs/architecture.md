@@ -33,10 +33,29 @@ The reservoir journey embeds the live page
 (`renderer/explore.html?reservoir=<id>&embed=1`) in an iframe. River Pulse has an independent
 scene and time selection UI; the existing reservoir engine is not its river-flow model.
 
+### River Pulse rendering
+
+Hacienda keeps two scene spaces: Map drapes a continuous ribbon over sourced USGS terrain;
+Bridge and Hacienda Beach show a separate photo-informed local reconstruction. Only Map
+reports source coordinates/elevation. The authored shoreline stays fixed during time selection.
+
+`visual-bindings/map-flow.js` maps eligible selected discharge to bounded display width
+within the loaded history range. `renderer/map-ribbon-geometry.js` builds the terrain-draped
+strip; `renderer/map-flow.js` gives it blue irregular moving detail and seasonal-color margins.
+Zero/missing discharge stops motion; absent history uses a disclosed fixed fallback scale.
+These mappings are illustrative, not inferred stage, banks or local velocity.
+
+`hacienda-beach.js` composes bridge, rock, pebbles and woodland; `authored-water.js` supplies
+green water, planar reflections, refraction and approximate caustics. Local setting assets
+live under Hacienda's `setting/` package, with source/license metadata. Three/TSL is shared
+with the umbrella; reservoir water kernels are not used as river hydraulics. See
+[authored-water notes](river-pulse/authored-water.md) for sources and optical limits.
+
 ## Data flow
 
 ```
-data/<id>/source.json ──pipeline/build.py──▶ data/<id>/terrain.bin.gz, terrain.json, cameras.json
+data/<id>/source.json ──pipeline/build.py──▶ data/<id>/terrain.bin.gz, terrain.json, cameras.json,
+                                              aerial.jpg, aerial.json (pipeline/aerial.py, NAIP)
 data/<id>/story.json, land.json (hand-written)        pipeline/render-flyover.mjs ──▶ flyover.mp4, poster.jpg
 data/biomes/<biome>/  (shared per landscape)          data/tours/<tour>.json (journeys)
                                    │
@@ -55,7 +74,11 @@ origin at the water's centroid; `terrain.json` records the UTM zone and origin.
 | `body.js` | `loadBody(id)`, `viewpoint(body, name)` |
 | `camera.js` | `viewRay` (matches the shader's `ray()`), `fly(state, input, dt, terrain)`, `altitudeFactor`, `terrainClearance` |
 | `quality.js` | Quality ladder (tier × width), `QualityGovernor`, `startingLevel(vendor)`, `forcedTier` |
-| `presets.js` | `PRESETS` (morning, midday, golden), `presetBuffer` (six float4s), `choosePreset` |
+| `presets.js` | `PRESETS` (morning, midday, golden), `presetBuffer(preset, look)` (twelve float4s: light, then the land look, fog and water optics), `choosePreset` |
+| `look.js` | `landLook(land)` from `land.json` (summer grass, cover, species weights and stands, fog, water optics), `effectivePreset` (overcast fog mornings), `speciesThresholds`, `pickSpecies` — shared by the kernel and the three.js land |
+
+`renderer/minimap.js` (`createMinimap(parent, base, terrainMeta)`, `mapPoint`) draws a body's
+`aerial.jpg` with the camera marked, in the explorer and on the journey page.
 
 The page (`renderer/explore.js`) owns controls, input, readouts, the quality governor and
 journey messaging. It keeps `ws.settings` in sync with its controls and calls `ws.step(dt)`

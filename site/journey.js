@@ -2,6 +2,7 @@
 // its poster and flyover video alone; the journey never waits on 3D.
 import { liveCapable } from "./device.js";
 import { poseAt } from "./flyover-path.js";
+import { createMinimap } from "../renderer/minimap.js";
 const $ = (id) => document.getElementById(id);
 // preferLive: open each stop in live 3D (on when WebGPU is available, off after "Back to video").
 const state = { stops: [], index: 0, live: null, preferLive: false };
@@ -23,11 +24,12 @@ async function loadJourney() {
     const journey = await json(`./data/tours/${tourId}.json`);
     state.stops = await Promise.all(
       journey.stops.map(async (stop) => {
-        const [story, cameras] = await Promise.all([
+        const [story, cameras, terrain] = await Promise.all([
           json(dataUrl(stop.id, "story.json")).catch(() => null),
           json(dataUrl(stop.id, "cameras.json")).catch(() => null),
+          json(dataUrl(stop.id, "terrain.json")).catch(() => null),
         ]);
-        return { ...stop, story, cameras };
+        return { ...stop, story, cameras, terrain };
       }),
     );
   } catch (e) {
@@ -182,6 +184,29 @@ addEventListener("message", (e) => {
   if (e.data.struggling === true) $("slowNotice").hidden = false;
 });
 
+// The stop's aerial map, its camera following the flyover video, or the live 3D camera.
+let stopMap = null,
+  stopMapFor = null;
+async function showStopMap(stop) {
+  stopMap?.remove();
+  stopMap = null;
+  stopMapFor = stop.id;
+  if (!stop.terrain) return;
+  const map = await createMinimap($("stopMap"), new URL(dataUrl(stop.id, ""), location.href), stop.terrain);
+  if (stopMapFor === stop.id) stopMap = map;
+  else map?.remove();
+}
+function followCamera() {
+  const stop = state.stops[state.index];
+  if (stopMap && stop?.cameras?.flyover) {
+    const live = state.live?.firstFrame && $("liveFrame")?.contentWindow?.waterscapeLab?.state,
+      pose = live || poseAt(stop.cameras.flyover, $("flyover").currentTime || 0);
+    stopMap.update(pose.x, pose.z, pose.yaw);
+  }
+  requestAnimationFrame(followCamera);
+}
+requestAnimationFrame(followCamera);
+
 function show(i) {
   i = Math.max(0, Math.min(state.stops.length - 1, i));
   if (i === state.index && !state.live && $("flyover").src) return;
@@ -189,6 +214,7 @@ function show(i) {
   state.index = i;
   const stop = state.stops[i];
   renderCard(stop, i);
+  showStopMap(stop);
   showMedia(stop);
   prefetch(i);
   $("prev").disabled = i === 0;

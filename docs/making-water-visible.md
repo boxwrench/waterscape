@@ -143,13 +143,17 @@ Exact binding, while an observed quantity can be shown through a Derived binding
 | Element | Binding class | Underlying state | Note |
 |---|---|---|---|
 | Terrain geometry above the waterline | Exact | Observed / processed | Directly follows the bundled USGS 3DEP elevation grid. The service export is bilinearly resampled to roughly 10 m cells and the bundle is quantized, so "Exact" means exact to the bundle grid, not raw lidar-point fidelity. |
+| Aerial map inset | Exact | Observed | USGS NAIP orthoimagery over exactly the terrain grid; its request URL is in `aerial.json`. The photograph's date is the service's, not the scene's. |
 | Facts and figures in `story.json` | Exact | Reported | Each summary/fact carries an https source; the bundle validator requires the source URL. |
 | Water surface and shoreline | Exact | Derived from 3DEP | The rendered surface is exactly `y = 0` at the bundle's `waterLevel`. The pipeline detects the anchor-connected hydro-flattened region in 3DEP and rounds its level to 0.1 m. This is the DEM/survey-time water surface, not a live gauge level. Within ~8 m of the shoreline the drawn edge is illustrative: it follows this shoreline to within about 2.5 m of modelled relief, plus the ebb. |
 | Shoreline contact (edge relief, ebb and flow, wet band) | Illustrative | Modeled / interactive | Organic waterline, a slow ebb and a darkened wet band within ~8 m of the shoreline. Amplitude follows the hand-set wave energy, not measured wind or water level. |
 | FFT waves and click ripples | Illustrative | Modeled / interactive | The wave model is physically motivated and uses the depth setting, but wave energy is hand-controlled rather than driven by measured local wind; ripples are user-triggered. |
-| Refraction, reflections and caustics | Derived | Renderer state | Computed from the current water surface, light and bed through defined optical calculations. Their inputs can themselves be illustrative, modeled or Setting. |
+| Refraction, reflections and caustics | Derived | Renderer state | Computed from the current water surface, light and bed through defined optical calculations. Their inputs can themselves be illustrative, modeled or Setting. Water colour (absorption and in-scatter) is a per-body profile chosen by eye, not measured: turbid for the Diablo reservoirs, greener at Crystal Springs. |
 | Underwater bed | Derived | Modeled | Synthetic bathymetry from shoreline distance, `bankSlope` and a depth cap, with small procedural relief. `maxDepth` currently uses the dam's sourced hydraulic height as a proxy and `bankSlope` is an estimate; this is not observed bathymetry. |
-| Grass, trees, sky and light presets | Setting | Biome / presentation profile | Biome-plausible rather than individually observed. Both current bundles default to summer/gold terrain and hand-tuned light presets. |
+| Grass, trees, sky, light presets and morning fog | Setting | Biome / presentation profile | Biome-plausible rather than individually observed. The Diablo bundles default to summer/gold terrain; Crystal Springs uses a Peninsula oak and Douglas-fir biome (species from SMC Parks and SFPUC pages, colours tuned to Wikimedia Commons photos) and its Morning preset is an overcast marine-layer morning with valley fog over the water. Light presets are hand-tuned. |
+| River Pulse Map water ribbon | Illustrative | Selected USGS discharge / history and seasonal statistics | Bounded width compares gauge discharge within the loaded history; category colors the margins. Blue color, irregular ripples and speed are display choices, not measured width, stage, inundation, water quality or local velocity. Missing history uses a disclosed fixed scale; zero/missing discharge stops motion. |
+| Hacienda Bridge / Beach geometry and woodland | Setting | Photo-informed authored reconstruction | Approximate gray steel bridge, left-pier rock, gray pebble beach, banks and grouped trees; local coordinates are not surveyed. The shoreline remains fixed during timeline selection. |
+| Hacienda water optics | Derived | Modeled surface/bed and authored light | Fresnel reflections, refraction and approximate caustics consume illustrative ripples and modeled bed geometry. Green color/clarity follows visual references, not measured water quality. See [authored-water notes](river-pulse/authored-water.md). |
 
 This table is an implementation reading, not a full scientific audit. Update it when either the
 underlying state or a visual binding changes.
@@ -158,7 +162,9 @@ underlying state or a visual binding changes.
 
 - **Disclosure in the UI.** Viewers should be able to tell what is exact, derived, illustrative
   or setting, see the provenance/method of the underlying state, and see any exaggeration factor
-  (for example vertical exaggeration) where one applies. Nothing does this yet.
+  (for example vertical exaggeration) where one applies. River Pulse's evidence drawer and
+  scene labels now explain its quantities and illustrative/authored views; comprehensive
+  binding disclosure across all experiences remains open.
 - **Enforcement.** A binding manifest per water body, checked by `pipeline/validate-bundles.mjs`
   the way `story.json` source URLs are checked, would fail the build on an unlabeled visual.
 - **Time-driven data.** A strong first test of this principle is a time control that moves the

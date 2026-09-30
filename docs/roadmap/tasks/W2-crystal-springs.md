@@ -90,3 +90,37 @@ a flyover video. It is not added to any tour yet (that is W4).
 - Checked 2026-09-27: `locate.py` gave anchor `[37.5279, -122.36541]`, bbox
   `[-122.4149, 37.4902, -122.3283, 37.5755]`, size `[764, 949]`; EPQS at that anchor returned
   84.9 m with acquisition year 2023.
+
+## Result
+- Status: done (stand-in biome; see notes)
+- Commit: 2a6efec
+- Checks:
+  - `locate.py "Lower Crystal Springs Reservoir"`: anchor `[37.5279, -122.36541]`, as in the notes above.
+  - `python pipeline/build.py crystal_springs`: `crystal_springs: water 86.6 m, 2.45 km2, grid 764x949 @ 10.10 m, …`
+  - NID CA00127: `MAX_STORAGE` 57910, `DAM_HEIGHT` 149, `YEAR_COMPLETED` 1888, `HYDRAULIC_HEIGHT` 139.
+  - EPQS at the anchor: 84.879997253 m, `AcquisitionDate` `10/0/2023`.
+  - Explorer: title `CRYSTAL SPRINGS RESERVOIR`, `errors: []` (headless Chrome, WebGPU).
+  - Flyover rendered with headless Chrome instead of Edge (Edge not installed; same script,
+    channel changed in a scratch copy only).
+  - `node pipeline/validate-bundles.mjs`: `Bundles valid.`; unit tests `ℹ fail 0`;
+    `npm run build`: `Built Pages with 78 browser modules, …`. `npm test` not run (needs Edge).
+- Notes:
+  - Deviations from step 4/7, to avoid wrong or stale facts: `land.json` uses Crystal Springs'
+    own NID hydraulic height (139 ft = 42.4 m) and source, not Calaveras'. `story.json` follows
+    the D1 card format (sourced `summary`, featured "Listed capacity", "USGS reference · 2023")
+    and quotes SFPUC as "2.7 million customers", the page's wording.
+  - The build's water level (86.6 m, from the 3DEP export) differs from the 2023 EPQS point
+    (84.9 m). The explorer readout shows the former, the card the latter. Not resolved here.
+  - Uses the `diablo-oak` biome as a stand-in; a greener Peninsula biome is the next task.
+    Re-record the flyover after it.
+- Follow-up (same day, user-directed):
+  - Upper Crystal Springs added via `extraAnchors` (`026b5a3`); water 4.92 km2.
+  - New `peninsula-oak-fir` biome: coast live oak with Douglas-fir in stands, sage summer
+    grass, spring-green default, denser cover off the ridge crests (`0bc7f6e`, `21e81f3`, `af0bb6c`).
+  - Viewpoints tuned (Shoreline at the waterline, both ridges on open ground) and pinned in
+    `source.json` (`19f9eaf`, `7ffc00e`).
+  - Morning: overcast with low valley fog (`083ff6d`, `06cab98`, `6281328`); greener water
+    optics (`c764ab7`).
+  - Water level: explorer 86.6 m (3DEP export) vs card 84.9 m (2023 EPQS point) accepted as
+    is; reservoir levels vary and the two come from different surveys.
+
