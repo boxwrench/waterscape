@@ -42,3 +42,30 @@ Do not change the reservoir renderer or its active checkout. Never push or merge
 - https://hacienda-cosmo.com/page-5/ fetched 2026-09-29: contemporary bridge identification
   and photographic context. Reference photographs are not shipped as scene textures.
 - Existing RP3/RP4 Poly Haven material sources and committed ez-tree asset provenance.
+
+## Result
+- Status: blocked
+- Commit: 4687052
+- Checks:
+  - `node --test "pipeline/tests/*.test.mjs"`: 104 passed, `ℹ fail 0`. The first run found a dry-bank relief defect; fixed before the passing rerun.
+  - `node pipeline/validate-river-packages.mjs`: `River packages valid.`
+  - `npm run test:build`: `Built experience pages and river assets valid.` (89 browser modules).
+  - `RIVER_PULSE_BROWSER=/opt/google/chrome/chrome node scripts/verify-river-pulse.mjs`: failed twice; stopped per AGENTS.md. First failure was a startup timeout from a missing caption DOM element, which was repaired. Second failure is recorded exactly below.
+  - Desktop photo-composition renders inspected through multiple material/geometry iterations; browser run captured desktop, reduced-motion and mobile shoreline screenshots before reaching the failing outage check. Visual match remains approximate and is not declared a finished photorealistic reconstruction.
+- Notes: preview remains on http://localhost:5174/river-pulse/renderer/hacienda.html. User corrections for gray steel/stone, large left-support rock and greener/less-clear water are incorporated. No push or merge. Required browser verification remains unfinished. The outage test checks `riverPulseMapFlow.mesh` before waiting for asynchronous scene-layer initialization; investigate that ordering before resuming verification. Target native WebGPU/Windows GPU performance is unmeasured.
+
+Second browser failure:
+
+```text
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+page.evaluate: TypeError: Cannot read properties of undefined (reading 'mesh')
+    at eval (eval at evaluate (:290:30), <anonymous>:1:32)
+    at UtilityScript.evaluate (<anonymous>:292:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+    at /tmp/waterscape-rp2/scripts/verify-river-pulse.mjs:265:34
+
+Node.js v24.19.0
+```
