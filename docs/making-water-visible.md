@@ -143,6 +143,7 @@ Exact binding, while an observed quantity can be shown through a Derived binding
 | Element | Binding class | Underlying state | Note |
 |---|---|---|---|
 | Terrain geometry above the waterline | Exact | Observed / processed | Directly follows the bundled USGS 3DEP elevation grid. The service export is bilinearly resampled to roughly 10 m cells and the bundle is quantized, so "Exact" means exact to the bundle grid, not raw lidar-point fidelity. |
+| Aerial map inset | Exact | Observed | USGS NAIP orthoimagery over exactly the terrain grid; its request URL is in `aerial.json`. The photograph's date is the service's, not the scene's. |
 | Facts and figures in `story.json` | Exact | Reported | Each summary/fact carries an https source; the bundle validator requires the source URL. |
 | Water surface and shoreline | Exact | Derived from 3DEP | The rendered surface is exactly `y = 0` at the bundle's `waterLevel`. The pipeline detects the anchor-connected hydro-flattened region in 3DEP and rounds its level to 0.1 m. This is the DEM/survey-time water surface, not a live gauge level. Within ~8 m of the shoreline the drawn edge is illustrative: it follows this shoreline to within about 2.5 m of modelled relief, plus the ebb. |
 | Shoreline contact (edge relief, ebb and flow, wet band) | Illustrative | Modeled / interactive | Organic waterline, a slow ebb and a darkened wet band within ~8 m of the shoreline. Amplitude follows the hand-set wave energy, not measured wind or water level. |

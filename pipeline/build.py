@@ -5,6 +5,7 @@
                   delta-coded; scales/offsets in terrain.json
   terrain.json    grid, datum, water level, origin, channel codecs, name, biome
   cameras.json    viewpoints (pinned in source.json or searched) and flyover keys
+  aerial.jpg/.json  NAIP orthoimagery for the map inset (pipeline/aerial.py)
 
 Local axes: x east, z south, y up from the reservoir surface, origin at the water centroid.
 Requires numpy, scipy, Pillow.  Usage:  python pipeline/build.py <id> [--native]
@@ -17,6 +18,7 @@ from pathlib import Path
 
 import numpy as np
 
+import aerial
 import cameras
 import dem as demlib
 import geo
@@ -82,6 +84,7 @@ def build(rid, native=False):
     area = water.sum() * sx * sy / 1e6
     print(f"{rid}: water {level:.1f} m, {area:.2f} km2, grid {w}x{h} @ {sx:.2f} m, origin {grid_origin}")
     print(f"{rid}: viewpoints {', '.join(v['label'] for v in views.values())}")
+    aerial.fetch(rid)
 
 
 if __name__ == "__main__":

@@ -27,6 +27,10 @@ The UTM zone is chosen from the anchor's longitude, so any US location works.
 
 ## 2. Write `data/<id>/source.json`
 
+`python pipeline/locate.py "<NHD lake name>" <biome>` prints a draft from the USGS National
+Hydrography Dataset outline (anchor far from every shore, box padded by 2 km, ~10 m cells).
+Save it, set the display `name` and drop `nhdAreaKm2`.
+
 ```json
 {
   "name": "Calaveras Reservoir",
@@ -47,10 +51,13 @@ The UTM zone is chosen from the anchor's longitude, so any US location works.
 | `name` | Shown on the fact card and in 3D |
 | `biome` | A folder in `data/biomes/` — the landscape's shared assets and look |
 | `anchor`, `bbox`, `size` | As above |
-| `viewpoints` | Optional. Three named views (`overlook`, `ridge`, `shore`) in local metres (x east, z south, origin at the water's centre), height `above` the ground, heading `yaw` and `pitch` in radians, flight `speed` in m/s. Leave it out and the pipeline searches for good views; pin them once you like them. |
+| `extraAnchors` | Optional `[[lat, lon], …]`: more water at the same level that a causeway or dam splits off, e.g. Upper Crystal Springs. Each must lie on flat water within 0.15 m of the main level, or the build stops. |
+| `viewpoints` | Optional. Three named views (`overlook`, `ridge`, `shore`) in local metres (x east, z south, origin at the water's centre), height `above` the ground, heading `yaw` and `pitch` in radians, flight `speed` in m/s. Leave it out and the pipeline searches for good views; pin them once you like them. The search does not know about trees: in dense woodland a ridge view can land among them, so check each view in the explorer. The reservoir Shoreline views stand ~3 m offshore at `above` 1.4, `pitch` −0.42, looking down at the shallows. |
 
 **Biomes.** `diablo-oak` is California oak woodland (gold grass, coast live, blue and valley
-oaks). A water body in different country — Sierra granite and conifers, desert, eastern
+oaks). `peninsula-oak-fir` is the San Francisco Peninsula watershed (coast live oak with
+Douglas-fir; ground textures shared with `diablo-oak`); its `biome.json` lists the species
+sources and photo references it was tuned to. A water body in different country — Sierra granite and conifers, desert, eastern
 forest — needs a new `data/biomes/<biome>/biome.json` (`id`, `name`, `description`) and, as the
 land engine grows, its own ground, grass and tree assets.
 
@@ -63,7 +70,9 @@ python pipeline/build.py <id>
 
 This downloads the elevation from the USGS 3DEP service, finds the water, and writes
 `terrain.bin.gz`, `terrain.json` (grid, UTM zone, water level) and `cameras.json` (viewpoints and
-flyover path) into `data/<id>/`. `--native` also writes the uncompressed `terrain.bin` for the
+flyover path) into `data/<id>/`, then fetches `aerial.jpg` (USGS NAIP orthoimagery, public
+domain) over exactly the same grid, with its request URL in `aerial.json`, for the map inset.
+`python pipeline/aerial.py <id>` fetches the photograph alone. `--native` also writes the uncompressed `terrain.bin` for the
 native Windows host.
 
 ## 4. Write the story and land profile
@@ -111,6 +120,20 @@ beside every number, and distinguish modeled bed/waves from measured data.
 
 `presets` lists the light presets this place offers (`morning`, `midday`, `golden`);
 `defaultSeason` is `spring` or `summer`. `biome` must match `source.json`.
+
+The rest of the look is optional (`renderer/engine/look.js`; Crystal Springs uses all of it):
+
+| Field | Meaning |
+|---|---|
+| `grass.summer` | `gold` (cured annual grass, the default) or `sage` (fog-belt hills that stay green-dominant) |
+| `vegetation.cover` | Extra woodland everywhere but ridge crests, added to the terrain-driven tree density (0 default; Crystal Springs 0.55) |
+| `vegetation.species` | Weights for the biome's species, e.g. `{ "coast-live": 0.9, "douglas-fir": 0.1 }` |
+| `vegetation.stands` | `1` groups the rarer species into ~80 m stands instead of scattering single trees |
+| `fog` | A Morning fog layer: `from` direction (`[0, 0]` everywhere), `edge`/`width` for a bank beyond a ridge line, `top`/`base` in metres above the water, `density` (1 default) and `overcast` 0–1 (closes the sky, dims the sun) |
+| `water.optics` | Water colour profile: `turbid` (default) or `green` |
+
+These are Setting or illustrative choices, not measurements; record where they came from
+(`fog.note`, the biome's sources) and keep [Making Water Visible](making-water-visible.md) in step.
 
 `water` shapes the lake bed, which lidar cannot see: the bed falls from the shoreline by
 `bankSlope` metres per metre (0.25 gives a wide, clear shallow band) down to `maxDepth` metres.

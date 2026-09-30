@@ -1,0 +1,8 @@
+{
+  "file": "aerial.jpg",
+  "width": 640,
+  "height": 741,
+  "source": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer/exportImage?bbox=547293.5,4157331.5,554103.2,4165219.0&bboxSR=32610&imageSR=32610&size=640,741&format=jpg&bandIds=0,1,2&f=image",
+  "service": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer",
+  "credit": "USGS, USDA, The National Map: Orthoimagery (NAIP Plus), public domain"
+}

@@ -36,7 +36,8 @@ scene and time selection UI; the existing reservoir engine is not its river-flow
 ## Data flow
 
 ```
-data/<id>/source.json ──pipeline/build.py──▶ data/<id>/terrain.bin.gz, terrain.json, cameras.json
+data/<id>/source.json ──pipeline/build.py──▶ data/<id>/terrain.bin.gz, terrain.json, cameras.json,
+                                              aerial.jpg, aerial.json (pipeline/aerial.py, NAIP)
 data/<id>/story.json, land.json (hand-written)        pipeline/render-flyover.mjs ──▶ flyover.mp4, poster.jpg
 data/biomes/<biome>/  (shared per landscape)          data/tours/<tour>.json (journeys)
                                    │
@@ -55,7 +56,11 @@ origin at the water's centroid; `terrain.json` records the UTM zone and origin.
 | `body.js` | `loadBody(id)`, `viewpoint(body, name)` |
 | `camera.js` | `viewRay` (matches the shader's `ray()`), `fly(state, input, dt, terrain)`, `altitudeFactor`, `terrainClearance` |
 | `quality.js` | Quality ladder (tier × width), `QualityGovernor`, `startingLevel(vendor)`, `forcedTier` |
-| `presets.js` | `PRESETS` (morning, midday, golden), `presetBuffer` (six float4s), `choosePreset` |
+| `presets.js` | `PRESETS` (morning, midday, golden), `presetBuffer(preset, look)` (twelve float4s: light, then the land look, fog and water optics), `choosePreset` |
+| `look.js` | `landLook(land)` from `land.json` (summer grass, cover, species weights and stands, fog, water optics), `effectivePreset` (overcast fog mornings), `speciesThresholds`, `pickSpecies` — shared by the kernel and the three.js land |
+
+`renderer/minimap.js` (`createMinimap(parent, base, terrainMeta)`, `mapPoint`) draws a body's
+`aerial.jpg` with the camera marked, in the explorer and on the journey page.
 
 The page (`renderer/explore.js`) owns controls, input, readouts, the quality governor and
 journey messaging. It keeps `ws.settings` in sync with its controls and calls `ws.step(dt)`
