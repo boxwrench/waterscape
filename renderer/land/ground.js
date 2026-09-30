@@ -58,6 +58,10 @@ export function createGroundMaterial(terrain, biomeBase, biome, look = landLook(
     return mix(a, b, k);
   };
   const lum = (c) => dot(c, vec3(0.2126, 0.7152, 0.0722));
+  // Rock brightness per biome, a number or rgb (Sierra granite is warm and pale).
+  const gain = biome.ground.rock?.gain ?? 2.1,
+    rockGain = Array.isArray(gain) ? vec3(...gain) : float(gain);
+  const rockStreaks = float(biome.ground.rock?.streaks ?? 0);
 
   const colorNode = Fn(() => {
     const p = positionWorld,
@@ -82,7 +86,16 @@ export function createGroundMaterial(terrain, biomeBase, biome, look = landLook(
       soilTint = mx_noise_float(vec3(xz.mul(0.008), 17)).mul(0.25).add(1.0),
       soil = soilPhoto.mul(1.25).mul(soilTint).mul(rings.mul(0.22).add(0.86)),
       // Brightness per biome: Diablo sandstone and greywacke 2.1, pale Sierra granite brighter.
-      rock = antiTile(tex.rock.colour, xz, 4.3).rgb.mul(biome.ground.rock?.gain ?? 2.1);
+      rockPhoto = antiTile(tex.rock.colour, xz, 4.3).rgb.mul(rockGain),
+      // Streaked walls (biome rock.streaks, 0 default): fine noise across the ground becomes
+      // vertical water streaks on a cliff face, plus broad rust staining.
+      streak = mx_noise_float(vec3(xz.mul(0.035), 23)).mul(0.5).add(0.5).mul(0.6).add(mx_noise_float(vec3(xz.mul(0.11), 31)).mul(0.2).add(0.2)),
+      rust = smoothstep(0.55, 0.8, mx_noise_float(vec3(xz.mul(0.015), 29)).mul(0.5).add(0.5)),
+      rock = mix(
+        rockPhoto,
+        rockPhoto.mul(streak.mul(0.9).add(0.45)).mul(mix(vec3(1), vec3(1.1, 0.86, 0.66), rust)),
+        rockStreaks,
+      );
     // Rock on steep ground and spur crests; soil on the drawdown bank and in patches.
     // look.rock lowers the threshold where the land is bare granite (domes and slabs).
     const rockW = smoothstep(0.34 - look.rock, 0.55 - look.rock, slope.add(macro.sub(0.5).mul(0.25)))

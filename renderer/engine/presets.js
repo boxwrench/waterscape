@@ -49,8 +49,8 @@ export const PRESETS = {
   },
 };
 
-// Twelve float4s, read by the shader as `const float4 *light` (see the comment above sky()):
-// six for the light, then the water body's land look, fog and water optics (look.js).
+// Thirteen float4s, read by the shader as `const float4 *light` (see the comment above sky()):
+// six for the light, then the water body's land look, fog, water optics and rock (look.js).
 export function presetBuffer(p, look = landLook(null)) {
   const fog = look.fog;
   return new Float32Array([
@@ -66,6 +66,7 @@ export function presetBuffer(p, look = landLook(null)) {
     ...(fog?.from ?? [0, 0]), fog?.width ?? 1, 0,
     ...look.water.absorb, 0,
     ...look.water.scatter, 0,
+    ...(look.rockAlbedo ?? [0, 0, 0]), look.rockAlbedo ? look.rock : 0,
   ]);
 }
 

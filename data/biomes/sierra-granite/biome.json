@@ -33,7 +33,18 @@
         "ground/rock_color.jpg",
         "ground/rock_normal.jpg"
       ],
-      "gain": 4.5
+      "gain": [
+        5.0,
+        4.25,
+        4.3
+      ],
+      "albedo": [
+        0.4,
+        0.34,
+        0.27
+      ],
+      "note": "gain and albedo matched to sunlit granite (sRGB 175,162,144) in https://commons.wikimedia.org/wiki/File:Hetch_Hetchy_May_2011_001.jpg",
+      "streaks": 1
     },
     "ochre": {
       "ambientcg": "Ground108",

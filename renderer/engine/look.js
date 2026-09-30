@@ -11,6 +11,12 @@ export const SUMMER = {
   },
   // Fog-belt Peninsula: hills stay green-dominant through summer (July aerials show sage-green
   // slopes with only small tan patches), so drier olive appears only in patches.
+  // Sierra granite benches: no cured grass, only dark evergreen shrubs and duff (photos show
+  // bare stone and green clumps, no gold).
+  granite: {
+    ground: [[0.04, 0.055, 0.03], [0.09, 0.1, 0.05]],
+    blade: [[0.05, 0.08, 0.03], [0.1, 0.14, 0.05], [0.16, 0.19, 0.08]],
+  },
   sage: {
     ground: [[0.13, 0.16, 0.06], [0.3, 0.32, 0.15]],
     blade: [[0.13, 0.18, 0.05], [0.27, 0.33, 0.11], [0.4, 0.42, 0.19]],
@@ -25,7 +31,7 @@ export const WATER = {
   green: { absorb: [0.6, 0.22, 0.42], scatter: [0.026, 0.25, 0.15] },
 };
 
-export function landLook(land) {
+export function landLook(land, biome) {
   const v = land?.vegetation ?? {};
   return {
     summer: SUMMER[land?.grass?.summer] ?? SUMMER.gold,
@@ -37,6 +43,12 @@ export function landLook(land) {
     bare: v.bare ?? 0,
     // Lowers the slope at which rock shows through the ground (domes and slabs), 0-0.3.
     rock: land?.ground?.rock ?? 0,
+    // Linear albedo of the biome's rock for the kernel's own shading (reflections); none: no rock.
+    rockAlbedo: biome?.ground?.rock?.albedo ?? null,
+    // Share of the near grass field that grows (1 default; granite benches far less).
+    grassCover: land?.grass?.cover ?? 1,
+    // Haze multiplier for the place's air (1 default; clear high-Sierra air less).
+    haze: land?.air?.haze ?? 1,
     // A fog layer (water.cu fogLayer), shown by presets with fog: `from` the unit direction it
     // lies in ([0, 0]: everywhere), `edge` metres from the scene origin along it where it
     // begins, thickening over `width`; `top` and `base` in metres above the water surface;
@@ -66,6 +78,7 @@ export function pickSpecies(thresholds, pick) {
 // thickens the haze. Shared by the water kernel and the three.js land.
 export function effectivePreset(p, look) {
   const o = p.fog ? look.fog?.overcast ?? 0 : 0;
+  if (look.haze !== undefined && look.haze !== 1) p = { ...p, hazeDensity: p.hazeDensity * look.haze };
   if (!o) return p;
   const mix = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t);
   return {

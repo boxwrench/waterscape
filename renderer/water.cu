@@ -286,6 +286,7 @@ __device__ float fresnel(float ci) {
 // L[6] summer grass dark rgb, tree cover · L[7] summer grass light rgb, bare cliffs (look.js)
 // L[8] fog amount, top, base, edge · L[9] fog from xz, ramp width, unused (look.js)
 // L[10] water absorption rgb, unused · L[11] water in-scatter rgb, unused (look.js)
+// L[12] rock albedo rgb, rock exposure (0: no rock layer; look.js)
 __device__ float3 lightSun(const float4 *L) { return v3(L[0].x, L[0].y, L[0].z); }
 __device__ float3 lightRad(const float4 *L) { return v3(L[1].x, L[1].y, L[1].z); }
 __device__ float3 lightFill(const float4 *L) { return v3(L[2].x, L[2].y, L[2].z); }
@@ -724,6 +725,10 @@ __device__ float3 terrainShade(const float4 *T, const float4 *L, float3 p, float
   float wet = 1.0f - smooth(.2f, .9f, p.y);
   float3 bank = mix3(v3(.34f, .30f, .22f), v3(.48f, .43f, .33f), tex);
   float3 ground = mix3(grass, v3(.15f, .19f, .12f), sage * .8f);
+  // Bare rock on steep ground where the biome has it (L[12]; granite walls in reflections).
+  if (L[12].w > 0.0f)
+    ground = mix3(ground, v3(L[12].x, L[12].y, L[12].z),
+                  smooth(.34f - L[12].w, .55f - L[12].w, 1.0f - n.y + .25f * (tex - .5f)));
   ground = mix3(ground, bank, ring);
   ground = mix3(ground, mul(bank, .45f), wet);
   // Lighting: sun with terrain shadows, sky dome, warm bounce.
