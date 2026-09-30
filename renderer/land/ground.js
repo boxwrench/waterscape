@@ -81,9 +81,11 @@ export function createGroundMaterial(terrain, biomeBase, biome, look = landLook(
       rings = sin(p.y.mul(9.0).add(mx_noise_float(vec3(xz.mul(0.02), 13)).mul(2.0))).mul(0.5).add(0.5),
       soilTint = mx_noise_float(vec3(xz.mul(0.008), 17)).mul(0.25).add(1.0),
       soil = soilPhoto.mul(1.25).mul(soilTint).mul(rings.mul(0.22).add(0.86)),
-      rock = antiTile(tex.rock.colour, xz, 4.3).rgb.mul(2.1);
+      // Brightness per biome: Diablo sandstone and greywacke 2.1, pale Sierra granite brighter.
+      rock = antiTile(tex.rock.colour, xz, 4.3).rgb.mul(biome.ground.rock?.gain ?? 2.1);
     // Rock on steep ground and spur crests; soil on the drawdown bank and in patches.
-    const rockW = smoothstep(0.34, 0.55, slope.add(macro.sub(0.5).mul(0.25)))
+    // look.rock lowers the threshold where the land is bare granite (domes and slabs).
+    const rockW = smoothstep(0.34 - look.rock, 0.55 - look.rock, slope.add(macro.sub(0.5).mul(0.25)))
         .mul(float(1).sub(valley.mul(0.6))),
       bank = float(1).sub(smoothstep(3, 6, p.y)),
       patch = smoothstep(0.72, 0.86, mx_noise_float(vec3(xz.mul(0.02), 7)).mul(0.5).add(0.5)),

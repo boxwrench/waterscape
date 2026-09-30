@@ -33,6 +33,10 @@ export function landLook(land) {
     species: v.species ?? null,
     // 0: species mixed tree by tree; 1: grouped in stands (oak-placement.js standPick).
     stands: v.stands ?? 0,
+    // 0-1: how bare of trees cliffs steeper than ~45° are (granite walls).
+    bare: v.bare ?? 0,
+    // Lowers the slope at which rock shows through the ground (domes and slabs), 0-0.3.
+    rock: land?.ground?.rock ?? 0,
     // A fog layer (water.cu fogLayer), shown by presets with fog: `from` the unit direction it
     // lies in ([0, 0]: everywhere), `edge` metres from the scene origin along it where it
     // begins, thickening over `width`; `top` and `base` in metres above the water surface;

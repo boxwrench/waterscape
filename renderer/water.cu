@@ -283,7 +283,7 @@ __device__ float fresnel(float ci) {
 // L[0] sun direction xyz, cloud coverage · L[1] sun radiance rgb, cloud density
 // L[2] sky fill rgb, sky gain · L[3] turbidity, rayleigh, mie coefficient, mie g
 // L[4] haze rgb, haze density · L[5] cloud scale, cloud speed, exposure, unused
-// L[6] summer grass dark rgb, tree cover · L[7] summer grass light rgb, unused (look.js)
+// L[6] summer grass dark rgb, tree cover · L[7] summer grass light rgb, bare cliffs (look.js)
 // L[8] fog amount, top, base, edge · L[9] fog from xz, ramp width, unused (look.js)
 // L[10] water absorption rgb, unused · L[11] water in-scatter rgb, unused (look.js)
 __device__ float3 lightSun(const float4 *L) { return v3(L[0].x, L[0].y, L[0].z); }
@@ -665,6 +665,7 @@ __device__ float3 terrainShade(const float4 *T, const float4 *L, float3 p, float
   float grove = smooth(.46f, .64f, fbm(p.x * .0065f + 13.0f, p.z * .0065f - 4.0f));
   float density = sat(.05f + .85f * valley + .55f * northFacing + .25f * steep + .75f * grove -
                       .70f * smooth(.62f, .88f, spur) + L[6].w * (1.0f - smooth(.62f, .88f, spur))) *
+                  (1.0f - L[7].w * smooth(.25f, .42f, 1.0f - n.y)) *
                   smooth(10.0f, 35.0f, shore);
   // Individual crowns while they are a few pixels wide, then their average cover.
   float farBlend = smooth(1.6f, 3.2f, footprint);

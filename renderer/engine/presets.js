@@ -61,7 +61,7 @@ export function presetBuffer(p, look = landLook(null)) {
     ...p.haze, p.hazeDensity,
     p.cloudScale, p.cloudSpeed, p.exposure, 0,
     ...look.summer.ground[0], look.cover,
-    ...look.summer.ground[1], 0,
+    ...look.summer.ground[1], look.bare,
     fog ? (p.fog ?? 0) * (fog.density ?? 1) : 0, fog?.top ?? 0, fog?.base ?? 0, fog?.edge ?? 0,
     ...(fog?.from ?? [0, 0]), fog?.width ?? 1, 0,
     ...look.water.absorb, 0,

@@ -42,6 +42,9 @@ def main():
     out_dir = manifest_path.parent / "ground"
     out_dir.mkdir(exist_ok=True)
     for layer, entry in manifest["ground"].items():
+        # A layer shared from another biome lists its files there and has no "ambientcg".
+        if "ambientcg" not in entry:
+            continue
         entry["source"] = fetch_layer(entry["ambientcg"], out_dir, layer)
         entry["files"] = [f"ground/{layer}_color.jpg", f"ground/{layer}_normal.jpg"]
         print(f"{biome}: {layer} <- {entry['ambientcg']}")

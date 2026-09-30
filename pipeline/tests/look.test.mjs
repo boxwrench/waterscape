@@ -61,3 +61,12 @@ test("water optics default to today's turbid profile and can be green", () => {
   const g = presetBuffer(PRESETS.golden, landLook({ water: { optics: "green" } }));
   assert.ok(g[41] < g[42], "green water loses blue faster than green");
 });
+
+test("bare cliffs and rock exposure default to none and reach the light buffer", () => {
+  assert.equal(landLook({}).bare, 0);
+  assert.equal(landLook({}).rock, 0);
+  const look = landLook({ vegetation: { bare: 0.9 }, ground: { rock: 0.15 } });
+  assert.equal(look.bare, 0.9);
+  assert.equal(look.rock, 0.15);
+  assert.equal(presetBuffer(PRESETS.golden, look)[31], Math.fround(0.9));
+});

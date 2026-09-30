@@ -123,7 +123,7 @@ export async function createTrees(terrain, biome, biomeBase, ground, look = land
     colour = new THREE.Color();
   function rebuild(x, z, tier) {
     for (const m of meshes) m.b.count = m.l.count = 0;
-    for (const site of oaksNear(terrain, x, z, range, look.cover)) {
+    for (const site of oaksNear(terrain, x, z, range, look.cover, look.bare)) {
       const s = species[pickSpecies(thresholds, standPick(site.x, site.z, site.pick, look.stands))],
         list = bySpecies[s],
         full = list[Math.floor(site.turn * 997) % list.length],
