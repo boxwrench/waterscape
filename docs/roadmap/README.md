@@ -33,10 +33,10 @@ Ultra are secondary. Track dependencies still apply; storage history needs Cryst
 
 ## Track RP — River Pulse
 
-The accepted Hacienda scene and Map ribbon are pushed to main; RP8 recorded a Pages
-screenshot timeout. The user accepted RP9 Jenner as a good starting point and authorized
-RP10 to merge/push it with updated documentation and a bounded capture fix. Local
-hydrodynamics and surveyed bed geometry remain future work.
+The accepted Hacienda scene, Map ribbon and Jenner coastal baseline are merged, pushed
+and deployed through RP10. Its bounded screenshot-capture fix resolved the historical RP8
+Pages block while preserving assertions. Local hydrodynamics and surveyed bed geometry
+remain future work.
 
 | ID | Task | Who | Needs | Status |
 |---|---|---|---|---|
@@ -46,9 +46,9 @@ hydrodynamics and surveyed bed geometry remain future work.
 | RP5 | [Hacienda authored scene](tasks/RP5-hacienda-authored-scene.md) | capable | RP4 | user accepted; historical browser race resolved in RP6 |
 | RP6 | [Flow-scaled Map water ribbon](tasks/RP6-map-water-ribbon.md) | capable | RP5 | complete; all scoped checks pass |
 | RP7 | [Irregular blue Map water](tasks/RP7-map-water-detail.md) | capable | RP6 | complete; all scoped checks pass |
-| RP8 | [Document and publish River Pulse](tasks/RP8-publish-river-pulse.md) | capable | RP7 | pushed; Pages blocked by CI screenshot timeout after two failed runs |
+| RP8 | [Document and publish River Pulse](tasks/RP8-publish-river-pulse.md) | capable | RP7 | historical Pages timeout; accepted scenes deployed in RP10 |
 | RP9 | [Jenner estuary and Pacific shoreline](tasks/RP9-jenner-estuary.md) | capable | RP8 code | user accepted as a good starting point; focused checks pass |
-| RP10 | [Merge and publish Jenner](tasks/RP10-publish-jenner.md) | capable | RP9 | user authorized; publication in progress |
+| RP10 | [Merge and publish Jenner](tasks/RP10-publish-jenner.md) | capable | RP9 | merged/pushed 4a404c4; Pages and live assets verified |
 
 ## Track D — reservoir context
 

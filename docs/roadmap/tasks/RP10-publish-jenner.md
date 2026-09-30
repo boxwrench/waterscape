@@ -31,3 +31,15 @@ and the accepted coastal visuals. Keep checks focused per the user's instruction
 
 Result-only documentation may use `[skip ci]` after the runtime commit's Pages workflow
 has completed. It does not change runtime files or bypass an unfinished/failed runtime check.
+
+
+## Result
+- Status: done
+- Commit: 4a404c4 (main merge; publication update 874b975)
+- Checks: `node --test pipeline/tests/jenner.test.mjs` — 8 passed; `ℹ fail 0`.
+- Checks: `npm run test:build` — `Built experience pages and river assets valid.`
+- Checks: `PLAYWRIGHT_BROWSERS_PATH=/tmp/rp8-browsers node .rp10-capture.mjs` (temporary targeted checker) — `Pinned CI Chromium authored-shoreline capture passed.`
+- Checks: `gh run watch 36724078133 --interval 30 --exit-status` — success; build and deploy both successful. [Pages run](https://github.com/boxwrench/waterscape/actions/runs/36724078133).
+- Checks: `python3 /tmp/rp10-verify-live.py` — `Deployed Jenner and Hacienda assets match the verified build.` (six HTTPS assets, HTTP 200 and SHA-256 equality).
+- Checks: `git diff --check` — no output / exit 0.
+- Notes: User acceptance recorded; README has the public Jenner link. The accepted coastal visuals and source-level distinction are retained. All existing River Pulse browser assertions remain; only artifact timeout/CSS transition completion changed. The earlier RP8 deployment block is resolved by the successful RP10 run. Six deployed checks cover Jenner HTML/entry/water, Hacienda HTML/Map water and the MIT license. Independent reservoir work is untouched. Result-only docs use `[skip ci]` after the runtime workflow succeeded; no runtime check was bypassed. Local preview remains on port 5174.

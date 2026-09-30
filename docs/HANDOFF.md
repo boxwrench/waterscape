@@ -11,8 +11,12 @@ merging and pushing. `task/RP10` integrates RP9 into the current main base in th
 River Pulse worktree. README now has the public Jenner link and the scene/resource docs
 record acceptance. The known RP8 artifact-capture failure is addressed with a 90-second
 screenshot timeout and completed CSS transitions; existing runtime assertions are retained.
-Focused publication checks and the normal Pages workflow determine publication status;
-see [RP10](roadmap/tasks/RP10-publish-jenner.md). Separate reservoir work remains untouched.
+Merged/pushed as `4a404c4`. [Pages run 36724078133](https://github.com/boxwrench/waterscape/actions/runs/36724078133)
+passed build and deployment. The public [Jenner scene](https://boxwrench.github.io/waterscape/river-pulse/renderer/jenner.html)
+is live; Jenner page/module/water, Hacienda page/Map water and the Tidewater license match
+the verified build by SHA-256. Focused Jenner tests (8), built assets and pinned-CI-browser
+shoreline capture pass. See [RP10](roadmap/tasks/RP10-publish-jenner.md). Separate reservoir
+work remains untouched. The result-only docs commit skips CI after successful runtime deployment.
 
 ## Jenner estuary and Pacific shoreline — RP9
 
@@ -44,7 +48,7 @@ updated docs. `task/RP8` integrates current remote main (`1b44237`) into the iso
 Pulse worktree, preserving published reservoir work and leaving the dirty `task/H1` checkout
 untouched. Code/docs are pushed to main at `15648e2`, with timing correction `6dc6a48`.
 Local unit (117), Python (26), shader/data/build checks and browser checks pass, including
-the pinned CI Chromium. Pages deployment is blocked: the first CI run timed out settling
+the pinned CI Chromium. RP8’s Pages deployment was blocked: the first CI run timed out settling
 width; after elapsed-time easing fixed that, the second run timed out saving `authored-shallows-desktop.png`
 at browser-check line 208 (`page.screenshot: Timeout 30000ms exceeded.`), with page errors `[]`.
 Build/deploy run [36672469191](https://github.com/boxwrench/waterscape/actions/runs/36672469191)
