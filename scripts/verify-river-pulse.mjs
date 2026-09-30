@@ -41,7 +41,7 @@ function feature(time, value, daily = false) {
     },
   };
 }
-async function setup(page, { offline = false, noGpu = false } = {}) {
+async function setup(page, { offline = false, noGpu = false, settingOffline = false } = {}) {
   await page.addInitScript(() =>
     Object.defineProperty(navigator, "gpu", { value: undefined }),
   );
@@ -51,7 +51,8 @@ async function setup(page, { offline = false, noGpu = false } = {}) {
     });
   page.on("pageerror", (e) => errors.push(String(e)));
   page.on("response", (r) => {
-    if (r.url().includes("127.0.0.1") && r.status() >= 400)
+    if (r.url().includes("127.0.0.1") && r.status() >= 400 &&
+        !(settingOffline && r.url().includes("/setting/")))
       errors.push(`${r.status()} ${r.url()}`);
   });
   await page.route("https://api.waterdata.usgs.gov/**", async (route) => {
@@ -108,6 +109,9 @@ async function setup(page, { offline = false, noGpu = false } = {}) {
       headers: { "Access-Control-Allow-Origin": "*" },
     });
   });
+  if (settingOffline) await page.route("**/setting/**", (route) => route.fulfill({
+    status: 503, body: "Test fixture: setting assets unavailable",
+  }));
   await page.goto(url);
   await page.waitForFunction(() =>
     document.querySelector("#loading").classList.contains("ready"),
@@ -123,7 +127,7 @@ try {
   await setup(page);
   await page.waitForFunction(
     () =>
-      window.riverPulseScene &&
+      window.riverPulseScene && window.riverPulseBankSetting &&
       window.riverPulseSeasonalCondition?.kind === "normal",
   );
   assert.equal(await page.locator("#flow-value").innerText(), "120 ft³/s");
@@ -176,10 +180,17 @@ try {
   assert.equal(await page.evaluate(() => window.riverPulseAuthoredWater.mesh.visible), true);
   await page.locator("#shallows").click();
   await page.waitForFunction(() => document.querySelector("#shallows").getAttribute("aria-pressed") === "true" &&
-    Math.abs(window.riverPulseScene.state.x - (window.riverPulseAuthoredWater.focus.x - 16)) < 1);
+    Math.abs(window.riverPulseScene.state.x - window.riverPulseBankSetting.camera.x) < 1);
+  assert.ok(await page.evaluate(() => window.riverPulseBankSetting.group.getObjectByName("Hacienda conifer stands").userData.treeCount > 0));
+  assert.ok(await page.evaluate(() => window.riverPulseBankSetting.group.getObjectByName("Bank rocks and pebbles").children.length > 1));
   await page.screenshot({ path: `${out}/authored-shallows-desktop.png` });
+  await page.locator("#focus-view").click();
+  await page.screenshot({ path: `${out}/shoreline-focus.png` });
+  await page.locator("#focus-view").click();
   await page.locator("#river-layer").click();
   assert.equal(await page.evaluate(() => window.riverPulseRiverLayer.visible), false);
+  assert.equal(await page.evaluate(() => window.riverPulseBankSetting.group.visible), true,
+    "River toggle controls water, while the authored bank setting remains visible");
   await page.locator("#river-layer").click();
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.screenshot({ path: `${out}/authored-shallows-reduced-motion.png` });
@@ -190,6 +201,7 @@ try {
     () => Math.abs(window.riverPulseScene.state.x + 900) < 1,
   );
   assert.equal(await page.evaluate(() => window.riverPulseAuthoredWater.mesh.visible), false);
+  assert.equal(await page.evaluate(() => window.riverPulseBankSetting.group.visible), false);
   await page.locator("#history-play").click();
   await page.waitForFunction(
     () => Number(document.querySelector("#time-range").value) >= 1,
@@ -215,7 +227,7 @@ try {
   await page.screenshot({ path: `${out}/mobile.png` });
   await page.locator("#shallows").click();
   await page.waitForFunction(() => Math.abs(window.riverPulseScene.state.x -
-    (window.riverPulseAuthoredWater.focus.x - 16)) < 1);
+    window.riverPulseBankSetting.camera.x) < 1);
   await page.screenshot({ path: `${out}/authored-shallows-mobile.png` });
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
   await page.locator("#timeline-toggle").click();
@@ -242,6 +254,14 @@ try {
   assert.equal(await unavailable.evaluate(() => window.riverPulseAuthoredWater.mesh.visible), true,
     "Optical preview survives data outage without deriving hydraulics from missing discharge");
   await unavailable.close();
+  const missingSetting = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+  await setup(missingSetting, { settingOffline: true });
+  await missingSetting.waitForFunction(() => window.riverPulseAuthoredWater);
+  assert.equal(await visible(missingSetting, "#error"), false);
+  assert.match(await missingSetting.locator("#water-disclosure").innerText(), /textures are unavailable/);
+  await missingSetting.locator("#shallows").click();
+  assert.equal(await missingSetting.evaluate(() => window.riverPulseAuthoredWater.mesh.visible), true);
+  await missingSetting.close();
   const noGpu = await browser.newPage({
     viewport: { width: 1280, height: 800 },
   });

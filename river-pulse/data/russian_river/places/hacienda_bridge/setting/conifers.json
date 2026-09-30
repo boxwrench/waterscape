@@ -1,0 +1,112 @@
+{
+  "sourceCommit": "af0bb6c",
+  "sourceBiome": "data/biomes/peninsula-oak-fir",
+  "sourceGenerator": "ez-tree 1.1.0 (MIT), pipeline/bake-trees.mjs",
+  "representation": "Setting: illustrative stands; not surveyed individual trees",
+  "variants": [
+    {
+      "id": "douglas-fir-a-far",
+      "species": "douglas-fir",
+      "preset": "Pine Medium",
+      "seed": 41,
+      "options": {
+        "branch": {
+          "length": {
+            "0": 60,
+            "1": 12
+          },
+          "children": {
+            "0": 40
+          },
+          "start": {
+            "1": 0.15
+          }
+        },
+        "leaves": {
+          "count": 21,
+          "size": 4.16
+        }
+      },
+      "lod": {
+        "branch": {
+          "children": {
+            "0": 40
+          }
+        },
+        "leafCountScale": 0.35,
+        "leafSizeScale": 1.6
+      },
+      "file": "douglas-fir-a-far.bin",
+      "parts": {
+        "branches": {
+          "vertexCount": 3197,
+          "indexCount": 14976,
+          "offset": 0
+        },
+        "leaves": {
+          "vertexCount": 6720,
+          "indexCount": 10080,
+          "offset": 162208
+        }
+      },
+      "height": 63.733,
+      "crownRadius": 11.7,
+      "crownCentre": [
+        0.334,
+        -0.179
+      ]
+    },
+    {
+      "id": "douglas-fir-b-far",
+      "species": "douglas-fir",
+      "preset": "Pine Large",
+      "seed": 53,
+      "options": {
+        "branch": {
+          "length": {
+            "0": 70,
+            "1": 14
+          },
+          "children": {
+            "0": 40
+          },
+          "start": {
+            "1": 0.15
+          }
+        },
+        "leaves": {
+          "count": 21,
+          "size": 4.16
+        }
+      },
+      "lod": {
+        "branch": {
+          "children": {
+            "0": 40
+          }
+        },
+        "leafCountScale": 0.35,
+        "leafSizeScale": 1.6
+      },
+      "file": "douglas-fir-b-far.bin",
+      "parts": {
+        "branches": {
+          "vertexCount": 3197,
+          "indexCount": 14976,
+          "offset": 0
+        },
+        "leaves": {
+          "vertexCount": 6720,
+          "indexCount": 10080,
+          "offset": 162208
+        }
+      },
+      "height": 74.684,
+      "crownRadius": 13.337,
+      "crownCentre": [
+        -0.711,
+        1.812
+      ]
+    }
+  ]
+}

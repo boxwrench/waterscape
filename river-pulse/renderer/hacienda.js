@@ -17,6 +17,8 @@ import { loadRiverTerrain } from "./terrain.js";
 import { buildRiverTerrainGrid } from "./terrain-mesh.js";
 import { elevationColors } from "./terrain-style.js";
 import { loadHydrography, createHydrographyLayer } from "./hydrography.js";
+import { loadBankMaterials } from "./bank-materials.js";
+import { createBankSetting } from "./bank-setting.js";
 import { createAuthoredWater } from "./authored-water.js";
 import { centerlineConditionStyle } from "../visual-bindings/condition-centerline.js";
 
@@ -54,7 +56,8 @@ let dragging = false,
   selected = null,
   cameraTransition = null,
   activeView = "overview",
-  authoredWater = null;
+  authoredWater = null,
+  bankSetting = null;
 
 function fail(error) {
   console.error(error);
@@ -91,14 +94,11 @@ function pose(state, terrain, kind, animate = true) {
   setActiveView(kind);
   let target;
   if (kind === "shallows" && authoredWater) {
-    const { x, y, z } = authoredWater.focus;
-    target = {
-      x: x - 16,
-      z: z + 28,
-      y: Math.max(y + 8, terrain.ground(x - 16, z + 28) + 8),
-      yaw: Math.atan2(16, 28),
-      pitch: -0.24,
-      speed: 6,
+    target = bankSetting ? { ...bankSetting.camera } : {
+      x: authoredWater.focus.x - 16,
+      z: authoredWater.focus.z + 28,
+      y: terrain.ground(authoredWater.focus.x - 16, authoredWater.focus.z + 28) + 8,
+      yaw: Math.atan2(16, 28), pitch: -0.24, speed: 6,
     };
   } else if (kind === "bridge") {
     target = {
@@ -250,11 +250,25 @@ async function updateRecentHistory(monitoringLocationId) {
 async function addRiverCenterline(scene, terrain) {
   try {
     try {
-      const document = await loadHydrography(
+      const hydrography = await loadHydrography(
           "../data/russian_river/places/hacienda_bridge/hydrography.json",
         ),
-        group = createHydrographyLayer(document, terrain);
-      authoredWater = createAuthoredWater(document, terrain);
+        group = createHydrographyLayer(hydrography, terrain);
+      let maps = null;
+      try { maps = await loadBankMaterials(); }
+      catch (error) {
+        console.warn("Keeping optical preview without bank textures", error);
+        document.querySelector("#water-disclosure").textContent +=
+          " Bank textures are unavailable; the water currently uses a procedural bed.";
+      }
+      authoredWater = createAuthoredWater(hydrography, terrain, maps);
+      if (maps) {
+        bankSetting = await createBankSetting(hydrography, terrain, maps);
+        if (bankSetting) {
+          scene.add(bankSetting.group);
+          window.riverPulseBankSetting = bankSetting;
+        }
+      }
       if (authoredWater) {
         group.add(authoredWater.mesh);
         shallowsButton.disabled = false;
@@ -266,11 +280,11 @@ async function addRiverCenterline(scene, terrain) {
         group.getObjectByName("3DHP Russian River flowline"),
       );
       window.riverPulseHydrography = Object.freeze({
-        source: document.source,
+        source: hydrography.source,
         representation: group.userData.representation,
       });
       sceneState.textContent = "Terrain + river";
-      sourceDetail.textContent += ` River centerlines: ${document.source}. Cartographic context, not measured width or depth.`;
+      sourceDetail.textContent += ` River centerlines: ${hydrography.source}. Cartographic context, not measured width or depth.`;
       return;
     } catch {
       /* Generated bundle is optional; fall back to authoritative DWR context. */
@@ -320,6 +334,7 @@ async function addRiverCenterline(scene, terrain) {
 
 function updateWaterVisibility() {
   if (authoredWater) authoredWater.mesh.visible = activeView !== "overview";
+  if (bankSetting) bankSetting.group.visible = activeView !== "overview";
   const mainstem = window.riverPulseRiverLayer?.getObjectByName("3DHP Russian River flowline");
   if (mainstem) mainstem.visible = activeView === "overview" || !authoredWater;
 }
@@ -337,7 +352,9 @@ function connectRiverLayer(group, mainstem) {
     document.querySelector("#river-layer").getAttribute("aria-pressed") ===
     "true";
   addEventListener("river-pulse-layer-change", (event) => {
-    if (event.detail.id === "river-layer") group.visible = event.detail.enabled;
+    if (event.detail.id === "river-layer") {
+      group.visible = event.detail.enabled;
+    }
   });
   addEventListener("river-pulse-condition-change", (event) =>
     apply(event.detail.condition),
@@ -463,7 +480,8 @@ async function main() {
   marker.visible = false;
   scene.add(marker);
 
-  const camera = new THREE.PerspectiveCamera(64, 1, 1, 50000);
+  const camera = new THREE.PerspectiveCamera(64, 1, 0.3, 50000),
+    shorelineClearance = { ground: (x, z) => terrain.ground(x, z) - 0.8 };
   camera.rotation.order = "YXZ";
   const state = { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, speed: 40 };
   pose(state, terrain, "overview", false);
@@ -557,7 +575,7 @@ async function main() {
       state.x += direction[0] * distance;
       state.z += direction[2] * distance;
       state.y = Math.max(
-        terrain.ground(state.x, state.z) + 8,
+        terrain.ground(state.x, state.z) + (activeView === "shallows" ? 1.8 : 8),
         state.y + direction[1] * distance,
       );
       event.preventDefault();
@@ -579,10 +597,11 @@ async function main() {
         state[key] =
           cameraTransition.from[key] +
           (cameraTransition.target[key] - cameraTransition.from[key]) * blend;
-      state.y = Math.max(state.y, terrain.ground(state.x, state.z) + 8);
+      state.y = Math.max(state.y, terrain.ground(state.x, state.z) + (activeView === "shallows" ? 1.8 : 8));
       if (t === 1) cameraTransition = null;
     }
-    fly(state, { keys, cruise: false }, dt, terrain);
+    fly(state, { keys, cruise: false }, dt,
+      activeView === "shallows" ? shorelineClearance : terrain);
 
     camera.position.set(state.x, state.y, state.z);
     camera.rotation.set(state.pitch, -state.yaw, 0);

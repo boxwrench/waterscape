@@ -1,11 +1,11 @@
 import * as THREE from "../../vendor/three/three.webgpu.js";
 import {
   attribute, cameraPosition, color, cos, dot, exp, float, floor, fract, fwidth,
-  mix, normalize, positionWorld, pow, reflector, refract, sin, uniform, vec2, vec3,
+  mix, normalize, positionWorld, pow, reflector, refract, sin, texture, uniform, vec2, vec3,
 } from "../../vendor/three/three.tsl.js";
 import { buildAuthoredWaterGeometry } from "./authored-water-geometry.js";
 
-export function createAuthoredWater(document, terrain) {
+export function createAuthoredWater(document, terrain, maps = null) {
   const grid = buildAuthoredWaterGeometry(document, terrain);
   if (!grid) return null;
   const geometry = new THREE.BufferGeometry();
@@ -37,12 +37,18 @@ export function createAuthoredWater(document, terrain) {
     bedUV = p.add(refracted.xz.div(refracted.y.abs().max(0.1)).mul(depth)),
     pebbleCell = floor(bedUV.mul(7)),
     gravel = fract(sin(dot(pebbleCell, vec2(127.1, 311.7))).mul(43758.5453)),
-    bed = mix(color(0x605b42), color(0xb7aa7a), gravel),
+    bed = maps?.pebbles
+      ? texture(maps.pebbles.color, bedUV.div(maps.pebbles.tileMetres)).rgb.mul(0.72)
+      : mix(color(0x605b42), color(0xb7aa7a), gravel),
+    bedNormal = maps?.pebbles
+      ? texture(maps.pebbles.normal, bedUV.div(maps.pebbles.tileMetres)).xyz.mul(2).sub(1)
+      : vec3(0, 0, 1),
+    bedLight = dot(normalize(bedNormal), normalize(vec3(-0.5, -0.25, 0.83))).max(0.45),
     ca = sin(bedUV.x.mul(3.8).add(bedUV.y.mul(2.1)).add(clock.mul(0.7))),
     cb = sin(bedUV.x.mul(-2.6).add(bedUV.y.mul(4.3)).sub(clock.mul(0.5))),
     caustic = pow(float(1).sub(ca.add(cb).mul(0.5).abs()), 14).mul(0.28),
     transmission = exp(depth.mul(-0.8).div(facing.add(0.25))),
-    underwater = mix(color(0x163b38), bed.mul(caustic.add(0.82)), transmission),
+    underwater = mix(color(0x163b38), bed.mul(bedLight).mul(caustic.add(0.82)), transmission),
     sun = normalize(vec3(-0.5, 0.83, 0.25)),
     glint = pow(dot(normal, normalize(sun.add(eye))).max(0), 260).mul(1.8),
     mirror = reflector({ resolutionScale: 0.35, bounces: false });

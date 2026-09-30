@@ -66,6 +66,22 @@ export function buildAuthoredWaterGeometry(document, terrain, {
       if (b >= 0 && c >= 0 && d >= 0) indices.push(b, c, d);
     }
   }
+  // Distance from the clipped shore drives a modeled optical bed, so a terrain-
+  // constrained bank can still have transparent shallows rather than a deep cut edge.
+  const distance = Float32Array.from(grid, (id) => id < 0 ? 0 : 1e6);
+  for (let j = 0; j < count; j++) for (let i = 0; i < count; i++) {
+    const k = j * count + i;
+    if (i > 0) distance[k] = Math.min(distance[k], distance[k - 1] + 1);
+    if (j > 0) distance[k] = Math.min(distance[k], distance[k - count] + 1);
+    if (i > 0 && j > 0) distance[k] = Math.min(distance[k], distance[k - count - 1] + Math.SQRT2);
+  }
+  for (let j = count - 1; j >= 0; j--) for (let i = count - 1; i >= 0; i--) {
+    const k = j * count + i;
+    if (i < count - 1) distance[k] = Math.min(distance[k], distance[k + 1] + 1);
+    if (j < count - 1) distance[k] = Math.min(distance[k], distance[k + count] + 1);
+    if (i < count - 1 && j < count - 1) distance[k] = Math.min(distance[k], distance[k + count + 1] + Math.SQRT2);
+    if (grid[k] >= 0) depths[grid[k]] = 0.12 + Math.min(2.6, distance[k] * step * 0.18);
+  }
   if (!indices.length) return null;
   return { positions: new Float32Array(positions), depths: new Float32Array(depths),
     indices: new Uint32Array(indices), focus: { x: focus.x, z: focus.z,

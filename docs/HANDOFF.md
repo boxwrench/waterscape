@@ -4,6 +4,17 @@ Where things stand, for whoever picks this up next (person or agent). The plan l
 `ROADMAP.md` and `docs/roadmap/README.md`; this file is the snapshot of "what just happened
 and what's next".
 
+## Hacienda bank materials — RP4
+
+`task/RP4` integrates the selected local Poly Haven pebble and rock maps into Hacienda's
+modeled bed and near-bank setting. A new Shoreline composition puts the camera at the
+terrain-constrained water edge, with a shallow depth mapping, foreground pebbles, bank
+rocks and grouped lightweight Douglas-fir meshes reused from the committed W2 biome.
+The river's sourced terrain and scientific data selection remain unchanged. See
+[authored-water notes](river-pulse/authored-water.md#rp4-bank-material-integration) for
+asset provenance and visual assumptions. The bridge remains the subsequent authored
+architecture task. This work is isolated from the active reservoir checkout and not published.
+
 ## Hacienda scene materials — RP3
 
 The user selected Poly Haven **Ganges River Pebbles** for the beach/shallow bed and

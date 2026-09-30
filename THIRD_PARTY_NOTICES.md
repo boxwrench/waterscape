@@ -29,3 +29,19 @@ https://github.com/thebenezer/FluffyGrass, snapshot
 licence (included in `data/biomes/diablo-oak/grass/LICENSE`). The splayed-card technique in
 `renderer/land/grass.js` follows the author's Codrops tutorial:
 https://tympanus.net/codrops/2025/02/04/how-to-make-the-fluffiest-grass-with-three-js/.
+
+## Hacienda bank materials and conifers
+
+`river-pulse/data/russian_river/places/hacienda_bridge/setting/pebbles-*.jpg` and
+`rock-*.jpg` are unmodified 1K JPG maps from Poly Haven's **Ganges River Pebbles** by
+Amal Kumar and **Rock Boulder Dry** by Dimitrios Savva (photography) / Rico Cilliers
+(processing). CC0 1.0: https://polyhaven.com/license. Source pages:
+https://polyhaven.com/a/ganges_river_pebbles and
+https://polyhaven.com/a/rock_boulder_dry. The local `materials.json` records individual
+map URLs, upstream MD5 hashes and material scales.
+
+The two lightweight Douglas-fir bakes, bark and needle textures in the same directory
+are reused unchanged from `data/biomes/peninsula-oak-fir/trees/` at repository commit
+`af0bb6c`. Generated with ez-tree 1.1.0 (MIT); its license is included as `LICENSE-ez-tree`.
+The `conifers.json` records the source commit and binary part layouts. They are authored
+Setting assets, not surveyed Hacienda trees.
