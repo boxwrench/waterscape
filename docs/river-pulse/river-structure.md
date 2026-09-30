@@ -32,6 +32,18 @@ Default set: **start, scenic middle, end.**
 
 Photographs inform Setting only. They are not redistributed and make no scientific claim.
 
+### Where a river's start is hard to pick
+
+Rivers form in many ways (tributaries, springs, wide floodplains), so a natural start can be
+unclear. A regulated river can start at a **dam outflow**, where the reservoir hands water to
+the river. That joins the two halves of Waterscape: the reservoir experience already shows
+the lake and dam, and River Pulse picks up below it.
+
+**Russian River decision:** the start is the outflow from Lake Mendocino. Places: Lake
+Mendocino outflow (start), Hacienda Bridge (middle, with a long gauge record), Jenner (end).
+Status: place not yet authored; a representative reference photograph is still to be chosen
+and recorded with its URL.
+
 ## History at every level
 
 - **Overview:** the timeline drives the river's condition at each place pin and the map ribbon.
