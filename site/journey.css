@@ -201,6 +201,21 @@ button:disabled {
 #systemMap li.active button {
   border-color: #ffffffa0;
 }
+/* The stop's aerial photograph with the camera marked (renderer/minimap.js). */
+#stopMap {
+  position: fixed;
+  top: 76px;
+  right: 38px;
+  width: 180px;
+  padding: 8px;
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+#stopMap:empty {
+  display: none;
+}
 .credit {
   position: fixed;
   right: 38px;
@@ -213,6 +228,9 @@ button:disabled {
   color: var(--muted);
 }
 @media (max-width: 700px) {
+  #stopMap {
+    display: none;
+  }
   .brand {
     top: 18px;
     left: 16px;

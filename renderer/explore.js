@@ -4,6 +4,7 @@ import { QualityGovernor, TIER_NAMES, forcedTier, startingLevel } from "./engine
 import { loadBody, viewpoint } from "./engine/body.js";
 import { fly, viewRay } from "./engine/camera.js";
 import { createWaterscape } from "./engine/waterscape.js";
+import { createMinimap } from "./minimap.js";
 const $ = (id) => document.getElementById(id),
   canvas = $("water"),
   q = new URLSearchParams(location.search);
@@ -17,6 +18,8 @@ let body = null,
   failed = false,
   last = 0,
   hover = null,
+  // The aerial map inset in the elevation panel (renderer/minimap.js).
+  minimap = null,
   drag = null,
   // Until the engine exists this holds load errors; then it is the engine's diagnostics.
   diag = (window.waterscapeDiagnostics = { ready: false, errors: [], location: bodyId });
@@ -212,6 +215,7 @@ async function frame(now) {
         boost = fly(state, { keys, cruise: $("cruise").checked }, dt, body.terrain);
       syncSettings();
       await ws.step(dt);
+      minimap?.update(state.x, state.z, state.yaw);
       if (governor) {
         const next = governor.sample(diag.frameMs, performance.now());
         if (next) {
@@ -322,6 +326,7 @@ try {
     $("energy").value = 0.3;
   }
   buildViewpoints();
+  if (!embedded) createMinimap($("minimap"), body.base, body.terrain.meta).then((m) => (minimap = m));
   const pose = q.get("pose")?.split(",").map(Number);
   if (pose?.length === 5 && pose.every(Number.isFinite))
     Object.assign(ws.state, { x: pose[0], y: pose[1], z: pose[2], yaw: pose[3], pitch: pose[4] });

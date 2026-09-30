@@ -203,6 +203,9 @@ input[type="checkbox"] {
 .survey .eyebrow {
   margin-bottom: 8px;
 }
+#minimap {
+  margin: 10px 0 8px;
+}
 .survey dl {
   display: grid;
   grid-template-columns: auto 1fr;
