@@ -4,6 +4,24 @@ Where things stand, for whoever picks this up next (person or agent). The plan l
 `ROADMAP.md` and `docs/roadmap/README.md`; this file is the snapshot of "what just happened
 and what's next".
 
+## Map water ribbon — RP6
+
+`task/RP6` in `/tmp/waterscape-rp2` adds a continuous water-like Map ribbon with exaggerated
+ripples and traveling highlights. Seasonal category colors its margins; selected discharge
+widens/narrows it within the loaded history range. Zero/missing data stops motion; missing
+history uses a disclosed fixed fallback scale. River toggle and reduced motion are intact.
+The user's accepted Hacienda Beach/Bridge setting is unchanged. Read the
+[Map binding notes](river-pulse/authored-water.md#map-flow-and-scientific-state--rp6) for
+normalization and limitations: width/motion are symbolic, not measured banks or hydraulics.
+
+Unit tests (108), river validation, built assets and the full browser suite pass. The earlier
+RP5 browser failure was an asynchronous test-readiness race, now resolved by waiting for the
+map/optical layers in setup. Desktop high/low-flow and mobile Map renders were inspected;
+synthetic fixture discharge stays test-only. The updated preview was opened in Firefox on
+port 5174. Native Chrome in the available user session could not create a graphics context;
+software Chrome verification passes, but target hardware performance remains unmeasured.
+No push, merge or publication; the active reservoir checkout remains separate.
+
 ## Hacienda authored scene — RP5
 
 `task/RP5` in `/tmp/waterscape-rp2` replaces the misleading Gauge flyover with Bridge and
@@ -17,10 +35,10 @@ See [authored-scene notes](river-pulse/authored-water.md) for evidence, licenses
 The user accepted this visual baseline after reviewing Firefox: "not perfect but
 recognizable." Keep the current composition, gray steel/stone, left-pier outcrop and
 greener water. Further visual polish is optional; technical verification remains open.
-Required browser verification is blocked after its second failure: the data-outage check
+Historical RP5 verification stopped after its second failure (resolved in RP6): the data-outage check
 reads `riverPulseMapFlow.mesh` before the asynchronous layer exists (line 265). The first
 failure exposed a missing caption element, since repaired. Unit tests (104), river
-validation and production build checks pass. Follow the RP5 Result before continuing.
+validation and production build checks passed. RP6 subsequently passes the complete browser suite.
 This remains an approximate reconstruction; reused tree meshes and planar optics still
 limit photographic realism. The isolated preview is served on port 5174; nothing is pushed,
 merged or published, and the active reservoir checkout remains separate.

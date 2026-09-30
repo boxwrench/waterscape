@@ -266,6 +266,8 @@ async function addRiverCenterline(scene, terrain) {
       mapFlow = createMapFlow(hydrography, terrain);
       group.add(mapFlow.mesh);
       mapFlow.applyState(window.riverPulseState ?? window.riverPulseCurrentState);
+      mapFlow.applyHistory(window.riverPulseHistory);
+      addEventListener("river-pulse-history-change", (event) => mapFlow.applyHistory(event.detail.graph));
       addEventListener("river-pulse-state-change", (event) => mapFlow.applyState(event.detail.state));
       window.riverPulseMapFlow = mapFlow;
       if (authoredWater) {
@@ -351,7 +353,7 @@ function updateWaterVisibility() {
   }
   const context = window.riverPulseRiverLayer?.getObjectByName("3DHP context flowlines");
   if (context) context.visible = !authored;
-  sceneState.textContent = authored ? "Hacienda · authored scene" : "Map · symbolic flow";
+  sceneState.textContent = authored ? "Hacienda · authored scene" : "Map · flow-scaled water ribbon";
   document.querySelector("#scene-reference").textContent = authored ? "Photo-informed setting" : "3DEP / NAVD88";
   document.querySelector(".compass").hidden = authored;
   document.querySelector("#tint-layer").disabled = authored;
@@ -364,7 +366,7 @@ function connectRiverLayer(group, mainstem) {
     if (!mainstem) return;
     const style = centerlineConditionStyle(condition);
     mainstem.material.color.setHex(style.color);
-    mapFlow?.setColor(style.color);
+    mapFlow?.setColor(style.color, style.opacity);
     mainstem.material.opacity = style.opacity;
     mainstem.material.transparent = true;
     group.userData.condition = style.kind;

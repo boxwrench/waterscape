@@ -116,6 +116,11 @@ async function setup(page, { offline = false, noGpu = false, settingOffline = fa
   await page.waitForFunction(() =>
     document.querySelector("#loading").classList.contains("ready"),
   );
+  // Terrain/data readiness precedes asynchronous optical/setting asset loading.
+  // A data outage is not a signal that the map layer has finished initializing.
+  if (!noGpu) await page.waitForFunction(() =>
+    window.riverPulseMapFlow && window.riverPulseAuthoredWater,
+  );
 }
 async function visible(page, selector) {
   return page.locator(selector).isVisible();
@@ -157,6 +162,22 @@ try {
   await page.waitForFunction(
     () => window.riverPulseRiverLayer?.userData.condition === "above-normal",
   );
+  const highWidth = await page.evaluate(() => window.riverPulseMapFlow.binding.width);
+  await page.waitForFunction(() => Math.abs(window.riverPulseMapFlow.mesh.userData.displayWidth -
+    window.riverPulseMapFlow.binding.width) < 0.1);
+  await page.screenshot({ path: `${out}/map-ribbon-high.png` });
+  await page.keyboard.press("ArrowRight");
+  await page.keyboard.press("ArrowRight");
+  await page.keyboard.press("ArrowRight");
+  await page.waitForFunction(() => document.querySelector("#flow-value").textContent === "80 ft³/s");
+  const lowWidth = await page.evaluate(() => window.riverPulseMapFlow.binding.width);
+  assert.ok(highWidth > lowWidth, "Historical high discharge widens the map ribbon");
+  await page.waitForFunction(() => Math.abs(window.riverPulseMapFlow.mesh.userData.displayWidth -
+    window.riverPulseMapFlow.binding.width) < 0.1 && window.riverPulseRiverLayer.userData.condition === "below-normal");
+  await page.screenshot({ path: `${out}/map-ribbon-low.png` });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.waitForFunction(() => window.riverPulseMapFlow.animationTime === 0);
+  await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.locator("#return-now").click();
   await page.waitForFunction(
     () => window.riverPulseSeasonalCondition?.kind === "normal",
@@ -237,6 +258,7 @@ try {
   );
   assert.equal(await visible(page, "#history-panel"), false);
   await page.screenshot({ path: `${out}/mobile.png` });
+  await page.screenshot({ path: `${out}/map-ribbon-mobile.png` });
   await page.locator("#shallows").click();
   await page.waitForFunction(() => Math.abs(window.riverPulseScene.state.x -
     window.riverPulseBankSetting.camera.x) < 1);

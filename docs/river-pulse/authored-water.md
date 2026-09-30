@@ -7,18 +7,40 @@ The previous Gauge camera was an elevated terrain flyover, not a finished author
 It has been replaced. RP2/RP4's terrain-clipped optical preview remains in history and its
 geometry tests; it is no longer the geometry used by the authored beach.
 
-## Map flow and scientific state
+## Map flow and scientific state — RP6
 
-`map-flow.js` places a fixed-width display stroke over the bundled Russian River mainstem.
-Its seasonal color follows the same selected-condition binding as the previous centerline.
-Traveling light pulses indicate positive, eligible selected discharge. Missing, invalid and
-zero quantities stop motion; reduced motion freezes the clock. The timeline controls this
-selection, including historical daily means, through the existing gauge/time policy.
+`map-flow.js` renders a continuous green-blue water-like strip along the bundled Russian
+River mainstem. It is subdivided to drape over Map terrain. Enlarged traveling ripples and
+highlights make motion visible from above. The seasonal-condition color now borders the
+water, keeping that category legible without recoloring the whole interior.
 
-Stroke width, pulse speed and source-line travel direction are illustrative display choices.
-They are not measured bank width, inundation, local velocity or a surveyed current vector.
-Positive discharge does not determine authored beach stage, optical clarity or currents.
-The original scientific quantities, sources and evidence UI are unchanged.
+`mapRibbonBinding` maps selected eligible gauge discharge to an authored display width of
+18–66 scene metres. Within the loaded history window, the mapping is
+`r = clamp((sqrt(Q) - sqrt(Qmin)) / (sqrt(Qmax) - sqrt(Qmin)), 0, 1)` and
+`width = 18 + 48*r`. Square-root compression keeps lower-flow differences legible when a
+window contains a large peak. Width eases toward the selected target without changing the
+scientific selection. This is a window-relative comparison, not an absolute cross-section.
+Selections outside the history range saturate at the limits.
+
+Constant positive history uses `r = clamp(Q / (2*Qreference), 0, 1)`, putting its reference
+at the midpoint. Zero-only history uses minimum width for zero and maximum for positive
+flow. Missing history uses a fixed fallback width of 34 m rather than inventing a flow
+reference. Missing/stale/invalid selected discharge uses that fallback with a muted static
+interior; observed zero is distinct and uses minimum width. Both stop the animation.
+Positive selected discharge enables movement at fixed display speed. Reduced motion
+freezes ripples and snaps width to the selected target.
+
+Width represents the selected gauge quantity across the whole displayed mainstem, not a
+spatially resolved hydraulic model. Ripple size, motion speed and source-line travel
+direction are illustrative display choices. They are not measured waves, bank width,
+inundation, local velocity or a surveyed current vector. The seasonal border retains the
+existing USGS condition mapping. History, current and condition event order is handled by
+reading the latest published state at layer initialization and subscribing to subsequent
+changes. The existing timeline/source/evidence selection policies remain unchanged.
+
+The data-outage browser check now waits for asynchronous map/optical layer readiness before
+reading its properties. This resolves RP5's verification race without changing its accepted
+beach setting. The full browser suite passes, including asset outage and unavailable graphics.
 
 ## Photo-informed local setting
 
