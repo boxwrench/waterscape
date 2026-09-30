@@ -58,3 +58,13 @@
    `git commit -m "W4: Crystal Springs and San Andreas join the Hetch Hetchy tour"`.
 
 8. Add the **Result** section (see AGENTS.md) to this file and commit it.
+
+## Result
+- Status: done
+- Commit: see `git log task/W4` ("W4: Crystal Springs and San Andreas join the Hetch Hetchy tour")
+- Checks:
+  - `node pipeline/validate-bundles.mjs`: `Bundles valid.`
+  - `scripts/verify-site.mjs` (headless Chrome copy, WebGPU flags): `Journey checks passed.`
+  - `scripts/verify.mjs` (same): result JSON with `"browserErrors": []`.
+- Notes: Edge is not installed here, so the browser checks ran through scratch copies using
+  Chrome; CI runs the real scripts in Edge. The regenerated `previews/` images were discarded.
