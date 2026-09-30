@@ -14,3 +14,10 @@ implement bridge geometry, beach geometry or materials in the renderer.
    that these are visual references rather than a claim of local geological identification.
 4. Update the handoff. Check the local document links and `git diff --check`.
 5. Commit this task title, append Result, then commit Result. Never push or merge.
+
+## Result
+- Status: done
+- Commit: c79ae94
+- Checks: local document-link target checks — Material selection document links valid.
+- Checks: `git diff --check` — exit 0; no whitespace errors.
+- Notes: Sources and Poly Haven CC0 terms were fetched during the preceding shortlist research. Selected textures are recorded as candidates, not marked Used. No assets downloaded or renderer changes made; bridge/rock/beach geometry and Shoreline camera remain the subsequent scene task. Branch includes RP2, preserves W2, and was not pushed or merged.
