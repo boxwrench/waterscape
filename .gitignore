@@ -16,3 +16,4 @@ data/*/terrain.bin
 .worktrees/
 previews/verification.json
 previews/river-pulse-ui/
+previews/jenner-ui/

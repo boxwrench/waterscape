@@ -35,7 +35,8 @@ Ultra are secondary. Track dependencies still apply; storage history needs Cryst
 
 The accepted Hacienda scene and Map ribbon are pushed to main; RP8 Pages deployment is
 blocked by a CI screenshot timeout. Local
-hydrodynamics, surveyed bed geometry and Jenner rendering remain future work.
+hydrodynamics and surveyed bed geometry remain future work. RP9 adds Jenner’s authored
+coastal scene locally; publication is separate.
 
 | ID | Task | Who | Needs | Status |
 |---|---|---|---|---|
@@ -46,6 +47,7 @@ hydrodynamics, surveyed bed geometry and Jenner rendering remain future work.
 | RP6 | [Flow-scaled Map water ribbon](tasks/RP6-map-water-ribbon.md) | capable | RP5 | complete; all scoped checks pass |
 | RP7 | [Irregular blue Map water](tasks/RP7-map-water-detail.md) | capable | RP6 | complete; all scoped checks pass |
 | RP8 | [Document and publish River Pulse](tasks/RP8-publish-river-pulse.md) | capable | RP7 | pushed; Pages blocked by CI screenshot timeout after two failed runs |
+| RP9 | [Jenner estuary and Pacific shoreline](tasks/RP9-jenner-estuary.md) | capable | RP8 code | local coastal preview; focused checks and visual review |
 
 ## Track D — reservoir context
 

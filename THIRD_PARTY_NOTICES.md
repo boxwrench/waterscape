@@ -52,3 +52,19 @@ RP5 also reuses the unchanged `coast-live-a-far.bin`, `coast-live-b-far.bin`,
 variant metadata and ez-tree generation source. They use the included MIT license.
 Stone color grading happens in the renderer; the CC0 source JPGs remain unchanged.
 Hacienda reference photographs were used for composition only and are not distributed.
+
+## Jenner coastal resources and Tidewater
+
+`river-pulse/renderer/jenner-noise.js` adapts the periodic gradient FBm noise texture
+generator from `src/ocean/SeaDetail.js` in https://github.com/dgreenheck/tidewater,
+revision `4811ba48d795197de5621985f404e765c0b7c0ef`.
+Copyright (c) 2026 DRG Software Solutions LLC, MIT License. The complete license is
+included in `river-pulse/data/russian_river/places/jenner/setting/LICENSE-tidewater`.
+Jenner's directional swell, breaking foam and swash are independently authored TSL;
+Tidewater's FFT renderer and third-party assets are not distributed here.
+
+Jenner reuses the above CC0 Poly Haven bank maps, CC0 ambientCG Grass004 ground color,
+MIT FluffyGrass alpha mask and MIT ez-tree broadleaf assets unchanged. The reference
+credits and resource/source URLs are recorded in Jenner's `setting/references.json`.
+The photographs by Xaven (CC BY-SA 1.0) and BookOfDisquiet (CC BY-SA 4.0) inform the
+composition only and are not distributed as assets.

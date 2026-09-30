@@ -41,7 +41,7 @@ For redistribution details and pinned snapshots of code/assets actually included
 | [Clearwater](https://github.com/Aureliengmz/clearwater) · [demo](https://aureliengmz.github.io/clearwater/) | **Used** | Aurélien / Lumaris's single-file WebGL2 shallow-water renderer: FFT waves, refraction and caustics. Primary visual/optical reference for Waterscape reservoir water. | **High / medium** | **MIT** |
 | [SamG-Coder/clearwater](https://github.com/SamG-Coder/clearwater) · [demo](https://samg-coder.github.io/clearwater/) | **Used** | CUDA/WebGPU reimplementation and extension of Clearwater; bridge to the CUDA-authored/WebGPU renderer used by Waterscape. | **High / medium** | **MIT** |
 | [Three.js Particle Fluids](https://github.com/dgreenheck/threejs-particle-fluids) · [demo](https://dgreenheck.github.io/threejs-particle-fluids/) | **Candidate** | GPU particle physics for Three.js/WebGPU: liquids, soft bodies, cloth and smoke, with fluid surface rendering and useful splash/runoff demos. Good for local interaction and secondary water effects rather than large-scale hydrodynamics. | **High / medium-high** | **MIT** |
-| [Tidewater](https://github.com/dgreenheck/tidewater) · [demo](https://dgreenheck.github.io/tidewater/) | **Candidate** | Full WebGPU ocean/island reference with four-cascade FFT water, depth-aware breaking waves, whitewater, spray, foam lace, shallow-water swash on sand, wakes, caustics, underwater/above-water transitions and refraction. Especially valuable as a current open implementation of convincing shoreline contact and surf behavior. | **Very high / high** | **MIT** code; third-party assets retain their own licences as documented upstream |
+| [Tidewater](https://github.com/dgreenheck/tidewater) · [demo](https://dgreenheck.github.io/tidewater/) | **Used / Candidate** | Full WebGPU ocean/island reference with four-cascade FFT water, depth-aware breaking waves, whitewater, spray, foam lace, shallow-water swash on sand, wakes, caustics, underwater/above-water transitions and refraction. Especially valuable as a current open implementation of convincing shoreline contact and surf behavior. | **Very high / high** | **MIT** code; third-party assets retain their own licences as documented upstream |
 | [caustic-volume](https://github.com/ScottieFox/caustic-volume) · [demo](https://scottiefox.github.io/caustic-volume/) | **Candidate** | Focused browser reference for moving water caustics, with lightweight and fuller sandbox approaches. Good for shallow-water readability. | **High / low-medium** | **MIT** |
 | [Three.js flowing water / Water2Mesh](https://github.com/mrdoob/three.js/blob/dev/examples/jsm/objects/Water2Mesh.js) | **Reference — Map RP7** | Advected surface normals with Fresnel reflection/refraction. Useful lightweight water-detail approach for a ribbon. RP7 uses existing vendored TSL noise for irregular surface detail, with no copied example code or normal-map assets. | **Medium-high / low-medium** (estimate; target GPU unmeasured) | **[MIT](https://github.com/mrdoob/three.js/blob/dev/LICENSE)** code; separately verify texture provenance before importing example assets |
 | [Codrops RainEffect](https://github.com/codrops/RainEffect) · [demo](https://tympanus.net/Development/RainEffect/) | **Candidate** | Screen-space/WebGL rain and water-drop effects. Old, but still interesting when a convincing wet/rain layer is wanted without full fluid simulation. | **Medium-high / low-medium** | **Codrops custom licence**: integration/build-upon allowed for personal or commercial projects; do not redistribute or sell as-is. Verify current upstream terms before use. |
@@ -50,6 +50,13 @@ Hacienda authored-water evaluation (RP2): [implementation and resource notes](..
 The first local pass reuses existing Three/TSL reflection machinery and uses multi-directional
 wave detail informed by the CAUSTIC//VOLUME explanation. Clearwater and Tidewater remain
 optical/full-system references; no new upstream code or assets were copied in RP2.
+
+Jenner coastal evaluation (RP9): [scene and resource notes](../docs/river-pulse/jenner-scene.md).
+The periodic noise generator from Tidewater’s `SeaDetail.js` is adapted under MIT at pinned
+revision `4811ba48d795197de5621985f404e765c0b7c0ef`; the license ships in the Jenner package.
+Its surf/foam techniques informed independently authored TSL. The full FFT engine remains a
+candidate; none of Tidewater’s third-party assets are imported. Existing CC0 rock/pebble/grass
+and MIT vegetation resources are reused.
 
 ## Rivers, currents & coastal flow
 
