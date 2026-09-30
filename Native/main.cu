@@ -85,11 +85,12 @@ struct App {
  // Golden-hour preset (renderer/engine/presets.js presetBuffer): the native host keeps one light.
  void decodeLight(){
   // Then the land look (renderer/engine/look.js): Diablo gold summer grass, no extra tree cover,
-  // no fog.
-  const float golden[40]={-0.9505f,0.1701f,0.2601f,0.52f, 2.4f,1.55f,0.85f,0.5f, 0.3f,0.34f,0.44f,2.0f,
+  // no fog, turbid water.
+  const float golden[48]={-0.9505f,0.1701f,0.2601f,0.52f, 2.4f,1.55f,0.85f,0.5f, 0.3f,0.34f,0.44f,2.0f,
    4.0f,1.4f,0.005f,0.85f, 0.74f,0.71f,0.68f,0.00017f, 0.0002f,0.00002f,0.85f,0.0f,
-   0.3f,0.21f,0.075f,0.0f, 0.5f,0.37f,0.15f,0.0f, 0,0,0,0, 0,0,1,0};
-  light.alloc(10);check(cudaMemcpy(light.p,golden,sizeof golden,cudaMemcpyHostToDevice));
+   0.3f,0.21f,0.075f,0.0f, 0.5f,0.37f,0.15f,0.0f, 0,0,0,0, 0,0,1,0,
+   0.62f,0.28f,0.30f,0, 0.022f/0.62f,0.070f/0.30f,0.105f/0.40f,0};
+  light.alloc(12);check(cudaMemcpy(light.p,golden,sizeof golden,cudaMemcpyHostToDevice));
  }
  void transform(float4* a,float4* b,float sign){for(int axis=0;axis<2;axis++)for(int p=1;p<256;p*=2){fft_pass<<<wavesGrid,block>>>(a,b,p,axis,sign);std::swap(a,b);}}
  void initGpu(){

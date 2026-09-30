@@ -17,6 +17,14 @@ export const SUMMER = {
   },
 };
 
+// Water optics (water.cu): absorption per metre and in-scattered colour, rgb.
+export const WATER = {
+  // Turbid reservoir water, a few metres of visibility: red and blue go first.
+  turbid: { absorb: [0.62, 0.28, 0.3], scatter: [0.022 / 0.62, 0.07 / 0.3, 0.105 / 0.4] },
+  // Greener water (phytoplankton, dissolved organics): blue absorbed faster, green scattered.
+  green: { absorb: [0.6, 0.22, 0.42], scatter: [0.026, 0.25, 0.15] },
+};
+
 export function landLook(land) {
   const v = land?.vegetation ?? {};
   return {
@@ -30,6 +38,7 @@ export function landLook(land) {
     // begins, thickening over `width`; `top` and `base` in metres above the water surface;
     // `density` scales its thickness (default 1); `overcast` 0-1 (effectivePreset).
     fog: land?.fog ?? null,
+    water: WATER[land?.water?.optics] ?? WATER.turbid,
   };
 }
 

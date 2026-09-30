@@ -285,6 +285,7 @@ __device__ float fresnel(float ci) {
 // L[4] haze rgb, haze density · L[5] cloud scale, cloud speed, exposure, unused
 // L[6] summer grass dark rgb, tree cover · L[7] summer grass light rgb, unused (look.js)
 // L[8] fog amount, top, base, edge · L[9] fog from xz, ramp width, unused (look.js)
+// L[10] water absorption rgb, unused · L[11] water in-scatter rgb, unused (look.js)
 __device__ float3 lightSun(const float4 *L) { return v3(L[0].x, L[0].y, L[0].z); }
 __device__ float3 lightRad(const float4 *L) { return v3(L[1].x, L[1].y, L[1].z); }
 __device__ float3 lightFill(const float4 *L) { return v3(L[2].x, L[2].y, L[2].z); }
@@ -999,8 +1000,8 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
                         centerX, centerZ);
     caus = mul(caus, fminf(3, fmaxf(.45f, 1 / (1 + .12f * dh * R.w))));
     caus = mix3(caus, v3(1, 1, 1), smooth(.01f, .12f, footprint));
-    // Turbid reservoir water (a few metres of visibility): red and blue go first.
-    float3 sig = v3(.62f, .28f, .30f);
+    // Water optics per body (look.js): turbid reservoir water loses red and blue first.
+    float3 sig = v3(light[10].x, light[10].y, light[10].z);
     float Ts = 1 - fresnel(sun.y);
     float3 Esun = prod(prod(mul(SUN, Ts * (-sunT.y)), exp3(mul(sig, -dh / (-sunT.y)))), caus),
            Esky =
@@ -1012,7 +1013,7 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
         add(prod(mul(SUN, Ts * (ph + .02f)), exp3(mul(sig, -dh * .5f / (-sunT.y)))),
             prod(v3(.0341f, .0385f, .0429f), exp3(mul(v3(.4f, .074f, .088f), -dh * .6f))));
     float3 Lin =
-        mul(prod(prod(v3(.022f / .62f, .070f / .30f, .105f / .40f), Lmid), sub(v3(1, 1, 1), Tv)),
+        mul(prod(prod(v3(light[11].x, light[11].y, light[11].z), Lmid), sub(v3(1, 1, 1), Tv)),
             3.2f);
     float3 under = add(prod(Lfloor, Tv), Lin);
     col = add(add(mul(reflection, F), mul(under, 1 - F)), spec);

@@ -23,7 +23,7 @@ test("species missing from the weights share evenly when no weights are given", 
 test("the light buffer carries the summer palette and cover in float4s 6 and 7", () => {
   const look = landLook({ grass: { summer: "sage" }, vegetation: { cover: 0.4 } }),
     b = presetBuffer(PRESETS.golden, look);
-  assert.equal(b.length, 40);
+  assert.equal(b.length, 48);
   assert.deepEqual([...b.slice(24, 27)], SUMMER.sage.ground[0].map(Math.fround));
   assert.equal(b[27], Math.fround(0.4));
   assert.deepEqual([...b.slice(28, 31)], SUMMER.sage.ground[1].map(Math.fround));
@@ -34,7 +34,7 @@ test("a marine layer is written only for a fog-capable preset and a body with fo
     look = landLook({ fog });
   assert.deepEqual(look.fog, fog);
   const morning = presetBuffer(PRESETS.morning, look), golden = presetBuffer(PRESETS.golden, look);
-  assert.equal(morning.length, 40);
+  assert.equal(morning.length, 48);
   assert.ok(morning[32] > 0, "morning fog amount");
   assert.deepEqual([...morning.slice(33, 36)], [330, 60, 2200]);
   assert.deepEqual([...morning.slice(36, 39)], [-1, 0, 1500]);
@@ -51,4 +51,13 @@ test("an overcast fog morning dims the sun and closes the clouds; other presets 
   assert.ok(m.hazeDensity > PRESETS.morning.hazeDensity);
   assert.equal(effectivePreset(PRESETS.golden, look), PRESETS.golden);
   assert.equal(effectivePreset(PRESETS.morning, landLook({})), PRESETS.morning);
+});
+
+test("water optics default to today's turbid profile and can be green", () => {
+  const b = presetBuffer(PRESETS.golden, landLook({}));
+  assert.equal(b.length, 48);
+  assert.deepEqual([...b.slice(40, 43)], [0.62, 0.28, 0.3].map(Math.fround));
+  assert.deepEqual([...b.slice(44, 47)], [0.022 / 0.62, 0.07 / 0.3, 0.105 / 0.4].map(Math.fround));
+  const g = presetBuffer(PRESETS.golden, landLook({ water: { optics: "green" } }));
+  assert.ok(g[41] < g[42], "green water loses blue faster than green");
 });
