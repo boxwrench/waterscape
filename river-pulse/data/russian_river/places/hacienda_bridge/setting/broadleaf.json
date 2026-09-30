@@ -1,0 +1,167 @@
+{
+  "sourceBiome": "data/biomes/diablo-oak",
+  "sourceGenerator": "ez-tree 1.1.0 (MIT), pipeline/bake-trees.mjs",
+  "representation": "Setting: broadleaf silhouettes from existing oak assets, not a surveyed species census",
+  "variants": [
+    {
+      "id": "coast-live-a-far",
+      "species": "coast-live",
+      "preset": "Oak Medium",
+      "seed": 11,
+      "options": {
+        "branch": {
+          "length": {
+            "0": 24,
+            "1": 18,
+            "2": 10,
+            "3": 6
+          },
+          "angle": {
+            "1": 68,
+            "2": 55,
+            "3": 35
+          },
+          "start": {
+            "1": 0.28
+          },
+          "children": {
+            "0": 7,
+            "1": 5,
+            "2": 3
+          },
+          "gnarliness": {
+            "1": 0.15,
+            "2": 0.2
+          },
+          "levels": 2
+        },
+        "leaves": {
+          "count": 10,
+          "size": 5.779999999999999,
+          "start": 0.1
+        }
+      },
+      "file": "coast-live-a-far.bin",
+      "parts": {
+        "branches": {
+          "vertexCount": 1444,
+          "indexCount": 5688,
+          "offset": 0
+        },
+        "leaves": {
+          "vertexCount": 4224,
+          "indexCount": 6336,
+          "offset": 68960
+        }
+      },
+      "height": 51.852,
+      "crownRadius": 33.256,
+      "crownCentre": [
+        1.588,
+        0.806
+      ]
+    },
+    {
+      "id": "coast-live-b-far",
+      "species": "coast-live",
+      "preset": "Oak Medium",
+      "seed": 23,
+      "options": {
+        "branch": {
+          "length": {
+            "0": 24,
+            "1": 18,
+            "2": 10,
+            "3": 6
+          },
+          "angle": {
+            "1": 68,
+            "2": 55,
+            "3": 35
+          },
+          "start": {
+            "1": 0.28
+          },
+          "children": {
+            "0": 7,
+            "1": 5,
+            "2": 3
+          },
+          "gnarliness": {
+            "1": 0.15,
+            "2": 0.2
+          },
+          "levels": 2
+        },
+        "leaves": {
+          "count": 10,
+          "size": 5.779999999999999,
+          "start": 0.1
+        }
+      },
+      "file": "coast-live-b-far.bin",
+      "parts": {
+        "branches": {
+          "vertexCount": 1444,
+          "indexCount": 5688,
+          "offset": 0
+        },
+        "leaves": {
+          "vertexCount": 4224,
+          "indexCount": 6336,
+          "offset": 68960
+        }
+      },
+      "height": 58.937,
+      "crownRadius": 32.536,
+      "crownCentre": [
+        -0.491,
+        -1.04
+      ]
+    },
+    {
+      "id": "blue-a-far",
+      "species": "blue",
+      "preset": "Oak Small",
+      "seed": 37,
+      "options": {
+        "branch": {
+          "start": {
+            "1": 0.3
+          },
+          "angle": {
+            "1": 62
+          },
+          "gnarliness": {
+            "1": 0.18,
+            "2": 0.2
+          },
+          "levels": 2
+        },
+        "leaves": {
+          "count": 7,
+          "size": 4.42
+        }
+      },
+      "file": "blue-a-far.bin",
+      "parts": {
+        "branches": {
+          "vertexCount": 1248,
+          "indexCount": 5616,
+          "offset": 0
+        },
+        "leaves": {
+          "vertexCount": 960,
+          "indexCount": 1440,
+          "offset": 62400
+        }
+      },
+      "height": 39.411,
+      "crownRadius": 18.808,
+      "crownCentre": [
+        -0.505,
+        -1.919
+      ]
+    }
+  ]
+}

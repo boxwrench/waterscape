@@ -45,3 +45,10 @@ are reused unchanged from `data/biomes/peninsula-oak-fir/trees/` at repository c
 `af0bb6c`. Generated with ez-tree 1.1.0 (MIT); its license is included as `LICENSE-ez-tree`.
 The `conifers.json` records the source commit and binary part layouts. They are authored
 Setting assets, not surveyed Hacienda trees.
+
+RP5 also reuses the unchanged `coast-live-a-far.bin`, `coast-live-b-far.bin`,
+`blue-a-far.bin`, `oak-bark.jpg` and `oak-leaf.png` from
+`data/biomes/diablo-oak/trees/`. The `broadleaf.json` manifest records the original
+variant metadata and ez-tree generation source. They use the included MIT license.
+Stone color grading happens in the renderer; the CC0 source JPGs remain unchanged.
+Hacienda reference photographs were used for composition only and are not distributed.

@@ -1,91 +1,103 @@
-# First Hacienda authored water pass
+# Hacienda Map and authored beach
 
-RP2 gives Gauge and Shallows a local optical preview while Valley retains the cartographic
-centerline. The river-layer switch controls both representations. Shallows is enabled only
-when the bundled 3DHP mainstem supports a nonempty local surface. DWR fallback stays a
-centerline; it does not create an invented surface.
+RP5 separates two representations. **Map** retains the sourced USGS 3DEP terrain and
+3DHP centerlines and adds an animated symbolic river stroke. **Bridge** and **Hacienda
+Beach** open an authored local scene composed from the user's two contemporary photos.
+The previous Gauge camera was an elevated terrain flyover, not a finished authored scene.
+It has been replaced. RP2/RP4's terrain-clipped optical preview remains in history and its
+geometry tests; it is no longer the geometry used by the authored beach.
 
-## Geometry and meaning
+## Map flow and scientific state
 
-The local patch is bounded to 420 m around the mainstem point nearest the configured gauge.
-Its lateral envelope is an authored maximum of 42 m either side of the centerline, sampled
-on a 1.5 m grid and clipped where terrain rises above the preview surface. Surface elevation
-interpolates sampled centerline terrain plus 0.24 m for visual separation. This is an
-illustrative mesh, not measured width, stage, inundation or a hydraulic reconstruction.
-The coarse DEM and triangle clipping limit bank detail. Terrain assets are unchanged.
+`map-flow.js` places a fixed-width display stroke over the bundled Russian River mainstem.
+Its seasonal color follows the same selected-condition binding as the previous centerline.
+Traveling light pulses indicate positive, eligible selected discharge. Missing, invalid and
+zero quantities stop motion; reduced motion freezes the clock. The timeline controls this
+selection, including historical daily means, through the existing gauge/time policy.
 
-RP4 replaces the original lateral-width depth curve with a modeled depth from distance to
-the clipped surface boundary: 0.12 m plus 0.18 times edge distance in metres, capped at
-2.72 m. A two-pass grid distance approximation keeps the terrain-clipped margin shallow. This is a modeled optical bed, not surveyed bathymetry.  Discharge is not converted to water elevation or current speed.
-Data outages leave this disclosed optical preview available while observation labels
-continue to report unavailable data.
+Stroke width, pulse speed and source-line travel direction are illustrative display choices.
+They are not measured bank width, inundation, local velocity or a surveyed current vector.
+Positive discharge does not determine authored beach stage, optical clarity or currents.
+The original scientific quantities, sources and evidence UI are unchanged.
 
-## Optics
+## Photo-informed local setting
 
-Nine traveling directions perturb surface normals. Pixel derivatives attenuate unresolved
-waves. Reduced motion freezes the wave/caustic clock. Schlick Fresnel blends the modeled bed
-with a Three TSL reflection pass at 35% resolution; its horizontal reflection plane is an
-approximation of the locally varying surface. Snell refraction addresses the locally bundled Ganges River Pebbles color and normal maps
-on the modeled bed. Exponential attenuation gives the shallow/deep transition. Caustic detail
-is an animated analytic pattern, not photon-traced or derived from wave focusing. Sun glints
-use the scene's lighting direction. These optics consume illustrative inputs; the UI explains
-the preview in Read the representation.
+`beach-layout.js` defines a curved gravel spit, steeper forested banks and a bend behind the
+bridge. Ground and water share the same bank curves and bed-height model. This local stage
+uses authored metre dimensions for scale; it is deliberately separate from the georeferenced
+map. Its ground, shoreline, level and underwater depth are modeled estimates, not 3DEP
+measurements, a survey or gauge stage. The UI replaces coordinates/NAVD88 and compass claims
+with authored-setting labels in these views. Source terrain assets are unchanged.
 
-## Resources considered
+Travel stays on a narrow dry-bank walking area, at 1.8 m eye height, within the finished
+reach. The two compositions look from the waterline toward the bridge. Switching between
+Map and the local stage cuts between coordinate systems; walking between the two authored
+cameras eases normally. This avoids flying through unfinished geometry.
 
-Read the project library at [resources/README.md](../../resources/README.md), including its
-original-license rule, before selecting this approach.
+The gray steel camelback model has seven panels. Its 61 m span and 7.71 m roadway width
+come from [HistoricBridges' Hacienda documentation](https://historicbridges.org/bridges/browser/?bridgebrowser=california/riverroadrussianriver/),
+fetched 2026-09-29. Its height, member sizes, concrete pier profiles, approaches and placement
+are photo-informed estimates, not surveyed engineering geometry. The left support meets a
+continuous fractured rock outcrop; it no longer stands beside a scattering of separate
+boulders. A small riverside house and layered mixed woodland support the composition.
 
-- Existing Three r186 / TSL: reused the vendored renderer, shader nodes and reflector;
-  [ReflectorNode documentation](https://threejs.org/docs/pages/ReflectorNode.html) and
-  [WaterMesh](https://threejs.org/docs/pages/WaterMesh.html) informed the optical architecture.
-  No vendor changes or new copied addon code/assets.
-- [CAUSTIC//VOLUME](https://github.com/ScottieFox/caustic-volume): reviewed the upstream
-  explanation of varied wave directions, shared surface normals, refracted bed and ray
-  focusing. The initial parallel-wave screenshot prompted multi-directional detail. No code
-  copied; full ray-focused caustics are a future refinement, not implemented here.
-- Clearwater / CUDA Clearwater: existing reservoir lineage remains relevant for optics;
-  did not reuse its still-water basin or synthetic reservoir bathymetry as river geometry.
-- [Tidewater](https://github.com/dgreenheck/tidewater): reviewed as a fuller coastal-system
-  candidate. Ocean/surf architecture is beyond this local first pass; no imported assets.
-- HDRP current-map article: retained as a river-current reference. Its upstream page did not
-  fetch during this task; no implementation or velocity claims were based on it.
+Reference checks included the user's two photos, the local
+[Hacienda history collection](https://hacienda-cosmo.com/page-5/), and a contemporary
+[close view of the pier and underside](https://s.hdnux.com/photos/01/53/62/25/28255615/3/ratio3x2_1920.jpg).
+Search results also included historic and other bridges; those captions were not treated as
+reliable current Hacienda evidence. Reference photographs are not distributed as textures.
+The scene is an approximation of the photographed place, not a photogrammetric reconstruction.
 
-## Limits and next visual work
+## Materials, woodland and lighting
 
-This is a first local water pass. Surrounding terrain still uses the existing elevation tint;
-the bridge has not yet been modeled. RP4 adds local gravel, rocks and conifer stands. Local mesh edges can show the coarse
-terrain/grid constraint. The bed geometry is modeled, its material is photographed, and caustics remain approximate. There is no
-current field, foam model, click-ripple simulation, flood model, measured stage or Jenner
-surface. Native WebGPU and target Windows GPU performance need separate measurement.
+The six RP4 Poly Haven 1K JPG maps remain unmodified and retain their upstream MD5 manifest:
+[Ganges River Pebbles](https://polyhaven.com/a/ganges_river_pebbles) and
+[Rock Boulder Dry](https://polyhaven.com/a/rock_boulder_dry), both CC0. The pebble albedo is
+graded toward the cool gray stone in the photographs, consistently on dry beach and submerged
+bed. Wet ground darkens and smooths; foreground instanced pebbles add geometric relief.
+Exposed rock uses triplanar color sampling to avoid stretched cliff textures.
 
-## RP4 bank material integration
+Two fir variants from committed reservoir W2 (`af0bb6c`) and three lightweight oak variants
+from the existing Diablo assets form overlapping bankside stands, taller fir groups behind,
+and low broadleaf cover near the water. Their manifests retain source biome and ez-tree MIT
+provenance. The oak silhouettes are general broadleaf Setting assets, not a local species
+census. No reservoir runtime or placement logic is changed. A daylight sky, architectural
+shadows and asymmetric bank shading are photographic composition choices, not measured light.
 
-Ganges River Pebbles colors the local exposed bank and refracted modeled bed at the asset's
-2.2 m tile scale. The bank overlay follows the original terrain triangles, lifted by 0.055 m
-to avoid coplanar overlap. Wetness darkens the bank and lowers roughness within 0.8 m of
-relative preview-surface height. This is an authored visual transition, not observed wetness.
-Rock Boulder Dry textures a dozen varied rock meshes on the near bank; small instanced
-pebbles add relief near the camera. Placement, silhouettes and pebble beach extent are
-Setting informed by the user's photos, not surveyed geometry or local geological claims.
+## Water optics and clarity
 
-The **Shoreline** camera sits 0.8 m beyond a terrain/surface crossing, at 1.8 m above the
-bank, and looks along the reach. The terrain clearance in this authored view allows a
-minimum 1.7 m eye height; other cameras keep their prior clearance. Shallow-bed depth now
-follows the clipped shore distance rather than only the centerline envelope.
+Nine traveling normal directions provide ripples, with pixel-derivative filtering at distance.
+Schlick Fresnel blends the underwater contribution and a planar Three TSL reflection at 65%
+resolution. Snell refraction addresses the photographic gray gravel bed. Exponential
+attenuation fades bed detail into a muted green body color beyond the shallow margin. This
+clarity/color and a mild reflection grade follow the user's photo feedback; neither is a
+measurement of turbidity, sediment, chlorophyll or water quality. Analytic caustic detail and
+sun glints are illustrative. Reduced motion freezes wave and caustic clocks.
 
-Forty-eight candidate sites form eight irregular conifer stands, with any site below the
-preview surface plus 1 m or above the local bank range rejected. Hacienda's bundled terrain
-accepts 43 sites. The two lightweight Douglas-fir variants and textures are reused from the
-reservoir's committed Peninsula assets (`af0bb6c`); no reservoir runtime or placement logic
-is changed. These are generic Setting assets, not surveyed individual trees. The local
-manifest and third-party notices preserve the source and MIT license.
+These optics consume modeled surface/bed and authored light. The water remains a presentation
+model: no local current field, surveyed bathymetry, flood model, click-ripple simulation or
+Jenner surface is added. Timeline changes do not move this photograph-inspired shoreline.
 
-All six material maps are unmodified 1K JPGs fetched from Poly Haven's official download
-manifest and verified against the published MD5 values. They and the fir assets total about
-6 MiB and ship inside the place package. The scene uses no external asset requests for
-these materials. Material failures retain the original procedural-water preview; a fir
-failure retains bank rocks and gravel. Data selection remains independent of these assets.
+## Resilience and limits
 
-The bridge is still the next architecture task. Coarse underlying terrain, the local patch
-boundary, and the approximate reflection plane remain visible limitations of this pass.
+River toggles water/river symbols while leaving the authored bank visible. Elevation tint is
+available on Map. A hydrology outage leaves the authored place available and stops the map
+flow cue. Texture failure retains procedural-bed water and fallback ground/rock materials;
+woodland failure retains the bridge and beach. The inspector explains those representations.
+
+Visual review catches problems beyond passing tests. The reconstruction now supplies the
+major composition, but the reused tree meshes, approximate caustics, modeled bank geometry
+and planar reflections still limit photographic realism. Native WebGPU and target Windows
+GPU frame rates remain unmeasured. Browser interaction checks use Chrome WebGL2/SwiftShader
+and synthetic intercepted hydrology only in tests, never in production.
+
+## Resource evaluation
+
+The [resource library](../../resources/README.md) guided the implementation. Existing Three
+r186/TSL and [ReflectorNode](https://threejs.org/docs/pages/ReflectorNode.html) were reused
+without vendor changes. [CAUSTIC//VOLUME](https://github.com/ScottieFox/caustic-volume) informed
+varied wave directions and refracted bed optics; no code was copied and its ray-focused
+caustics are not implemented. [Tidewater](https://github.com/dgreenheck/tidewater) was reviewed
+as a larger coastal-system candidate. Reservoir Clearwater lineage remains an optics
+reference, not river geometry. The HDRP current-map article did not fetch in RP2, so no
+velocity claims or code were based on it.

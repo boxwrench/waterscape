@@ -161,6 +161,7 @@ try {
   await page.waitForFunction(
     () => window.riverPulseSeasonalCondition?.kind === "normal",
   );
+  assert.equal(await page.evaluate(() => window.riverPulseMapFlow.mesh.userData.moving), true);
   await page.locator("#river-layer").click();
   assert.equal(
     await page.evaluate(() => window.riverPulseRiverLayer.visible),
@@ -175,17 +176,28 @@ try {
   await page.locator("#tint-layer").click();
   await page.locator("#bridge").click();
   await page.waitForFunction(
-    () => Math.abs(window.riverPulseScene.state.x + 120) < 1,
+    () => Math.abs(window.riverPulseScene.state.x - window.riverPulseBankSetting.bridgeCamera.x) < 1,
   );
   assert.equal(await page.evaluate(() => window.riverPulseAuthoredWater.mesh.visible), true);
   await page.locator("#shallows").click();
   await page.waitForFunction(() => document.querySelector("#shallows").getAttribute("aria-pressed") === "true" &&
     Math.abs(window.riverPulseScene.state.x - window.riverPulseBankSetting.camera.x) < 1);
-  assert.ok(await page.evaluate(() => window.riverPulseBankSetting.group.getObjectByName("Hacienda conifer stands").userData.treeCount > 0));
+  assert.ok(await page.evaluate(() => window.riverPulseBankSetting.group.getObjectByName("Hacienda mixed woodland").userData.treeCount > 0));
   assert.ok(await page.evaluate(() => window.riverPulseBankSetting.group.getObjectByName("Bank rocks and pebbles").children.length > 1));
   await page.screenshot({ path: `${out}/authored-shallows-desktop.png` });
   await page.locator("#focus-view").click();
+  await page.waitForTimeout(800);
+  assert.equal(await page.evaluate(() => window.riverPulseBankSetting.group.getObjectByName("Hacienda camelback bridge").userData.panels), 7);
   await page.screenshot({ path: `${out}/shoreline-focus.png` });
+  await page.locator("#scene").focus();
+  await page.keyboard.down("KeyW");
+  await page.waitForTimeout(400);
+  await page.keyboard.up("KeyW");
+  assert.ok(await page.evaluate(() => {
+    const s = window.riverPulseScene.state;
+    return s.z >= -35 && s.z <= 70 && s.y < 4;
+  }), "Beach movement remains at eye height within authored bounds");
+  await page.locator("#shallows").click();
   await page.locator("#focus-view").click();
   await page.locator("#river-layer").click();
   assert.equal(await page.evaluate(() => window.riverPulseRiverLayer.visible), false);
@@ -250,6 +262,7 @@ try {
     false,
     "A data outage should not break terrain",
   );
+  assert.equal(await unavailable.evaluate(() => window.riverPulseMapFlow.mesh.userData.moving), false);
   await unavailable.locator("#shallows").click();
   assert.equal(await unavailable.evaluate(() => window.riverPulseAuthoredWater.mesh.visible), true,
     "Optical preview survives data outage without deriving hydraulics from missing discharge");

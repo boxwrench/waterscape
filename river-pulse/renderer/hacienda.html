@@ -137,12 +137,13 @@
             depth, or water velocity.
           </p>
           <p id="water-disclosure">
-            Gauge and Shoreline show a local optical water preview: ripples, a
-            refracted textured gravel bed, procedural caustic detail and Fresnel reflections. Surface
-            extent and level follow a terrain-constrained visual model; bed depth
-            is modeled. These are not surveyed banks, bathymetry, gauge stage or
-            measured currents. Reflections use one approximate local plane. Bank rocks, pebble beach
-            and tree stands are authored setting, not surveyed individual objects.
+            Bridge and Hacienda Beach are photo-informed authored scenes with modeled banks,
+            a seven-panel camelback bridge, mixed woodland and shallow gravel water.
+            They are not surveyed banks, infrastructure geometry, bathymetry, gauge stage or
+            measured currents. Map preserves sourced terrain and centerlines; moving pulses
+            illustrate flow when selected discharge is positive. Their width, speed and direction
+            are display choices. Beach light, water level and geometry do not change with the timeline.
+
           </p>
         </div>
       </section>
@@ -155,14 +156,15 @@
           type="button"
           aria-pressed="true"
         >
-          <span>01</span> Valley view</button
+          <span>01</span> Map</button
         ><button
           id="bridge"
+          disabled
           class="view-button"
           type="button"
           aria-pressed="false"
         >
-          <span>02</span> Gauge view
+          <span>02</span> Bridge
         </button>
         <button
           id="shallows"
@@ -170,7 +172,7 @@
           type="button"
           aria-pressed="false"
           disabled
-        ><span>03</span> Shoreline</button>
+        ><span>03</span> Hacienda Beach</button>
       </div>
       <div class="layer-buttons glass" role="group" aria-label="Map layers">
         <button id="river-layer" type="button" aria-pressed="true">
@@ -181,7 +183,7 @@
       </div>
     </div>
     <div class="map-caption">
-      <span id="scene-state">Loading terrain</span><span>3DEP / NAVD88</span
+      <span id="scene-state">Loading terrain</span><span id="scene-reference">3DEP / NAVD88</span
       ><span id="render-backend"></span>
     </div>
     <div class="compass" aria-label="North direction">

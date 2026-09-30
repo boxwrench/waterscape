@@ -18,7 +18,9 @@ import { buildRiverTerrainGrid } from "./terrain-mesh.js";
 import { elevationColors } from "./terrain-style.js";
 import { loadHydrography, createHydrographyLayer } from "./hydrography.js";
 import { loadBankMaterials } from "./bank-materials.js";
-import { createBankSetting } from "./bank-setting.js";
+import { createHaciendaBeach } from "./hacienda-beach.js";
+import { beachGround, constrainBeachCamera } from "./beach-layout.js";
+import { createMapFlow } from "./map-flow.js";
 import { createAuthoredWater } from "./authored-water.js";
 import { centerlineConditionStyle } from "../visual-bindings/condition-centerline.js";
 
@@ -57,7 +59,9 @@ let dragging = false,
   cameraTransition = null,
   activeView = "overview",
   authoredWater = null,
-  bankSetting = null;
+  bankSetting = null,
+  mapFlow = null,
+  mapObjects = null;
 
 function fail(error) {
   console.error(error);
@@ -91,6 +95,7 @@ function setActiveView(kind) {
 function pose(state, terrain, kind, animate = true) {
   selected = null;
   inspectTitle.textContent = "Camera position";
+  const switchingWorld = (activeView === "overview") !== (kind === "overview");
   setActiveView(kind);
   let target;
   if (kind === "shallows" && authoredWater) {
@@ -100,15 +105,8 @@ function pose(state, terrain, kind, animate = true) {
       y: terrain.ground(authoredWater.focus.x - 16, authoredWater.focus.z + 28) + 8,
       yaw: Math.atan2(16, 28), pitch: -0.24, speed: 6,
     };
-  } else if (kind === "bridge") {
-    target = {
-      x: -120,
-      z: 180,
-      y: terrain.ground(-120, 180) + 55,
-      yaw: Math.atan2(120, 180),
-      pitch: -0.32,
-      speed: 12,
-    };
+  } else if (kind === "bridge" && bankSetting) {
+    target = { ...bankSetting.bridgeCamera };
   } else {
     target = {
       x: -900,
@@ -119,7 +117,7 @@ function pose(state, terrain, kind, animate = true) {
       speed: 55,
     };
   }
-  if (animate && !matchMedia("(prefers-reduced-motion: reduce)").matches)
+  if (animate && !switchingWorld && !matchMedia("(prefers-reduced-motion: reduce)").matches)
     cameraTransition = { from: { ...state }, target, start: performance.now() };
   else {
     Object.assign(state, target);
@@ -261,17 +259,19 @@ async function addRiverCenterline(scene, terrain) {
         document.querySelector("#water-disclosure").textContent +=
           " Bank textures are unavailable; the water currently uses a procedural bed.";
       }
-      authoredWater = createAuthoredWater(hydrography, terrain, maps);
-      if (maps) {
-        bankSetting = await createBankSetting(hydrography, terrain, maps);
-        if (bankSetting) {
-          scene.add(bankSetting.group);
-          window.riverPulseBankSetting = bankSetting;
-        }
-      }
+      bankSetting = await createHaciendaBeach(maps);
+      scene.add(bankSetting.group);
+      window.riverPulseBankSetting = bankSetting;
+      authoredWater = createAuthoredWater(hydrography, terrain, maps, bankSetting.waterGrid);
+      mapFlow = createMapFlow(hydrography, terrain);
+      group.add(mapFlow.mesh);
+      mapFlow.applyState(window.riverPulseState ?? window.riverPulseCurrentState);
+      addEventListener("river-pulse-state-change", (event) => mapFlow.applyState(event.detail.state));
+      window.riverPulseMapFlow = mapFlow;
       if (authoredWater) {
         group.add(authoredWater.mesh);
         shallowsButton.disabled = false;
+        bridgeButton.disabled = false;
         window.riverPulseAuthoredWater = authoredWater;
       }
       scene.add(group);
@@ -283,7 +283,7 @@ async function addRiverCenterline(scene, terrain) {
         source: hydrography.source,
         representation: group.userData.representation,
       });
-      sceneState.textContent = "Terrain + river";
+      updateWaterVisibility();
       sourceDetail.textContent += ` River centerlines: ${hydrography.source}. Cartographic context, not measured width or depth.`;
       return;
     } catch {
@@ -334,9 +334,29 @@ async function addRiverCenterline(scene, terrain) {
 
 function updateWaterVisibility() {
   if (authoredWater) authoredWater.mesh.visible = activeView !== "overview";
-  if (bankSetting) bankSetting.group.visible = activeView !== "overview";
+  const authored = activeView !== "overview" && Boolean(bankSetting);
+  if (bankSetting) bankSetting.group.visible = authored;
+  if (mapFlow) mapFlow.mesh.visible = !authored;
+  if (mapObjects) {
+    mapObjects.land.visible = !authored;
+    mapObjects.gaugeBeacon.visible = !authored;
+    mapObjects.scene.background.setHex(authored ? 0x9ad8f2 : 0xc5d0c8);
+    mapObjects.scene.fog.color.setHex(authored ? 0xb8dce7 : 0xc5d0c8);
+    mapObjects.scene.fog.density = authored ? 0.001 : 0.0001;
+    mapObjects.hemi.intensity = authored ? 1.1 : 1.8;
+    mapObjects.sun.intensity = authored ? 2.5 : 2.3;
+    mapObjects.sun.castShadow = authored;
+    mapObjects.sun.position.set(...(authored ? [110, 120, 30] : [-3000, 5000, 1500]));
+    mapObjects.sun.target.position.set(0, 0, authored ? -70 : 0);
+  }
+  const context = window.riverPulseRiverLayer?.getObjectByName("3DHP context flowlines");
+  if (context) context.visible = !authored;
+  sceneState.textContent = authored ? "Hacienda · authored scene" : "Map · symbolic flow";
+  document.querySelector("#scene-reference").textContent = authored ? "Photo-informed setting" : "3DEP / NAVD88";
+  document.querySelector(".compass").hidden = authored;
+  document.querySelector("#tint-layer").disabled = authored;
   const mainstem = window.riverPulseRiverLayer?.getObjectByName("3DHP Russian River flowline");
-  if (mainstem) mainstem.visible = activeView === "overview" || !authoredWater;
+  if (mainstem) mainstem.visible = !mapFlow && (activeView === "overview" || !authoredWater);
 }
 
 function connectRiverLayer(group, mainstem) {
@@ -344,6 +364,7 @@ function connectRiverLayer(group, mainstem) {
     if (!mainstem) return;
     const style = centerlineConditionStyle(condition);
     mainstem.material.color.setHex(style.color);
+    mapFlow?.setColor(style.color);
     mainstem.material.opacity = style.opacity;
     mainstem.material.transparent = true;
     group.userData.condition = style.kind;
@@ -410,6 +431,9 @@ async function main() {
     ? "WebGPU"
     : "WebGL2";
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
+  renderer.shadowMap.enabled = true;
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xc5d0c8);
@@ -446,10 +470,16 @@ async function main() {
     }
   });
 
-  const hemi = new THREE.HemisphereLight(0xe3f0ea, 0x5c6851, 1.8),
-    sun = new THREE.DirectionalLight(0xffefd0, 2.3);
+  const hemi = new THREE.HemisphereLight(0xc3ddff, 0x384034, 1.8),
+    sun = new THREE.DirectionalLight(0xfffcf5, 2.3);
   sun.position.set(-3000, 5000, 1500);
   scene.add(hemi, sun);
+  sun.shadow.mapSize.set(2048, 2048);
+  Object.assign(sun.shadow.camera, { left: -100, right: 100, top: 120, bottom: -100, near: 1, far: 400 });
+  sun.position.set(110, 120, 30);
+  sun.target.position.set(0, 0, -70);
+  sun.shadow.bias = -0.001;
+  scene.add(sun.target);
 
   // The configured anchor is the USGS Hacienda gauge, so it is local (0, 0) by construction.
   const gaugeGround = terrain.ground(0, 0),
@@ -480,8 +510,9 @@ async function main() {
   marker.visible = false;
   scene.add(marker);
 
-  const camera = new THREE.PerspectiveCamera(64, 1, 0.3, 50000),
-    shorelineClearance = { ground: (x, z) => terrain.ground(x, z) - 0.8 };
+  mapObjects = { land, gaugeBeacon, scene, sun, hemi };
+  const camera = new THREE.PerspectiveCamera(58, 1, 0.1, 50000),
+    shorelineClearance = { ground: (x, z) => beachGround(x, z) - 0.8 };
   camera.rotation.order = "YXZ";
   const state = { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, speed: 40 };
   pose(state, terrain, "overview", false);
@@ -554,7 +585,7 @@ async function main() {
     dragging = false;
     if (canvas.hasPointerCapture(event.pointerId))
       canvas.releasePointerCapture(event.pointerId);
-    if (moved > 5) return;
+    if (moved > 5 || activeView !== "overview") return;
 
     const sx = (event.clientX / innerWidth) * 2 - 1,
       sy = 1 - (event.clientY / innerHeight) * 2,
@@ -575,7 +606,7 @@ async function main() {
       state.x += direction[0] * distance;
       state.z += direction[2] * distance;
       state.y = Math.max(
-        terrain.ground(state.x, state.z) + (activeView === "shallows" ? 1.8 : 8),
+        (activeView !== "overview" ? beachGround(state.x, state.z) + 1.8 : terrain.ground(state.x, state.z) + 8),
         state.y + direction[1] * distance,
       );
       event.preventDefault();
@@ -597,18 +628,23 @@ async function main() {
         state[key] =
           cameraTransition.from[key] +
           (cameraTransition.target[key] - cameraTransition.from[key]) * blend;
-      state.y = Math.max(state.y, terrain.ground(state.x, state.z) + (activeView === "shallows" ? 1.8 : 8));
+      state.y = Math.max(state.y, (activeView !== "overview" ? beachGround(state.x, state.z) + 1.8 : terrain.ground(state.x, state.z) + 8));
       if (t === 1) cameraTransition = null;
     }
     fly(state, { keys, cruise: false }, dt,
-      activeView === "shallows" ? shorelineClearance : terrain);
+      activeView !== "overview" ? shorelineClearance : terrain);
+    if (activeView !== "overview") constrainBeachCamera(state);
 
     camera.position.set(state.x, state.y, state.z);
     camera.rotation.set(state.pitch, -state.yaw, 0);
     document.querySelector("#compass-arrow").style.transform =
       `rotate(${state.yaw}rad)`;
 
-    if (selected) {
+    if (activeView !== "overview") {
+      coords.textContent = "Hacienda · authored setting";
+      elevation.textContent = "Photo-informed ground";
+      agl.textContent = "1.8 m eye height";
+    } else if (selected) {
       coords.textContent = formatLatLon(terrain.latLon(selected.x, selected.z));
       elevation.textContent = `${selected.elevation.toFixed(1)} m NAVD88`;
       agl.textContent = "Terrain surface";
@@ -620,7 +656,7 @@ async function main() {
 
     gaugeProjection.copy(gaugeLabelPoint).project(camera);
     const gaugeVisible =
-      gaugeProjection.z > -1 &&
+      activeView === "overview" && gaugeProjection.z > -1 &&
       gaugeProjection.z < 1 &&
       Math.abs(gaugeProjection.x) < 1.08 &&
       Math.abs(gaugeProjection.y) < 1.08;
@@ -630,7 +666,9 @@ async function main() {
       gaugeWorldLabel.style.top = `${(-gaugeProjection.y * 0.5 + 0.5) * innerHeight}px`;
     }
 
-    authoredWater?.update(now / 1000, matchMedia("(prefers-reduced-motion: reduce)").matches);
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    authoredWater?.update(now / 1000, reducedMotion);
+    mapFlow?.update(now / 1000, reducedMotion);
     renderer.render(scene, camera);
   });
 }

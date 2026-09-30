@@ -4,6 +4,24 @@ Where things stand, for whoever picks this up next (person or agent). The plan l
 `ROADMAP.md` and `docs/roadmap/README.md`; this file is the snapshot of "what just happened
 and what's next".
 
+## Hacienda authored scene — RP5
+
+`task/RP5` in `/tmp/waterscape-rp2` replaces the misleading Gauge flyover with Bridge and
+Hacienda Beach. Map retains source terrain and adds symbolic moving flow pulses when the
+selected eligible discharge is positive. The photo-informed local setting has a gray steel
+camelback, concrete approaches, continuous left-pier rock outcrop, gray pebble beach,
+layered mixed woodland and greener, less transparent water. Shore walking stays bounded
+at eye height. Local geometry is authored, not surveyed: coordinate/elevation labels and
+the compass are Map-only. Timeline/scientific selection is independent of the static beach.
+See [authored-scene notes](river-pulse/authored-water.md) for evidence, licenses and limits.
+Required browser verification is blocked after its second failure: the data-outage check
+reads `riverPulseMapFlow.mesh` before the asynchronous layer exists (line 265). The first
+failure exposed a missing caption element, since repaired. Unit tests (104), river
+validation and production build checks pass. Follow the RP5 Result before continuing.
+This remains an approximate reconstruction; reused tree meshes and planar optics still
+limit photographic realism. The isolated preview is served on port 5174; nothing is pushed,
+merged or published, and the active reservoir checkout remains separate.
+
 ## Hacienda bank materials — RP4
 
 `task/RP4` integrates the selected local Poly Haven pebble and rock maps into Hacienda's

@@ -4,9 +4,10 @@ import {
   mix, normalize, positionWorld, pow, reflector, refract, sin, texture, uniform, vec2, vec3,
 } from "../../vendor/three/three.tsl.js";
 import { buildAuthoredWaterGeometry } from "./authored-water-geometry.js";
+import { grayStone } from "./beach-materials.js";
 
-export function createAuthoredWater(document, terrain, maps = null) {
-  const grid = buildAuthoredWaterGeometry(document, terrain);
+export function createAuthoredWater(document, terrain, maps = null, authoredGrid = null) {
+  const grid = authoredGrid ?? buildAuthoredWaterGeometry(document, terrain);
   if (!grid) return null;
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute("position", new THREE.BufferAttribute(grid.positions, 3));
@@ -23,7 +24,7 @@ export function createAuthoredWater(document, terrain, maps = null) {
       phase = p.x.mul(dx * frequency).add(p.y.mul(dz * frequency))
         .add(clock.mul(0.7 + i * 0.13)).add(i * 1.7),
       wandering = sin(p.x.mul(0.21).add(p.y.mul(0.17)).add(clock.mul(0.12))).mul(0.55),
-      wave = cos(phase.add(wandering)).mul(0.021).mul(exp(fwidth(phase).mul(-1.5)));
+      wave = cos(phase.add(wandering)).mul(0.065).mul(exp(fwidth(phase).mul(-1.5)));
     slopeX = slopeX.add(wave.mul(dx));
     slopeZ = slopeZ.add(wave.mul(dz));
   }
@@ -38,7 +39,7 @@ export function createAuthoredWater(document, terrain, maps = null) {
     pebbleCell = floor(bedUV.mul(7)),
     gravel = fract(sin(dot(pebbleCell, vec2(127.1, 311.7))).mul(43758.5453)),
     bed = maps?.pebbles
-      ? texture(maps.pebbles.color, bedUV.div(maps.pebbles.tileMetres)).rgb.mul(0.72)
+      ? grayStone(maps.pebbles.color, bedUV.div(maps.pebbles.tileMetres))
       : mix(color(0x605b42), color(0xb7aa7a), gravel),
     bedNormal = maps?.pebbles
       ? texture(maps.pebbles.normal, bedUV.div(maps.pebbles.tileMetres)).xyz.mul(2).sub(1)
@@ -47,16 +48,20 @@ export function createAuthoredWater(document, terrain, maps = null) {
     ca = sin(bedUV.x.mul(3.8).add(bedUV.y.mul(2.1)).add(clock.mul(0.7))),
     cb = sin(bedUV.x.mul(-2.6).add(bedUV.y.mul(4.3)).sub(clock.mul(0.5))),
     caustic = pow(float(1).sub(ca.add(cb).mul(0.5).abs()), 14).mul(0.28),
-    transmission = exp(depth.mul(-0.8).div(facing.add(0.25))),
-    underwater = mix(color(0x163b38), bed.mul(bedLight).mul(caustic.add(0.82)), transmission),
-    sun = normalize(vec3(-0.5, 0.83, 0.25)),
+    // Photo-informed clarity: a narrow readable shallow edge, then muted green
+    // body color. This is an authored optical setting, not measured turbidity.
+    transmission = exp(depth.mul(-1.35).div(facing.add(0.6))),
+    underwater = mix(color(0x2c5137), bed.mul(bedLight).mul(caustic.add(0.88))
+      .mul(vec3(0.85, 1, 0.8)), transmission),
+    sun = normalize(vec3(0.68, 0.73, 0.18)),
     glint = pow(dot(normal, normalize(sun.add(eye))).max(0), 260).mul(1.8),
-    mirror = reflector({ resolutionScale: 0.35, bounces: false });
+    mirror = reflector({ resolutionScale: 0.65, bounces: false });
   mirror.target.rotation.x = -Math.PI / 2;
   mirror.target.position.y = grid.focus.y;
-  mirror.uvNode = mirror.uvNode.add(vec2(normal.x, normal.z).mul(0.012));
+  mirror.uvNode = mirror.uvNode.add(vec2(normal.x, normal.z).mul(0.035));
   const material = new THREE.MeshBasicNodeMaterial({ side: THREE.FrontSide });
-  material.colorNode = mix(underwater, mirror.rgb, fresnel).add(color(0xffe6b4).mul(glint));
+  const reflected = mix(mirror.rgb, color(0x294c38), 0.12);
+  material.colorNode = mix(underwater, reflected, fresnel).add(color(0xfff2d8).mul(glint));
   const mesh = new THREE.Mesh(geometry, material);
   mesh.name = "Hacienda authored water";
   mesh.add(mirror.target);

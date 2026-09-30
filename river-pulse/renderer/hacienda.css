@@ -675,3 +675,5 @@ pre {
     scroll-behavior: auto !important;
   }
 }
+
+.compass[hidden] { display: none; }
