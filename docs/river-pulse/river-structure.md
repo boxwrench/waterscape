@@ -41,8 +41,12 @@ the lake and dam, and River Pulse picks up below it.
 
 **Russian River decision:** the start is the outflow from Lake Mendocino. Places: Lake
 Mendocino outflow (start), Hacienda Bridge (middle, with a long gauge record), Jenner (end).
-Status: place not yet authored; a representative reference photograph is still to be chosen
-and recorded with its URL.
+The place is labelled **East Fork**, the river directly below the dam. It is an earthfill
+embankment, not a masonry or granite dam: wide gently sloped dry-grass face, rock-lined
+waterline, crest road, intake tower on a walkway, and outlet works with a stilling basin at
+the downstream toe, ringed by oak woodland. Buildings are left out of the scene. Reference
+aerial photographs were supplied by the user (Coyote Valley Dam mosaic on rs.locationshub.com,
+location 050-10120170); they are not redistributed. Status: not yet authored.
 
 ## History at every level
 
