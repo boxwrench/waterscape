@@ -17,11 +17,12 @@ with USGS discharge, history and seasonal context alongside the scene.
 | [Reservoirs](https://boxwrench.github.io/waterscape/) | Calaveras, San Antonio, Crystal Springs and San Andreas: lidar landscapes, sourced context, modeled water optics and aerial maps | Live journey and WebGPU explorer |
 | [River Pulse](https://boxwrench.github.io/waterscape/river-pulse/) | Hacienda Map with a flow-scaled water ribbon; authored gray steel bridge, rock outcrop, pebble beach and green reflective water; USGS discharge/history | Live prototype; illustrative water and authored setting, no local hydrodynamic model |
 
-**Jenner coastal preview:** [scene notes](docs/river-pulse/jenner-scene.md), with Estuary lookout,
+**[Explore Jenner estuary →](https://boxwrench.github.io/waterscape/river-pulse/renderer/jenner.html)**
+[Scene notes](docs/river-pulse/jenner-scene.md), with Estuary lookout,
 River shore and Pacific beach. Photo-informed sand spit, Goat Rock, green coastal bluffs,
 green estuary water and teal Pacific surf; the separate USGS card reports NAVD88 water level
 at Highway 1. Open [Jenner locally](http://localhost:5173/river-pulse/renderer/jenner.html) after
-building and starting the server. This new scene is not published yet. Supported capabilities
+building and starting the server. Supported capabilities
 in a manifest are not promises of current data availability.
 
 ![Jenner authored coastal preview: estuary, sand spit and Pacific surf](previews/jenner-estuary.png)

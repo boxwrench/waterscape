@@ -122,6 +122,11 @@ async function setup(page, { offline = false, noGpu = false, settingOffline = fa
     window.riverPulseMapFlow && window.riverPulseAuthoredWater,
   );
 }
+// Software-rendered CI can need more than 30 seconds for GPU readback and PNG capture.
+// This only changes artifact capture; interaction assertions retain their existing limits.
+async function capture(page, path) {
+  await page.screenshot({ path, timeout: 90000, animations: "disabled" });
+}
 async function visible(page, selector) {
   return page.locator(selector).isVisible();
 }
@@ -165,7 +170,7 @@ try {
   const highWidth = await page.evaluate(() => window.riverPulseMapFlow.binding.width);
   await page.waitForFunction(() => Math.abs(window.riverPulseMapFlow.mesh.userData.displayWidth -
     window.riverPulseMapFlow.binding.width) < 0.1);
-  await page.screenshot({ path: `${out}/map-ribbon-high.png` });
+  await capture(page, `${out}/map-ribbon-high.png`);
   await page.keyboard.press("ArrowRight");
   await page.keyboard.press("ArrowRight");
   await page.keyboard.press("ArrowRight");
@@ -174,7 +179,7 @@ try {
   assert.ok(highWidth > lowWidth, "Historical high discharge widens the map ribbon");
   await page.waitForFunction(() => Math.abs(window.riverPulseMapFlow.mesh.userData.displayWidth -
     window.riverPulseMapFlow.binding.width) < 0.1 && window.riverPulseRiverLayer.userData.condition === "below-normal");
-  await page.screenshot({ path: `${out}/map-ribbon-low.png` });
+  await capture(page, `${out}/map-ribbon-low.png`);
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.waitForFunction(() => window.riverPulseMapFlow.animationTime === 0);
   await page.emulateMedia({ reducedMotion: "no-preference" });
@@ -205,11 +210,11 @@ try {
     Math.abs(window.riverPulseScene.state.x - window.riverPulseBankSetting.camera.x) < 1);
   assert.ok(await page.evaluate(() => window.riverPulseBankSetting.group.getObjectByName("Hacienda mixed woodland").userData.treeCount > 0));
   assert.ok(await page.evaluate(() => window.riverPulseBankSetting.group.getObjectByName("Bank rocks and pebbles").children.length > 1));
-  await page.screenshot({ path: `${out}/authored-shallows-desktop.png` });
+  await capture(page, `${out}/authored-shallows-desktop.png`);
   await page.locator("#focus-view").click();
   await page.waitForTimeout(800);
   assert.equal(await page.evaluate(() => window.riverPulseBankSetting.group.getObjectByName("Hacienda camelback bridge").userData.panels), 7);
-  await page.screenshot({ path: `${out}/shoreline-focus.png` });
+  await capture(page, `${out}/shoreline-focus.png`);
   await page.locator("#scene").focus();
   await page.keyboard.down("KeyW");
   await page.waitForTimeout(400);
@@ -226,7 +231,7 @@ try {
     "River toggle controls water, while the authored bank setting remains visible");
   await page.locator("#river-layer").click();
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.screenshot({ path: `${out}/authored-shallows-reduced-motion.png` });
+  await capture(page, `${out}/authored-shallows-reduced-motion.png`);
   assert.match(await page.locator("#water-disclosure").innerText(), /not surveyed banks/);
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.locator("#overview").click();
@@ -244,9 +249,9 @@ try {
   await page.locator("#focus-view").click();
   assert.equal(await visible(page, ".control-deck"), false);
   await page.locator("#focus-view").click();
-  await page.screenshot({ path: `${out}/desktop.png` });
+  await capture(page, `${out}/desktop.png`);
   await page.locator("#inspect-toggle").click();
-  await page.screenshot({ path: `${out}/evidence.png` });
+  await capture(page, `${out}/evidence.png`);
   await page.locator("#inspect-close").click();
 
   await page.setViewportSize({ width: 390, height: 844 });
@@ -257,16 +262,16 @@ try {
     true,
   );
   assert.equal(await visible(page, "#history-panel"), false);
-  await page.screenshot({ path: `${out}/mobile.png` });
-  await page.screenshot({ path: `${out}/map-ribbon-mobile.png` });
+  await capture(page, `${out}/mobile.png`);
+  await capture(page, `${out}/map-ribbon-mobile.png`);
   await page.locator("#shallows").click();
   await page.waitForFunction(() => Math.abs(window.riverPulseScene.state.x -
     window.riverPulseBankSetting.camera.x) < 1);
-  await page.screenshot({ path: `${out}/authored-shallows-mobile.png` });
+  await capture(page, `${out}/authored-shallows-mobile.png`);
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
   await page.locator("#timeline-toggle").click();
   assert.equal(await visible(page, "#history-panel"), true);
-  await page.screenshot({ path: `${out}/mobile-history.png` });
+  await capture(page, `${out}/mobile-history.png`);
   await page.locator("#inspect-toggle").click();
   assert.equal(await visible(page, "#inspector"), true);
   await page.close();
@@ -310,7 +315,7 @@ try {
     false,
     "GPU failure must not disable history",
   );
-  await noGpu.screenshot({ path: `${out}/graphics-unavailable.png` });
+  await capture(noGpu, `${out}/graphics-unavailable.png`);
   await noGpu.close();
   assert.deepEqual(errors, []);
   console.log(
