@@ -1,0 +1,47 @@
+{
+  "name": "San Andreas Lake",
+  "biome": "peninsula-oak-fir",
+  "anchor": [
+    37.59082,
+    -122.42208
+  ],
+  "bbox": [
+    -122.464,
+    37.562,
+    -122.3874,
+    37.6323
+  ],
+  "size": [
+    676,
+    783
+  ],
+  "viewpoints": {
+    "overlook": {
+      "x": -2418,
+      "z": -1662,
+      "above": 3,
+      "yaw": 1.974,
+      "pitch": -0.052,
+      "speed": 40,
+      "label": "Northwest ridge"
+    },
+    "ridge": {
+      "x": 340,
+      "z": 1017,
+      "above": 3,
+      "yaw": -0.257,
+      "pitch": -0.165,
+      "speed": 40,
+      "label": "South ridge"
+    },
+    "shore": {
+      "x": -1311.4,
+      "z": -1931.5,
+      "above": 1.4,
+      "yaw": 2.182,
+      "pitch": -0.42,
+      "speed": 4,
+      "label": "Shoreline"
+    }
+  }
+}

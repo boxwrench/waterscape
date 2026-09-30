@@ -88,3 +88,16 @@ a flyover video. It is not added to any tour yet (that is W4).
 ## Notes
 
 - The NHD name is exactly `San Andreas Lake` (checked 2026-09-27: 1.97 km²).
+
+## Result
+- Status: done
+- Commit: ae8d02d
+- Checks:
+  - `locate.py "San Andreas Lake"`: anchor `[37.59082, -122.42208]`; build: `san_andreas: water 136.4 m, 1.90 km2, grid 676x783 @ 10.07 m, …`
+  - NID CA00129: `MAX_STORAGE` 19027, `DAM_HEIGHT` 107, `YEAR_COMPLETED` 1870, `HYDRAULIC_HEIGHT` 97. EPQS: 134.350006104 m, 2023.
+  - `node pipeline/validate-bundles.mjs`: `Bundles valid.`; unit tests `ℹ fail 0`.
+  - Explorer: title `SAN ANDREAS LAKE`, `errors: []`; flyover rendered (headless Chrome with WebGPU flags; no Edge here).
+- Notes: uses Crystal Springs' look (`peninsula-oak-fir`, sage summer, spring default, morning fog,
+  green water) rather than a copy of Calaveras' land.json, and San Andreas' own hydraulic height
+  (97 ft = 29.6 m). Viewpoints tuned for tree cover and pinned in `source.json`; the second
+  ridge is now "South ridge". Card uses the D1 format and SFPUC's "customers" wording.

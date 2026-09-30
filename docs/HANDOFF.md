@@ -15,7 +15,7 @@ W1 (`pipeline/locate.py`) and W2 are done: Crystal Springs (both upper and lower
 look: summer grass palette, tree cover, species weights and stands, fog (with overcast for
 the Morning preset) and water optics (`renderer/engine/look.js`, light buffer L[6]–L[11]).
 Crystal Springs defaults to spring green, has a foggy overcast Morning and greener water.
-Not yet in any tour (W4). Flyovers here were rendered with headless Chrome (no Edge on the
+W3 adds San Andreas Lake with the same look; W4 puts both on the Hetch Hetchy tour (four stops). Flyovers here were rendered with headless Chrome (no Edge on the
 build machine). See [W2](roadmap/tasks/W2-crystal-springs.md).
 
 ## Shoreline contact — 2026-09-29

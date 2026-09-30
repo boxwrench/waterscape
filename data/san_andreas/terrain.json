@@ -1,0 +1,49 @@
+{
+  "source": "USGS National Map 3D Elevation Program (3DEP), public domain",
+  "name": "San Andreas Lake",
+  "biome": "peninsula-oak-fir",
+  "anchor": [
+    37.59082,
+    -122.42208
+  ],
+  "service": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer",
+  "bbox_lonlat": [
+    -122.464,
+    37.562,
+    -122.3874,
+    37.6323
+  ],
+  "crs": "EPSG:32610",
+  "utmZone": 10,
+  "verticalDatum": "NAVD88 metres (3DEP)",
+  "encoding": "gzip; 3 planar uint16 channels; rows delta-coded from the row above",
+  "width": 676,
+  "height": 783,
+  "cell": [
+    10.073495314462205,
+    10.07349531446247
+  ],
+  "waterLevel": 136.4,
+  "originUTM": [
+    550661.3447915214,
+    4161118.4923993605
+  ],
+  "gridOrigin": [
+    -3362.7664647548227,
+    -4095.4776700288057
+  ],
+  "channels": {
+    "height": {
+      "offset": -250.0,
+      "scale": 0.05
+    },
+    "shoreDistance": {
+      "offset": -4000.0,
+      "scale": 0.25
+    },
+    "valley": {
+      "offset": 0,
+      "scale": 1.5273704789833822e-05
+    }
+  }
+}

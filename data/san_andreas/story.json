@@ -1,0 +1,17 @@
+{
+  "id": "san_andreas",
+  "name": "San Andreas Lake",
+  "place": "San Mateo County, on the San Francisco Peninsula",
+  "operator": "San Francisco Public Utilities Commission",
+  "summary": {
+    "value": "A Peninsula storage reservoir in the regional water system; its water is treated at the Harry Tracy Water Treatment Plant along with the Crystal Springs supply.",
+    "source": "https://www.sfpuc.gov/about-us/our-systems/surface-water-water-rain-and-snowmelt"
+  },
+  "headline": "The valley this lake floods gave the San Andreas Fault its name.",
+  "facts": [
+    { "label": "Listed capacity", "value": "19,027 acre-feet", "featured": true, "source": "https://geospatial.sec.usace.army.mil/dls/rest/services/NID/National_Inventory_of_Dams_Public_Service/FeatureServer/0/query?where=NIDID%3D%27CA00129%27&outFields=MAX_STORAGE&f=json" },
+    { "label": "Dam", "value": "107 ft tall, completed 1870", "source": "https://geospatial.sec.usace.army.mil/dls/rest/services/NID/National_Inventory_of_Dams_Public_Service/FeatureServer/0/query?where=NIDID%3D%27CA00129%27&outFields=DAM_HEIGHT,YEAR_COMPLETED&f=json" },
+    { "label": "Water system", "value": "Hetch Hetchy Regional Water System, serving 2.7 million customers", "source": "https://www.sfpuc.gov/about-us/our-systems" },
+    { "label": "USGS reference · 2023", "value": "134.4 m (441 ft) above sea level", "source": "https://epqs.nationalmap.gov/v1/json?x=-122.42208&y=37.59082&units=Meters&wkid=4326&includeDate=true" }
+  ]
+}
