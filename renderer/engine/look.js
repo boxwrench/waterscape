@@ -28,7 +28,7 @@ export function landLook(land) {
     // A fog layer (water.cu fogLayer), shown by presets with fog: `from` the unit direction it
     // lies in ([0, 0]: everywhere), `edge` metres from the scene origin along it where it
     // begins, thickening over `width`; `top` and `base` in metres above the water surface;
-    // `overcast` 0-1 (effectivePreset).
+    // `density` scales its thickness (default 1); `overcast` 0-1 (effectivePreset).
     fog: land?.fog ?? null,
   };
 }

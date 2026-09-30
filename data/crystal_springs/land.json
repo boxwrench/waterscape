@@ -36,6 +36,7 @@
     "top": 70,
     "base": -20,
     "overcast": 0.85,
+    "density": 0.6,
     "note": "Setting: low valley fog under an overcast marine-layer morning, typical of the Peninsula watershed in summer (see the Commons photos listed in the biome); heights set by eye."
   }
 }
