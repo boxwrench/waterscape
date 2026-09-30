@@ -64,6 +64,13 @@ export function oakDensity(terrain, x, z, cover = 0) {
 
 export const OAK_CELL = 9;
 
+// Species pick in stands (look.js `stands`): a slow ~80 m noise field pushes the pick up or
+// down, so the rarer species grows in groups instead of as isolated trees. Mirrored in
+// impostors.js.
+export function standPick(x, z, pick, stands) {
+  return stands > 0 ? sat(pick + stands * 2 * (noise(x * 0.012 + 41, z * 0.012 - 7) - 0.5)) : pick;
+}
+
 // The oak of lattice cell (cx, cz), or null: trunk position, crown radius (m) and two hashes for
 // choosing its species and variant — the same numbers oakCrowns() uses.
 export function oakSite(terrain, cx, cz, cover = 0) {

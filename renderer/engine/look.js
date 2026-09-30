@@ -19,7 +19,13 @@ export const SUMMER = {
 
 export function landLook(land) {
   const v = land?.vegetation ?? {};
-  return { summer: SUMMER[land?.grass?.summer] ?? SUMMER.gold, cover: v.cover ?? 0, species: v.species ?? null };
+  return {
+    summer: SUMMER[land?.grass?.summer] ?? SUMMER.gold,
+    cover: v.cover ?? 0,
+    species: v.species ?? null,
+    // 0: species mixed tree by tree; 1: grouped in stands (oak-placement.js standPick).
+    stands: v.stands ?? 0,
+  };
 }
 
 // Cumulative pick thresholds for `order` (the biome's species): a tree whose pick hash is below

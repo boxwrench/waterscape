@@ -19,11 +19,11 @@
       "label": "South ridge"
     },
     "shore": {
-      "x": -2142,
-      "z": -1976,
-      "above": 1.6,
-      "yaw": 2.316,
-      "pitch": -0.04,
+      "x": -2145.5,
+      "z": -1942.4,
+      "above": 1.4,
+      "yaw": 0.611,
+      "pitch": -0.42,
       "speed": 4,
       "label": "Shoreline"
     }

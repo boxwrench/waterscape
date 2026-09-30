@@ -122,9 +122,11 @@ export function createImpostors(terrain, biome, biomeBase, ground, speciesOrder,
       pick = hash(cx.add(5), cz.add(91)),
       turn = hash(cx.sub(7), cz.add(3)),
       // look.js pickSpecies: how many thresholds the pick has passed.
+      // oak-placement.js standPick: the pick shifted by the ~80 m stand field.
+      stand = look.stands > 0 ? clamp(pick.add(noise(x.mul(0.012).add(41), z.mul(0.012).sub(7)).sub(0.5).mul(2 * look.stands)), 0, 1) : pick,
       species = speciesThresholds(look, speciesOrder)
         .slice(0, -1)
-        .reduce((n, t) => n.add(select(pick.greaterThanEqual(t), float(1), float(0))), float(0)),
+        .reduce((n, t) => n.add(select(stand.greaterThanEqual(t), float(1), float(0))), float(0)),
       row = species.mul(perSpecies).add(floor(turn.mul(997)).mod(perSpecies)),
       theta = turn.mul(TAU),
       // Which photograph: the viewer's direction in the tree's own (unrotated) frame.

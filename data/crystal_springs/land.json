@@ -4,9 +4,10 @@
     "density": 1.0,
     "cover": 0.55,
     "species": {
-      "coast-live": 0.93,
-      "douglas-fir": 0.07
-    }
+      "coast-live": 0.9,
+      "douglas-fir": 0.1
+    },
+    "stands": 1
   },
   "grass": {
     "spring": "green",

@@ -6,7 +6,7 @@ import {
   Fn, texture, positionWorld, positionLocal, normalWorld, vec2, vec3, float, max, dot, normalize,
   sin, time, instanceIndex, instanceColor, If, Discard, uv,
 } from "../../vendor/three/three.tsl.js";
-import { oaksNear } from "./oak-placement.js";
+import { oaksNear, standPick } from "./oak-placement.js";
 import { landLook, pickSpecies, speciesThresholds } from "../engine/look.js";
 
 // Near-oak range (m) per quality tier; the kernel fades its crowns in just inside this.
@@ -124,7 +124,7 @@ export async function createTrees(terrain, biome, biomeBase, ground, look = land
   function rebuild(x, z, tier) {
     for (const m of meshes) m.b.count = m.l.count = 0;
     for (const site of oaksNear(terrain, x, z, range, look.cover)) {
-      const s = species[pickSpecies(thresholds, site.pick)],
+      const s = species[pickSpecies(thresholds, standPick(site.x, site.z, site.pick, look.stands))],
         list = bySpecies[s],
         full = list[Math.floor(site.turn * 997) % list.length],
         near = tier > 0 && Math.hypot(site.x - x, site.z - z) < NEAR_DETAIL,
