@@ -14,7 +14,7 @@ export const SUMMER = {
   // Sierra granite benches: no cured grass, only dark evergreen shrubs and duff (photos show
   // bare stone and green clumps, no gold).
   granite: {
-    ground: [[0.04, 0.055, 0.03], [0.09, 0.1, 0.05]],
+    ground: [[0.05, 0.055, 0.04], [0.11, 0.105, 0.075]],
     blade: [[0.05, 0.08, 0.03], [0.1, 0.14, 0.05], [0.16, 0.19, 0.08]],
   },
   sage: {

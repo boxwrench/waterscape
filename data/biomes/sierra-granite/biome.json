@@ -48,6 +48,12 @@
       "canyon": {
         "below": -25,
         "gain": 0.5
+      },
+      "fracture": {
+        "tilt": 0.8,
+        "crack": 0.65,
+        "large": 6,
+        "note": "Joint sets (two vertical, one sheeting) with angular block faces, by eye from the Commons photographs and the user's photos below the dam; set geometry in renderer/land/granite.js."
       }
     },
     "ochre": {

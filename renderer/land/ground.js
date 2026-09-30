@@ -4,6 +4,7 @@
 // the baked light map (bake_light). Trees are still drawn by the water kernel on top.
 import * as THREE from "../../vendor/three/three.webgpu.js";
 import { landLook } from "../engine/look.js";
+import { fracture, triplanar } from "./granite.js";
 import {
   Fn, texture, uniform, positionWorld, normalWorld, vec2, vec3, float, mix, smoothstep, dot,
   max, normalize, clamp, mx_noise_float, sin,
@@ -63,7 +64,9 @@ export function createGroundMaterial(terrain, biomeBase, biome, look = landLook(
     rockGain = Array.isArray(gain) ? vec3(...gain) : float(gain);
   const rockStreaks = float(biome.ground.rock?.streaks ?? 0),
     // Below a dam: bare, water-polished dark granite from `canyon.below` metres under the lake.
-    canyon = biome.ground.rock?.canyon;
+    canyon = biome.ground.rock?.canyon,
+    // Jointed, faceted rock with exfoliation ledges (granite.js), where the biome describes it.
+    fractured = biome.ground.rock?.fracture;
 
   const colorNode = Fn(() => {
     const p = positionWorld,
@@ -88,7 +91,8 @@ export function createGroundMaterial(terrain, biomeBase, biome, look = landLook(
       soilTint = mx_noise_float(vec3(xz.mul(0.008), 17)).mul(0.25).add(1.0),
       soil = soilPhoto.mul(1.25).mul(soilTint).mul(rings.mul(0.22).add(0.86)),
       // Brightness per biome: Diablo sandstone and greywacke 2.1, pale Sierra granite brighter.
-      rockPhoto = antiTile(tex.rock.colour, xz, 4.3).rgb.mul(rockGain),
+      rockPhoto = (fractured ? triplanar(tex.rock.colour, p, n0, 6) : antiTile(tex.rock.colour, xz, 4.3)).rgb.mul(rockGain),
+      blocks = fractured ? fracture(p, n0, fractured) : null,
       // Streaked walls (biome rock.streaks, 0 default): fine noise across the ground becomes
       // vertical water streaks on a cliff face, plus broad rust staining.
       streak = mx_noise_float(vec3(xz.mul(0.035), 23)).mul(0.5).add(0.5).mul(0.6).add(mx_noise_float(vec3(xz.mul(0.11), 31)).mul(0.2).add(0.2)),
@@ -97,7 +101,7 @@ export function createGroundMaterial(terrain, biomeBase, biome, look = landLook(
         rockPhoto,
         rockPhoto.mul(streak.mul(0.9).add(0.45)).mul(mix(vec3(1), vec3(1.1, 0.86, 0.66), rust)),
         rockStreaks,
-      );
+      ).mul(blocks ? blocks.shade : float(1));
     // Rock on steep ground and spur crests; soil on the drawdown bank and in patches.
     // look.rock lowers the threshold where the land is bare granite (domes and slabs).
     const rockW = smoothstep(0.34 - look.rock, 0.55 - look.rock, slope.add(macro.sub(0.5).mul(0.25)))
@@ -120,9 +124,10 @@ export function createGroundMaterial(terrain, biomeBase, biome, look = landLook(
     // Close-up detail normal from the dominant layer's normal map (tangent frame ≈ world x/z).
     const nm = mix(antiTile(tex.grass.normal, xz, 2.6).rgb, antiTile(tex.rock.normal, xz, 4.3).rgb, rockW),
       bump = vec3(nm.x.mul(2).sub(1), 0, float(1).sub(nm.y.mul(2))).mul(0.35),
-      n = normalize(n0.add(bump)),
+      // Fractured rock takes its block's facet, with a little of the texture's bump.
+      n = blocks ? normalize(mix(n0.add(bump), blocks.normal.add(bump.mul(0.3)), rockW)) : normalize(n0.add(bump)),
       sunLit = u.sunColor.mul(max(dot(n, u.sun), 0).mul(light.x)),
-      skyLit = u.fill.mul(n0.y.mul(0.3).add(0.38).mul(light.y)),
+      skyLit = u.fill.mul((blocks ? n : n0).y.mul(0.3).add(0.38).mul(light.y)),
       bounce = vec3(0.2, 0.16, 0.08).mul(float(1).sub(n0.y).mul(0.25));
     return albedo.mul(sunLit.add(skyLit).add(bounce));
   })();
