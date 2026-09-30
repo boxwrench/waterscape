@@ -149,7 +149,7 @@ Exact binding, while an observed quantity can be shown through a Derived binding
 | FFT waves and click ripples | Illustrative | Modeled / interactive | The wave model is physically motivated and uses the depth setting, but wave energy is hand-controlled rather than driven by measured local wind; ripples are user-triggered. |
 | Refraction, reflections and caustics | Derived | Renderer state | Computed from the current water surface, light and bed through defined optical calculations. Their inputs can themselves be illustrative, modeled or Setting. |
 | Underwater bed | Derived | Modeled | Synthetic bathymetry from shoreline distance, `bankSlope` and a depth cap, with small procedural relief. `maxDepth` currently uses the dam's sourced hydraulic height as a proxy and `bankSlope` is an estimate; this is not observed bathymetry. |
-| Grass, trees, sky and light presets | Setting | Biome / presentation profile | Biome-plausible rather than individually observed. Both current bundles default to summer/gold terrain and hand-tuned light presets. |
+| Grass, trees, sky, light presets and morning fog | Setting | Biome / presentation profile | Biome-plausible rather than individually observed. The Diablo bundles default to summer/gold terrain; Crystal Springs uses a Peninsula oak and Douglas-fir biome (species from SMC Parks and SFPUC pages, colours tuned to Wikimedia Commons photos) and shows a marine-layer fog bank on its western ridges in the Morning preset. Light presets are hand-tuned. |
 
 This table is an implementation reading, not a full scientific audit. Update it when either the
 underlying state or a visual binding changes.

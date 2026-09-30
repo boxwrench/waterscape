@@ -20,11 +20,24 @@ test("species missing from the weights share evenly when no weights are given", 
   assert.deepEqual(speciesThresholds(landLook({}), ["a", "b"]), [0.5, 1]);
 });
 
-test("the light buffer carries the summer palette and cover in its last two float4s", () => {
+test("the light buffer carries the summer palette and cover in float4s 6 and 7", () => {
   const look = landLook({ grass: { summer: "sage" }, vegetation: { cover: 0.4 } }),
     b = presetBuffer(PRESETS.golden, look);
-  assert.equal(b.length, 32);
+  assert.equal(b.length, 40);
   assert.deepEqual([...b.slice(24, 27)], SUMMER.sage.ground[0].map(Math.fround));
   assert.equal(b[27], Math.fround(0.4));
   assert.deepEqual([...b.slice(28, 31)], SUMMER.sage.ground[1].map(Math.fround));
+});
+
+test("a marine layer is written only for a fog-capable preset and a body with fog", () => {
+  const fog = { from: [-1, 0], edge: 2200, width: 1500, top: 330, base: 60 },
+    look = landLook({ fog });
+  assert.deepEqual(look.fog, fog);
+  const morning = presetBuffer(PRESETS.morning, look), golden = presetBuffer(PRESETS.golden, look);
+  assert.equal(morning.length, 40);
+  assert.ok(morning[32] > 0, "morning fog amount");
+  assert.deepEqual([...morning.slice(33, 36)], [330, 60, 2200]);
+  assert.deepEqual([...morning.slice(36, 39)], [-1, 0, 1500]);
+  assert.equal(golden[32], 0);
+  assert.equal(presetBuffer(PRESETS.morning, landLook({}))[32], 0);
 });

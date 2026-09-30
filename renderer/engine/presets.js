@@ -14,6 +14,8 @@ export const PRESET_NAMES = ["morning", "midday", "golden"];
 export const PRESETS = {
   morning: {
     label: "Morning",
+    // A water body with a marine layer (land.json "fog") shows it in the morning.
+    fog: 1,
     sun: unit([0.93, 0.28, 0.24]),
     sunColor: [2.2, 1.8, 1.35],
     fill: [0.34, 0.42, 0.56],
@@ -47,9 +49,10 @@ export const PRESETS = {
   },
 };
 
-// Eight float4s, read by the shader as `const float4 *light` (see the comment above sky()):
-// six for the light, two for the water body's land look (look.js).
+// Ten float4s, read by the shader as `const float4 *light` (see the comment above sky()):
+// six for the light, two for the water body's land look and two for its fog (look.js).
 export function presetBuffer(p, look = landLook(null)) {
+  const fog = look.fog;
   return new Float32Array([
     ...p.sun, p.cloudCoverage,
     ...p.sunColor, p.cloudDensity,
@@ -59,6 +62,8 @@ export function presetBuffer(p, look = landLook(null)) {
     p.cloudScale, p.cloudSpeed, p.exposure, 0,
     ...look.summer.ground[0], look.cover,
     ...look.summer.ground[1], 0,
+    fog ? p.fog ?? 0 : 0, fog?.top ?? 0, fog?.base ?? 0, fog?.edge ?? 0,
+    ...(fog?.from ?? [0, 0]), fog?.width ?? 1, 0,
   ]);
 }
 

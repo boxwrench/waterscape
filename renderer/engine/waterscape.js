@@ -86,7 +86,7 @@ export async function createWaterscape(
 
   const source = await (await fetch(new URL("../water.cu", import.meta.url))).text(),
     terrainCells = rt.createBuffer(terrain.gpuCells()),
-    lightBuf = rt.createBuffer(32 * 4),
+    lightBuf = rt.createBuffer(40 * 4),
     look = landLook(body.land),
     // Baked terrain light (bake_light): rows padded to 256 bytes so they copy into a texture.
     bakeStride = Math.ceil(terrain.width / 16) * 16,

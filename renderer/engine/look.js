@@ -25,6 +25,10 @@ export function landLook(land) {
     species: v.species ?? null,
     // 0: species mixed tree by tree; 1: grouped in stands (oak-placement.js standPick).
     stands: v.stands ?? 0,
+    // A marine layer lying beyond a ridge line (water.cu fogLayer), shown by presets with fog:
+    // `from` the unit direction it lies in, `edge` metres from the scene origin along it where
+    // it begins, thickening over `width`; `top` and `base` in metres above the water surface.
+    fog: land?.fog ?? null,
   };
 }
 

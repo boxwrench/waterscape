@@ -284,6 +284,7 @@ __device__ float fresnel(float ci) {
 // L[2] sky fill rgb, sky gain · L[3] turbidity, rayleigh, mie coefficient, mie g
 // L[4] haze rgb, haze density · L[5] cloud scale, cloud speed, exposure, unused
 // L[6] summer grass dark rgb, tree cover · L[7] summer grass light rgb, unused (look.js)
+// L[8] fog amount, top, base, edge · L[9] fog from xz, ramp width, unused (look.js)
 __device__ float3 lightSun(const float4 *L) { return v3(L[0].x, L[0].y, L[0].z); }
 __device__ float3 lightRad(const float4 *L) { return v3(L[1].x, L[1].y, L[1].z); }
 __device__ float3 lightFill(const float4 *L) { return v3(L[2].x, L[2].y, L[2].z); }
@@ -749,14 +750,58 @@ __device__ float3 terrainShade(const float4 *T, const float4 *L, float3 p, float
   float3 lit = mix3(groundLit, crownLit, canopy * (1.0f - ring) * (given.w > 1.5f ? 0.0f : 1.0f));
   return aerial(L, lit, distance);
 }
+// Morning marine layer (Setting): a fog bank lying beyond a ridge line (L[8], L[9]; look.js),
+// thickening over a ramp, its top billowing with drifting noise. Eight steps where the ray
+// crosses the layer; nothing at all without fog.
+__device__ float3 fogLayer(const float4 *L, float3 col, float3 ro, float3 rd, float tEnd, float time) {
+  float amount = L[8].x, top = L[8].y, base = L[8].z, edge = L[8].w, fx = L[9].x, fz = L[9].y;
+  if (amount <= 0.0f)
+    return col;
+  // Clip the ray to the layer's height band and to the fog side of the edge.
+  float t0 = 0.0f, t1 = fminf(tEnd, 30000.0f), crown = top + 60.0f;
+  if (fabsf(rd.y) > .00001f) {
+    float ta = (base - ro.y) / rd.y, tb = (crown - ro.y) / rd.y;
+    t0 = fmaxf(t0, fminf(ta, tb));
+    t1 = fminf(t1, fmaxf(ta, tb));
+  } else if (ro.y < base || ro.y > crown)
+    return col;
+  float s0 = ro.x * fx + ro.z * fz - edge, ds = rd.x * fx + rd.z * fz;
+  if (fabsf(ds) > .00001f) {
+    float ts = -s0 / ds;
+    if (ds > 0.0f)
+      t0 = fmaxf(t0, ts);
+    else
+      t1 = fminf(t1, ts);
+  } else if (s0 < 0.0f)
+    return col;
+  if (t1 <= t0)
+    return col;
+  float dt = (t1 - t0) / 8.0f, tau = 0.0f, lift = 0.0f;
+  for (int i = 0; i < 8; i++) {
+    float3 p = add(ro, mul(rd, t0 + ((float)i + .5f) * dt));
+    // Billows: broad swells and smaller heads on the layer's top, drifting slowly.
+    float n = .65f * noise(p.x * .0007f + time * .004f, p.z * .0007f) +
+              .35f * noise(p.x * .0031f + time * .01f, p.z * .0031f + 5.0f),
+          crest = top + 150.0f * (n - .5f),
+          d = smooth(0.0f, L[9].z, p.x * fx + p.z * fz - edge) * smooth(crest, crest - 30.0f, p.y) *
+              smooth(base, base + 50.0f, p.y) * dt;
+    tau += d;
+    lift += d * sat((p.y - base) / fmaxf(1.0f, crest - base));
+  }
+  // Sunlit tops, greyer where the fog is seen low in the layer.
+  float3 fog = mul(add(mul(lightRad(L), .22f), mul(lightFill(L), 1.6f)),
+                   .7f + .45f * (tau > 0.0f ? lift / tau : 0.0f));
+  return mix3(fog, col, expf(-.004f * amount * tau));
+}
 // Reflected / environment lookup: terrain if the ray hits it, otherwise the sky.
 __device__ float3 environment(const float4 *T, const float4 *L, float3 ro, float3 rd, int steps,
                               int season, float time) {
   float t = terrainTrace(T, ro, rd, steps, 16000.0f);
   if (t > 0)
-    return terrainShade(T, L, add(ro, mul(rd, t)), rd, t, season, 0, 0.0f, T, 0,
-                        make_float4(0.0f, 0.0f, 0.0f, 0.0f), 0.0f, time, 0.0f);
-  return sky(L, rd, season, time);
+    return fogLayer(L, terrainShade(T, L, add(ro, mul(rd, t)), rd, t, season, 0, 0.0f, T, 0,
+                                    make_float4(0.0f, 0.0f, 0.0f, 0.0f), 0.0f, time, 0.0f),
+                    ro, rd, t, time);
+  return fogLayer(L, sky(L, rd, season, time), ro, rd, 1.0e9f, time);
 }
 __device__ float floorDepth(const float4 *T, float x, float z, float depth, float slope) {
   // Floor meets the surface at the waterline so the bank shows through shallow water.
@@ -857,6 +902,8 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
   } else
     landT = terrainTrace(terrain, ro, rd, traceSteps, 16000.0f);
   bool hitWater = false;
+  // Distance to whatever this pixel shows, for the fog layer (sky: unbounded).
+  float hitT = 1.0e9f;
   if (rd.y < .0015f) {
     float3 wd = norm(v3(rd.x, fminf(rd.y, -.0015f), rd.z));
     float t = -camY / wd.y;
@@ -894,6 +941,7 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
     }
     if (onReservoir) {
     hitWater = true;
+    hitT = t;
     float3 n = norm(v3(-a.y, 1, -a.z)), v = mul(wd, -1);
     float nv = dot3(n, v);
     if (nv < .02f) {
@@ -969,6 +1017,7 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
   // calculating terrain and sky first spent work on values that were discarded.
   if (!hitWater) {
     if (landT > 0) {
+      hitT = landT;
       float3 lp = add(ro, mul(rd, landT));
       lp.y = terrainHeight(terrain, lp.x, lp.z);
       col = terrainShade(terrain, light, lp, rd, landT, season, shadowSteps, treeNear, baked,
@@ -978,6 +1027,7 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
   }
   float mu = dot3(rd, sun);
   col = add(col, mul(SUN, 18 * smooth(.99996f, .999985f, mu)));
+  col = fogLayer(light, col, ro, rd, hitT, time);
   hdr[iy * width + ix] = make_float4(fmaxf(0, col.x), fmaxf(0, col.y), fmaxf(0, col.z), 1);
 }
 __global__ void bloom_pass(const float4 *input, float4 *output, int width, int height, int axis) {
