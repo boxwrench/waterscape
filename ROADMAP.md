@@ -53,6 +53,16 @@ The roadmap below describes the **reservoir experience**, rather than limiting t
   Low-tier tree geometry fell from 9.8 MB to 1.2 MB. Local first handoff measured 16.1 → 14.6 s;
   next stop 15.6 → 14.2 s (single samples, not a production benchmark).
 
+## Man-made features
+
+Scenes currently leave out everything man-made; land beyond the water is drawn as the biome
+even where aerial photographs show suburbs. When structures are added, in this order:
+
+1. **Dams** — the structure that makes each reservoir, sourced from the National Inventory of
+   Dams.
+2. **Adits and outlet structures** — intakes, towers and tunnel portals that move the water.
+3. **Roads and other buildings** — last, if at all.
+
 ## Next: water and reservoir context
 
 1. **D1 — Reservoir context around the water**
