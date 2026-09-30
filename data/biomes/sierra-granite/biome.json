@@ -44,7 +44,11 @@
         0.27
       ],
       "note": "gain and albedo matched to sunlit granite (sRGB 175,162,144) in https://commons.wikimedia.org/wiki/File:Hetch_Hetchy_May_2011_001.jpg",
-      "streaks": 1
+      "streaks": 1,
+      "canyon": {
+        "below": -25,
+        "gain": 0.5
+      }
     },
     "ochre": {
       "ambientcg": "Ground108",

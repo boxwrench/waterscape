@@ -124,6 +124,31 @@ def carve_dams(dem, water, crests, crest_elevations, cell, heights=None):
     return out, footprint
 
 
+def carve_river(dem, centre, widths, surfaces, cell, depth=1.5, clear=0.0):
+    """Cut a river below its surface so a ribbon of water at `surfaces` shows over the 10 m
+    grid, which smears a narrow channel. `centre` is a polyline in raster (col, row) units;
+    `widths` (metres) and `surfaces` (elevations) are per point and interpolated along it.
+    Returns (carved dem, footprint mask); the footprint extends `clear` metres past the banks
+    (the canyon kept free of trees)."""
+    rows, cols = np.mgrid[0:dem.shape[0], 0:dem.shape[1]]
+    best = np.full(dem.shape, np.inf)
+    width = np.zeros(dem.shape)
+    surface = np.zeros(dem.shape)
+    for i, ((c0, r0), (c1, r1)) in enumerate(zip(centre, centre[1:])):
+        dc, dr = c1 - c0, r1 - r0
+        t = np.clip(((cols - c0) * dc + (rows - r0) * dr) / max(dc * dc + dr * dr, 1e-9), 0, 1)
+        dist = np.hypot(cols - (c0 + t * dc), rows - (r0 + t * dr)) * cell
+        closer = dist < best
+        best[closer] = dist[closer]
+        width[closer] = (widths[i] + (widths[i + 1] - widths[i]) * t)[closer]
+        surface[closer] = (surfaces[i] + (surfaces[i + 1] - surfaces[i]) * t)[closer]
+    # Half the width plus half a cell, so the grid's samples straddle both banks.
+    channel = best <= width / 2 + cell / 2
+    out = dem.copy()
+    out[channel] = np.minimum(out[channel], surface[channel] - depth)
+    return out, best <= width / 2 + cell / 2 + clear
+
+
 def channels(dem, water, level, cell):
     """(height above water, signed shoreline distance in metres, valley-ness 0..1)."""
     sdf = ndimage.distance_transform_edt(~water) * cell - ndimage.distance_transform_edt(water) * cell

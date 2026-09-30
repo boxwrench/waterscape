@@ -82,3 +82,14 @@ def test_dams_flood_their_upstream_face_even_over_smeared_high_ground():
     out = burn_dams(water, [[(5.0, 43.0), (55.0, 43.0)]], reach=6, always=3)
     assert out[41:43, 10:50].all()
     assert not out[41:43, 0].any(), "not beyond the crest's ends"
+
+
+def test_rivers_are_carved_below_their_surface_within_their_width():
+    from dem import carve_river
+    dem = np.full((40, 60), 100.0)
+    # A river along row 20 from col 5 to 55, 6 cells wide, surface falling 50 -> 40.
+    out, foot = carve_river(dem, [(5.0, 20.0), (55.0, 20.0)], [6.0, 6.0], [50.0, 40.0], cell=1.0)
+    assert out[20, 5] <= 50.0 - 1.5 and out[20, 55] <= 40.0 - 1.5
+    assert abs(out[20, 30] - (45.0 - 1.5)) < 0.2, "surface interpolated along the river"
+    assert out[20 + 5, 30] == 100.0, "outside the banks untouched"
+    assert foot[20, 30] and not foot[30, 30]

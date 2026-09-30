@@ -61,7 +61,9 @@ export function createGroundMaterial(terrain, biomeBase, biome, look = landLook(
   // Rock brightness per biome, a number or rgb (Sierra granite is warm and pale).
   const gain = biome.ground.rock?.gain ?? 2.1,
     rockGain = Array.isArray(gain) ? vec3(...gain) : float(gain);
-  const rockStreaks = float(biome.ground.rock?.streaks ?? 0);
+  const rockStreaks = float(biome.ground.rock?.streaks ?? 0),
+    // Below a dam: bare, water-polished dark granite from `canyon.below` metres under the lake.
+    canyon = biome.ground.rock?.canyon;
 
   const colorNode = Fn(() => {
     const p = positionWorld,
@@ -106,6 +108,14 @@ export function createGroundMaterial(terrain, biomeBase, biome, look = landLook(
       wet = float(1).sub(smoothstep(0.2, 0.9, p.y));
     let albedo = mix(grass, soil, soilW);
     albedo = mix(albedo, rock, rockW);
+    if (canyon) {
+      const deep = float(1).sub(smoothstep(canyon.below, canyon.below + 15, p.y));
+      // Grey, not the warm weathered granite above: the photos show near-black wet rock with
+      // pale veins.
+      const grey = vec3(dot(rock, vec3(0.3333))).mul(canyon.gain),
+        vein = smoothstep(0.62, 0.7, mx_noise_float(vec3(xz.x.mul(0.3), p.y.mul(0.03), xz.y.mul(0.3))).mul(0.5).add(0.5));
+      albedo = mix(albedo, mix(grey, grey.mul(2.2), vein), deep);
+    }
     albedo = mix(albedo, albedo.mul(0.45), wet);
     // Close-up detail normal from the dominant layer's normal map (tangent frame ≈ world x/z).
     const nm = mix(antiTile(tex.grass.normal, xz, 2.6).rgb, antiTile(tex.rock.normal, xz, 4.3).rgb, rockW),

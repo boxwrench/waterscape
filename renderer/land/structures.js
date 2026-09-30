@@ -4,7 +4,10 @@
 // not the as-built drawings. Lit like the trees; alpha 0.5 tells the water kernel the pixel is
 // already shaded (pack.js), and hides the water behind it.
 import * as THREE from "../../vendor/three/three.webgpu.js";
-import { texture, positionWorld, normalWorld, vec2, float, max, dot, normalize, uv } from "../../vendor/three/three.tsl.js";
+import {
+  texture, positionWorld, normalWorld, cameraPosition, vec2, vec3, float, max, min, dot, normalize, uv, mix,
+  smoothstep, fract, abs, pow, reflect, mx_noise_float, time,
+} from "../../vendor/three/three.tsl.js";
 
 // Cross-section across the dam in metres: u downstream from the upstream face, y below the
 // crest. Closed polygon, walked upstream face → crest (with parapets) → downstream face →
@@ -89,9 +92,58 @@ export function damGeometry(dam, meta, downstream) {
   return g;
 }
 
+// A river as a ribbon of water along its centre line, at its recorded surface (scene y), each
+// point `width` metres across. uv: x metres downstream, y 0-1 across.
+export function riverGeometry(river, meta) {
+  const [e0, n0] = meta.originUTM,
+    pts = river.centreUTM.map(([e, n]) => new THREE.Vector3(e - e0, 0, n0 - n)),
+    positions = [],
+    uvs = [],
+    index = [];
+  let along = 0;
+  pts.forEach((p, i) => {
+    const a = pts[Math.max(0, i - 1)],
+      b = pts[Math.min(pts.length - 1, i + 1)],
+      t = new THREE.Vector3().subVectors(b, a).normalize(),
+      half = river.width[i] / 2,
+      y = river.surface[i] - meta.waterLevel;
+    if (i) along += p.distanceTo(pts[i - 1]);
+    for (const s of [-1, 1]) {
+      positions.push(p.x - t.z * half * s, y, p.z + t.x * half * s);
+      uvs.push(along, (s + 1) / 2);
+    }
+    if (i) index.push(2 * i - 2, 2 * i - 1, 2 * i, 2 * i - 1, 2 * i + 1, 2 * i);
+  });
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+  g.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
+  g.setIndex(index);
+  return g;
+}
+
+// Dark canyon water: a slowly moving rippled normal, a Fresnel mix of the sky fill over the
+// deep colour, and the sun's glint. Illustrative only (no flow is modelled); tagged as shaded.
+function riverMaterial(u) {
+  const q = uv(),
+    flow = time.mul(0.6),
+    nx = mx_noise_float(vec3(q.x.mul(0.25).sub(flow), q.y.mul(3), 1)).mul(0.18),
+    nz = mx_noise_float(vec3(q.x.mul(0.25).sub(flow), q.y.mul(3), 7)).mul(0.18),
+    n = normalize(vec3(nx, 1, nz)),
+    v = normalize(cameraPosition.sub(positionWorld)),
+    fres = pow(float(1).sub(max(dot(n, v), 0)), 5).mul(0.95).add(0.05),
+    glint = pow(max(dot(reflect(v.negate(), n), u.sun), 0), 120).mul(4),
+    deep = vec3(0.006, 0.01, 0.011),
+    sky = u.fill.mul(0.3),
+    m = new THREE.MeshBasicNodeMaterial({ blending: THREE.NoBlending });
+  m.colorNode = mix(deep, sky, fres).add(u.sunColor.mul(glint));
+  m.opacityNode = float(0.5);
+  return m;
+}
+
 export async function createStructures(terrain, structures, ground) {
-  const dams = structures?.dams ?? [];
-  if (!dams.length) return null;
+  const dams = structures?.dams ?? [],
+    rivers = structures?.rivers ?? [];
+  if (!dams.length && !rivers.length) return null;
   const load = (file, colour) => {
       const t = new THREE.TextureLoader().load(new URL(`../../data/structures/${file}`, import.meta.url).href);
       t.wrapS = t.wrapT = THREE.RepeatWrapping;
@@ -107,11 +159,21 @@ export async function createStructures(terrain, structures, ground) {
     // No blending: the 0.5 alpha is a tag for pack.js, and blending a face over another
     // (or over the ground) would change it and turn the dam into plain ground.
     material = new THREE.MeshBasicNodeMaterial({ side: THREE.DoubleSide, blending: THREE.NoBlending });
-  // Weathered concrete, brightened to the pale face in photographs; sun, sky fill and the
-  // baked terrain light, as the ground.
-  material.colorNode = texture(concrete, uv())
-    .rgb.mul(2.1)
-    .mul(u.sunColor.mul(max(dot(n, u.sun), 0).mul(light.x)).add(u.fill.mul(n.y.mul(0.3).add(0.55).mul(light.y))));
+  // Weathered grey-tan concrete as in photographs of the downstream face: the texture tinted
+  // warm, darker pour lines every 1.5 m of height, panel joints every 15 m along the crest,
+  // and broad dark water staining down the face; lit by sun, sky fill and baked terrain light.
+  const q = uv(),
+    lift = smoothstep(0.9, 0.97, abs(fract(positionWorld.y.div(1.5)).sub(0.5)).mul(2)),
+    joint = smoothstep(0.93, 0.99, abs(fract(q.x.mul(11 / 15)).sub(0.5)).mul(2)),
+    stain = smoothstep(0.55, 0.85, mx_noise_float(vec3(q.x.mul(0.25), positionWorld.y.mul(0.012), 5)).mul(0.5).add(0.5)),
+    photo = texture(concrete, uv()).rgb,
+    albedo = mix(photo, vec3(0.36), 0.7)
+      .mul(vec3(1.25, 1.17, 1.05))
+      .mul(float(1).sub(lift.mul(0.3)).sub(joint.mul(0.2)))
+      .mul(mix(float(1), float(0.55), stain));
+  material.colorNode = albedo.mul(
+    u.sunColor.mul(max(dot(n, u.sun), 0).mul(light.x)).add(u.fill.mul(n.y.mul(0.3).add(0.55).mul(light.y))),
+  );
   material.opacityNode = float(0.5);
   const group = new THREE.Group();
   for (const dam of dams) {
@@ -127,6 +189,14 @@ export async function createStructures(terrain, structures, ground) {
       mesh = new THREE.Mesh(damGeometry(dam, terrain.meta, side), material);
     mesh.name = dam.name;
     group.add(mesh);
+  }
+  if (rivers.length) {
+    const water = riverMaterial(u);
+    for (const river of rivers) {
+      const mesh = new THREE.Mesh(riverGeometry(river, terrain.meta), water);
+      mesh.name = river.name;
+      group.add(mesh);
+    }
   }
   return { group };
 }

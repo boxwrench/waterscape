@@ -35,6 +35,15 @@
       "pitch": -0.36,
       "speed": 10,
       "label": "O'Shaughnessy Dam"
+    },
+    "below": {
+      "x": -4514,
+      "z": -174,
+      "above": 3.8,
+      "yaw": 1.178,
+      "pitch": 0.244,
+      "speed": 6,
+      "label": "Below the dam"
     }
   },
   "flyover": {
