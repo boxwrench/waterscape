@@ -1,0 +1,43 @@
+{
+  "biome": "peninsula-oak-fir",
+  "vegetation": {
+    "density": 1.0,
+    "cover": 0.55,
+    "species": {
+      "coast-live": 0.9,
+      "douglas-fir": 0.1
+    },
+    "stands": 1
+  },
+  "grass": {
+    "spring": "green",
+    "summer": "sage"
+  },
+  "presets": [
+    "morning",
+    "midday",
+    "golden"
+  ],
+  "defaultPreset": "golden",
+  "defaultSeason": "spring",
+  "water": {
+    "maxDepth": 42.4,
+    "bankSlope": 0.25,
+    "maxDepthSource": "https://geospatial.sec.usace.army.mil/dls/rest/services/NID/National_Inventory_of_Dams_Public_Service/FeatureServer/0/query?where=NIDID%3D%27CA00127%27&outFields=HYDRAULIC_HEIGHT&f=json",
+    "note": "maxDepth is the dam's hydraulic height (streambed to maximum water level); bankSlope is metres of depth per metre from shore, an estimate.",
+    "optics": "green"
+  },
+  "fog": {
+    "from": [
+      0,
+      0
+    ],
+    "edge": -1,
+    "width": 1,
+    "top": 70,
+    "base": -20,
+    "overcast": 0.85,
+    "density": 0.6,
+    "note": "Setting: low valley fog under an overcast marine-layer morning, typical of the Peninsula watershed in summer (see the Commons photos listed in the biome); heights set by eye."
+  }
+}

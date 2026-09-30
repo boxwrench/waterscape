@@ -3,6 +3,7 @@
 // renderer's HDR units (today's sun was (2.0, 1.83, 1.55), sky fill (.36, .46, .62)).
 // skyGain scales the Preetham sky (whose raw brightness falls ~10x from midday to a low sun)
 // to those units; see sky() in water.cu.
+import { landLook } from "./look.js";
 const unit = (v) => {
   const l = Math.hypot(...v);
   return v.map((x) => x / l);
@@ -13,6 +14,8 @@ export const PRESET_NAMES = ["morning", "midday", "golden"];
 export const PRESETS = {
   morning: {
     label: "Morning",
+    // A water body with a marine layer (land.json "fog") shows it in the morning.
+    fog: 1,
     sun: unit([0.93, 0.28, 0.24]),
     sunColor: [2.2, 1.8, 1.35],
     fill: [0.34, 0.42, 0.56],
@@ -46,8 +49,10 @@ export const PRESETS = {
   },
 };
 
-// Six float4s, read by the shader as `const float4 *light` (see the comment above sky()).
-export function presetBuffer(p) {
+// Twelve float4s, read by the shader as `const float4 *light` (see the comment above sky()):
+// six for the light, then the water body's land look, fog and water optics (look.js).
+export function presetBuffer(p, look = landLook(null)) {
+  const fog = look.fog;
   return new Float32Array([
     ...p.sun, p.cloudCoverage,
     ...p.sunColor, p.cloudDensity,
@@ -55,6 +60,12 @@ export function presetBuffer(p) {
     p.turbidity, p.rayleigh, p.mieCoefficient, p.mieG,
     ...p.haze, p.hazeDensity,
     p.cloudScale, p.cloudSpeed, p.exposure, 0,
+    ...look.summer.ground[0], look.cover,
+    ...look.summer.ground[1], 0,
+    fog ? (p.fog ?? 0) * (fog.density ?? 1) : 0, fog?.top ?? 0, fog?.base ?? 0, fog?.edge ?? 0,
+    ...(fog?.from ?? [0, 0]), fog?.width ?? 1, 0,
+    ...look.water.absorb, 0,
+    ...look.water.scatter, 0,
   ]);
 }
 

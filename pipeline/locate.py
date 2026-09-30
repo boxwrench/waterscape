@@ -1,21 +1,3 @@
-# W1 — `pipeline/locate.py`: draft a source.json from a lake name
-
-**Who:** small · **Needs:** — · **Branch:** `task/W1`
-
-## Goal
-
-A command that turns a lake's official name into a draft `data/<id>/source.json`, using the
-lake outline from the USGS National Hydrography Dataset (NHD). It picks an anchor point far from
-every shore (so the builder finds the right water), pads the box with 2 km of land, and sizes the
-grid at about 10 m per cell.
-
-## Steps
-
-1. `git switch -c task/W1`
-
-2. Create `pipeline/locate.py` with exactly this content:
-
-```python
 """Draft a data/<id>/source.json from a lake's name, using the USGS National Hydrography Dataset.
 
 Usage:  python pipeline/locate.py "<NHD lake name>" <biome> [--pad-km 2]
@@ -108,46 +90,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-```
-
-3. Create `pipeline/tests/test_locate.py` with exactly this content:
-
-```python
-from locate import anchor_point, inside
-
-SQUARE = [[[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]]]
-
-
-def test_inside_square():
-    assert inside(0.5, 0.5, SQUARE)
-    assert not inside(1.5, 0.5, SQUARE)
-
-
-def test_anchor_is_the_middle_of_a_square():
-    assert anchor_point(SQUARE, 1.0) == [0.5, 0.5]
-```
-
-4. Run: `python -m pytest pipeline/tests/test_locate.py -q`
-   **Pass:** `2 passed`.
-
-5. Run (needs internet): `python pipeline/locate.py "Calaveras Reservoir" diablo-oak`
-   **Pass:** prints JSON whose `anchor` is within 0.02 of `[37.47, -121.82]` in both numbers,
-   and whose `nhdAreaKm2` is about `4.8`.
-
-6. Run: `python -m pytest pipeline/tests -q` — **Pass:** no `failed`.
-
-7. Commit: `git add pipeline/locate.py pipeline/tests/test_locate.py` then
-   `git commit -m "W1: pipeline/locate.py drafts a source.json from a lake name"`.
-
-8. Add the **Result** section (see AGENTS.md) to this file and commit it.
-
-## Result
-- Status: done
-- Commit: 980c471
-- Checks:
-  - `python -m pytest pipeline/tests/test_locate.py -q`: `2 passed`.
-  - `python pipeline/locate.py "Calaveras Reservoir" diablo-oak`: anchor `[37.46421, -121.81646]`,
-    `nhdAreaKm2` 4.799.
-  - `python -m pytest pipeline/tests -q`: `23 passed`.
-- Notes: this machine has no `python`/pytest on PATH; checks ran in a scratch venv
-  (numpy, scipy, Pillow, pytest) with `python3`.

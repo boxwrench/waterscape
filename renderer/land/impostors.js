@@ -11,12 +11,13 @@ import {
   If, Discard, select, uv,
 } from "../../vendor/three/three.tsl.js";
 import { OAK_CELL } from "./oak-placement.js";
+import { landLook, speciesThresholds } from "../engine/look.js";
 
 // Impostor range (m) per quality tier.
 export const IMPOSTOR_RANGE = [250, 900, 1500];
 const TAU = Math.PI * 2;
 
-export function createImpostors(terrain, biome, biomeBase, ground, speciesOrder) {
+export function createImpostors(terrain, biome, biomeBase, ground, speciesOrder, look = landLook(null)) {
   const imp = biome.trees?.impostors,
     tex = biome.trees?.textures;
   if (!imp?.rows?.length || !tex?.impostorAlbedo) return null;
@@ -110,7 +111,8 @@ export function createImpostors(terrain, biome, biomeBase, ground, speciesOrder)
       steep = sm(0.18, 0.45, float(1).sub(float(6).div(len))),
       grove = sm(0.46, 0.64, fbm(x.mul(0.0065).add(13), z.mul(0.0065).sub(4))),
       density = clamp(
-        valley.mul(0.85).add(0.05).add(north.mul(0.55)).add(steep.mul(0.25)).add(grove.mul(0.75)).sub(sm(0.62, 0.88, spur).mul(0.7)),
+        valley.mul(0.85).add(0.05).add(north.mul(0.55)).add(steep.mul(0.25)).add(grove.mul(0.75)).sub(sm(0.62, 0.88, spur).mul(0.7))
+          .add(float(1).sub(sm(0.62, 0.88, spur)).mul(look.cover)),
         0,
         1,
       ).mul(sm(10, 35, g.y)),
@@ -119,7 +121,12 @@ export function createImpostors(terrain, biome, biomeBase, ground, speciesOrder)
       radius = hash(cx.add(11), cz.add(5)).mul(3.2).add(3.4),
       pick = hash(cx.add(5), cz.add(91)),
       turn = hash(cx.sub(7), cz.add(3)),
-      species = clamp(floor(pick.mul(speciesOrder.length)), 0, speciesOrder.length - 1),
+      // look.js pickSpecies: how many thresholds the pick has passed.
+      // oak-placement.js standPick: the pick shifted by the ~80 m stand field.
+      stand = look.stands > 0 ? clamp(pick.add(noise(x.mul(0.012).add(41), z.mul(0.012).sub(7)).sub(0.5).mul(2 * look.stands)), 0, 1) : pick,
+      species = speciesThresholds(look, speciesOrder)
+        .slice(0, -1)
+        .reduce((n, t) => n.add(select(stand.greaterThanEqual(t), float(1), float(0))), float(0)),
       row = species.mul(perSpecies).add(floor(turn.mul(997)).mod(perSpecies)),
       theta = turn.mul(TAU),
       // Which photograph: the viewer's direction in the tree's own (unrotated) frame.

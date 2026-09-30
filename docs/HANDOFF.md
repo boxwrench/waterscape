@@ -8,6 +8,16 @@ and what's next".
 
 https://boxwrench.github.io/waterscape/ (GitHub Pages deploys on every push to `main`).
 
+## Crystal Springs — 2026-09-29
+
+W1 (`pipeline/locate.py`) and W2 are done: Crystal Springs (both upper and lower lakes, via
+`extraAnchors`) with a new `peninsula-oak-fir` biome. `land.json` now drives a water body's
+look: summer grass palette, tree cover, species weights and stands, fog (with overcast for
+the Morning preset) and water optics (`renderer/engine/look.js`, light buffer L[6]–L[11]).
+Crystal Springs defaults to spring green, has a foggy overcast Morning and greener water.
+Not yet in any tour (W4). Flyovers here were rendered with headless Chrome (no Edge on the
+build machine). See [W2](roadmap/tasks/W2-crystal-springs.md).
+
 ## Shoreline contact — 2026-09-29
 
 B1 replaced the straight, grid-aligned waterline with an organic edge. Within ~8 m of the

@@ -3,6 +3,7 @@
 // terrainShade in water.cu — preset sun and sky fill, with sun visibility and sky openness from
 // the baked light map (bake_light). Trees are still drawn by the water kernel on top.
 import * as THREE from "../../vendor/three/three.webgpu.js";
+import { landLook } from "../engine/look.js";
 import {
   Fn, texture, uniform, positionWorld, normalWorld, vec2, vec3, float, mix, smoothstep, dot,
   max, normalize, clamp, mx_noise_float, sin,
@@ -28,8 +29,10 @@ export function gridTexture(data, width, height) {
   return t;
 }
 
-export function createGroundMaterial(terrain, biomeBase, biome) {
-  const files = (layer, kind) => new URL(`ground/${layer}_${kind}.jpg`, biomeBase).href,
+export function createGroundMaterial(terrain, biomeBase, biome, look = landLook(null)) {
+  // A layer's listed files (colour, normal; may point into another biome), else the convention.
+  const files = (layer, kind) =>
+    new URL(biome.ground[layer].files?.[kind === "color" ? 0 : 1] ?? `ground/${layer}_${kind}.jpg`, biomeBase).href,
     tex = {};
   for (const layer of Object.keys(biome.ground))
     tex[layer] = { colour: loadTexture(files(layer, "color"), true), normal: loadTexture(files(layer, "normal"), false) };
@@ -69,7 +72,7 @@ export function createGroundMaterial(terrain, biomeBase, biome) {
     const grassPhoto = antiTile(tex.grass.colour, xz, 2.6).rgb,
       detail = clamp(lum(grassPhoto).div(MEAN.grass), 0.35, 2.2),
       spring = mix(vec3(0.13, 0.3, 0.03), vec3(0.3, 0.46, 0.06), macro),
-      summer = mix(vec3(0.3, 0.21, 0.075), vec3(0.5, 0.37, 0.15), macro),
+      summer = mix(vec3(...look.summer.ground[0]), vec3(...look.summer.ground[1]), macro),
       grass = mix(spring, summer, u.season).mul(detail.mul(0.55).add(0.45)),
       // Bank soil: two photo soils in patches, large-scale tint, and faint "bathtub rings" —
       // bands left along a reservoir's drawdown zone by past water levels.

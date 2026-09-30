@@ -28,3 +28,18 @@ test("no oaks at the shore", () => {
   assert.equal(oaksNear(beach, 0, 0, 100).length, 0);
   assert.ok(oaksNear(woodland, 0, 0, 100).length > 50);
 });
+
+test("stands group the rarer species instead of scattering it", async () => {
+  const { standPick } = await import("../../renderer/land/oak-placement.js");
+  // Neighbouring trees 9 m apart agree far more often with stands than without.
+  let agreeMixed = 0, agreeStands = 0, n = 0;
+  for (let cx = 0; cx < 200; cx++)
+    for (let cz = 0; cz < 20; cz++) {
+      const x = cx * 9, z = cz * 9, a = hash(cx + 5, cz + 91), b = hash(cx + 6, cz + 91);
+      agreeMixed += (a >= 0.9) === (b >= 0.9) && a >= 0.9 ? 1 : 0;
+      agreeStands += (standPick(x, z, a, 1) >= 0.9) && (standPick(x + 9, z, b, 1) >= 0.9) ? 1 : 0;
+      n++;
+    }
+  assert.ok(agreeStands > 3 * agreeMixed, `${agreeStands} vs ${agreeMixed} of ${n}`);
+  assert.equal(standPick(10, 20, 0.42, 0), 0.42);
+});

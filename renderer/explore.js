@@ -56,9 +56,11 @@ function syncSettings() {
     grass: $("grass").checked,
   });
 }
+// The summer label follows the water body's grass (land.json): gold hills, or Peninsula sage.
+const summerLabel = () => (body.land.grass?.summer === "sage" ? "Summer sage" : "Summer gold");
 function intro() {
   $("intro").textContent =
-    `${+$("season").value ? "Summer gold" : "Spring green"} at ${body.terrain.meta.name}, from USGS lidar terrain.`;
+    `${+$("season").value ? summerLabel() : "Spring green"} at ${body.terrain.meta.name}, from USGS lidar terrain.`;
 }
 $("season").addEventListener("change", () => body && intro());
 $("quality").onchange = () => {
@@ -304,6 +306,7 @@ try {
   applyPreset(q.get("preset"));
   // The bundle's usual look: Diablo Range hills are gold most of the year.
   $("season").value = body.land.defaultSeason === "spring" ? "0" : "1";
+  $("season").options[1].textContent = summerLabel();
   // Only the presets this water body offers, default selected.
   for (const opt of [...$("preset").options]) opt.hidden = !body.land.presets.includes(opt.value);
   $("preset").value = ws.state.preset;

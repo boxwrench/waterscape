@@ -1,0 +1,17 @@
+{
+  "id": "crystal_springs",
+  "name": "Crystal Springs Reservoir",
+  "place": "San Mateo County, on the San Francisco Peninsula",
+  "operator": "San Francisco Public Utilities Commission",
+  "summary": {
+    "value": "A Peninsula storage reservoir in the regional water system; its water is treated at the Harry Tracy Water Treatment Plant along with the San Andreas supply.",
+    "source": "https://www.sfpuc.gov/about-us/our-systems/surface-water-water-rain-and-snowmelt"
+  },
+  "headline": "A 149-foot dam from 1888 holds water for the Peninsula in the valley of the San Andreas Fault.",
+  "facts": [
+    { "label": "Listed capacity", "value": "57,910 acre-feet", "featured": true, "source": "https://geospatial.sec.usace.army.mil/dls/rest/services/NID/National_Inventory_of_Dams_Public_Service/FeatureServer/0/query?where=NIDID%3D%27CA00127%27&outFields=MAX_STORAGE&f=json" },
+    { "label": "Dam", "value": "149 ft tall, completed 1888", "source": "https://geospatial.sec.usace.army.mil/dls/rest/services/NID/National_Inventory_of_Dams_Public_Service/FeatureServer/0/query?where=NIDID%3D%27CA00127%27&outFields=DAM_HEIGHT,YEAR_COMPLETED&f=json" },
+    { "label": "Water system", "value": "Hetch Hetchy Regional Water System, serving 2.7 million customers", "source": "https://www.sfpuc.gov/about-us/our-systems"},
+    { "label": "USGS reference · 2023", "value": "84.9 m (279 ft) above sea level", "source": "https://epqs.nationalmap.gov/v1/json?x=-122.36541&y=37.5279&units=Meters&wkid=4326&includeDate=true" }
+  ]
+}

@@ -2,6 +2,7 @@
 // World-anchored 8 m chunks are culled by the camera; three card LODs reduce distant geometry.
 // Roots sample the same lidar/light textures as the ground, with seasonal tint and rolling wind.
 import * as THREE from "../../vendor/three/three.webgpu.js";
+import { landLook } from "../engine/look.js";
 import {
   Fn, uniform, attribute, instanceIndex, positionLocal, modelPosition, texture, varying, vec2, vec3, vec4, float, int,
   mix, smoothstep, dot, max, normalize, fract, sin, cos, mx_noise_float, time, uv, select, If, Discard,
@@ -40,7 +41,8 @@ function tuftGeometry(cards, segments) {
   return g;
 }
 
-export function createGrass(terrain, terrainTex, lightTex, lightUniforms) {
+export function createGrass(terrain, terrainTex, lightTex, lightUniforms, look = landLook(null)) {
+  const [summerBase, summerTip, summerBright] = look.summer.blade;
   const geometries = [tuftGeometry(6, 3), tuftGeometry(3, 2), tuftGeometry(2, 1)],
     mask = new THREE.TextureLoader().load(new URL("../../data/biomes/diablo-oak/grass/fluffy-mask.jpg", import.meta.url).href),
     { width: w, height: h, cell, x0, z0 } = terrain,
@@ -118,9 +120,9 @@ export function createGrass(terrain, terrainTex, lightTex, lightUniforms) {
       shade = vShade,
       season = lightUniforms.season,
       tipSpring = mix(vec3(0.24, 0.42, 0.05), vec3(0.36, 0.48, 0.1), shade.z),
-      tipSummer = mix(vec3(0.5, 0.38, 0.15), vec3(0.62, 0.5, 0.24), shade.z),
+      tipSummer = mix(vec3(...summerTip), vec3(...summerBright), shade.z),
       baseSpring = vec3(0.1, 0.22, 0.04),
-      baseSummer = vec3(0.34, 0.25, 0.09),
+      baseSummer = vec3(...summerBase),
       albedo = mix(mix(baseSpring, tipSpring, t), mix(baseSummer, tipSummer, t), season),
       // Blades lean up: soft, mostly-top lighting, some light through the blade from behind.
       n = normalize(vec3(0, 1, 0)),

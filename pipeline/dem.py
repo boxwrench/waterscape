@@ -31,10 +31,11 @@ def fetch_dem(rid, bbox, size, cache_dir, zone):
     return np.array(img, dtype=np.float32), float(scale[0]), float(scale[1]), tie[3], tie[4]
 
 
-def detect_water(dem, anchor=None, min_area_cells=5000):
+def detect_water(dem, anchor=None, min_area_cells=5000, extra=()):
     """Lidar hydro-flattens water: the reservoir is the largest connected region at the
     most common elevation, or (with an anchor) the flat region containing the anchor.
-    Returns (mask, water_level)."""
+    `extra` anchors add further flat regions at the same level (a reservoir split by a
+    causeway). Returns (mask, water_level)."""
     if anchor is not None:
         r, c = anchor
         anchor_level = float(dem[r, c])
@@ -43,7 +44,11 @@ def detect_water(dem, anchor=None, min_area_cells=5000):
             raise ValueError(f"anchor {anchor} is not on lidar-flattened water")
         level = round(anchor_level * 10) / 10
         labels, _ = ndimage.label(np.abs(dem - level) < 0.15)
-        water = ndimage.binary_closing(labels == labels[r, c], iterations=2)
+        for er, ec in extra:
+            if abs(float(dem[er, ec]) - level) >= 0.15:
+                raise ValueError(f"extra anchor {(er, ec)} is not at the water level {level}")
+        water = ndimage.binary_closing(np.isin(labels, [labels[r, c]] + [labels[er, ec] for er, ec in extra]),
+                                       iterations=2)
     else:
         vals, counts = np.unique(np.round(dem * 10) / 10, return_counts=True)
         level = float(vals[counts.argmax()])
