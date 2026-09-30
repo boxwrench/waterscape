@@ -28,7 +28,7 @@ export async function validateRiverPackages(root) {
         manifest: `${river.name}/places/${place.name}/place.json`,
         supported_capabilities: [...new Set(manifest.supported_capabilities)].sort(),
       });
-      // A manifest-only place (Jenner today) must not be mistaken for a ready scene.
+      // Scientific terrain is optional; authored Setting geometry (Jenner) is not a DEM.
       if (!manifest.terrain_source) continue;
       assert.equal(manifest.terrain_source, "source.json");
       const source = await json(path.join(dir, "source.json")),

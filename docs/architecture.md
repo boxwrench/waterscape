@@ -10,8 +10,8 @@ derived, illustrative or setting class belongs to each visual binding.
 - **Reservoirs:** existing `index.html`, `site/`, `renderer/`, and `data/` retain their URLs
   and still-water semantics. The root opens the reservoir journey, with navigation to River Pulse.
 - **River Pulse:** `river-pulse/` contains `adapters/`, `data-model/`, `visual-bindings/`,
-  `renderer/`, and `data/`. `/river-pulse/` opens the Hacienda prototype. Jenner is currently a
-  manifest/data contract, not a selectable 3D scene.
+  `renderer/`, and `data/`. `/river-pulse/` opens the Hacienda prototype; its header links to
+  Jenner's coastal scene, which uses the same place registry and a separate source level card.
 - **Shared infrastructure:** one `vendor/`, `pipeline/`, `scripts/`, npm install and Pages
   build. River Pulse already imports the root camera utilities and inverse UTM helper. Python
   river builders reuse elevation acquisition and projection, not reservoir detection.
@@ -50,6 +50,12 @@ green water, planar reflections, refraction and approximate caustics. Local sett
 live under Hacienda's `setting/` package, with source/license metadata. Three/TSL is shared
 with the umbrella; reservoir water kernels are not used as river hydraulics. See
 [authored-water notes](river-pulse/authored-water.md) for sources and optical limits.
+
+`jenner.js` composes an authored coastal height field, sand spit, rocks, woodland and shore
+views. `jenner-water.js` contrasts calm estuary optics with Pacific swell/foam using a small
+MIT Tidewater noise adaptation. `jenner-level.js` selects eligible USGS NAVD88 observations
+for the separate Highway 1 card; it does not drive coastline, tide, currents or mouth status.
+Both pages load through `data-model/place-registry.js`. See [Jenner notes](river-pulse/jenner-scene.md).
 
 ## Data flow
 

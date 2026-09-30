@@ -155,6 +155,10 @@ Exact binding, while an observed quantity can be shown through a Derived binding
 | Hacienda Bridge / Beach geometry and woodland | Setting | Photo-informed authored reconstruction | Approximate gray steel bridge, left-pier rock, gray pebble beach, banks and grouped trees; local coordinates are not surveyed. The shoreline remains fixed during timeline selection. |
 | Hacienda water optics | Derived | Modeled surface/bed and authored light | Fresnel reflections, refraction and approximate caustics consume illustrative ripples and modeled bed geometry. Green color/clarity follows visual references, not measured water quality. See [authored-water notes](river-pulse/authored-water.md). |
 
+| Jenner gauge card | Exact | Observed USGS 63160 / NAVD88 | Source water level at Highway 1; stale/missing values remain unavailable. No gauge-to-coast level conversion. |
+| Jenner coast, rocks, sand spit and vegetation | Setting | Photo-informed authored reconstruction | Fixed open-mouth composition, not surveyed terrain or today’s observed mouth status. |
+| Jenner swell, foam, swash and water colors | Illustrative | Authored surface and depth profile | Contrasts calm estuary with Pacific surf; not measured tide, currents, waves or water quality. Optical calculations consume authored inputs. See [Jenner scene](river-pulse/jenner-scene.md). |
+
 This table is an implementation reading, not a full scientific audit. Update it when either the
 underlying state or a visual binding changes.
 
@@ -176,7 +180,7 @@ underlying state or a visual binding changes.
   scientific data. The doctrine above is the target standard for future biome profiles.
 - **Other water systems.** River Pulse now provides an initial river experience within this
   repository: Hacienda terrain, gauge observations, time selection and visual bindings, with
-  a Jenner place/data contract. River hydrodynamics are not implemented. Watersheds, aqueducts,
+  a Jenner authored coastal scene and source water-level card. River hydrodynamics are not implemented. Watersheds, aqueducts,
   groundwater, treatment plants, floodplains and distribution networks remain future
   experiences. Extract shared machinery only where these experiences prove a common need.
 

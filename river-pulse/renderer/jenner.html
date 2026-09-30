@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#183c40">
+    <title>River Pulse · Jenner Estuary · Waterscape</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='8' fill='%23183c40'/%3E%3Cpath d='M7 13c10-8 16 8 26 0M7 21c10-8 16 8 26 0M7 29c10-8 16 8 26 0' fill='none' stroke='%23e0e8c8' stroke-width='2'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="./jenner.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#level-card">Skip to water observation</a>
+    <canvas id="scene" tabindex="0" aria-label="Jenner coastal scene. Drag to look, scroll to walk, or select a shoreline view."></canvas>
+    <div class="shade" aria-hidden="true"></div>
+    <header class="topbar">
+      <a class="brand" href="../../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M7 12c10-9 16 9 26 0M7 20c10-9 16 9 26 0M7 28c10-9 16 9 26 0"/></svg><span>RIVER PULSE<small>A living river atlas</small></span></a>
+      <span class="trail">Russian River <i>/</i> Pacific coast</span>
+      <nav class="actions" aria-label="Places and scene controls">
+        <a href="./hacienda.html">Hacienda ↗</a>
+        <button id="explore" aria-pressed="false">Explore</button>
+        <button id="inspect" aria-expanded="false" aria-controls="inspector">Inspect data ↗</button>
+      </nav>
+    </header>
+    <main>
+      <section class="place-card" aria-labelledby="place-title">
+        <p class="eyebrow">RUSSIAN RIVER / 02 <span>COASTAL PREVIEW</span></p>
+        <h1 id="place-title">Jenner.</h1>
+        <p class="subtitle">Where the river meets the sea.</p>
+        <section id="level-card" class="level-card glass" aria-label="Latest Jenner water observation" tabindex="-1" aria-live="polite">
+          <div class="level-heading"><span>WATER LEVEL AT HIGHWAY 1</span><span id="level-quality">Checking</span></div>
+          <strong id="level-value">—</strong><span class="datum">NAVD88</span>
+          <p id="level-time">Connecting to USGS…</p>
+          <a id="gauge-source" href="https://waterdata.usgs.gov/monitoring-location/USGS-11467270/" target="_blank" rel="noopener">USGS 11467270 <span>Source record ↗</span></a>
+        </section>
+      </section>
+      <aside id="inspector" class="glass inspector" aria-label="Water evidence and scene interpretation" hidden>
+        <div class="panel-heading"><div><span class="eyebrow">THE EVIDENCE</span><h2>Behind the coast</h2></div><button id="inspect-close" aria-label="Close inspector">×</button></div>
+        <p>This is a photo-informed coastal setting. The gauge measures water level at Highway 1, upstream of the pictured mouth.</p>
+        <dl id="evidence"><dt>Status</dt><dd>Waiting for USGS</dd></dl>
+        <details><summary>Source flags & normalized record</summary><pre id="record">No observation selected.</pre></details>
+        <h3>Read the representation</h3>
+        <p>The sand spit, coastal bluffs, rocks and camera positions are authored local geometry, not surveyed terrain or bathymetry.</p>
+        <p>Water color, clarity, swell, surf and wet sand are illustrative. The shoreline stays fixed; the gauge does not drive this ocean surface. The pictured mouth opening does not establish today's mouth condition, tide or local currents.</p>
+        <h3>Photographic references</h3>
+        <p><a href="https://commons.wikimedia.org/wiki/File:Russian_River_mouth_on_California_coast.jpeg" target="_blank" rel="noopener">Russian River mouth · Xaven ↗</a><br><small>CC BY-SA 1.0 · reference only</small></p>
+        <p><a href="https://commons.wikimedia.org/wiki/File:Wildlands_Jenner_Headlands_Russian_River.jpg" target="_blank" rel="noopener">Jenner Headlands · BookOfDisquiet ↗</a><br><small>CC BY-SA 4.0 · reference only</small></p>
+        <p><a href="https://www.sonomawater.org/russian-river-estuary" target="_blank" rel="noopener">Sonoma Water estuary information ↗</a></p>
+        <p class="resource-note">Periodic sea-detail noise adapted from <a href="https://github.com/dgreenheck/tidewater" target="_blank" rel="noopener">Tidewater (MIT)</a>. Local rock, pebble and vegetation resources are shared with Hacienda.</p>
+      </aside>
+    </main>
+    <footer class="coast-controls">
+      <div class="views glass" role="group" aria-label="Coastal viewpoints">
+        <button data-view="lookout" class="active" aria-pressed="true"><span>01</span> Estuary lookout</button>
+        <button data-view="river" aria-pressed="false"><span>02</span> River shore</button>
+        <button data-view="ocean" aria-pressed="false"><span>03</span> Pacific beach</button>
+      </div>
+      <div class="scene-note"><span id="scene-state">Preparing the coast</span><span>Authored setting</span><button id="pause" aria-pressed="false">Pause water</button></div>
+      <p class="controls-copy">Drag to look <i>·</i> Scroll or WASD to walk <i>·</i> Stay close to the shore</p>
+    </footer>
+    <div id="loading" role="status"><span class="loading-ring"></span><strong>Entering the Pacific coast</strong><p id="status">Shaping the estuary…</p></div>
+    <div id="error" class="glass error" role="status" hidden></div>
+    <script type="module" src="./jenner.js"></script>
+  </body>
+</html>
