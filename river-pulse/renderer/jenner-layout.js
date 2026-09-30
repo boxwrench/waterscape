@@ -1,7 +1,22 @@
 // Photo-informed local coordinates, not surveyed Jenner banks or bathymetry.
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const smooth = (a, b, v) => { const t = clamp((v - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
-const channel = [[-310, -345], [-65, -250], [175, -145], [295, 160], [370, 510], [700, 900], [1260, 1320], [2100, 1800]];
+const control = [[-310, -345], [-65, -250], [175, -145], [295, 160], [370, 510], [700, 900], [1260, 1320], [2100, 1800]];
+
+// Catmull-Rom through the control points, so the channel bends like a river instead of turning
+// at polyline corners. Photo-informed layout, not a surveyed centreline.
+function smoothed(points, steps = 6) {
+  const out = [], at = (i) => points[Math.max(0, Math.min(points.length - 1, i))];
+  for (let i = 0; i < points.length - 1; i++)
+    for (let k = 0; k < steps; k++) {
+      const t = k / steps, t2 = t * t, t3 = t2 * t, [p0, p1, p2, p3] = [at(i - 1), at(i), at(i + 1), at(i + 2)];
+      out.push([0, 1].map((a) => 0.5 * (2 * p1[a] + (-p0[a] + p2[a]) * t + (2 * p0[a] - 5 * p1[a] + 4 * p2[a] - p3[a]) * t2 +
+        (-p0[a] + 3 * p1[a] - 3 * p2[a] + p3[a]) * t3)));
+    }
+  out.push(points[points.length - 1]);
+  return out;
+}
+const channel = smoothed(control);
 
 export function jennerCoast(z) {
   return -160 + 75 * Math.sin((z + 200) / 940) + 0.055 * z;

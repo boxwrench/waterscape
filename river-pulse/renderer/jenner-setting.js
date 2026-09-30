@@ -12,7 +12,7 @@ function terrain(noise, maps, clock, grassMap) {
   geometry.setIndex(new THREE.BufferAttribute(grid.indices, 1)); geometry.computeVertexNormals();
   const material = new THREE.MeshStandardNodeMaterial({ roughness: 0.9 }), p = positionWorld,
     mottle = texture(noise, p.xz.div(160)), grain = texture(noise, p.xz.div(3)).r,
-    sand = mix(color(0x777263), color(0x979184), grain.mul(0.35).add(mottle.g.mul(0.30))),
+    sand = mix(color(0x625f56), color(0x85827a), grain.mul(0.35).add(mottle.g.mul(0.30))),
     gravel = maps ? grayStone(maps.pebbles.color, p.xz.div(1.8)).mul(vec3(0.88, 0.86, 0.77)) : sand,
     beach = mix(sand, gravel, 0.26),
     grassTint = mix(color(0x485938), color(0x8b9762), mottle.r.mul(0.75).add(mottle.b.mul(0.2))),
@@ -25,8 +25,8 @@ function terrain(noise, maps, clock, grassMap) {
     upland = mix(rock.mul(vec3(0.87, 0.9, 0.82)), grass, slope),
     bank = smoothstep(3, 8, p.y),
     wetFront = sin(clock.mul(0.95).add(mottle.b.mul(2))).mul(0.24).add(0.85),
-    dry = smoothstep(wetFront.sub(0.2), wetFront.add(0.6), p.y);
-  material.colorNode = mix(beach.mul(mix(0.46, 1, dry)), upland, bank);
+    dry = smoothstep(wetFront.sub(0.3), wetFront.add(1.1), p.y);
+  material.colorNode = mix(beach.mul(mix(0.62, 1, dry)), upland, bank);
   material.roughnessNode = mix(0.34, 0.96, dry);
   const mesh = new THREE.Mesh(geometry, material); mesh.name = "Jenner sand spit and coastal bluffs";
   mesh.receiveShadow = true; return mesh;
@@ -40,7 +40,7 @@ function rocks(maps) {
   for (let i = 0; i < position.count; i++) {
     const x = position.getX(i), y = position.getY(i), z = position.getZ(i),
       fracture = 0.89 + 0.11 * Math.sin(x * 17 + y * 7) * Math.sin(z * 11 - y * 9),
-      top = Math.min(y, 0.62) + Math.sin(x * 13) * Math.sin(z * 8) * 0.025;
+      top = 0.62 * Math.tanh(y / 0.62) + Math.sin(x * 13) * Math.sin(z * 8) * 0.025;
     position.setXYZ(i, x * fracture, top * fracture, z * fracture);
   }
   geometry.computeVertexNormals();
@@ -61,7 +61,9 @@ function rocks(maps) {
     material.colorNode = grayStone(maps.rock.color, p.zy.div(9), 0.55).mul(w.x)
       .add(grayStone(maps.rock.color, p.xz.div(9), 0.55).mul(w.y))
       .add(grayStone(maps.rock.color, p.xy.div(9), 0.55).mul(w.z))
-      .mul(mix(color(0x6d7462), color(0xc0bfb0), smoothstep(-0.2, 4, p.y)));
+      .mul(mix(color(0x4a4d47), color(0x8d8c80), smoothstep(-0.2, 12, p.y)));
+    // Sea stacks and Goat Rock carry a green turf cap on their upward faces, as in photographs.
+    material.colorNode = mix(material.colorNode, color(0x4f6234), smoothstep(0.55, 0.85, normalWorld.y).mul(smoothstep(8, 20, p.y)));
   }
   for (const [name, x, z, sx, sy, sz] of [
     ["Goat Rock silhouette", jennerCoast(1720) - 44, 1720, 78, 80, 125],
