@@ -23,3 +23,13 @@ corridor prototype or build Jenner in this task.
    surveyed bathymetry, complete river simulation or hardware performance.
 6. Update the handoff and authored-water notes; link the evaluation from the resource library. Commit using this task title; append Result
    and commit the result separately. Never push or merge.
+
+## Result
+- Status: done
+- Commit: 45660b6
+- Checks: `node --test 'pipeline/tests/*.test.mjs'` — ℹ fail 0 (26 test files passed).
+- Checks: `node pipeline/validate-river-packages.mjs` — River packages valid.
+- Checks: `npm run test:build` — Built experience pages and river assets valid.
+- Checks: `RIVER_PULSE_BROWSER=/opt/google/chrome/chrome node scripts/verify-river-pulse.mjs` — River Pulse browser checks passed: production assets, WebGL fallback, timeline, evidence, camera/layers, mobile, data outage and GPU failure.
+- Checks: `git diff --check` — exit 0; no whitespace errors.
+- Notes: Inspected desktop and mobile authored-Shallows screenshots, refined parallel-wave artifacts into filtered multi-directional detail, and retained the existing overview/UI behavior. Screenshots are under `/tmp/waterscape-rp2/previews/river-pulse-ui/`. Initial sandboxed browser server startup reported "Detected unsettled top-level await"; authorized execution outside the sandbox passed, including the final optical revision. Browser rendering uses Chrome WebGL2/SwiftShader; native WebGPU and Windows hardware performance remain unmeasured. See authored-water notes for coarse geometry, approximate caustics, modeled bed and planar-reflection limits. Resource library reviewed and linked to the evaluation; no new upstream code/assets copied. Isolated checkout preserved all W2 changes. No push or merge.
