@@ -4,6 +4,19 @@ Where things stand, for whoever picks this up next (person or agent). The plan l
 `ROADMAP.md` and `docs/roadmap/README.md`; this file is the snapshot of "what just happened
 and what's next".
 
+## Irregular blue Map water — RP7
+
+RP7 refines Map surface detail after the user spotted regular stripes: varied advected noise
+normals replace the periodic bands, with a bluer body and softer highlights. Three's flowing
+water example is recorded in the resource library as a technique reference; existing vendored
+TSL noise supplies the detail. No new asset downloads or vendor changes. RP6's width, border,
+state and reduced-motion behavior, and the accepted authored beach remain unchanged. See
+[surface refinement notes](river-pulse/authored-water.md#map-surface-refinement--rp7).
+
+Unit tests (108), river validation, built assets and the complete River Pulse browser suite
+pass. Desktop high/low flow and mobile renders were inspected. Work remains isolated in
+`/tmp/waterscape-rp2` on `task/RP7`; preview port 5174. No push, merge or publication.
+
 ## Map water ribbon — RP6
 
 `task/RP6` in `/tmp/waterscape-rp2` adds a continuous water-like Map ribbon with exaggerated

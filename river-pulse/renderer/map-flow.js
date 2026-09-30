@@ -1,7 +1,7 @@
 import * as THREE from "../../vendor/three/three.webgpu.js";
 import {
-  attribute, cameraPosition, color, cos, dot, exp, float, fwidth, mix, normalize,
-  positionWorld, pow, reflect, sin, smoothstep, uniform, vec3,
+  attribute, cameraPosition, color, dot, exp, float, fwidth, mix, mx_noise_vec3,
+  normalize, positionWorld, pow, reflect, smoothstep, uniform, vec2, vec3,
 } from "../../vendor/three/three.tsl.js";
 import { mapRibbonBinding } from "../visual-bindings/map-flow.js";
 import { buildMapRibbonSkeleton, mapRibbonPositions } from "./map-ribbon-geometry.js";
@@ -22,28 +22,29 @@ export function createMapFlow(document, terrain) {
     borderColor = uniform(new THREE.Color(0x8c9894)), borderOpacity = uniform(0.5),
     along = attribute("flowDistance", "float"), across = attribute("flowAcross", "float"),
     tangent = attribute("flowTangent", "vec2"), cross = across.mul(displayWidth).mul(0.5);
-  let longitudinal = float(0), lateral = float(0), sparkle = float(0);
-  // Meter-scale ripples are deliberately magnified for the overhead view. Their
-  // speed is a presentation choice; gauge discharge controls width, not velocity.
-  for (let i = 0; i < 5; i++) {
-    const a = 0.3 + i * 0.12, b = i % 2 ? -0.31 : 0.24,
-      phase = along.mul(a).add(cross.mul(b)).sub(clock.mul(1.2 + i * 0.21)).add(i * 2.1),
-      filtered = exp(fwidth(phase).mul(-0.7)), wave = cos(phase).mul(0.15).mul(filtered);
-    longitudinal = longitudinal.add(wave);
-    lateral = lateral.add(wave.mul(i % 2 ? -0.65 : 0.7));
-    sparkle = sparkle.add(pow(sin(phase).mul(0.5).add(0.5), 9).mul(filtered).mul(0.055));
-  }
+  // Advected, warped noise provides broken surface detail without periodic wave
+  // bands or a repeating texture. These scales/speeds are illustrative, not measured.
+  const drift = along.sub(clock.mul(4.5)),
+    warp = mx_noise_vec3(vec2(drift.mul(0.012), cross.mul(0.028))).xy.mul(1.7),
+    broadUV = vec2(drift.mul(0.095), cross.mul(0.065)).add(warp),
+    fineUV = vec2(along.sub(clock.mul(6.1)).mul(0.27), cross.mul(0.19))
+      .add(warp.mul(0.7)).add(vec2(19.3, 7.1)),
+    broad = mx_noise_vec3(broadUV),
+    fine = mx_noise_vec3(fineUV).mul(exp(fwidth(fineUV).length().mul(-1.2))),
+    slopes = broad.xy.mul(0.85).add(fine.xy.mul(0.38)),
+    longitudinal = slopes.x, lateral = slopes.y;
   const normal = normalize(vec3(tangent.x.mul(longitudinal).sub(tangent.y.mul(lateral)), 1,
       tangent.y.mul(longitudinal).add(tangent.x.mul(lateral)))),
     eye = normalize(cameraPosition.sub(positionWorld)), facing = dot(normal, eye).clamp(0, 1),
     fresnel = pow(float(1).sub(facing), 5).mul(0.98).add(0.02),
     reflected = reflect(eye.negate(), normal),
-    sky = mix(color(0x647d67), color(0x8ec2d7), reflected.y.clamp(0, 1)),
-    body = mix(color(0x234f4a), color(0x42796c), across.abs().pow(2)),
+    sky = mix(color(0x547a99), color(0xb2d5e5), reflected.y.clamp(0, 1)),
+    body = mix(color(0x205e87), color(0x3c83a4), across.abs().pow(2).mul(0.65)
+      .add(broad.z.mul(0.12)).add(0.12).clamp(0, 1)),
     sun = normalize(vec3(-0.5, 0.83, 0.25)),
-    glint = pow(dot(normal, normalize(sun.add(eye))).max(0), 70).mul(0.7),
-    rippled = mix(body, sky, fresnel.mul(0.65)).add(color(0xb6d6cc).mul(sparkle.add(glint))),
-    water = mix(color(0x586c67), rippled, known),
+    glint = pow(dot(normal, normalize(sun.add(eye))).max(0), 45).mul(0.6),
+    rippled = mix(body, sky, fresnel.mul(0.85)).add(color(0xc4dfed).mul(glint)),
+    water = mix(color(0x586c78), rippled, known),
     rim = smoothstep(0.83, 0.92, across.abs()),
     material = new THREE.MeshBasicNodeMaterial({ side: THREE.DoubleSide });
   material.colorNode = mix(water, borderColor.mul(borderOpacity.mul(0.35).add(0.65)), rim);

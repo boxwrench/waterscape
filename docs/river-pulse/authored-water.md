@@ -123,3 +123,23 @@ caustics are not implemented. [Tidewater](https://github.com/dgreenheck/tidewate
 as a larger coastal-system candidate. Reservoir Clearwater lineage remains an optics
 reference, not river geometry. The HDRP current-map article did not fetch in RP2, so no
 velocity claims or code were based on it.
+
+## Map surface refinement — RP7
+
+The user identified obvious stripes in RP6's five periodic wave bands and requested bluer
+Map water. RP7 replaces those bands with broad and fine advected noise normals, warped by
+a slower irregular field. Pixel derivatives attenuate fine detail at distance. A blue body,
+blue sky approximation and softer sun highlights keep the surface readable without a regular
+crosshatch. No bitmap tile repeats along the ribbon. Ripple scale/speed and color remain
+illustrative; the RP6 width/condition/state mappings and accepted authored beach are unchanged.
+
+The existing library's Clearwater and Tidewater were revisited as fuller optics/FFT references.
+For this Map ribbon, Three's
+[Water2Mesh](https://github.com/mrdoob/three.js/blob/dev/examples/jsm/objects/Water2Mesh.js)
+offers a more focused reference for advecting irregular surface normals and Fresnel shading.
+Its [MIT license](https://github.com/mrdoob/three.js/blob/dev/LICENSE) was checked on 2026-09-29.
+This implementation reuses the already vendored Three/TSL `mx_noise_vec3`; no upstream example
+code, textures or reflection render passes were imported. Its texture blending/flow-map cycle
+is not implemented: continuous procedural coordinates avoid texture resets. The resource is
+recorded as a technique reference, not as a newly integrated renderer. Target GPU performance
+remains unmeasured; production WebGL2 rendering is verified by the existing browser suite.
