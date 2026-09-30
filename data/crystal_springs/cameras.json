@@ -1,10 +1,10 @@
 {
   "viewpoints": {
     "overlook": {
-      "x": -2425,
-      "z": -1401,
+      "x": -2335,
+      "z": -1761,
       "above": 3.0,
-      "yaw": 2.095,
+      "yaw": 1.497,
       "pitch": -0.079,
       "speed": 40,
       "label": "Northwest ridge"
