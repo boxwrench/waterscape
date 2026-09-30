@@ -43,3 +43,12 @@ Geometry is a photo-informed Setting reconstruction, not new DEM/bathymetry, inf
 survey, flood prediction or a real-time mouth-closure determination. Observation numbers are
 normalized from fetched USGS records with provenance; source quantity and visual geometry
 stay separate. Color/clarity, swell, foam, swash and light are illustrative/authored choices.
+
+## Result
+- Status: done
+- Commit: d237da7
+- Checks: `node --test pipeline/tests/jenner.test.mjs` — 8 passed; `ℹ fail 0`.
+- Checks: `npm run test:build` — `Built experience pages and river assets valid.`
+- Checks: `RIVER_PULSE_BROWSER=/opt/google/chrome/chrome node scripts/verify-jenner.mjs` — `Jenner views, motion, mobile, data outage and GPU fallback passed.`
+- Checks: `git diff --check` — no output / exit 0.
+- Notes: Desktop/mobile renders inspected against the fetched mouth/headlands photos. A final targeted mobile round-trip and 360px Hacienda navigation fit check also passed. The README includes a clean rendered coastal preview, with no synthetic gauge values visible. Periodic sea-detail noise adapts Tidewater at the recorded MIT revision; local CC0/MIT ground and vegetation assets are reused. Photos are references only. Cameras and coast are authored Setting; the independent Highway 1 NAVD88 card does not drive tide, mouth status or currents. Software WebGL2 was checked; native GPU performance and WebGPU remain unmeasured. Firefox opened `http://localhost:5174/river-pulse/renderer/jenner.html`. Work is isolated on `task/RP9` in `/tmp/waterscape-rp2`; the dirty reservoir checkout is untouched. No push, merge or publication; RP8 deployment was not revisited.
