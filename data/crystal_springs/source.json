@@ -1,0 +1,18 @@
+{
+  "name": "Crystal Springs Reservoir",
+  "biome": "diablo-oak",
+  "anchor": [
+    37.5279,
+    -122.36541
+  ],
+  "bbox": [
+    -122.4149,
+    37.4902,
+    -122.3283,
+    37.5755
+  ],
+  "size": [
+    764,
+    949
+  ]
+}
