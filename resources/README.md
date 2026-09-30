@@ -45,6 +45,11 @@ For redistribution details and pinned snapshots of code/assets actually included
 | [caustic-volume](https://github.com/ScottieFox/caustic-volume) · [demo](https://scottiefox.github.io/caustic-volume/) | **Candidate** | Focused browser reference for moving water caustics, with lightweight and fuller sandbox approaches. Good for shallow-water readability. | **High / low-medium** | **MIT** |
 | [Codrops RainEffect](https://github.com/codrops/RainEffect) · [demo](https://tympanus.net/Development/RainEffect/) | **Candidate** | Screen-space/WebGL rain and water-drop effects. Old, but still interesting when a convincing wet/rain layer is wanted without full fluid simulation. | **Medium-high / low-medium** | **Codrops custom licence**: integration/build-upon allowed for personal or commercial projects; do not redistribute or sell as-is. Verify current upstream terms before use. |
 
+Hacienda authored-water evaluation (RP2): [implementation and resource notes](../docs/river-pulse/authored-water.md).
+The first local pass reuses existing Three/TSL reflection machinery and uses multi-directional
+wave detail informed by the CAUSTIC//VOLUME explanation. Clearwater and Tidewater remain
+optical/full-system references; no new upstream code or assets were copied in RP2.
+
 ## Rivers, currents & coastal flow
 
 | Resource | Status | Why it matters | Visual / cost | Upstream licence / reuse |

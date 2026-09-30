@@ -4,6 +4,16 @@ Where things stand, for whoever picks this up next (person or agent). The plan l
 `ROADMAP.md` and `docs/roadmap/README.md`; this file is the snapshot of "what just happened
 and what's next".
 
+## River Pulse authored water — RP2
+
+`task/RP2` in `/tmp/waterscape-rp2` adds a first local optical water preview in Hacienda's
+Gauge and new Shallows cameras. Valley remains cartographic. The preview uses the existing
+terrain/mainstem assets, with disclosed illustrative surface/bed geometry, fine ripples,
+Fresnel scene reflections, refracted procedural gravel and approximate caustic detail.
+Read [authored-water notes](river-pulse/authored-water.md) for resource evaluation and limits.
+No discharge-to-stage/velocity inference, corridor restoration or Jenner surface is included.
+The unfinished W2 checkout was preserved. This branch is for review; it is not published.
+
 ## Live now
 
 https://boxwrench.github.io/waterscape/ (GitHub Pages deploys on every push to `main`).

@@ -173,10 +173,23 @@ try {
   await page.waitForFunction(
     () => Math.abs(window.riverPulseScene.state.x + 120) < 1,
   );
+  assert.equal(await page.evaluate(() => window.riverPulseAuthoredWater.mesh.visible), true);
+  await page.locator("#shallows").click();
+  await page.waitForFunction(() => document.querySelector("#shallows").getAttribute("aria-pressed") === "true" &&
+    Math.abs(window.riverPulseScene.state.x - (window.riverPulseAuthoredWater.focus.x - 16)) < 1);
+  await page.screenshot({ path: `${out}/authored-shallows-desktop.png` });
+  await page.locator("#river-layer").click();
+  assert.equal(await page.evaluate(() => window.riverPulseRiverLayer.visible), false);
+  await page.locator("#river-layer").click();
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.screenshot({ path: `${out}/authored-shallows-reduced-motion.png` });
+  assert.match(await page.locator("#water-disclosure").innerText(), /not surveyed banks/);
+  await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.locator("#overview").click();
   await page.waitForFunction(
     () => Math.abs(window.riverPulseScene.state.x + 900) < 1,
   );
+  assert.equal(await page.evaluate(() => window.riverPulseAuthoredWater.mesh.visible), false);
   await page.locator("#history-play").click();
   await page.waitForFunction(
     () => Number(document.querySelector("#time-range").value) >= 1,
@@ -200,6 +213,11 @@ try {
   );
   assert.equal(await visible(page, "#history-panel"), false);
   await page.screenshot({ path: `${out}/mobile.png` });
+  await page.locator("#shallows").click();
+  await page.waitForFunction(() => Math.abs(window.riverPulseScene.state.x -
+    (window.riverPulseAuthoredWater.focus.x - 16)) < 1);
+  await page.screenshot({ path: `${out}/authored-shallows-mobile.png` });
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
   await page.locator("#timeline-toggle").click();
   assert.equal(await visible(page, "#history-panel"), true);
   await page.screenshot({ path: `${out}/mobile-history.png` });
@@ -220,6 +238,9 @@ try {
     false,
     "A data outage should not break terrain",
   );
+  await unavailable.locator("#shallows").click();
+  assert.equal(await unavailable.evaluate(() => window.riverPulseAuthoredWater.mesh.visible), true,
+    "Optical preview survives data outage without deriving hydraulics from missing discharge");
   await unavailable.close();
   const noGpu = await browser.newPage({
     viewport: { width: 1280, height: 800 },

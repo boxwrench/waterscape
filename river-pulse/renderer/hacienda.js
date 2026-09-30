@@ -17,6 +17,7 @@ import { loadRiverTerrain } from "./terrain.js";
 import { buildRiverTerrainGrid } from "./terrain-mesh.js";
 import { elevationColors } from "./terrain-style.js";
 import { loadHydrography, createHydrographyLayer } from "./hydrography.js";
+import { createAuthoredWater } from "./authored-water.js";
 import { centerlineConditionStyle } from "../visual-bindings/condition-centerline.js";
 
 const canvas = document.querySelector("#scene"),
@@ -40,6 +41,7 @@ const canvas = document.querySelector("#scene"),
   errorBox = document.querySelector("#error"),
   overviewButton = document.querySelector("#overview"),
   bridgeButton = document.querySelector("#bridge"),
+  shallowsButton = document.querySelector("#shallows"),
   TERRAIN_BASE = "../data/russian_river/places/hacienda_bridge/terrain",
   SOURCE_URL = "../data/russian_river/places/hacienda_bridge/source.json";
 
@@ -50,7 +52,9 @@ let dragging = false,
   lastX = 0,
   lastY = 0,
   selected = null,
-  cameraTransition = null;
+  cameraTransition = null,
+  activeView = "overview",
+  authoredWater = null;
 
 function fail(error) {
   console.error(error);
@@ -71,6 +75,10 @@ function fail(error) {
 }
 
 function setActiveView(kind) {
+  activeView = kind;
+  shallowsButton.classList.toggle("active", kind === "shallows");
+  shallowsButton.setAttribute("aria-pressed", String(kind === "shallows"));
+  updateWaterVisibility();
   overviewButton.classList.toggle("active", kind === "overview");
   bridgeButton.classList.toggle("active", kind === "bridge");
   overviewButton.setAttribute("aria-pressed", String(kind === "overview"));
@@ -82,7 +90,17 @@ function pose(state, terrain, kind, animate = true) {
   inspectTitle.textContent = "Camera position";
   setActiveView(kind);
   let target;
-  if (kind === "bridge") {
+  if (kind === "shallows" && authoredWater) {
+    const { x, y, z } = authoredWater.focus;
+    target = {
+      x: x - 16,
+      z: z + 28,
+      y: Math.max(y + 8, terrain.ground(x - 16, z + 28) + 8),
+      yaw: Math.atan2(16, 28),
+      pitch: -0.24,
+      speed: 6,
+    };
+  } else if (kind === "bridge") {
     target = {
       x: -120,
       z: 180,
@@ -236,6 +254,12 @@ async function addRiverCenterline(scene, terrain) {
           "../data/russian_river/places/hacienda_bridge/hydrography.json",
         ),
         group = createHydrographyLayer(document, terrain);
+      authoredWater = createAuthoredWater(document, terrain);
+      if (authoredWater) {
+        group.add(authoredWater.mesh);
+        shallowsButton.disabled = false;
+        window.riverPulseAuthoredWater = authoredWater;
+      }
       scene.add(group);
       connectRiverLayer(
         group,
@@ -294,6 +318,12 @@ async function addRiverCenterline(scene, terrain) {
   }
 }
 
+function updateWaterVisibility() {
+  if (authoredWater) authoredWater.mesh.visible = activeView !== "overview";
+  const mainstem = window.riverPulseRiverLayer?.getObjectByName("3DHP Russian River flowline");
+  if (mainstem) mainstem.visible = activeView === "overview" || !authoredWater;
+}
+
 function connectRiverLayer(group, mainstem) {
   function apply(condition) {
     if (!mainstem) return;
@@ -314,6 +344,7 @@ function connectRiverLayer(group, mainstem) {
   );
   apply(window.riverPulseSeasonalCondition);
   window.riverPulseRiverLayer = group;
+  updateWaterVisibility();
 }
 
 async function fetchJson(url) {
@@ -457,6 +488,11 @@ async function main() {
     pose(state, terrain, "bridge");
   });
 
+  shallowsButton.addEventListener("click", () => {
+    marker.visible = false;
+    pose(state, terrain, "shallows");
+  });
+
   addEventListener("keydown", (event) => {
     if (event.target.closest?.("input, button, select, textarea, summary, a"))
       return;
@@ -575,6 +611,7 @@ async function main() {
       gaugeWorldLabel.style.top = `${(-gaugeProjection.y * 0.5 + 0.5) * innerHeight}px`;
     }
 
+    authoredWater?.update(now / 1000, matchMedia("(prefers-reduced-motion: reduce)").matches);
     renderer.render(scene, camera);
   });
 }
