@@ -14,6 +14,9 @@ layered mixed woodland and greener, less transparent water. Shore walking stays 
 at eye height. Local geometry is authored, not surveyed: coordinate/elevation labels and
 the compass are Map-only. Timeline/scientific selection is independent of the static beach.
 See [authored-scene notes](river-pulse/authored-water.md) for evidence, licenses and limits.
+The user accepted this visual baseline after reviewing Firefox: "not perfect but
+recognizable." Keep the current composition, gray steel/stone, left-pier outcrop and
+greener water. Further visual polish is optional; technical verification remains open.
 Required browser verification is blocked after its second failure: the data-outage check
 reads `riverPulseMapFlow.mesh` before the asynchronous layer exists (line 265). The first
 failure exposed a missing caption element, since repaired. Unit tests (104), river
