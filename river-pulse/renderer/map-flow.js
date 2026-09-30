@@ -8,7 +8,8 @@ import { buildMapRibbonSkeleton, mapRibbonPositions } from "./map-ribbon-geometr
 
 export function createMapFlow(document, terrain) {
   const skeleton = buildMapRibbonSkeleton(document), geometry = new THREE.BufferGeometry();
-  let state = null, history = null, binding = mapRibbonBinding(state, history), width = binding.width;
+  let state = null, history = null, binding = mapRibbonBinding(state, history), width = binding.width,
+    previousUpdate = null;
   const positions = new THREE.BufferAttribute(mapRibbonPositions(skeleton, terrain, width), 3);
   positions.setUsage(THREE.DynamicDrawUsage);
   geometry.setAttribute("position", positions);
@@ -67,12 +68,15 @@ export function createMapFlow(document, terrain) {
     get binding() { return binding; },
     get animationTime() { return clock.value; },
     update(seconds, reducedMotion) {
+      const elapsed = previousUpdate === null ? 1 / 60 : Math.max(0, Math.min(1, seconds - previousUpdate));
+      previousUpdate = seconds;
       clock.value = reducedMotion || !binding.moving ? 0 : seconds;
       mesh.userData.reducedMotion = reducedMotion;
-      // Ease the visual width only; the scientific selection updates immediately.
+      // Ease the visual width only; scientific selection updates immediately.
+      // Elapsed time keeps settling duration consistent on slow software renderers.
       const difference = binding.width - width;
       if (Math.abs(difference) > 0.01) {
-        width += difference * (reducedMotion ? 1 : 0.15);
+        width += difference * (reducedMotion ? 1 : 1 - Math.exp(-9.75 * elapsed));
         mapRibbonPositions(skeleton, terrain, width, positions.array);
         positions.needsUpdate = true;
         displayWidth.value = width; mesh.userData.displayWidth = width;

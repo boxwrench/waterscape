@@ -143,3 +143,9 @@ code, textures or reflection render passes were imported. Its texture blending/f
 is not implemented: continuous procedural coordinates avoid texture resets. The resource is
 recorded as a technique reference, not as a newly integrated renderer. Target GPU performance
 remains unmeasured; production WebGL2 rendering is verified by the existing browser suite.
+
+RP8 publication verification changes display-width easing from a per-frame fraction to an
+elapsed-time exponential. The target binding is unchanged; the transition now takes a
+consistent wall-clock duration at slow CI/software-rendering frame rates. Reduced motion
+still snaps directly to the target. The initial CI timeout was at width settling, while a
+probe using its pinned Chromium 141 rendered without page errors.

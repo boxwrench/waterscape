@@ -16,6 +16,8 @@ and leave the independent dirty reservoir checkout untouched.
 3. Run publication checks, commit docs and push the verified integrated commit to main using
    an ordinary fast-forward push. Never force-push.
 4. Monitor the Pages workflow and verify deployed River Pulse assets against the local build.
+   If CI exposes a rendering/readiness defect, diagnose with its pinned Chromium version
+   and repair only the publication-blocking River Pulse behavior/check.
 5. Record the publication result and commit/push that documentation update too.
 
 ## Checks

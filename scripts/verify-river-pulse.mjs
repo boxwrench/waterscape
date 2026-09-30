@@ -316,6 +316,9 @@ try {
   console.log(
     "River Pulse browser checks passed: production assets, WebGL fallback, timeline, evidence, camera/layers, mobile, data outage and GPU failure.",
   );
+} catch (error) {
+  console.error("River Pulse page errors before check failure:", errors);
+  throw error;
 } finally {
   await browser.close();
   await new Promise((resolve) => server.close(resolve));
