@@ -37,3 +37,14 @@ selected discharge controls the whole mainstem display width, which is an illust
 comparison within the loaded history window, not spatially resolved discharge, channel
 width, bank extent, stage, inundation or local velocity. Ripple size/speed are exaggerated
 presentation choices. No new factual quantities or external assets are needed.
+
+## Result
+- Status: done
+- Commit: 2e9a2a4
+- Checks:
+  - `node --test "pipeline/tests/*.test.mjs"`: 108 passed, `ℹ fail 0`.
+  - `node pipeline/validate-river-packages.mjs`: `River packages valid.`
+  - `npm run test:build`: `Built experience pages and river assets valid.` (90 browser modules).
+  - `RIVER_PULSE_BROWSER=/opt/google/chrome/chrome node scripts/verify-river-pulse.mjs`: `River Pulse browser checks passed: production assets, WebGL fallback, timeline, evidence, camera/layers, mobile, data outage and GPU failure.`
+  - Visual inspection: desktop high-flow ribbon wider with blue seasonal margins; low-flow ribbon narrower with warm margins; ripples readable on desktop/mobile. Synthetic test hydrology never ships to users.
+- Notes: Updated Map preview opened in existing Firefox via `firefox --new-tab http://localhost:5174/river-pulse/renderer/hacienda.html`. The available native Chrome session could not create a graphics context; its error tab was closed. Software Chrome checks pass; native WebGPU/target GPU performance remains unmeasured. RP5's test-readiness race is resolved; accepted beach/bridge visuals remain unchanged. Width is a disclosed window-relative gauge-flow mapping, not measured channel geometry. No push or merge.
