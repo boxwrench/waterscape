@@ -33,7 +33,8 @@ Ultra are secondary. Track dependencies still apply; storage history needs Cryst
 
 ## Track RP — River Pulse
 
-The accepted Hacienda scene and Map ribbon are ready for publication as RP8. Local
+The accepted Hacienda scene and Map ribbon are pushed to main; RP8 Pages deployment is
+blocked by a CI screenshot timeout. Local
 hydrodynamics, surveyed bed geometry and Jenner rendering remain future work.
 
 | ID | Task | Who | Needs | Status |
@@ -44,7 +45,7 @@ hydrodynamics, surveyed bed geometry and Jenner rendering remain future work.
 | RP5 | [Hacienda authored scene](tasks/RP5-hacienda-authored-scene.md) | capable | RP4 | user accepted; historical browser race resolved in RP6 |
 | RP6 | [Flow-scaled Map water ribbon](tasks/RP6-map-water-ribbon.md) | capable | RP5 | complete; all scoped checks pass |
 | RP7 | [Irregular blue Map water](tasks/RP7-map-water-detail.md) | capable | RP6 | complete; all scoped checks pass |
-| RP8 | [Document and publish River Pulse](tasks/RP8-publish-river-pulse.md) | capable | RP7 | publication in progress |
+| RP8 | [Document and publish River Pulse](tasks/RP8-publish-river-pulse.md) | capable | RP7 | pushed; Pages blocked by CI screenshot timeout after two failed runs |
 
 ## Track D — reservoir context
 

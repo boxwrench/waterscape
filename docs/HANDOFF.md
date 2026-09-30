@@ -9,10 +9,17 @@ and what's next".
 The user authorized committing/pushing accepted RP2–RP7 work, a prominent README link and
 updated docs. `task/RP8` integrates current remote main (`1b44237`) into the isolated River
 Pulse worktree, preserving published reservoir work and leaving the dirty `task/H1` checkout
-untouched. Publication verification is in progress; see
-[RP8](roadmap/tasks/RP8-publish-river-pulse.md) for final commit/check/deployment evidence.
-The River Pulse sections below record historical local milestones; RP8's result supersedes
-their unpublished status once deployment is verified.
+untouched. Code/docs are pushed to main at `15648e2`, with timing correction `6dc6a48`.
+Local unit (117), Python (26), shader/data/build checks and browser checks pass, including
+the pinned CI Chromium. Pages deployment is blocked: the first CI run timed out settling
+width; after elapsed-time easing fixed that, the second run timed out saving `authored-shallows-desktop.png`
+at browser-check line 208 (`page.screenshot: Timeout 30000ms exceeded.`), with page errors `[]`.
+Build/deploy run [36672469191](https://github.com/boxwrench/waterscape/actions/runs/36672469191)
+failed build and skipped deployment. The accepted visuals are not yet live. Per AGENTS.md's
+two-failure rule and the user's request to avoid more checks, no further rerun or CI bypass
+was attempted. See [RP8](roadmap/tasks/RP8-publish-river-pulse.md) for the result. Its docs-only
+result commit skips CI to avoid another run; runtime code remains the locally verified build.
+The River Pulse sections below record historical local milestones.
 
 ## Irregular blue Map water — RP7
 
