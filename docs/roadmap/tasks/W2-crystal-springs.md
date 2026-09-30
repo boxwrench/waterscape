@@ -113,3 +113,14 @@ a flyover video. It is not added to any tour yet (that is W4).
     (84.9 m). The explorer readout shows the former, the card the latter. Not resolved here.
   - Uses the `diablo-oak` biome as a stand-in; a greener Peninsula biome is the next task.
     Re-record the flyover after it.
+- Follow-up (same day, user-directed):
+  - Upper Crystal Springs added via `extraAnchors` (`026b5a3`); water 4.92 km2.
+  - New `peninsula-oak-fir` biome: coast live oak with Douglas-fir in stands, sage summer
+    grass, spring-green default, denser cover off the ridge crests (`0bc7f6e`, `21e81f3`, `af0bb6c`).
+  - Viewpoints tuned (Shoreline at the waterline, both ridges on open ground) and pinned in
+    `source.json` (`19f9eaf`, `7ffc00e`).
+  - Morning: overcast with low valley fog (`083ff6d`, `06cab98`, `6281328`); greener water
+    optics (`c764ab7`).
+  - Water level: explorer 86.6 m (3DEP export) vs card 84.9 m (2023 EPQS point) accepted as
+    is; reservoir levels vary and the two come from different surveys.
+
