@@ -59,7 +59,7 @@ export function createMapFlow(document, terrain) {
     binding = mapRibbonBinding(state, history);
     mesh.userData.moving = binding.moving;
     mesh.userData.binding = binding;
-    known.value = binding.availability === "present" ? 1 : 0;
+    known.value = binding.availability === "present" ? 1 : 0.7;
   }
   refresh();
   return { mesh, applyState(next) { state = next; refresh(); },
