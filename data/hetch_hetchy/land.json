@@ -34,5 +34,6 @@
   "air": {
     "haze": 0.5,
     "note": "Clear air at 1,150 m: half the presets' haze, matched by eye to the Commons photos."
-  }
+  },
+  "structures": true
 }

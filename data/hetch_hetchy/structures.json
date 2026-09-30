@@ -1,0 +1,61 @@
+{
+  "dams": [
+    {
+      "name": "O'Shaughnessy Dam",
+      "nid": "CA00123",
+      "type": "Gravity",
+      "crestUTM": [
+        [
+          254934.9,
+          4203764.4
+        ],
+        [
+          254963.0,
+          4203753.2
+        ],
+        [
+          254991.1,
+          4203734.4
+        ],
+        [
+          255016.1,
+          4203710.7
+        ],
+        [
+          255034.9,
+          4203687.6
+        ],
+        [
+          255049.2,
+          4203659.4
+        ],
+        [
+          255058.0,
+          4203631.3
+        ],
+        [
+          255063.0,
+          4203603.2
+        ],
+        [
+          255065.5,
+          4203571.9
+        ],
+        [
+          255066.1,
+          4203545.7
+        ]
+      ],
+      "utmZone": 11,
+      "crestElevation": 1163.4,
+      "height": 95.1,
+      "length": 274.3,
+      "sources": {
+        "height, length, type": "https://geospatial.sec.usace.army.mil/dls/rest/services/NID/National_Inventory_of_Dams_Public_Service/FeatureServer/0/query?where=NIDID%3D%27CA00123%27&outFields=DAM_HEIGHT,DAM_LENGTH,PRIMARY_DAM_TYPE&f=json",
+        "crest line": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer/exportImage?bbox=254587.97054700254,4203509.417535508,255287.97054700254,4204009.417535508&bboxSR=32611&imageSR=32611&size=1120,800&format=jpg&bandIds=0,1,2&f=image",
+        "crest elevation": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?bbox=254814.84554700254,4203485.667535508,255126.09554700254,4203824.417535508&bboxSR=32611&imageSR=32611&size=155,169&format=tiff&pixelType=F32&interpolation=RSP_BilinearInterpolation&f=image"
+      },
+      "note": "Crest line traced by hand from the NAIP image (275.6 m against NID's 900 ft); crest elevation is the 3DEP maximum along it (the toe lies 93.7 m lower, against NID's 312 ft). Cross-section is a generic gravity profile, not the as-built drawings."
+    }
+  ]
+}

@@ -42,6 +42,15 @@
       "pitch": -0.42,
       "speed": 4,
       "label": "Shoreline"
+    },
+    "dam": {
+      "x": -4552,
+      "z": -367,
+      "above": 2,
+      "yaw": 2.059,
+      "pitch": -0.36,
+      "speed": 10,
+      "label": "O'Shaughnessy Dam"
     }
   }
 }
