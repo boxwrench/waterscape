@@ -63,6 +63,9 @@ accessible if graphics initialization fails. Source outages show unavailable dat
 The [authored-water notes](../docs/river-pulse/authored-water.md) record visual mappings,
 photographic references, CC0 ground materials, MIT tree assets and rendering limitations.
 
+See [River structure](../docs/river-pulse/river-structure.md) for how rivers, places and views
+are organised, and how to choose places for a new river.
+
 ## Layout
 
 | Directory | Responsibility |
