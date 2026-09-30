@@ -27,3 +27,14 @@ flow width, condition border, data behavior and the independent reservoir checko
 Ripple size, speed, blue color and reflection highlights are illustrative presentation
 choices, not measurements of velocity, water quality or waves. No new hydrology binding,
 external runtime import, texture asset or vendor modification is needed.
+
+## Result
+- Status: done
+- Commit: 01e34f4
+- Checks:
+  - `node --test "pipeline/tests/*.test.mjs"`: 108 passed, `ℹ fail 0`.
+  - `node pipeline/validate-river-packages.mjs`: `River packages valid.`
+  - `npm run test:build`: `Built experience pages and river assets valid.` (90 modules).
+  - `RIVER_PULSE_BROWSER=/opt/google/chrome/chrome node scripts/verify-river-pulse.mjs`: `River Pulse browser checks passed: production assets, WebGL fallback, timeline, evidence, camera/layers, mobile, data outage and GPU failure.`
+  - Visual inspection: desktop high/low and mobile Map water is blue with irregular softer highlights. Closer renders at two advancing animation times show changing detail without regular crosshatching; no page errors. Accepted beach composition and green water inspected and retained.
+- Notes: Three Water2Mesh is a technique reference, not imported code/assets. Existing local TSL noise supplies detail; no new downloads. Firefox preview reopened at `http://localhost:5174/river-pulse/renderer/hacienda.html?preview=rp7`. Software Chrome WebGL2 verified; target GPU performance remains unmeasured. No push, merge or publication; reservoir checkout untouched.
