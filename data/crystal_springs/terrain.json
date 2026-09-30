@@ -9,28 +9,28 @@
   "service": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer",
   "bbox_lonlat": [
     -122.4149,
-    37.4902,
-    -122.3283,
+    37.4776,
+    -122.315,
     37.5755
   ],
   "crs": "EPSG:32610",
   "utmZone": 10,
   "verticalDatum": "NAVD88 metres (3DEP)",
   "encoding": "gzip; 3 planar uint16 channels; rows delta-coded from the row above",
-  "width": 764,
-  "height": 949,
+  "width": 882,
+  "height": 1090,
   "cell": [
-    10.09761647851522,
-    10.097616478515194
+    10.09128448403469,
+    10.091284484034746
   ],
   "waterLevel": 86.6,
   "originUTM": [
-    555735.3644238699,
-    4153758.6696795328
+    557203.0904521537,
+    4151920.1962757097
   ],
   "gridOrigin": [
-    -4065.167361693224,
-    -5199.814477947541
+    -5532.896555974265,
+    -7052.015524217859
   ],
   "channels": {
     "height": {
