@@ -28,13 +28,14 @@
   },
   "fog": {
     "from": [
-      -1,
+      0,
       0
     ],
-    "edge": 1700,
-    "width": 900,
-    "top": 420,
-    "base": 60,
-    "note": "Setting: the Pacific marine layer on the western ridges on summer mornings, as in the July 2014 Commons photos listed in the biome; placement and height set by eye."
+    "edge": -1,
+    "width": 1,
+    "top": 70,
+    "base": -20,
+    "overcast": 0.85,
+    "note": "Setting: low valley fog under an overcast marine-layer morning, typical of the Peninsula watershed in summer (see the Commons photos listed in the biome); heights set by eye."
   }
 }

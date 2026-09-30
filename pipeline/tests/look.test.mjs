@@ -41,3 +41,14 @@ test("a marine layer is written only for a fog-capable preset and a body with fo
   assert.equal(golden[32], 0);
   assert.equal(presetBuffer(PRESETS.morning, landLook({}))[32], 0);
 });
+
+test("an overcast fog morning dims the sun and closes the clouds; other presets are untouched", async () => {
+  const { effectivePreset } = await import("../../renderer/engine/look.js");
+  const look = landLook({ fog: { from: [0, 0], edge: -1, width: 1, top: 70, base: -20, overcast: 0.9 } }),
+    m = effectivePreset(PRESETS.morning, look);
+  assert.ok(m.cloudCoverage >= 0.9);
+  assert.ok(m.sunColor[0] < PRESETS.morning.sunColor[0] * 0.6);
+  assert.ok(m.hazeDensity > PRESETS.morning.hazeDensity);
+  assert.equal(effectivePreset(PRESETS.golden, look), PRESETS.golden);
+  assert.equal(effectivePreset(PRESETS.morning, landLook({})), PRESETS.morning);
+});

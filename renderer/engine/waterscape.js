@@ -4,7 +4,7 @@
 // `settings` in sync with its controls and calls step() once per frame.
 import { GpuRuntime } from "../../vendor/cuda-webshader/runtime/runtime.js";
 import { PRESETS, choosePreset, presetBuffer } from "./presets.js";
-import { landLook } from "./look.js";
+import { effectivePreset, landLook } from "./look.js";
 import { createLandPass } from "../land/scene.js";
 
 const WG = [32, 32, 3],
@@ -109,7 +109,7 @@ export async function createWaterscape(
   // then two for the land look.
   function setPreset(name) {
     state.preset = choosePreset(name, body.land);
-    const p = PRESETS[state.preset];
+    const p = effectivePreset(PRESETS[state.preset], look);
     rt.write(lightBuf, presetBuffer(p, look));
     settings.exposure = p.exposure;
     landPass?.setLight(p, settings.season);

@@ -367,6 +367,14 @@ __device__ float3 sky(const float4 *L, float3 d, int season, float time) {
     col = mix3(col, through, alpha);
   }
   col = mul(col, L[2].w);
+  // A closed overcast (coverage past .8; look.js effectivePreset): a flat grey ceiling in the
+  // haze's brightness, darker overhead and a little brighter toward the hidden sun, in place of
+  // the blue sky and the sun's glow (render_water drops the disc).
+  float overcast = smooth(.8f, 1.0f, L[0].w);
+  if (overcast > 0.0f) {
+    float3 ceiling = mul(lightHaze(L), (1.0f - .25f * sat(d.y * 2.0f)) * (1.0f + .25f * smooth(.6f, 1.0f, cosT)));
+    col = mix3(col, ceiling, overcast * smooth(-.05f, .05f, d.y));
+  }
   // Distant, hazy ridgelines beyond the lidar crop: two layers at different depths.
   float e = d.y, a = atan2f(d.z, d.x);
   float far = .050f + .018f * sinf(a * 2.0f + .8f) + .012f * sinf(a * 5.0f - .5f) +
@@ -750,9 +758,10 @@ __device__ float3 terrainShade(const float4 *T, const float4 *L, float3 p, float
   float3 lit = mix3(groundLit, crownLit, canopy * (1.0f - ring) * (given.w > 1.5f ? 0.0f : 1.0f));
   return aerial(L, lit, distance);
 }
-// Morning marine layer (Setting): a fog bank lying beyond a ridge line (L[8], L[9]; look.js),
-// thickening over a ramp, its top billowing with drifting noise. Eight steps where the ray
-// crosses the layer; nothing at all without fog.
+// Morning fog (Setting; L[8], L[9], look.js): a layer between base and top, lying beyond an
+// edge line (or everywhere), its top billowing with drifting noise in proportion to its depth:
+// a marine bank over a ridge, or valley fog over the water. Eight steps where the ray crosses
+// the layer; nothing at all without fog.
 __device__ float3 fogLayer(const float4 *L, float3 col, float3 ro, float3 rd, float tEnd, float time) {
   float amount = L[8].x, top = L[8].y, base = L[8].z, edge = L[8].w, fx = L[9].x, fz = L[9].y;
   if (amount <= 0.0f)
@@ -782,9 +791,10 @@ __device__ float3 fogLayer(const float4 *L, float3 col, float3 ro, float3 rd, fl
     // Billows: broad swells and smaller heads on the layer's top, drifting slowly.
     float n = .65f * noise(p.x * .0007f + time * .004f, p.z * .0007f) +
               .35f * noise(p.x * .0031f + time * .01f, p.z * .0031f + 5.0f),
-          crest = top + 150.0f * (n - .5f),
-          d = smooth(0.0f, L[9].z, p.x * fx + p.z * fz - edge) * smooth(crest, crest - 30.0f, p.y) *
-              smooth(base, base + 50.0f, p.y) * dt;
+          crest = top + .4f * (top - base) * (n - .5f),
+          d = smooth(0.0f, L[9].z, p.x * fx + p.z * fz - edge) *
+              smooth(crest, crest - fminf(30.0f, .3f * (top - base)), p.y) *
+              smooth(base, base + fminf(50.0f, .25f * (top - base)), p.y) * dt;
     tau += d;
     lift += d * sat((p.y - base) / fmaxf(1.0f, crest - base));
   }
@@ -1026,7 +1036,7 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
       col = sky(light, rd, season, time);
   }
   float mu = dot3(rd, sun);
-  col = add(col, mul(SUN, 18 * smooth(.99996f, .999985f, mu)));
+  col = add(col, mul(SUN, 18 * smooth(.99996f, .999985f, mu) * (1.0f - smooth(.8f, 1.0f, light[0].w))));
   col = fogLayer(light, col, ro, rd, hitT, time);
   hdr[iy * width + ix] = make_float4(fmaxf(0, col.x), fmaxf(0, col.y), fmaxf(0, col.z), 1);
 }

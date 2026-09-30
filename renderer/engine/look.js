@@ -25,9 +25,10 @@ export function landLook(land) {
     species: v.species ?? null,
     // 0: species mixed tree by tree; 1: grouped in stands (oak-placement.js standPick).
     stands: v.stands ?? 0,
-    // A marine layer lying beyond a ridge line (water.cu fogLayer), shown by presets with fog:
-    // `from` the unit direction it lies in, `edge` metres from the scene origin along it where
-    // it begins, thickening over `width`; `top` and `base` in metres above the water surface.
+    // A fog layer (water.cu fogLayer), shown by presets with fog: `from` the unit direction it
+    // lies in ([0, 0]: everywhere), `edge` metres from the scene origin along it where it
+    // begins, thickening over `width`; `top` and `base` in metres above the water surface;
+    // `overcast` 0-1 (effectivePreset).
     fog: land?.fog ?? null,
   };
 }
@@ -45,4 +46,23 @@ export function speciesThresholds(look, order) {
 export function pickSpecies(thresholds, pick) {
   const i = thresholds.findIndex((t) => pick < t);
   return i < 0 ? thresholds.length - 1 : i;
+}
+
+// The light a preset gives this water body: a fog preset (Morning) under a body whose fog is
+// `overcast` (0-1) closes the clouds, weakens and greys the sun, lifts a grey sky fill and
+// thickens the haze. Shared by the water kernel and the three.js land.
+export function effectivePreset(p, look) {
+  const o = p.fog ? look.fog?.overcast ?? 0 : 0;
+  if (!o) return p;
+  const mix = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t);
+  return {
+    ...p,
+    // The cloud layer's coverage is not linear: +0.3 closes the sky at a full overcast.
+    cloudCoverage: Math.max(p.cloudCoverage, Math.min(1, o + 0.3)),
+    cloudDensity: Math.max(p.cloudDensity, 0.9 * o),
+    sunColor: p.sunColor.map((c) => c * (1 - 0.8 * o)),
+    fill: mix(p.fill, [0.5, 0.52, 0.56], 0.6 * o),
+    haze: mix(p.haze, [0.72, 0.74, 0.76], o),
+    hazeDensity: p.hazeDensity * (1 + 2 * o),
+  };
 }
