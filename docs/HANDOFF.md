@@ -4,6 +4,17 @@ Where things stand, for whoever picks this up next (person or agent). The plan l
 `ROADMAP.md` and `docs/roadmap/README.md`; this file is the snapshot of "what just happened
 and what's next".
 
+## Hacienda scene materials — RP3
+
+The user selected Poly Haven **Ganges River Pebbles** for the beach/shallow bed and
+**Rock Boulder Dry** for large exposed bank rocks. Source and CC0 links are saved in the
+[resource library](../resources/README.md#terrain-rocks--ground-materials). River Small Rocks
+is an optional gravel variation. These are selected candidates, not downloaded/integrated
+materials or a geological identification. Use a shared dry/wet pebble material and some
+foreground pebble geometry in the next authored scene pass. The bridge, large rocks,
+pebble beach and water-edge Shoreline camera remain the requested next scene work.
+`task/RP3` builds on RP2; no push or merge.
+
 ## River Pulse authored water — RP2
 
 `task/RP2` in `/tmp/waterscape-rp2` adds a first local optical water preview in Hacienda's
