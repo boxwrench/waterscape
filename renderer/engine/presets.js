@@ -3,6 +3,7 @@
 // renderer's HDR units (today's sun was (2.0, 1.83, 1.55), sky fill (.36, .46, .62)).
 // skyGain scales the Preetham sky (whose raw brightness falls ~10x from midday to a low sun)
 // to those units; see sky() in water.cu.
+import { landLook } from "./look.js";
 const unit = (v) => {
   const l = Math.hypot(...v);
   return v.map((x) => x / l);
@@ -46,8 +47,9 @@ export const PRESETS = {
   },
 };
 
-// Six float4s, read by the shader as `const float4 *light` (see the comment above sky()).
-export function presetBuffer(p) {
+// Eight float4s, read by the shader as `const float4 *light` (see the comment above sky()):
+// six for the light, two for the water body's land look (look.js).
+export function presetBuffer(p, look = landLook(null)) {
   return new Float32Array([
     ...p.sun, p.cloudCoverage,
     ...p.sunColor, p.cloudDensity,
@@ -55,6 +57,8 @@ export function presetBuffer(p) {
     p.turbidity, p.rayleigh, p.mieCoefficient, p.mieG,
     ...p.haze, p.hazeDensity,
     p.cloudScale, p.cloudSpeed, p.exposure, 0,
+    ...look.summer.ground[0], look.cover,
+    ...look.summer.ground[1], 0,
   ]);
 }
 

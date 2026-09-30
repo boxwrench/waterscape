@@ -283,6 +283,7 @@ __device__ float fresnel(float ci) {
 // L[0] sun direction xyz, cloud coverage · L[1] sun radiance rgb, cloud density
 // L[2] sky fill rgb, sky gain · L[3] turbidity, rayleigh, mie coefficient, mie g
 // L[4] haze rgb, haze density · L[5] cloud scale, cloud speed, exposure, unused
+// L[6] summer grass dark rgb, tree cover · L[7] summer grass light rgb, unused (look.js)
 __device__ float3 lightSun(const float4 *L) { return v3(L[0].x, L[0].y, L[0].z); }
 __device__ float3 lightRad(const float4 *L) { return v3(L[1].x, L[1].y, L[1].z); }
 __device__ float3 lightFill(const float4 *L) { return v3(L[2].x, L[2].y, L[2].z); }
@@ -626,7 +627,7 @@ __device__ float3 terrainShade(const float4 *T, const float4 *L, float3 p, float
   float tex = fbm(p.x * .024f, p.z * .024f);
   // Spring grass is a saturated yellow-green; summer cures to straw.
   float3 spring = mix3(v3(.13f, .30f, .030f), v3(.30f, .46f, .060f), tex);
-  float3 summer = mix3(v3(.30f, .21f, .075f), v3(.50f, .37f, .15f), tex);
+  float3 summer = mix3(v3(L[6].x, L[6].y, L[6].z), v3(L[7].x, L[7].y, L[7].z), tex);
   float3 grass = mix3(spring, summer, season == 0 ? 0.0f : 1.0f);
   // Wind in the grass. Instanced-blade grass bends each blade by a scrolling wind texture;
   // seen from a distance that shows up as gusts rolling across the hill as lighter bands,
@@ -653,7 +654,7 @@ __device__ float3 terrainShade(const float4 *T, const float4 *L, float3 p, float
   float steep = smooth(.18f, .45f, 1.0f - n.y);
   float grove = smooth(.46f, .64f, fbm(p.x * .0065f + 13.0f, p.z * .0065f - 4.0f));
   float density = sat(.05f + .85f * valley + .55f * northFacing + .25f * steep + .75f * grove -
-                      .70f * smooth(.62f, .88f, spur)) *
+                      .70f * smooth(.62f, .88f, spur) + L[6].w * (1.0f - smooth(.62f, .88f, spur))) *
                   smooth(10.0f, 35.0f, shore);
   // Individual crowns while they are a few pixels wide, then their average cover.
   float farBlend = smooth(1.6f, 3.2f, footprint);

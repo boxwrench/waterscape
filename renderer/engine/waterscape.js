@@ -4,6 +4,7 @@
 // `settings` in sync with its controls and calls step() once per frame.
 import { GpuRuntime } from "../../vendor/cuda-webshader/runtime/runtime.js";
 import { PRESETS, choosePreset, presetBuffer } from "./presets.js";
+import { landLook } from "./look.js";
 import { createLandPass } from "../land/scene.js";
 
 const WG = [32, 32, 3],
@@ -85,7 +86,8 @@ export async function createWaterscape(
 
   const source = await (await fetch(new URL("../water.cu", import.meta.url))).text(),
     terrainCells = rt.createBuffer(terrain.gpuCells()),
-    lightBuf = rt.createBuffer(24 * 4),
+    lightBuf = rt.createBuffer(32 * 4),
+    look = landLook(body.land),
     // Baked terrain light (bake_light): rows padded to 256 bytes so they copy into a texture.
     bakeStride = Math.ceil(terrain.width / 16) * 16,
     bakeBuf = rt.createBuffer(bakeStride * terrain.height * 16);
@@ -103,11 +105,12 @@ export async function createWaterscape(
     landPass?.updateLight(bakeBuf, bakeStride);
   }
 
-  // Lighting preset: the shader reads six float4s (sun, radiance, fill, sky, haze, clouds).
+  // Lighting preset: the shader reads six float4s (sun, radiance, fill, sky, haze, clouds),
+  // then two for the land look.
   function setPreset(name) {
     state.preset = choosePreset(name, body.land);
     const p = PRESETS[state.preset];
-    rt.write(lightBuf, presetBuffer(p));
+    rt.write(lightBuf, presetBuffer(p, look));
     settings.exposure = p.exposure;
     landPass?.setLight(p, settings.season);
     rebake();
@@ -130,6 +133,7 @@ export async function createWaterscape(
   try {
     landPass = await createLandPass(rt, terrain, {
       biome: body.biome,
+      look,
       biomeBase: new URL(`../../data/biomes/${terrain.meta.biome}/`, import.meta.url),
     });
     diag.land = { shared: landPass.shared, error: null };

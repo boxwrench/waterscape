@@ -26,9 +26,10 @@ try {
   await page.waitForFunction(() => window.ready);
   // Each variant twice: full detail near the camera, and a lighter "-far" version (fewer, larger
   // leaves, fewer branch levels) for distance and the low tier.
-  const lod = manifest.trees.lod ?? {},
-    far = manifest.trees.variants.map((v) => {
-      const leaves = v.options?.leaves ?? {};
+  // A variant's own "lod" (e.g. a conifer, whose preset has one branch level) overrides the biome's.
+  const far = manifest.trees.variants.map((v) => {
+      const lod = v.lod ?? manifest.trees.lod ?? {},
+        leaves = v.options?.leaves ?? {};
       return {
         ...v,
         id: `${v.id}-far`,
@@ -72,14 +73,19 @@ try {
     });
     console.log(`${biome}: ${v.id} — ${parts.branches.vertexCount} + ${parts.leaves.vertexCount} vertices, height ${v.height.toFixed(1)}, crown r ${v.crownRadius.toFixed(1)}`);
   }
-  const textures = {};
-  for (const [name, src] of Object.entries(baked.textures)) {
-    if (!src?.startsWith("data:")) continue;
-    const [, mime, data] = src.match(/^data:image\/(\w+);base64,(.*)$/),
-      file = `trees/${name}.${mime === "jpeg" ? "jpg" : mime}`;
-    await writeFile(path.join(biomeDir, file), Buffer.from(data, "base64"));
-    textures[name] = file;
-  }
+  const textures = {},
+    save = async (name, src) => {
+      const [, mime, data] = src.match(/^data:image\/(\w+);base64,(.*)$/),
+        file = `trees/${name}.${mime === "jpeg" ? "jpg" : mime}`;
+      await writeFile(path.join(biomeDir, file), Buffer.from(data, "base64"));
+      return file;
+    };
+  for (const [name, src] of Object.entries(baked.textures)) if (src?.startsWith("data:")) textures[name] = await save(name, src);
+  // A species whose bark or leaves differ from the biome's (renderer/land/trees.js reads these).
+  for (const [species, own] of Object.entries(baked.speciesTextures ?? {}))
+    for (const [name, src] of Object.entries(own))
+      if (src?.startsWith("data:") && src !== baked.textures[name])
+        ((textures.species ??= {})[species] ??= {})[name] = await save(`${species}-${name}`, src);
   // Impostor sheets from the full-detail variants (one row each), spring-tinted per species.
   const spec = manifest.trees.impostors,
     rowsFor = manifest.trees.variants,

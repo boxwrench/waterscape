@@ -7,6 +7,7 @@ import {
   sin, time, instanceIndex, instanceColor, If, Discard, uv,
 } from "../../vendor/three/three.tsl.js";
 import { oaksNear } from "./oak-placement.js";
+import { landLook, pickSpecies, speciesThresholds } from "../engine/look.js";
 
 // Near-oak range (m) per quality tier; the kernel fades its crowns in just inside this.
 export const TREE_RANGE = [40, 100, 200];
@@ -33,7 +34,7 @@ async function loadVariant(biomeBase, v) {
   return { ...v, branches: part(v.parts.branches), leaves: part(v.parts.leaves) };
 }
 
-export async function createTrees(terrain, biome, biomeBase, ground) {
+export async function createTrees(terrain, biome, biomeBase, ground, look = landLook(null)) {
   const baked = biome.trees?.baked ?? [];
   if (!baked.length) return null;
   // Species and variation order come from the full-detail metadata, regardless of which
@@ -49,8 +50,6 @@ export async function createTrees(terrain, biome, biomeBase, ground) {
       if (colour) t.colorSpace = THREE.SRGBColorSpace;
       return t;
     },
-    bark = tex(biome.trees.textures.bark, true),
-    leaf = tex(biome.trees.textures.leaf, true),
     u = ground.uniforms,
     { width: w, height: h, cell, x0, z0 } = terrain,
     lightAt = (p) =>
@@ -63,29 +62,39 @@ export async function createTrees(terrain, biome, biomeBase, ground) {
       return albedo.mul(sunLit.add(skyLit));
     };
 
-  // Bark: the texture, lit. Alpha 0.5 marks tree pixels for pack.js (see water.cu).
-  const barkMat = new THREE.MeshBasicNodeMaterial();
-  barkMat.colorNode = lit(texture(bark, uv()).rgb.mul(0.8), float(0.15));
-  barkMat.opacityNode = float(0.5);
-  // Leaves: alpha-tested cards, tinted per tree, lit with a wide wrap (light through foliage),
-  // swaying a little in the wind (more toward the crown's edge).
-  const leafMat = new THREE.MeshBasicNodeMaterial({ side: THREE.DoubleSide });
-  leafMat.colorNode = Fn(() => {
-    const t = texture(leaf, uv());
-    If(t.a.lessThan(0.5), () => Discard());
-    return lit(t.rgb.mul(instanceColor), float(0.45));
-  })();
-  leafMat.opacityNode = float(0.5);
-  leafMat.positionNode = Fn(() => {
-    const p = positionLocal,
-      phase = float(instanceIndex).mul(1.7),
-      sway = sin(time.mul(1.3).add(phase).add(p.y.mul(0.08))).mul(p.y.mul(0.004));
-    return p.add(vec3(sway, 0, sway.mul(0.6)));
-  })();
+  // Bark and leaf materials per species: a species' own textures (a conifer's needles), else the
+  // biome's. Alpha 0.5 marks tree pixels for pack.js (see water.cu).
+  const materials = {},
+    materialsFor = (species) => {
+      if (materials[species]) return materials[species];
+      const own = biome.trees.textures.species?.[species] ?? {},
+        bark = tex(own.bark ?? biome.trees.textures.bark, true),
+        leaf = tex(own.leaf ?? biome.trees.textures.leaf, true),
+        barkMat = new THREE.MeshBasicNodeMaterial();
+      barkMat.colorNode = lit(texture(bark, uv()).rgb.mul(0.8), float(0.15));
+      barkMat.opacityNode = float(0.5);
+      // Leaves: alpha-tested cards, tinted per tree, lit with a wide wrap (light through
+      // foliage), swaying a little in the wind (more toward the crown's edge).
+      const leafMat = new THREE.MeshBasicNodeMaterial({ side: THREE.DoubleSide });
+      leafMat.colorNode = Fn(() => {
+        const t = texture(leaf, uv());
+        If(t.a.lessThan(0.5), () => Discard());
+        return lit(t.rgb.mul(instanceColor), float(0.45));
+      })();
+      leafMat.opacityNode = float(0.5);
+      leafMat.positionNode = Fn(() => {
+        const p = positionLocal,
+          phase = float(instanceIndex).mul(1.7),
+          sway = sin(time.mul(1.3).add(phase).add(p.y.mul(0.08))).mul(p.y.mul(0.004));
+        return p.add(vec3(sway, 0, sway.mul(0.6)));
+      })();
+      return (materials[species] = { barkMat, leafMat });
+    };
 
   const group = new THREE.Group(),
     makeMesh = (v) => {
-      const b = new THREE.InstancedMesh(v.branches, barkMat, MAX_TREES),
+      const { barkMat, leafMat } = materialsFor(v.species),
+        b = new THREE.InstancedMesh(v.branches, barkMat, MAX_TREES),
         l = new THREE.InstancedMesh(v.leaves, leafMat, MAX_TREES);
       l.instanceColor = new THREE.InstancedBufferAttribute(new Float32Array(MAX_TREES * 3), 3);
       for (const m of [b, l]) {
@@ -101,7 +110,8 @@ export async function createTrees(terrain, biome, biomeBase, ground) {
     byId = {};
   for (const m of meshes) byId[m.v.id] = m;
   for (const v of fullVariants) (bySpecies[v.species] ??= []).push(v);
-  const species = Object.keys(bySpecies);
+  const species = Object.keys(bySpecies),
+    thresholds = speciesThresholds(look, species);
 
   let last = null,
     detailRequested = false,
@@ -113,8 +123,8 @@ export async function createTrees(terrain, biome, biomeBase, ground) {
     colour = new THREE.Color();
   function rebuild(x, z, tier) {
     for (const m of meshes) m.b.count = m.l.count = 0;
-    for (const site of oaksNear(terrain, x, z, range)) {
-      const s = species[Math.min(species.length - 1, Math.floor(site.pick * species.length))],
+    for (const site of oaksNear(terrain, x, z, range, look.cover)) {
+      const s = species[pickSpecies(thresholds, site.pick)],
         list = bySpecies[s],
         full = list[Math.floor(site.turn * 997) % list.length],
         near = tier > 0 && Math.hypot(site.x - x, site.z - z) < NEAR_DETAIL,
