@@ -10,7 +10,7 @@ status for each resource.
 
 | Experience | What it shows | Status |
 |---|---|---|
-| [Reservoirs](https://boxwrench.github.io/waterscape/) | Calaveras and San Antonio: lidar landscapes, sourced context and modeled water optics | Live journey and WebGPU explorer |
+| [Reservoirs](https://boxwrench.github.io/waterscape/) | Calaveras, San Antonio, Crystal Springs and San Andreas: lidar landscapes, sourced context, modeled water optics and aerial maps | Live journey and WebGPU explorer |
 | [River Pulse](https://boxwrench.github.io/waterscape/river-pulse/) | Russian River at Hacienda Bridge: terrain, a cartographic river centerline, USGS discharge and recent history | Prototype; river water/current simulation is not implemented |
 
 Jenner has an authored place manifest and water-level adapter coverage; it does not yet have
@@ -54,11 +54,12 @@ interpretation. The full principle is in
 
 Any US lake, reservoir or pond with 3DEP lidar coverage can become a stop:
 
-1. Create `data/<id>/source.json` — name, biome, a lon/lat box around the water and an
-   on-water anchor point.
-2. `python pipeline/build.py <id>` — downloads the lidar and writes the terrain and cameras.
+1. `python pipeline/locate.py "<NHD lake name>" <biome>` drafts `data/<id>/source.json` — name,
+   biome, a lon/lat box around the water and an on-water anchor point.
+2. `python pipeline/build.py <id>` — downloads the lidar and aerial photograph and writes the
+   terrain, cameras and map inset.
 3. Write `data/<id>/story.json` (facts, each with an https source) and `data/<id>/land.json`
-   (light presets, default season).
+   (the look: light presets, season, grass, trees, fog, water colour).
 4. `node pipeline/render-flyover.mjs <id>` — renders the flyover video and poster.
 5. Add the stop to a tour in `data/tours/`, run `npm test`, and publish with GitHub Pages.
 

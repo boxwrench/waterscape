@@ -8,6 +8,14 @@ and what's next".
 
 https://boxwrench.github.io/waterscape/ (GitHub Pages deploys on every push to `main`).
 
+## Aerial map inset — 2026-09-29
+
+Each reservoir has `aerial.jpg` (USGS NAIP Plus, public domain, fetched by `pipeline/aerial.py`
+over exactly the terrain grid; source URL in `aerial.json`). `renderer/minimap.js` shows it with
+the camera marked in the explorer's elevation panel and beside the journey's stop list
+(following the flyover video or the live camera; hidden on phones). The photographs show
+suburbs east of Crystal Springs that the 3D scene draws as woodland — a known Setting gap.
+
 ## Crystal Springs — 2026-09-29
 
 W1 (`pipeline/locate.py`) and W2 are done: Crystal Springs (both upper and lower lakes, via
