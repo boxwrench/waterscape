@@ -1,16 +1,16 @@
 {
-  "biome": "diablo-oak",
+  "biome": "peninsula-oak-fir",
   "vegetation": {
     "density": 1.0,
+    "cover": 0.55,
     "species": {
-      "coast-live": 0.5,
-      "blue": 0.3,
-      "valley": 0.2
+      "coast-live": 0.93,
+      "douglas-fir": 0.07
     }
   },
   "grass": {
     "spring": "green",
-    "summer": "gold"
+    "summer": "sage"
   },
   "presets": [
     "morning",
@@ -18,7 +18,7 @@
     "golden"
   ],
   "defaultPreset": "golden",
-  "defaultSeason": "summer",
+  "defaultSeason": "spring",
   "water": {
     "maxDepth": 42.4,
     "bankSlope": 0.25,
