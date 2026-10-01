@@ -67,8 +67,9 @@ export function graniteRock(tex, g, p, n0, slope, bank, deep) {
     slab = photo(tex.slab, g.slab.mean, target, p, bend, 9).mul(mx_noise_float(p.mul(0.017)).mul(0.18).add(1)),
     // The drawdown band: the same slab, bleached pale (no lichen or stain below full pool).
     bleached = mix(slab, vec3(dot(slab, LUMA)), 0.6).mul(1.45),
-    // Below a dam: dark wet fractured rock.
-    canyon = photo(tex.canyon, g.canyon.mean, vec3(dot(target, LUMA)).mul(g.rock.canyon?.gain ?? 0.5), p, bend, 6);
+    // Below a dam: the fractured-rock photo's texture in the same granite colour, a little
+    // darker where the river keeps it wet.
+    canyon = photo(tex.canyon, g.canyon.mean, target.mul(g.rock.canyon?.gain ?? 1), p, bend, 6);
   let albedo = mix(slab, walls, wall);
   albedo = mix(albedo, bleached, bank);
   albedo = mix(albedo, canyon, deep);

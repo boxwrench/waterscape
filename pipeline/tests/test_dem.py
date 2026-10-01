@@ -104,3 +104,28 @@ def test_dams_also_carve_the_crest_line_itself():
     out, foot = carve_dams(dem, water, [[(2.0, 43.0), (18.0, 43.0)]], [100.0], cell=1.0, heights=[60.0])
     assert out[42, 10] < 50.0 and out[43, 10] < 50.0, "no land wedge on the crest line"
     assert not foot[42, 10], "the lake side stays water"
+
+
+def test_full_pool_reaches_only_land_connected_to_the_lake():
+    from dem import full_pool
+    # Lake rows 0-29 at level 50; a dam ridge at row 30 (height 70); a bank rising north of
+    # the lake and a canyon beyond the dam at the same heights.
+    dem = np.full((80, 20), 200.0)
+    dem[:30, :] = 50.0
+    dem[30, :] = 70.0
+    dem[31:, :] = 52.0  # below full pool, but behind the dam
+    water = dem == 50.0
+    pool = full_pool(dem, water, 50.0, rise=10.0)
+    assert pool[:30].all() and not pool[31:].any()
+    # A gap at the dam's end (rock below full pool) is closed by the crest barrier.
+    dem[30, 18:] = 52.0
+    assert full_pool(dem, water, 50.0, rise=10.0)[60, 5]
+    assert not full_pool(dem, water, 50.0, rise=10.0, crests=[[(0.0, 30.0), (18.0, 30.0)]], cell=10.0)[60, 5]
+
+
+def test_pack_writes_an_optional_fourth_plane():
+    from dem import pack
+    h = np.zeros((3, 4))
+    body3 = pack(h, h, h)
+    body4 = pack(h, h, h, drawdown=np.ones((3, 4)))
+    assert len(body4) == len(body3) * 4 // 3

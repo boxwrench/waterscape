@@ -17,6 +17,7 @@ import sys
 from pathlib import Path
 
 import numpy as np
+from scipy import ndimage
 
 import aerial
 import cameras
@@ -44,6 +45,17 @@ def build(rid, native=False):
     # Optional "extraAnchors": more water at the same level, e.g. a lake split by a causeway.
     extra = [cell_of(*a) for a in config.get("extraAnchors", [])]
     water, level = demlib.detect_water(dem, anchor=cell_of(anchor_lat, anchor_lon), extra=extra)
+    # Optional drawdown zone (land.json ground.bathtub, metres above the surveyed water): the
+    # land the lake covers at full pool, found on the survey before any dam is carved.
+    land_file = ROOT / "data" / rid / "land.json"
+    bathtub = json.loads(land_file.read_text()).get("ground", {}).get("bathtub", 0) if land_file.exists() else 0
+    drawdown = None
+    if bathtub:
+        dams = json.loads((ROOT / "data" / rid / "structures.json").read_text()).get("dams", []) \
+            if (ROOT / "data" / rid / "structures.json").exists() else []
+        crests = [[((e - left) / sx - 0.5, (top - n) / sy - 0.5) for e, n in d["crestUTM"]] for d in dams]
+        pool = ndimage.binary_dilation(demlib.full_pool(dem, water, level, bathtub, crests, sx), iterations=2)
+        drawdown = ndimage.gaussian_filter(pool.astype(float), 1.0)
     # Dams (structures.json): the water reaches their upstream face, below the crest.
     structures = ROOT / "data" / rid / "structures.json"
     built = json.loads(structures.read_text()) if structures.exists() else {}
@@ -71,7 +83,7 @@ def build(rid, native=False):
 
     out = ROOT / "data" / rid
     out.mkdir(parents=True, exist_ok=True)
-    body = demlib.pack(height, sdf, valley)
+    body = demlib.pack(height, sdf, valley, drawdown)
     demlib.write_gzip(out / "terrain.bin.gz", body)
     if native:
         (out / "terrain.bin").write_bytes(body)
@@ -92,7 +104,8 @@ def build(rid, native=False):
         "waterLevel": level,
         "originUTM": [origin_e, origin_n],
         "gridOrigin": grid_origin,
-        "channels": {"height": demlib.HEIGHT, "shoreDistance": demlib.SHORE, "valley": demlib.VALLEY},
+        "channels": {"height": demlib.HEIGHT, "shoreDistance": demlib.SHORE, "valley": demlib.VALLEY}
+        | ({"drawdown": demlib.DRAWDOWN} if drawdown is not None else {}),
     }
     (out / "terrain.json").write_text(json.dumps(meta, indent=2) + "\n")
 

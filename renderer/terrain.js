@@ -6,7 +6,7 @@
 export class Terrain {
   constructor(meta, cells) {
     this.meta = meta;
-    this.cells = cells; // Float32 (height, shoreDistance, valley, 0) per cell
+    this.cells = cells; // Float32 (height, shoreDistance, valley, drawdown or 0) per cell
     this.width = meta.width;
     this.height = meta.height;
     this.cell = meta.cell[0];
@@ -109,8 +109,9 @@ export async function loadTerrain(base) {
     view = new DataView(raw),
     cells = new Float32Array(n * 4),
     row = new Uint16Array(w),
-    codecs = [channels.height, channels.shoreDistance, channels.valley];
-  if (raw.byteLength !== n * 6) throw new Error("Terrain asset has an unexpected size.");
+    // An optional fourth channel: the full-pool drawdown zone (0-1), where a body has one.
+    codecs = [channels.height, channels.shoreDistance, channels.valley, channels.drawdown].filter(Boolean);
+  if (raw.byteLength !== n * 2 * codecs.length) throw new Error("Terrain asset has an unexpected size.");
   // Planar channels, each row stored as uint16 deltas from the row above.
   codecs.forEach(({ scale, offset }, c) => {
     row.fill(0);

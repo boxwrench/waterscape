@@ -12,6 +12,7 @@ SERVICE = "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/
 HEIGHT = {"offset": -250.0, "scale": 0.05}  # -250 .. 3026 m at 5 cm
 SHORE = {"offset": -4000.0, "scale": 0.25}  # -4000 .. 12383 m at 25 cm
 VALLEY = {"offset": 0, "scale": 1 / 65472}
+DRAWDOWN = {"offset": 0, "scale": 1 / 65472}  # 0-1: within the lake at full pool
 
 
 def fetch_dem(rid, bbox, size, cache_dir, zone):
@@ -154,6 +155,20 @@ def carve_river(dem, centre, widths, surfaces, cell, depth=1.5, clear=0.0):
     return out, best <= width / 2 + cell / 2 + clear
 
 
+def full_pool(dem, water, level, rise, crests=(), cell=1.0):
+    """Land the lake covers when it stands `rise` metres higher: cells below that level
+    connected to the water. Run on the survey before dams are carved; dam crests (polylines in
+    raster units) also hold the pool, with a few cells' margin round their ends where the
+    rock beside a dam can sit below full pool."""
+    below = dem < level + rise
+    for crest in crests:
+        dist, _, _ = _crest_frame(dem.shape, crest)
+        below &= dist * cell > max(1.5 * cell, 15.0)
+    labels, _ = ndimage.label(below)
+    lake = np.unique(labels[water & (labels > 0)])
+    return np.isin(labels, lake) & (labels > 0)
+
+
 def channels(dem, water, level, cell):
     """(height above water, signed shoreline distance in metres, valley-ness 0..1)."""
     sdf = ndimage.distance_transform_edt(~water) * cell - ndimage.distance_transform_edt(water) * cell
@@ -165,13 +180,16 @@ def channels(dem, water, level, cell):
     return height, sdf, valley
 
 
-def pack(height, sdf, valley):
-    """Planar uint16 channels, each row delta-coded from the row above (mod 65536)."""
+def pack(height, sdf, valley, drawdown=None):
+    """Planar uint16 channels, each row delta-coded from the row above (mod 65536); an
+    optional fourth, the full-pool drawdown zone (0-1)."""
     planes = [
         np.clip(np.round((height - HEIGHT["offset"]) / HEIGHT["scale"]), 0, 65535).astype(np.int64),
         np.clip(np.round((sdf - SHORE["offset"]) / SHORE["scale"]), 0, 65535).astype(np.int64),
         np.round(valley * 1023).astype(np.int64) * 64,
     ]
+    if drawdown is not None:
+        planes.append(np.round(np.clip(drawdown, 0, 1) * 1023).astype(np.int64) * 64)
     body = b""
     for plane in planes:
         delta = plane.copy()

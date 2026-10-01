@@ -38,7 +38,7 @@ export function createGroundMaterial(terrain, biomeBase, biome, look = landLook(
   for (const layer of Object.keys(biome.ground))
     tex[layer] = { colour: loadTexture(files(layer, "color"), true), normal: loadTexture(files(layer, "normal"), false) };
   const { width: w, height: h, cell, x0, z0 } = terrain,
-    // (height, shoreDistance, valley, 0) per lidar cell — the same data the shader samples.
+    // (height, shoreDistance, valley, drawdown) per lidar cell — the same data the shader samples.
     terrainTex = gridTexture(new Float32Array(terrain.cells), w, h),
     // (sun visibility, sky openness) per cell, filled on the GPU by bake_light.
     lightTex = gridTexture(new Float32Array(w * h * 4).fill(1), w, h),
@@ -111,7 +111,9 @@ export function createGroundMaterial(terrain, biomeBase, biome, look = landLook(
     if (granite) {
       // Granite country: the drawdown band up to full pool is bare bleached rock (look.bathtub
       // metres above the surveyed water), the canyon below a dam dark wet rock; no soil bank.
-      const band = float(1).sub(smoothstep(look.bathtub - 1.5, look.bathtub + 1.5, p.y)).mul(smoothstep(-3, -1, p.y)),
+      // Only inside the full-pool zone the build found (terrain channel w): not the canyon
+      // below a dam at the same height.
+      const band = float(1).sub(smoothstep(look.bathtub - 1.5, look.bathtub + 1.5, p.y)).mul(smoothstep(-3, -1, p.y)).mul(g.w),
         deep = canyon ? float(1).sub(smoothstep(canyon.below, canyon.below + 15, p.y)) : float(0),
         stone = graniteRock(tex, biome.ground, p, n0, slope, band, deep),
         cover = max(rockW, max(band, deep)),
