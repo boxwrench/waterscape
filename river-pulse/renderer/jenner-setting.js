@@ -4,6 +4,7 @@ import { jennerCoast, jennerGrid, jennerGround, jennerRiver, JENNER_VIEWS } from
 import { grayStone } from "./beach-materials.js";
 import { seededRandom } from "./bank-setting-layout.js";
 import { SETTING_BASE } from "./bank-materials.js";
+import { treeAssets } from "./beach-woodland.js";
 
 function terrain(noise, maps, clock, grassMap) {
   const grid = jennerGrid(), geometry = new THREE.BufferGeometry();
@@ -127,17 +128,20 @@ async function coastalGrass(clock) {
     side: THREE.DoubleSide, roughness: 0.94 }), random = seededRandom(981), sites = [];
   material.positionNode = positionLocal.add(vec3(sin(clock.mul(0.6).add(float(instanceIndex).mul(0.37)))
     .mul(positionGeometry.y.pow(2)).mul(0.12), 0, 0));
-  for (let i = 0; i < 18000; i++) {
-    const x = -160 + random() * 585, z = -800 + random() * 440, y = jennerGround(x, z);
-    if (y < 5 || y > 155) continue;
+  // Prairie on the bluffs the three views look at: behind the lookout, and the southern headland
+  // that the Pacific beach faces. Patchy, denser on lower slopes. Setting, not a plant survey.
+  for (const [x0, x1, z0, z1, count, size] of [[-420, 560, -860, -330, 36000, 1],
+    [-120, 700, 850, 1950, 30000, 1.7]]) for (let i = 0; i < count; i++) {
+    const x = x0 + random() * (x1 - x0), z = z0 + random() * (z1 - z0), y = jennerGround(x, z);
+    if (y < 5 || y > 175 || jennerRiver(x, z).bankDistance < 6) continue;
     const patch = Math.sin(x * 0.045) * Math.sin(z * 0.061);
-    if (random() > 0.6 + patch * 0.35) continue;
-    sites.push({ x, y, z });
+    if (random() > 0.62 + patch * 0.35 - y / 600) continue;
+    sites.push({ x, y, z, size });
   }
   const mesh = new THREE.InstancedMesh(geometry, material, sites.length), dummy = new THREE.Object3D(), tint = new THREE.Color();
   sites.forEach((s, i) => {
     dummy.position.set(s.x, s.y - 0.04, s.z); dummy.rotation.set(0, random() * 6.28, 0);
-    const h = 0.22 + random() * 0.54; dummy.scale.set(0.6 + random() * 0.5, h, 0.6 + random() * 0.5);
+    const h = (0.22 + random() * 0.54) * s.size; dummy.scale.set((0.6 + random() * 0.5) * s.size, h, (0.6 + random() * 0.5) * s.size);
     dummy.updateMatrix(); mesh.setMatrixAt(i, dummy.matrix);
     tint.setHSL(0.19 + random() * 0.06, 0.24 + random() * 0.18, 0.27 + random() * 0.14); mesh.setColorAt(i, tint);
   });
@@ -182,6 +186,48 @@ async function woodland() {
   group.name = "Coastal woodland groups"; return group;
 }
 
+// Douglas-fir stands on the inland ridges and low coastal scrub on the bluffs, as in the reference
+// photographs (dark conifer ridgelines, scattered shrubs on green slopes). Reuses the Hacienda
+// ez-tree bakes; stand centres are authored Setting, not a species census.
+async function conifersAndScrub() {
+  const [firs, oaks] = await Promise.all([
+    treeAssets("conifers.json", "douglas-fir-bark.jpg", "douglas-fir-leaf.png"),
+    treeAssets("broadleaf.json", "oak-bark.jpg", "oak-leaf.png"),
+  ]), random = seededRandom(443), sites = [], group = new THREE.Group();
+  // Distant foliage: mip-mapped alpha thins leaves out until only trunks remain, so keep more of it.
+  for (const v of [...firs, ...oaks]) for (const part of v.parts) if (part.leaf) part.material.alphaTest = 0.1;
+  const place = (centres, make) => {
+    for (const [cx, cz, count, spread] of centres) for (let i = 0; i < count; i++) {
+      const x = cx + (random() - 0.5) * spread, z = cz + (random() - 0.5) * spread, y = jennerGround(x, z);
+      if (y < 8 || jennerRiver(x, z).bankDistance < 40) continue;
+      sites.push({ x, y, z, turn: random() * 6.28, ...make(y) });
+    }
+  };
+  place([[640, -640, 110, 300], [930, -330, 90, 280], [260, -840, 60, 200], [1000, 1150, 120, 340],
+    [1300, 1750, 100, 340], [560, 1500, 50, 200], [420, -220, 90, 260], [520, 150, 120, 300],
+    [650, 520, 100, 300], [300, -520, 50, 160]], () => ({ fir: true, height: 15 + random() * 17 }));
+  place([[-150, -520, 70, 160], [60, -720, 70, 200], [150, 950, 80, 220], [100, 1400, 90, 260],
+    [-60, 1700, 60, 180], [230, -380, 90, 200], [260, 30, 90, 240], [300, 330, 80, 240]], () => ({ fir: false, shrub: true, height: 2.2 + random() * 3 }));
+  const dummy = new THREE.Object3D(), tint = new THREE.Color();
+  for (const [variants, isFir] of [[oaks, false], [firs, true]]) variants.forEach((v, vi) => {
+    const selected = sites.filter((s, i) => s.fir === isFir && i % variants.length === vi);
+    for (const part of v.parts) {
+      const mesh = new THREE.InstancedMesh(part.geometry, part.material, selected.length);
+      selected.forEach((s, i) => {
+        const scale = s.height / v.height;
+        dummy.position.set(s.x, s.y - (s.shrub ? s.height * 0.3 : 0.3), s.z); dummy.rotation.set(0, s.turn, 0);
+        dummy.scale.set(scale * (s.shrub ? 1.5 : 1.35), scale * (s.shrub ? 0.75 : 1), scale * (s.shrub ? 1.5 : 1.35));
+        dummy.updateMatrix(); mesh.setMatrixAt(i, dummy.matrix);
+        if (isFir) tint.setHSL(0.27, 0.2 + random() * 0.15, 0.2 + random() * 0.1);
+        else tint.setHSL(0.22 + random() * 0.04, 0.2 + random() * 0.15, 0.25 + random() * 0.1);
+        mesh.setColorAt(i, part.leaf ? tint : new THREE.Color(0xb4aea0));
+      });
+      mesh.computeBoundingSphere(); group.add(mesh);
+    }
+  });
+  group.name = "Douglas-fir stands and coastal scrub"; return group;
+}
+
 export async function createJennerSetting(noise, maps, clock) {
   const group = new THREE.Group(); group.name = "Jenner photo-informed setting";
   const grassMap = await new THREE.TextureLoader().loadAsync(new URL("../../data/biomes/diablo-oak/ground/grass_color.jpg", import.meta.url).href)
@@ -190,7 +236,7 @@ export async function createJennerSetting(noise, maps, clock) {
     grassMap.colorSpace = THREE.SRGBColorSpace; grassMap.wrapS = grassMap.wrapT = THREE.RepeatWrapping; grassMap.anisotropy = 4;
   }
   group.add(terrain(noise, maps, clock, grassMap), rocks(maps), driftwood());
-  const results = await Promise.allSettled([coastalGrass(clock), woodland()]);
+  const results = await Promise.allSettled([coastalGrass(clock), woodland(), conifersAndScrub()]);
   for (const result of results) {
     if (result.status === "fulfilled") group.add(result.value);
     else console.warn("Coastal vegetation unavailable", result.reason);
