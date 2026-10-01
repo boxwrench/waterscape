@@ -53,9 +53,16 @@ export function createJennerWater(noise, maps) {
     detail = texture(noise, wp.div(37).add(vec2(clock.mul(-0.015), clock.mul(0.008)))).rg.sub(0.5)
       .add(texture(noise, vec2(wp.y.negate(), wp.x).div(9.3)
         .add(vec2(clock.mul(0.022), 0.31))).ba.sub(0.5).mul(0.4)),
-    normal = normalize(vec3(sx.negate().add(detail.x.mul(mix(0.10, 0.4, sea)))
+    // River and lagoon: a current that carries streaky ripples toward the mouth (north, -z) plus a
+    // breeze ripple on top. Illustrative motion, not measured velocity or wind.
+    inland = float(1).sub(sea),
+    current = texture(noise, vec2(wp.x.div(11), wp.y.div(26).add(clock.mul(0.16)))).rg.sub(0.5)
+      .add(texture(noise, vec2(wp.x.div(5.5).add(0.37), wp.y.div(13).add(clock.mul(0.27)))).ba.sub(0.5).mul(0.6)),
+    breeze = texture(noise, wp.div(7.5).add(vec2(clock.mul(0.045), clock.mul(0.03)))).rg.sub(0.5),
+    riverRipple = current.mul(0.55).add(breeze.mul(0.4)).mul(inland),
+    normal = normalize(vec3(sx.negate().add(detail.x.mul(mix(0.10, 0.4, sea))).add(riverRipple.x)
       .sub(cos(breakerPhase).mul(breaker.max(0).pow(2)).mul(breakZone).mul(0.38)),
-      1, sz.negate().add(detail.y.mul(mix(0.10, 0.4, sea))))),
+      1, sz.negate().add(detail.y.mul(mix(0.10, 0.4, sea))).add(riverRipple.y))),
     eye = normalize(cameraPosition.sub(positionWorld)), facing = dot(normal, eye).clamp(0.02, 1),
     fresnel = pow(float(1).sub(facing), 5).mul(0.98).add(0.02),
     reflected = reflect(eye.negate(), normal),
