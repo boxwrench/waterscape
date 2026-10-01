@@ -42,13 +42,34 @@ function triplanarNormal(tex, p, n, scale, upright = false) {
     .add((upright ? vec3(tz.y, tz.x, 0) : vec3(tz.x, tz.y, 0)).mul(w.z));
 }
 
-// A layer's photo at `scale` metres, recoloured: photo / its mean × target albedo.
+// The same point in a second, rotated and offset frame: a different stretch of the photo, so
+// two samples blended by slow noise hide the tile's repeat.
+const turned = (p) => vec3(p.x.mul(0.6).sub(p.z.mul(0.8)), p.y.add(p.x.mul(0.3)), p.x.mul(0.8).add(p.z.mul(0.6))).add(37.3);
+const tileMix = (p, scale, seed) =>
+  smoothstep(-0.3, 0.3, mx_noise_float(p.mul(0.35 / scale).add(seed)));
+
+// A tiling texture without a visible repeat: triplanar at `scale` and at 1.37× in a turned
+// frame, chosen between by slow noise.
+function untiled(tex, p, n, scale, upright = false) {
+  return mix(triplanar(tex, p, n, scale, upright), triplanar(tex, turned(p), n, scale * 1.37, upright), tileMix(p, scale, 3));
+}
+function untiledNormal(tex, p, n, scale, upright = false) {
+  return mix(
+    triplanarNormal(tex, p, n, scale, upright),
+    triplanarNormal(tex, turned(p), n, scale * 1.37, upright),
+    tileMix(p, scale, 3),
+  );
+}
+
+// A layer's photo at `scale` metres, recoloured: photo / its mean × target albedo, with broad
+// light and dark patches over several tiles.
 function photo(layer, mean, target, p, n, scale, upright = false) {
   // Mostly the photo's light and dark, in the target's colour; a fifth of its own hue (full
   // hue amplifies a photo's tints, e.g. yellow veins into orange, once divided by its mean).
-  const rgb = triplanar(layer.colour, p, n, scale, upright).rgb.div(vec3(...mean)),
-    grey = vec3(dot(rgb, LUMA));
-  return mix(grey, rgb, 0.2).mul(target);
+  const rgb = untiled(layer.colour, p, n, scale, upright).rgb.div(vec3(...mean)),
+    grey = vec3(dot(rgb, LUMA)),
+    patches = mx_noise_float(p.mul(0.25 / scale).add(11)).mul(0.22).add(1);
+  return mix(grey, rgb, 0.2).mul(target).mul(patches);
 }
 
 // { albedo, normal } for granite at world p, smooth terrain normal n0 and steepness `slope`
@@ -79,10 +100,10 @@ export function graniteRock(tex, g, p, n0, slope, bank, deep) {
   albedo = mix(albedo, bleached, bank);
   albedo = mix(albedo, canyon, deep);
   const offset = mix(
-    mix(triplanarNormal(tex.slab.normal, p, bend, 9), triplanarNormal(tex.joints.normal, p, bend, 7, up), wall).add(
+    mix(untiledNormal(tex.slab.normal, p, bend, 9), untiledNormal(tex.joints.normal, p, bend, 7, up), wall).add(
       triplanarNormal(tex.joints.normal, p, bend, 31, up).mul(wall.mul(1.3)),
     ),
-    triplanarNormal(tex.canyon.normal, p, bend, 6),
+    untiledNormal(tex.canyon.normal, p, bend, 6),
     deep,
   );
   return { albedo, normal: normalize(bend.add(offset.mul(0.8))) };
