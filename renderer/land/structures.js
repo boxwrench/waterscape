@@ -6,7 +6,7 @@
 import * as THREE from "../../vendor/three/three.webgpu.js";
 import {
   texture, positionWorld, normalWorld, cameraPosition, vec3, float, max, min, dot, normalize, uv, mix,
-  smoothstep, fract, abs, pow, reflect, mx_noise_float, time,
+  smoothstep, fract, abs, pow, reflect, mx_noise_float, time, Fn, If, Discard,
 } from "../../vendor/three/three.tsl.js";
 
 // Cross-section across the dam in metres: u downstream from the upstream face, y below the
@@ -121,6 +121,66 @@ export function riverGeometry(river, meta) {
   return g;
 }
 
+// Where a dam's outlet sits: { p, t (along the crest), n (downstream), along (m) } for the
+// point `outlet.along` (0-1, from the crest's first point) of its length.
+export function outletFrame(dam, meta, downstream, outlet) {
+  const pts = crestCurve(crestScene(dam, meta)),
+    lengths = [0];
+  for (let i = 1; i < pts.length; i++) lengths.push(lengths[i - 1] + pts[i].distanceTo(pts[i - 1]));
+  const along = outlet.along * lengths.at(-1),
+    i = Math.max(1, lengths.findIndex((l) => l >= along)),
+    f = (along - lengths[i - 1]) / Math.max(1e-6, lengths[i] - lengths[i - 1]),
+    p = new THREE.Vector3().lerpVectors(pts[i - 1], pts[i], f),
+    t = new THREE.Vector3().subVectors(pts[i], pts[i - 1]).normalize(),
+    n = new THREE.Vector3(-t.z, 0, t.x).multiplyScalar(downstream);
+  return { p, t, n, along };
+}
+
+// A jet from an outlet as a ribbon falling down the downstream face to the toe: it leaves the
+// face a little and spreads as it falls (gravityProfile's face: vertical 6 m, then 0.75:1).
+// uv: x 0-1 across, y metres fallen.
+export function plumeGeometry(dam, meta, downstream, outlet) {
+  const { p, t, n } = outletFrame(dam, meta, downstream, outlet),
+    top = dam.crestElevation - meta.waterLevel,
+    positions = [],
+    uvs = [],
+    index = [];
+  const steps = 40;
+  for (let k = 0; k <= steps; k++) {
+    const d = outlet.below + ((dam.height - outlet.below) * k) / steps,
+      fall = d - outlet.below,
+      face = d <= 6 ? 7.5 : 7.5 + 0.75 * (d - 6),
+      off = face + 0.8 + Math.min(2.5, fall * 0.06),
+      half = 0.9 + fall * 0.07;
+    for (const s of [-1, 1]) {
+      positions.push(p.x + n.x * off + t.x * half * s, top - d, p.z + n.z * off + t.z * half * s);
+      uvs.push((s + 1) / 2, fall);
+    }
+    if (k) index.push(2 * k - 2, 2 * k - 1, 2 * k, 2 * k - 1, 2 * k + 1, 2 * k);
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+  g.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
+  g.setIndex(index);
+  return g;
+}
+
+// Aerated white water streaming down, ragged at its edges. Illustrative; tagged as shaded.
+function plumeMaterial(u, seed) {
+  const q = uv(),
+    streak = mx_noise_float(vec3(q.x.mul(7), q.y.sub(time.mul(9)).mul(0.12), seed)).mul(0.5).add(0.5),
+    fleck = mx_noise_float(vec3(q.x.mul(19), q.y.sub(time.mul(11)).mul(0.5), seed + 3)).mul(0.5).add(0.5),
+    edge = abs(q.x.sub(0.5)).mul(2),
+    m = new THREE.MeshBasicNodeMaterial({ side: THREE.DoubleSide, blending: THREE.NoBlending });
+  m.colorNode = Fn(() => {
+    If(edge.greaterThan(streak.mul(0.35).add(0.62)), () => Discard());
+    const white = mix(vec3(0.55, 0.58, 0.6), vec3(0.95, 0.96, 0.97), streak.mul(0.6).add(fleck.mul(0.4)));
+    return white.mul(u.sunColor.mul(0.45).add(u.fill.mul(0.9)));
+  })();
+  m.opacityNode = float(0.5);
+  return m;
+}
+
 // Dark canyon water: a slowly moving rippled normal, a Fresnel mix of the sky fill over the
 // deep colour, and the sun's glint. Illustrative only (no flow is modelled); tagged as shaded.
 function riverMaterial(u) {
@@ -141,6 +201,15 @@ function riverMaterial(u) {
 }
 
 export async function createStructures(terrain, structures, ground) {
+  // Outlets per dam as (along metres, metres below the crest), for the face's wet stain.
+  const wetTerm = (q, top, frames) =>
+    frames.reduce((acc, { along, below }) => {
+      const fall = float(top - below).sub(positionWorld.y),
+        spread = fall.mul(0.12).add(3.5),
+        across = abs(q.x.mul(11).sub(along)),
+        opening = smoothstep(1.4, 1.0, vec3(across, fall, 0).length());
+      return max(acc, max(smoothstep(spread, spread.mul(0.6), across).mul(smoothstep(-0.5, 0.5, fall)), opening.mul(1.6)));
+    }, float(0));
   const dams = structures?.dams ?? [],
     rivers = structures?.rivers ?? [];
   if (!dams.length && !rivers.length) return null;
@@ -153,29 +222,33 @@ export async function createStructures(terrain, structures, ground) {
     },
     concrete = load("concrete_color.jpg", true),
     u = ground.uniforms,
-    n = normalize(normalWorld),
-    // No blending: the 0.5 alpha is a tag for pack.js, and blending a face over another
-    // (or over the ground) would change it and turn the dam into plain ground.
-    material = new THREE.MeshBasicNodeMaterial({ side: THREE.DoubleSide, blending: THREE.NoBlending });
+    n = normalize(normalWorld);
   // Weathered grey-tan concrete as in photographs of the downstream face: the texture tinted
   // warm, darker pour lines every 1.5 m of height, panel joints every 15 m along the crest,
   // and broad dark water staining down the face; lit by sun and sky fill. Not by the terrain's
   // baked light: the dam stands above that surface (and above the trench cut under its crest),
   // so the bake would stamp the 10 m grid's shadows onto the concrete. A canyon's sky is
   // partly walled in: fill at 80%.
-  const q = uv(),
-    lift = smoothstep(0.9, 0.97, abs(fract(positionWorld.y.div(1.5)).sub(0.5)).mul(2)),
-    joint = smoothstep(0.93, 0.99, abs(fract(q.x.mul(11 / 15)).sub(0.5)).mul(2)),
-    stain = smoothstep(0.55, 0.85, mx_noise_float(vec3(q.x.mul(0.25), positionWorld.y.mul(0.012), 5)).mul(0.5).add(0.5)),
-    photo = texture(concrete, uv()).rgb,
-    albedo = mix(photo, vec3(0.36), 0.7)
-      .mul(vec3(1.25, 1.17, 1.05))
-      .mul(float(1).sub(lift.mul(0.3)).sub(joint.mul(0.2)))
-      .mul(mix(float(1), float(0.55), stain));
-  material.colorNode = albedo.mul(
-    u.sunColor.mul(max(dot(n, u.sun), 0)).add(u.fill.mul(n.y.mul(0.3).add(0.55).mul(0.8))),
-  );
-  material.opacityNode = float(0.5);
+  // Below each outlet the face is dark and wet, and the opening itself is black.
+  const damMaterial = (wetFrames, top) => {
+    const q = uv(),
+      lift = smoothstep(0.9, 0.97, abs(fract(positionWorld.y.div(1.5)).sub(0.5)).mul(2)),
+      joint = smoothstep(0.93, 0.99, abs(fract(q.x.mul(11 / 15)).sub(0.5)).mul(2)),
+      stain = smoothstep(0.55, 0.85, mx_noise_float(vec3(q.x.mul(0.25), positionWorld.y.mul(0.012), 5)).mul(0.5).add(0.5)),
+      wet = wetTerm(q, top, wetFrames),
+      photo = texture(concrete, uv()).rgb,
+      albedo = mix(photo, vec3(0.36), 0.7)
+        .mul(vec3(1.25, 1.17, 1.05))
+        .mul(float(1).sub(lift.mul(0.3)).sub(joint.mul(0.2)))
+        .mul(mix(float(1), float(0.55), stain))
+        .mul(float(1).sub(wet.min(1).mul(0.6)).sub(wet.sub(1).max(0).mul(0.6))),
+      // No blending: the 0.5 alpha is a tag for pack.js, and blending a face over another
+      // (or over the ground) would change it and turn the dam into plain ground.
+      m = new THREE.MeshBasicNodeMaterial({ side: THREE.DoubleSide, blending: THREE.NoBlending });
+    m.colorNode = albedo.mul(u.sunColor.mul(max(dot(n, u.sun), 0)).add(u.fill.mul(n.y.mul(0.3).add(0.55).mul(0.8))));
+    m.opacityNode = float(0.5);
+    return m;
+  };
   const group = new THREE.Group();
   for (const dam of dams) {
     // The dry side is the one whose shore distance grows away from the crest.
@@ -187,9 +260,16 @@ export async function createStructures(terrain, structures, ground) {
       tz = bz - az,
       l = Math.hypot(tx, tz),
       side = terrain.shoreDistance(cx - (tz / l) * 40, cz + (tx / l) * 40) > terrain.shoreDistance(cx + (tz / l) * 40, cz - (tx / l) * 40) ? 1 : -1,
-      mesh = new THREE.Mesh(damGeometry(dam, terrain.meta, side), material);
+      outlets = dam.outlets ?? [],
+      wetFrames = outlets.map((o) => ({ along: outletFrame(dam, terrain.meta, side, o).along, below: o.below })),
+      mesh = new THREE.Mesh(damGeometry(dam, terrain.meta, side), damMaterial(wetFrames, dam.crestElevation - terrain.meta.waterLevel));
     mesh.name = dam.name;
     group.add(mesh);
+    outlets.forEach((o, k) => {
+      const jet = new THREE.Mesh(plumeGeometry(dam, terrain.meta, side, o), plumeMaterial(u, 13 + k * 5));
+      jet.name = `${dam.name} outlet ${k + 1}`;
+      group.add(jet);
+    });
   }
   if (rivers.length) {
     const water = riverMaterial(u);

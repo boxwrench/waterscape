@@ -55,7 +55,18 @@
         "crest line": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer/exportImage?bbox=254587.97054700254,4203509.417535508,255287.97054700254,4204009.417535508&bboxSR=32611&imageSR=32611&size=1120,800&format=jpg&bandIds=0,1,2&f=image",
         "crest elevation": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?bbox=254814.84554700254,4203485.667535508,255126.09554700254,4203824.417535508&bboxSR=32611&imageSR=32611&size=155,169&format=tiff&pixelType=F32&interpolation=RSP_BilinearInterpolation&f=image"
       },
-      "note": "Crest line traced by hand from the NAIP image (275.6 m against NID's 900 ft); crest elevation is the 3DEP maximum along it (the toe lies 93.7 m lower, against NID's 312 ft). Cross-section is a generic gravity profile, not the as-built drawings."
+      "note": "Crest line traced by hand from the NAIP image (275.6 m against NID's 900 ft); crest elevation is the 3DEP maximum along it (the toe lies 93.7 m lower, against NID's 312 ft). Cross-section is a generic gravity profile, not the as-built drawings.",
+      "outlets": [
+        {
+          "along": 0.46,
+          "below": 30
+        },
+        {
+          "along": 0.51,
+          "below": 30
+        }
+      ],
+      "outletsNote": "Two valve outlets on the downstream face, placed by eye from a visitor's photograph from the plunge pool (about 30 m below the crest, near mid-length, counted from the north end). Their jets are drawn running: an illustrative release, not a record of flow."
     }
   ],
   "rivers": [

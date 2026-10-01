@@ -1,7 +1,7 @@
 // Sierra granite for the ground's rock layer, from photographs rather than drawn cracks:
-// jointed rock on walls (two scales, so real fractures read close up and across the lake),
-// smooth weathered slab on gentle ground and the bleached drawdown band, dark fractured rock
-// in the canyon below a dam. Each CC0 photo is sampled triplanar (cliffs are not smeared by a
+// streaked wall rock (two scales, so it reads close up and across the lake), speckled rough
+// granite on gentle ground and the bleached drawdown band, smooth water-polished rock in the
+// canyon below a dam. A layer marked `upright` turns its side projections 90°. Each CC0 photo is sampled triplanar (cliffs are not smeared by a
 // top-down projection), normalised by its mean colour to the biome's granite albedo, and its
 // normal map perturbs the terrain normal. Big faces turn slowly with a low-frequency bend.
 // Setting only; tuned to photographs of Hetch Hetchy (data/biomes/sierra-granite/biome.json).
@@ -44,7 +44,11 @@ function triplanarNormal(tex, p, n, scale, upright = false) {
 
 // A layer's photo at `scale` metres, recoloured: photo / its mean × target albedo.
 function photo(layer, mean, target, p, n, scale, upright = false) {
-  return triplanar(layer.colour, p, n, scale, upright).rgb.div(vec3(...mean)).mul(target);
+  // Mostly the photo's light and dark, in the target's colour; a fifth of its own hue (full
+  // hue amplifies a photo's tints, e.g. yellow veins into orange, once divided by its mean).
+  const rgb = triplanar(layer.colour, p, n, scale, upright).rgb.div(vec3(...mean)),
+    grey = vec3(dot(rgb, LUMA));
+  return mix(grey, rgb, 0.2).mul(target);
 }
 
 // { albedo, normal } for granite at world p, smooth terrain normal n0 and steepness `slope`
@@ -55,8 +59,9 @@ export function graniteRock(tex, g, p, n0, slope, bank, deep) {
     // Slowly turning big faces (no hard steps: at this size they read as polygons).
     bend = normalize(n0.add(mx_noise_vec3(p.mul(0.012)).mul(0.35))),
     // Walls: jointed rock at 7 m, its tone varied by the same photo at 31 m.
-    near = photo(tex.joints, g.joints.mean, target, p, bend, 7, true),
-    far = triplanar(tex.joints.colour, p, bend, 31, true).rgb,
+    up = !!g.joints.upright,
+    near = photo(tex.joints, g.joints.mean, target, p, bend, 7, up),
+    far = triplanar(tex.joints.colour, p, bend, 31, up).rgb,
     variation = dot(far, LUMA).div(dot(vec3(...g.joints.mean), LUMA)).max(0.05),
     // Water stains: the same photo stretched 6× tall on walls reads as vertical streaks.
     streaks = dot(texture(tex.joints.colour, vec2(p.x.add(p.z).div(18), p.y.div(110))).rgb, LUMA)
@@ -74,8 +79,8 @@ export function graniteRock(tex, g, p, n0, slope, bank, deep) {
   albedo = mix(albedo, bleached, bank);
   albedo = mix(albedo, canyon, deep);
   const offset = mix(
-    mix(triplanarNormal(tex.slab.normal, p, bend, 9), triplanarNormal(tex.joints.normal, p, bend, 7, true), wall).add(
-      triplanarNormal(tex.joints.normal, p, bend, 31, true).mul(wall.mul(1.3)),
+    mix(triplanarNormal(tex.slab.normal, p, bend, 9), triplanarNormal(tex.joints.normal, p, bend, 7, up), wall).add(
+      triplanarNormal(tex.joints.normal, p, bend, 31, up).mul(wall.mul(1.3)),
     ),
     triplanarNormal(tex.canyon.normal, p, bend, 6),
     deep,
