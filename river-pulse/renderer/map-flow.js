@@ -6,9 +6,12 @@ import {
 import { mapRibbonBinding } from "../visual-bindings/map-flow.js";
 import { buildMapRibbonSkeleton, mapRibbonPositions } from "./map-ribbon-geometry.js";
 
+// Display rate of the baseline drift when no discharge is available, relative to measured-flow motion.
+const AMBIENT_RATE = 0.4;
+
 export function createMapFlow(document, terrain) {
   const skeleton = buildMapRibbonSkeleton(document), geometry = new THREE.BufferGeometry();
-  let state = null, history = null, binding = mapRibbonBinding(state, history), width = binding.width,
+  let phase = 0, state = null, history = null, binding = mapRibbonBinding(state, history), width = binding.width,
     previousUpdate = null;
   const positions = new THREE.BufferAttribute(mapRibbonPositions(skeleton, terrain, width), 3);
   positions.setUsage(THREE.DynamicDrawUsage);
@@ -70,7 +73,12 @@ export function createMapFlow(document, terrain) {
     update(seconds, reducedMotion) {
       const elapsed = previousUpdate === null ? 1 / 60 : Math.max(0, Math.min(1, seconds - previousUpdate));
       previousUpdate = seconds;
-      clock.value = reducedMotion || !binding.moving ? 0 : seconds;
+      // Baseline: water always drifts gently when no discharge is known (Setting; it says nothing
+      // about flow). Data sets the rate when present; a recorded zero stops it. Reduced motion freezes.
+      const rate = reducedMotion ? 0 : binding.moving ? 1 : binding.availability === "missing" ? AMBIENT_RATE : 0;
+      phase = rate ? phase + elapsed * rate : reducedMotion ? 0 : phase;
+      clock.value = phase;
+      mesh.userData.ambient = rate > 0 && !binding.moving;
       mesh.userData.reducedMotion = reducedMotion;
       // Ease the visual width only; scientific selection updates immediately.
       // Elapsed time keeps settling duration consistent on slow software renderers.
