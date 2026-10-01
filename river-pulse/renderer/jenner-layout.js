@@ -3,7 +3,7 @@ const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const smooth = (a, b, v) => { const t = clamp((v - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
 // The channel leaves the lagoon, then runs behind the barrier beach about 240 m inland of the
 // surf line (as the river does in photographs) before bending away into the hills.
-const control = [[-310, -345], [-65, -250], [175, -145], [150, 100], [135, 420], [205, 800],
+const control = [[-330, -380], [-150, -350], [20, -290], [150, -170], [150, 100], [135, 420], [205, 800],
   [380, 1180], [740, 1580], [1300, 1900], [2100, 2200]];
 
 // Catmull-Rom through the control points, so the channel bends like a river instead of turning
@@ -31,7 +31,7 @@ export function jennerRiver(x, z) {
     const [ax, az] = channel[i - 1], [bx, bz] = channel[i], dx = bx - ax, dz = bz - az,
       t = clamp(((x - ax) * dx + (z - az) * dz) / (dx * dx + dz * dz), 0, 1),
       d = Math.hypot(x - ax - dx * t, z - az - dz * t);
-    if (d < distance) { distance = d; radius = (112 + 30 * smooth(-200, 0, az + dz * t)) * (1 - 0.5 * smooth(0, 500, az + dz * t)); }
+    if (d < distance) { distance = d; radius = (84 + 34 * smooth(-420, -200, az + dz * t)) * (1 - 0.42 * smooth(-150, 450, az + dz * t)); }
   }
   return { distance, radius, bankDistance: distance - radius };
 }
