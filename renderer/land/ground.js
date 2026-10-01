@@ -114,14 +114,21 @@ export function createGroundMaterial(terrain, biomeBase, biome, look = landLook(
       // Only inside the full-pool zone the build found (terrain channel w): not the canyon
       // below a dam at the same height.
       const band = float(1).sub(smoothstep(look.bathtub - 1.5, look.bathtub + 1.5, p.y)).mul(smoothstep(-3, -1, p.y)).mul(g.w),
-        deep = canyon ? float(1).sub(smoothstep(canyon.below, canyon.below + 15, p.y)) : float(0),
+        // The canyon rock fades in over ~45 m of height, its edge warped ±20 m by two octaves
+        // of noise so it never follows a level contour.
+        edgeY = p.y
+          .add(mx_noise_float(vec3(xz.mul(0.02), 51)).mul(14))
+          .add(mx_noise_float(vec3(xz.mul(0.08), 53)).mul(6)),
+        deep = canyon ? float(1).sub(smoothstep(canyon.below - 25, canyon.below + 20, edgeY)) : float(0),
         stone = graniteRock(tex, biome.ground, p, n0, slope, band, deep),
         cover = max(rockW, max(band, deep)),
         nm = antiTile(tex.grass.normal, xz, 2.6).rgb,
         bump = vec3(nm.x.mul(2).sub(1), 0, float(1).sub(nm.y.mul(2))).mul(0.35),
         n = normalize(mix(n0.add(bump), stone.normal, cover));
       let albedo = mix(mix(grass, soil, patch.mul(0.6)), stone.albedo, cover);
-      albedo = mix(albedo, albedo.mul(0.45), wet);
+      // Wet only at the lake's own shore (the drawdown zone), not the canyon below a dam,
+      // which lies far below the lake surface.
+      albedo = mix(albedo, albedo.mul(0.45), wet.mul(g.w));
       const sunLit = u.sunColor.mul(max(dot(n, u.sun), 0).mul(light.x)),
         skyLit = u.fill.mul(n.y.mul(0.3).add(0.38).mul(light.y)),
         bounce = vec3(0.2, 0.16, 0.08).mul(float(1).sub(n0.y).mul(0.25));
