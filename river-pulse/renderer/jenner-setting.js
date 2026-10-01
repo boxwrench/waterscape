@@ -17,7 +17,9 @@ function terrain(noise, maps, clock, grassMap) {
     gravel = maps ? grayStone(maps.pebbles.color, p.xz.div(1.8)).mul(vec3(0.88, 0.86, 0.77)) : sand,
     beach = mix(sand, gravel, 0.26),
     grassTint = mix(color(0x485938), color(0x8b9762), mottle.r.mul(0.75).add(mottle.b.mul(0.2))),
-    grass = grassMap ? grassTint.mul(texture(grassMap, p.xz.div(1.5)).rgb.mul(1.1).add(0.45)) : grassTint,
+    scrub = texture(noise, p.xz.div(38)).g.mul(0.6).add(texture(noise, p.xz.div(11)).b.mul(0.4)),
+    scrubTint = mix(grassTint, color(0x2d4430), smoothstep(0.55, 0.72, scrub).mul(0.5)),
+    grass = grassMap ? scrubTint.mul(texture(grassMap, p.xz.div(1.5)).rgb.mul(1.1).add(0.45)) : scrubTint,
     slope = floatSlope(normalWorld.y),
     n = normalWorld.abs(), weights = n.div(n.x.add(n.y).add(n.z)),
     rock = maps ? grayStone(maps.rock.color, p.zy.div(12), 0.55).mul(weights.x)
@@ -200,12 +202,14 @@ async function conifersAndScrub() {
     for (const [cx, cz, count, spread] of centres) for (let i = 0; i < count; i++) {
       const x = cx + (random() - 0.5) * spread, z = cz + (random() - 0.5) * spread, y = jennerGround(x, z);
       if (y < 8 || jennerRiver(x, z).bankDistance < 40) continue;
-      sites.push({ x, y, z, turn: random() * 6.28, ...make(y) });
+      // Clearings and thinner edges, so stands read as patches and not rows.
+      if (Math.sin(x * 0.021 + 1.3) * Math.sin(z * 0.017 + 0.4) + random() * 0.8 < -0.15) continue;
+      sites.push({ x, y, z, turn: random() * 6.28, lean: 0.8 + random() * 0.45, ...make(y) });
     }
   };
   place([[640, -640, 110, 300], [930, -330, 90, 280], [260, -840, 60, 200], [1000, 1150, 120, 340],
     [1300, 1750, 100, 340], [560, 1500, 50, 200], [420, -220, 90, 260], [520, 150, 120, 300],
-    [650, 520, 100, 300], [300, -520, 50, 160]], () => ({ fir: true, height: 15 + random() * 17 }));
+    [650, 520, 100, 300], [300, -520, 50, 160]], () => ({ fir: true, height: 9 + random() * random() * 26 + random() * 6 }));
   place([[-150, -520, 70, 160], [60, -720, 70, 200], [150, 950, 80, 220], [100, 1400, 90, 260],
     [-60, 1700, 60, 180], [230, -380, 90, 200], [260, 30, 90, 240], [300, 330, 80, 240]], () => ({ fir: false, shrub: true, height: 2.2 + random() * 3 }));
   const dummy = new THREE.Object3D(), tint = new THREE.Color();
@@ -216,7 +220,7 @@ async function conifersAndScrub() {
       selected.forEach((s, i) => {
         const scale = s.height / v.height;
         dummy.position.set(s.x, s.y - (s.shrub ? s.height * 0.3 : 0.3), s.z); dummy.rotation.set(0, s.turn, 0);
-        dummy.scale.set(scale * (s.shrub ? 1.5 : 1.35), scale * (s.shrub ? 0.75 : 1), scale * (s.shrub ? 1.5 : 1.35));
+        dummy.scale.set(scale * (s.shrub ? 1.5 : 1.35) * s.lean, scale * (s.shrub ? 0.75 : 1), scale * (s.shrub ? 1.5 : 1.35) * (2 - s.lean));
         dummy.updateMatrix(); mesh.setMatrixAt(i, dummy.matrix);
         if (isFir) tint.setHSL(0.27, 0.2 + random() * 0.15, 0.2 + random() * 0.1);
         else tint.setHSL(0.22 + random() * 0.04, 0.2 + random() * 0.15, 0.25 + random() * 0.1);
