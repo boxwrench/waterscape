@@ -62,6 +62,15 @@ interpretation. The full principle is in
 
 ## River Pulse views
 
+East Fork, below Coyote Valley Dam, adds the Lake Mendocino outflow with an earthfill face,
+concrete outlet, grey riprap and oak groups. Open the
+[East Fork local preview](http://localhost:5173/river-pulse/renderer/east-fork.html).
+The Map inset links East Fork, Hacienda and Jenner using bundled USGS centerlines and
+source-linked place coordinates. Hacienda's 3D map remains its local terrain extent.
+East Fork is photo-informed Setting with illustrative water; the retired local gauge is
+linked as historical context, with no live flow or stage claim. See
+[East Fork scene notes](docs/river-pulse/east-fork-scene.md).
+
 Map keeps sourced terrain and river centerlines. Its blue water ribbon widens/narrows with
 selected discharge relative to the loaded history; seasonal condition colors the border.
 Ripple scale and motion are exaggerated. Width is a visual comparison, not measured banks,

@@ -13,8 +13,9 @@
     <link rel="stylesheet" href="./hacienda-label.css" />
     <link rel="stylesheet" href="./hacienda-flow.css" />
     <link rel="stylesheet" href="./hacienda-time.css" />
+    <link rel="stylesheet" href="./river-map.css" />
   </head>
-  <body>
+  <body data-river-place="hacienda_bridge">
     <a class="skip-link" href="#time-range">Skip to river timeline</a>
     <canvas
       id="scene"
@@ -38,6 +39,7 @@
         ><span>Hacienda Bridge</span>
       </div>
       <div class="header-actions">
+        <a class="place-link" href="./east-fork.html">East Fork ↗</a>
         <a class="place-link" href="./jenner.html">Jenner ↗</a>
         <button id="focus-view" type="button" aria-pressed="false">
           Explore</button
@@ -307,6 +309,7 @@
     </div>
     <div id="error" class="error glass" role="status" hidden></div>
     <script type="module" src="./hacienda.js"></script>
+    <script type="module" src="./river-map.js"></script>
     <script type="module" src="./hacienda-time.js"></script>
     <script type="module" src="./hacienda-seasonal.js"></script>
     <script type="module" src="./hacienda-interface.js"></script>

@@ -1,0 +1,43 @@
+{
+  "schema_version": "river-pulse-place-0.1",
+  "minimum_engine_version": "0.1.0",
+  "id": "east_fork",
+  "river_pack": "russian_river",
+  "name": "East Fork \u00b7 Lake Mendocino outflow",
+  "hydrologic_context": "regulated_river_outflow",
+  "anchor": {
+    "latitude": 39.1973914199688,
+    "longitude": -123.187504588673
+  },
+  "anchor_source": "https://waterdata.usgs.gov/monitoring-location/USGS-11462000/",
+  "time_zone": "America/Los_Angeles",
+  "horizontal_crs": "EPSG:32610",
+  "supported_capabilities": [
+    "historical_discharge_context"
+  ],
+  "data_bindings": [],
+  "constraints": [
+    "The local USGS continuous record ends in 2011; this scene has no current discharge or stage binding.",
+    "Authored outlet geometry, water level, ripples and foam are illustrative; they do not show current dam operations."
+  ],
+  "references": [
+    {
+      "label": "USGS 11462000 historic East Fork station",
+      "url": "https://waterdata.usgs.gov/monitoring-location/USGS-11462000/"
+    },
+    {
+      "label": "UC San Diego outlet photograph",
+      "url": "https://today.ucsd.edu/story/new-forecast-informed-decision-making-tool-implemented-at-lake-mendocino"
+    },
+    {
+      "label": "User-selected Coyote Valley Dam gallery",
+      "url": "https://rs.locationshub.com/Home/LocationDetail?rsLocationId=050-10120170"
+    }
+  ],
+  "authored_scene": {
+    "entry": "../../../../renderer/east-fork.html",
+    "binding_class": "setting",
+    "surveyed": false,
+    "references": "setting/references.json"
+  }
+}

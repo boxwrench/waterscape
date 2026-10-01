@@ -26,8 +26,14 @@ California DWR geometry is a fallback if the local centerline cannot load.
 - **Hacienda Bridge:** real USGS 3DEP terrain, USGS 3DHP cartographic centerlines,
   USGS discharge/history, time selection and seasonal context; Map, Bridge and Hacienda
   Beach viewpoints.
-- **Jenner:** authored place manifest, common package-loader tests and a USGS NAVD88
-  water-level adapter. No Jenner 3D scene yet.
+- **East Fork:** Lake Mendocino outflow, with two bounded bank views, photo-informed earthfill
+  dam/outlet, riprap and oak groups. USGS 11462000 is a historical record; this scene has no
+  live discharge or stage binding.
+- **Jenner:** photo-informed estuary lookout, river shore and Pacific beach, with sourced
+  USGS NAVD88 water-level evidence independent of its illustrative ocean water.
+- **Geographic map:** bundled USGS centerlines and clickable place pins join all three places.
+  The inset opens on Hacienda Map, or through Map on East Fork/Jenner. It does not expand
+  Hacienda's local 3D terrain into a surveyed whole-river scene.
 - **Not implemented:** local hydrodynamic simulation, forecasts, a complete river
   corridor. Package capabilities describe intent, not
   guaranteed data availability. Offline replay has a tested data contract, not a finished UI.
@@ -64,7 +70,7 @@ photographic references, CC0 ground materials, MIT tree assets and rendering lim
 | `adapters/` | Normalize USGS and DWR source records, preserving provenance |
 | `data-model/` | Quantities, deterministic selection, RiverState, packages and replay |
 | `visual-bindings/` | Convert scientific state into labels, charts and scene styling |
-| `renderer/` | Hacienda terrain scene and its interface |
+| `renderer/` | Hacienda terrain, authored place scenes, map navigation and interfaces |
 | `data/` | River/place manifests, generated registry and committed terrain/centerlines |
 
 Root `vendor/`, camera/projection utilities, `pipeline/`, `scripts/` and dependency installation

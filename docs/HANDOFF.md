@@ -4,6 +4,28 @@ Where things stand, for whoever picks this up next (person or agent). The plan l
 `ROADMAP.md` and `docs/roadmap/README.md`; this file is the snapshot of "what just happened
 and what's next".
 
+## East Fork local preview — LM2
+
+`task/LM2` in `/tmp/waterscape-mendocino` continues the Russian River start below Coyote
+Valley Dam. The branch starts at current origin/main (`3c01b23`), preserving the independent
+LM1 reservoir foundations and active H1/Jenner worktrees. East Fork has two bounded bank
+views, broad dry earthfill face, crest road, concrete outlet portals and wing walls, grey
+riprap, grouped oaks and reflective illustrative water. Photographs were inspected; sources
+and display limitations are in [scene notes](river-pulse/east-fork-scene.md).
+
+Hacienda Map now has a geographic inset with selectable East Fork, Hacienda and Jenner pins.
+East Fork/Jenner open the same inset through Map. It uses committed USGS 3DHP centerlines,
+with manifest anchors; Hacienda's existing 3D terrain still covers Hacienda only. DWR's
+centerline service was offline, so USGS 3DHP was used for this new inset.
+
+The local East Fork station's continuous record ends in 2011; no current flow/stage is
+invented or substituted from a mainstem gauge. Lake Mendocino's separate reservoir bundle
+remains LM1 work: its NHD outline request timed out again on October 1. The lake-side intake
+model remains on task/LM1 and is not pictured from this downstream scene.
+
+Preview server port 5175 serves this branch's build. No push or merge for LM2. See
+[task](roadmap/tasks/LM2-east-fork.md) for checks and final result.
+
 ## Jenner publication — RP10
 
 The user accepted Jenner as "a good start" and explicitly requested updating, committing,
