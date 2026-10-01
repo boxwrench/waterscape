@@ -29,7 +29,9 @@
     "note": "maxDepth is the dam's hydraulic height (streambed to maximum water level); bankSlope is metres of depth per metre from shore, an estimate."
   },
   "ground": {
-    "rock": 0.38
+    "rock": 0.38,
+    "bathtub": 10,
+    "note": "bathtub: the bleached drawdown band, from the surveyed water (1151.7 m) toward the dam crest (1163.4 m, structures.json), shown 10 m high as in photographs."
   },
   "air": {
     "haze": 0.5,

@@ -44,16 +44,9 @@
         0.27
       ],
       "note": "gain and albedo matched to sunlit granite (sRGB 175,162,144) in https://commons.wikimedia.org/wiki/File:Hetch_Hetchy_May_2011_001.jpg",
-      "streaks": 1,
       "canyon": {
         "below": -25,
         "gain": 0.5
-      },
-      "fracture": {
-        "tilt": 0.8,
-        "crack": 0.65,
-        "large": 6,
-        "note": "Joint sets (two vertical, one sheeting) with angular block faces, by eye from the Commons photographs and the user's photos below the dam; set geometry in renderer/land/granite.js."
       }
     },
     "ochre": {
@@ -63,6 +56,48 @@
       "files": [
         "ground/ochre_color.jpg",
         "ground/ochre_normal.jpg"
+      ]
+    },
+    "joints": {
+      "polyhaven": "dry_riverbed_rock",
+      "licence": "CC0 1.0, Poly Haven",
+      "source": "https://polyhaven.com/a/dry_riverbed_rock",
+      "files": [
+        "ground/joints_color.jpg",
+        "ground/joints_normal.jpg"
+      ],
+      "mean": [
+        0.1424,
+        0.0981,
+        0.0741
+      ]
+    },
+    "slab": {
+      "polyhaven": "rock_01",
+      "licence": "CC0 1.0, Poly Haven",
+      "source": "https://polyhaven.com/a/rock_01",
+      "files": [
+        "ground/slab_color.jpg",
+        "ground/slab_normal.jpg"
+      ],
+      "mean": [
+        0.1846,
+        0.1502,
+        0.1147
+      ]
+    },
+    "canyon": {
+      "polyhaven": "dark_rock_02",
+      "licence": "CC0 1.0, Poly Haven",
+      "source": "https://polyhaven.com/a/dark_rock_02",
+      "files": [
+        "ground/canyon_color.jpg",
+        "ground/canyon_normal.jpg"
+      ],
+      "mean": [
+        0.0438,
+        0.0343,
+        0.026
       ]
     }
   },

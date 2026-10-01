@@ -43,6 +43,8 @@ export function landLook(land, biome) {
     bare: v.bare ?? 0,
     // Lowers the slope at which rock shows through the ground (domes and slabs), 0-0.3.
     rock: land?.ground?.rock ?? 0,
+    // Height (m above the surveyed water) of the bare drawdown band in granite country.
+    bathtub: land?.ground?.bathtub ?? 0,
     // Linear albedo of the biome's rock for the kernel's own shading (reflections); none: no rock.
     rockAlbedo: biome?.ground?.rock?.albedo ?? null,
     // Share of the near grass field that grows (1 default; granite benches far less).
