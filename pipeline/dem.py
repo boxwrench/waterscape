@@ -121,6 +121,11 @@ def carve_dams(dem, water, crests, crest_elevations, cell, heights=None):
         foot = (side == -up) & within & (u <= width)
         out[foot] = np.minimum(out[foot], face[foot] - 6.0)
         footprint |= foot
+        # The crest line itself: the survey smears the dam top over a cell or two either side,
+        # which would ramp land up the upstream face. Sink it to the toe; the lake side stays
+        # water (not in the footprint).
+        line = within & (u <= 1.6 * cell)
+        out[line] = np.minimum(out[line], top - (heights[i] if heights else 90.0))
     return out, footprint
 
 

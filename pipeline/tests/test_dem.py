@@ -93,3 +93,14 @@ def test_rivers_are_carved_below_their_surface_within_their_width():
     assert abs(out[20, 30] - (45.0 - 1.5)) < 0.2, "surface interpolated along the river"
     assert out[20 + 5, 30] == 100.0, "outside the banks untouched"
     assert foot[20, 30] and not foot[30, 30]
+
+
+def test_dams_also_carve_the_crest_line_itself():
+    from dem import carve_dams
+    water = np.zeros((120, 20), bool)
+    water[:40, :] = True
+    dem = np.full((120, 20), 50.0)
+    dem[40:, :] = 100.0  # the survey's smeared dam top, crest at row 43
+    out, foot = carve_dams(dem, water, [[(2.0, 43.0), (18.0, 43.0)]], [100.0], cell=1.0, heights=[60.0])
+    assert out[42, 10] < 50.0 and out[43, 10] < 50.0, "no land wedge on the crest line"
+    assert not foot[42, 10], "the lake side stays water"

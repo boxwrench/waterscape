@@ -5,7 +5,7 @@
 // already shaded (pack.js), and hides the water behind it.
 import * as THREE from "../../vendor/three/three.webgpu.js";
 import {
-  texture, positionWorld, normalWorld, cameraPosition, vec2, vec3, float, max, min, dot, normalize, uv, mix,
+  texture, positionWorld, normalWorld, cameraPosition, vec3, float, max, min, dot, normalize, uv, mix,
   smoothstep, fract, abs, pow, reflect, mx_noise_float, time,
 } from "../../vendor/three/three.tsl.js";
 
@@ -153,15 +153,16 @@ export async function createStructures(terrain, structures, ground) {
     },
     concrete = load("concrete_color.jpg", true),
     u = ground.uniforms,
-    { width: w, height: h, cell, x0, z0 } = terrain,
-    light = texture(ground.lightTex, vec2(positionWorld.x.sub(x0).div(cell).add(0.5).div(w), positionWorld.z.sub(z0).div(cell).add(0.5).div(h))),
     n = normalize(normalWorld),
     // No blending: the 0.5 alpha is a tag for pack.js, and blending a face over another
     // (or over the ground) would change it and turn the dam into plain ground.
     material = new THREE.MeshBasicNodeMaterial({ side: THREE.DoubleSide, blending: THREE.NoBlending });
   // Weathered grey-tan concrete as in photographs of the downstream face: the texture tinted
   // warm, darker pour lines every 1.5 m of height, panel joints every 15 m along the crest,
-  // and broad dark water staining down the face; lit by sun, sky fill and baked terrain light.
+  // and broad dark water staining down the face; lit by sun and sky fill. Not by the terrain's
+  // baked light: the dam stands above that surface (and above the trench cut under its crest),
+  // so the bake would stamp the 10 m grid's shadows onto the concrete. A canyon's sky is
+  // partly walled in: fill at 80%.
   const q = uv(),
     lift = smoothstep(0.9, 0.97, abs(fract(positionWorld.y.div(1.5)).sub(0.5)).mul(2)),
     joint = smoothstep(0.93, 0.99, abs(fract(q.x.mul(11 / 15)).sub(0.5)).mul(2)),
@@ -172,7 +173,7 @@ export async function createStructures(terrain, structures, ground) {
       .mul(float(1).sub(lift.mul(0.3)).sub(joint.mul(0.2)))
       .mul(mix(float(1), float(0.55), stain));
   material.colorNode = albedo.mul(
-    u.sunColor.mul(max(dot(n, u.sun), 0).mul(light.x)).add(u.fill.mul(n.y.mul(0.3).add(0.55).mul(light.y))),
+    u.sunColor.mul(max(dot(n, u.sun), 0)).add(u.fill.mul(n.y.mul(0.3).add(0.55).mul(0.8))),
   );
   material.opacityNode = float(0.5);
   const group = new THREE.Group();
