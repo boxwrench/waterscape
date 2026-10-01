@@ -30,3 +30,21 @@ No edits to vendor or the reservoir engine/water shader. No push or merge.
 - `RIVER_PULSE_BROWSER=/opt/google/chrome/chrome node scripts/verify-east-fork.mjs`
 - Browser smoke/visual review: East Fork first frame, shoreline camera, pause, alternate view,
   reduced motion, geographic map pin navigation, mobile layout and console errors.
+
+## Result
+- Status: done
+- Commit: 5e84813
+- Checks:
+  - `node pipeline/validate-river-packages.mjs` — `River packages valid.`
+  - `python3 pipeline/build_river_registry.py --check` — `River Pulse registry is current: /tmp/waterscape-mendocino/river-pulse/data/registry.json`
+  - `npm run test:build` — `Built experience pages and river assets valid.`
+  - `RIVER_PULSE_BROWSER=/opt/google/chrome/chrome node scripts/verify-east-fork.mjs` — `East Fork scene, shoreline controls and map navigation passed.`
+  - `git diff --check` — no output.
+- Notes: Desktop riverbank/outlet and mobile/map captures inspected in
+  `/tmp/waterscape-mendocino-review/`. Bank starts dry at eye height; movement, pause,
+  reduced motion and map navigation through Hacienda/East Fork/Jenner pass, with no page
+  errors or missing local assets. Rendering review used Chrome's WebGL2 software backend;
+  hardware WebGPU performance is unmeasured. Firefox opened the local preview at port 5175.
+  README, source notes and handoff updated. No push or merge. LM1's lake outline remains
+  blocked by a USGS NHD timeout; this task completes the independent river setting, not
+  the Lake Mendocino reservoir bundle. No current discharge/stage is invented.
