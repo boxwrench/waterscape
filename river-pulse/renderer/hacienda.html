@@ -179,6 +179,12 @@
           disabled
         ><span>03</span> Hacienda Beach</button>
       </div>
+      <div id="stage-control" class="stage-buttons glass" role="group" aria-label="Water level" hidden>
+        <button id="stage-selected" type="button" class="active" aria-pressed="true">Selected time</button
+        ><button id="stage-low" type="button" aria-pressed="false">Record low</button
+        ><button id="stage-high" type="button" aria-pressed="false">Record high</button>
+        <p id="stage-readout" aria-live="polite"></p>
+      </div>
       <div class="layer-buttons glass" role="group" aria-label="Map layers">
         <button id="river-layer" type="button" aria-pressed="true">
           <i class="line-symbol" aria-hidden="true"></i> River</button

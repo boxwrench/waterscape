@@ -12,6 +12,7 @@ export function createAuthoredWater(document, terrain, maps = null, authoredGrid
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute("position", new THREE.BufferAttribute(grid.positions, 3));
   geometry.setAttribute("opticalDepth", new THREE.BufferAttribute(grid.depths, 1));
+  if (grid.beds) geometry.setAttribute("bedElevation", new THREE.BufferAttribute(grid.beds, 1));
   geometry.setIndex(new THREE.BufferAttribute(grid.indices, 1));
   geometry.computeBoundingSphere();
   const clock = uniform(0), p = positionWorld.xz;
@@ -32,7 +33,9 @@ export function createAuthoredWater(document, terrain, maps = null, authoredGrid
     eye = normalize(cameraPosition.sub(positionWorld)),
     facing = dot(normal, eye).clamp(0.02, 1),
     fresnel = pow(float(1).sub(facing), 5).mul(0.98).add(0.02),
-    depth = attribute("opticalDepth", "float"),
+    // With a stage-aware grid the depth is the surface height above the authored bed, so the
+    // waterline follows the terrain as the mesh is raised or lowered.
+    depth = grid.beds ? positionWorld.y.sub(attribute("bedElevation", "float")).max(0.01) : attribute("opticalDepth", "float"),
     // Analytic refraction onto a modeled gravel bed. No survey bathymetry is implied.
     refracted = refract(eye.negate(), normal, 1 / 1.333),
     bedUV = p.add(refracted.xz.div(refracted.y.abs().max(0.1)).mul(depth)),
@@ -60,6 +63,10 @@ export function createAuthoredWater(document, terrain, maps = null, authoredGrid
   mirror.target.position.y = grid.focus.y;
   mirror.uvNode = mirror.uvNode.add(vec2(normal.x, normal.z).mul(0.035));
   const material = new THREE.MeshBasicNodeMaterial({ side: THREE.FrontSide });
+  if (grid.beds) {
+    material.opacityNode = positionWorld.y.sub(attribute("bedElevation", "float")).sub(0.03).div(0.02).clamp(0, 1);
+    material.alphaTest = 0.5;
+  }
   const reflected = mix(mirror.rgb, color(0x294c38), 0.12);
   material.colorNode = mix(underwater, reflected, fresnel).add(color(0xfff2d8).mul(glint));
   const mesh = new THREE.Mesh(geometry, material);
@@ -68,7 +75,12 @@ export function createAuthoredWater(document, terrain, maps = null, authoredGrid
   mesh.visible = false;
   mesh.userData = { representation: grid.representation, bindingClass: "illustrative",
     optics: "derived from illustrative surface, bed and lighting", focus: grid.focus };
-  return { mesh, focus: grid.focus, update(seconds, reducedMotion) {
-    clock.value = reducedMotion ? 0 : seconds;
-  } };
+  // Authored scenes only: raise or lower the surface (metres relative to the authored baseline).
+  const base = mesh.position.y;
+  return { mesh, focus: grid.focus, stageAware: Boolean(grid.beds),
+    get level() { return mesh.position.y - base; },
+    setLevel(metres) { if (grid.beds && Number.isFinite(metres)) mesh.position.y = base + metres; },
+    update(seconds, reducedMotion) {
+      clock.value = reducedMotion ? 0 : seconds;
+    } };
 }

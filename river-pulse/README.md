@@ -79,6 +79,17 @@ are organised, and how to choose places for a new river.
   zero stops it; reduced motion freezes it.
 - **Haze (Setting):** a light exponential haze on the Map gives the valley depth.
 
+## Historical high and low (Hacienda close-ups)
+
+Bridge and Hacienda Beach offer **Selected time / Record low / Record high**. The record
+extremes come from USGS (`visual-bindings/hacienda-extremes.js`, each with its source URL; see
+[RP11](../docs/roadmap/tasks/RP11-hacienda-high-low.md)): record low flow 0.75 ft³/s
+(1977-05-06, no stage published) and record high stage 49.7 ft (90,100 ft³/s, 1955-12-23).
+Water height is an **Illustrative** compression of discharge, 1.1 m per tenfold change from
+the authored 100 ft³/s baseline, so the scene shows about 5.6 m of the real 15 m swing. Selected
+time follows the timeline. The water surface spreads past the banks and the terrain cuts the
+waterline. The readout always shows the real values.
+
 ## Layout
 
 | Directory | Responsibility |
