@@ -4,6 +4,24 @@ Where things stand, for whoever picks this up next (person or agent). The plan l
 `ROADMAP.md` and `docs/roadmap/README.md`; this file is the snapshot of "what just happened
 and what's next".
 
+## River Pulse visual pass — 2026-10-02 (branch `task/rp-visuals-v2`)
+
+Built on LM2 (East Fork and the geographic river map). Full list in
+[RP12](roadmap/tasks/RP12-river-pulse-visuals.md). Highlights: Hacienda map water stays blue,
+drifts when no discharge is known, and speeds up on steep reaches and outer bends; Jenner
+rebuilt to match the two reference photos (barrier beach, one break line, moving river water,
+conifer stands and scrub); Hacienda Bridge and Beach now have Selected time / Record low /
+Record high water from USGS records ([RP11](roadmap/tasks/RP11-hacienda-high-low.md)), the
+record high reaching the bridge steel. Place structure rules for new rivers are in
+[River structure](river-pulse/river-structure.md).
+
+Branch notes for whoever merges: this branch replaces `task/rp-visuals` (which had its own
+hub page, dropped in favour of LM2's river map) and `archive/rp-water-ribbon-superseded`
+(superseded, and it also holds seven H1 commits; those are preserved cleanly on
+`task/H1-recovered`). `task/LM1` (earthfill dam profile, intake tower, NID facts) is still
+unmerged and based on `task/H1`. I also fixed `river-package-validation.test.mjs`, which
+LM2 left expecting two places.
+
 ## East Fork local preview — LM2
 
 `task/LM2` in `/tmp/waterscape-mendocino` continues the Russian River start below Coyote
