@@ -67,4 +67,40 @@ Skip overlook and ridge views; at their distances 10 m already holds up.
    merge.
 
 ## Result
-- Status: todo
+- Status: paused for the user's decisions (survey done; no patches built yet)
+- Commit: see `git log --grep "L4:"`
+- Checks:
+  - `python pipeline/detail_survey.py <dir>`: 4 Shoreline cameras surveyed against 1 m windows read from S3.
+  - `python -m pytest pipeline/tests -q`: `26 passed`.
+  - `node --test "pipeline/tests/*.test.mjs"`: `ℹ fail 0` (125 passed).
+  - `git diff --check`: no output.
+- Survey (`pipeline/detail_survey.py`, 640 m around each `shore` camera; plan views in
+  `previews/l4-shoreline-10m-vs-1m.png`):
+
+  | Bundle | 1 m tile | Lake level, 1 m vs bundle | Land within 300 m | …ahead of camera | 1 m − 10 m on land (RMS / p95 / max) |
+  |---|---|---|---|---|---|
+  | calaveras | `CA_SantaClaraCounty_2020_A20` x60y415 | −0.04 m | 66% | 24% | 1.20 / 2.20 / 3.6 m |
+  | san_antonio | `CA_AlamedaCounty_2021_B21` x60y416 | −0.03 m | 48% | 24% | 1.27 / 2.47 / 4.6 m |
+  | crystal_springs | `CA_CaliforniaGaps_B23` x55y416 | **−1.72 m** | 62% | 23% | 0.80 / 1.61 / 6.6 m |
+  | san_andreas | `CA_CaliforniaGaps_B23` x54y417 | **−2.05 m** | 90% | 45% | 0.53 / 1.24 / 2.4 m |
+
+- Notes:
+  - **Hacienda is not a 1 m candidate as built.** Its Bridge and Beach views are an accepted
+    authored stage deliberately separate from 3DEP (`docs/river-pulse/authored-water.md`);
+    real terrain is only used by Map, seen from ~500 m up. Applying 1 m there would mean
+    rebuilding the authored beach on surveyed ground: the user's decision.
+  - **Shoreline cameras look out over the water.** Only about a quarter of the nearby land is
+    ahead of the default view (San Andreas: 45%). The visible gains are the waterline's true
+    shape (the 10 m grid turns it into stair-steps) and the banks beside the camera; the rest
+    shows when the visitor turns or walks.
+  - **The 1 m Peninsula survey caught both lakes ~2 m low.** At Crystal Springs and San
+    Andreas the 1 m lidar's hydro-flattened lake sits 1.7–2.1 m below the bundle level, so it
+    includes a ~2 m band of exposed bank. Keep the bundle level as the authority and replace
+    1 m ground below it with the modelled bed (step 2).
+  - 1 m adds roads, trails and berms that 10 m blurs out (visible at Calaveras and San
+    Andreas). The roadmap leaves man-made features out for now; decide whether patches keep
+    or smooth them.
+  - 1 m tiles are NAD83 UTM (EPSG:26910); bundles are WGS84 UTM (EPSG:32610). They differ by
+    roughly a metre here: reproject or offset before blending.
+  - The survey reads from S3 with rasterio; `pipeline/build.py`'s own 3DEP and NAIP hosts were
+    unreachable from the cloud session that ran it.
