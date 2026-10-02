@@ -76,6 +76,20 @@ water body or biome needs lives under `data/`.
   station `HTH` for storage.
 - Techniques to adopt from the [Virtual Yosemite Photo Tour](../../resources/README.md#terrain-rocks--ground-materials)
   (study only: no source or licence is published, so reimplement, never copy code):
+  - **Lidar data check (2026-10-02).** USGS 3DEP project `CA_YosemiteNP_2019_D19` covers the
+    whole reservoir and its walls. The regional `CA_SierraNevada_*` surveys stop ~7 km west at
+    the park boundary, and the AWS Entwine mirror (`usgs-lidar-public`) has no Hetch Hetchy
+    coverage, so use the staged project directly:
+    - **1 m DEM:** UTM 11N tiles `USGS_1M_11_x25y421` (dam, Kolana Rock, Wapama and Tueeulala)
+      and `x26y421` (east end), plus `x25y420`/`x26y420` to the south, each ~270–290 MB, at
+      `https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/1m/Projects/CA_YosemiteNP_2019_D19/TIFF/`.
+    - **Point cloud:** 1 km LAZ tiles (USNG names such as `11SKC5705` under Wapama Falls;
+      tile index in `CA_YosemiteNP_2019.vpc` on the same S3 bucket; LAZ files download from
+      `rockyweb.usgs.gov`). All 77 tiles from E 254–265 km, N 4201–4208 km are present, at a
+      median 34 points/m² (12–48; the lowest are on the water surface).
+    - **Intensity** is in the point schema; there is **no RGB**. Whether its values are usable
+      as rock brightness on the steep walls is unverified: open one LAZ tile and grid its
+      intensity before planning around it.
   - **Cliff colour.** NAIP cannot paint near-vertical granite (Kolana Rock, Hetch Hetchy
     Dome, the walls behind Wapama and Tueeulala Falls). First check whether the 3DEP point
     clouds covering Hetch Hetchy record return intensity, and use it as rock brightness on
