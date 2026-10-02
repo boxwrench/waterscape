@@ -28,8 +28,9 @@ shows procedural colour cannot get there.
    their spread, to the biome (`data/biomes/sierra-granite/`). These are the targets the
    procedural material extrapolates from across every wall, including faces no photo
    shows. Note how sampling corrected for each photo's exposure and white balance.
-3. **Shape.** Use the H1 brief's 1 m lidar patches (`USGS_1M_11_x25y421`, `x26y421`)
-   so wall geometry near the cameras comes from lidar, not the coarse grid.
+3. **Shape.** Use L4's 1 m detail patches (tiles `USGS_1M_11_x25y421`, `x26y421`) so wall
+   geometry near the cameras comes from 1 m lidar, not the 10 m grid. The walls sit
+   0.5–2 km out, so extend the patches (or add a wall-only band) to cover them.
 4. **Rock material**, in the land pass (`renderer/land/ground.js` or a biome-specific
    material beside it):
    - Triplanar granite on steep faces (CC0 texture; today's ground samples by `xz` and

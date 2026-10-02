@@ -82,7 +82,7 @@ versioned long-lived asset caching or a different host.
 | W3 | [Add San Andreas Lake](tasks/W3-san-andreas.md) | small | W1 | done 2026-09-29 |
 | W4 | [Add both to the Hetch Hetchy tour](tasks/W4-tour.md) | small | W2, W3 | done 2026-09-29 |
 | H1 | Hetch Hetchy: Sierra granite + conifer biome, then the bundle ([brief](capable-agent-briefs.md#h1-hetch-hetchy)) | capable | L1, L2 | later |
-| H2 | [Granite walls at Hetch Hetchy: 1 m lidar shape, procedural rock calibrated from the user's photos](tasks/H2-granite-walls.md) | capable | H1 | todo |
+| H2 | [Granite walls at Hetch Hetchy: 1 m lidar shape, procedural rock calibrated from the user's photos](tasks/H2-granite-walls.md) | capable | H1, L4 | todo |
 
 ## Track T — water level and timeline
 
@@ -113,6 +113,7 @@ Calaveras, San Antonio and San Andreas are not in CDEC, so they have no timeline
 | L2b | Real tree shadows: render oaks and grass from the sun into a shadow map sampled by ground and grass (today's soft blobs from the old procedural crowns do not match the 3D trees) | capable | L2 | later; supporting landscape work |
 | U1 | PC-only Ultra tier (opt-in, never auto-picked): denser curved grass with seed heads and flowers, backlit glow, land-pass anti-aliasing, shadow maps, full-detail oaks to ~400 m, native resolution, photo mode (pause, hide UI, 2× PNG) | capable | L2b | proposed |
 | L3 | Light and tuning, re-rendered flyovers ([brief](capable-agent-briefs.md#l3-light-and-tuning)) | capable | L2 | later |
+| L4 | [1 m lidar detail where the camera is close](tasks/L4-detail-patches.md): Hacienda first, then reservoir Shoreline views, Jenner; shared with H1/H2 | capable | — | todo |
 
 ## Track Q — upkeep
 
