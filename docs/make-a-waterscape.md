@@ -75,6 +75,22 @@ domain) over exactly the same grid, with its request URL in `aerial.json`, for t
 `python pipeline/aerial.py <id>` fetches the photograph alone. `--native` also writes the uncompressed `terrain.bin` for the
 native Windows host.
 
+Then add 1 m lidar detail around the close cameras (any viewpoint with `above` under 3 m):
+
+```
+pip install rasterio
+python pipeline/detail.py <id>
+```
+
+It finds the USGS 1 m DEM covering each close camera (`--project <name>` picks one), reads a
+~640 m window over HTTP and writes `detail-<view>.bin.gz` plus `detail.json`. The renderer,
+the water kernel and collisions use the patch where it exists, so the bank and waterline near
+the camera follow the 1 m survey; it blends into the 10 m grid over its outer 50 m. The bundle's
+water level stays the authority: 1 m ground at or below it is water. Re-run it after moving a
+close camera or rebuilding the bundle. A Shoreline camera reads best about 1.7 m inland of the
+waterline, where the bank fills the bottom of the frame. Without `detail.json` the bundle simply
+uses the 10 m grid.
+
 ## 4. Write the story and land profile
 
 `data/<id>/story.json` is the fact card. Every fact needs an https source; prefer government

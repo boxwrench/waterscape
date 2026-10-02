@@ -71,6 +71,16 @@ export async function validateBundle(dir) {
     await stat(path.join(dir, aerial.file ?? "")).catch(() => errors.push(`${id}: aerial.json names a missing image`));
     if (!/^https:\/\//.test(aerial.source ?? "")) errors.push(`${id}: aerial.json source must be an https URL`);
   }
+  // Optional 1 m detail patches (pipeline/detail.py): each must fit the grid and exist.
+  const detail = await readFile(path.join(dir, "detail.json"), "utf8").then(JSON.parse, () => null);
+  for (const p of detail?.patches ?? []) {
+    if (!cameras.viewpoints?.[p.view]) errors.push(`${id}: detail.json patch for unknown viewpoint ${p.view}`);
+    if (p.width !== p.cells * p.sub + 1 || p.height !== p.width)
+      errors.push(`${id}: detail.json patch ${p.view} is not ${p.cells} cells x ${p.sub} + 1 square`);
+    if (p.i0 < 0 || p.j0 < 0 || p.i0 + p.cells >= terrain.width || p.j0 + p.cells >= terrain.height)
+      errors.push(`${id}: detail.json patch ${p.view} runs off the terrain grid`);
+    await stat(path.join(dir, p.file ?? "")).catch(() => errors.push(`${id}: detail.json names a missing ${p.file}`));
+  }
   const biomeFile = path.join(path.dirname(dir), "biomes", source.biome ?? "", "biome.json");
   await stat(biomeFile).catch(() =>
     errors.push(`${id}: biome ${source.biome} has no data/biomes/${source.biome}/biome.json`),

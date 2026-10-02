@@ -113,7 +113,7 @@ Calaveras, San Antonio and San Andreas are not in CDEC, so they have no timeline
 | L2b | Real tree shadows: render oaks and grass from the sun into a shadow map sampled by ground and grass (today's soft blobs from the old procedural crowns do not match the 3D trees) | capable | L2 | later; supporting landscape work |
 | U1 | PC-only Ultra tier (opt-in, never auto-picked): denser curved grass with seed heads and flowers, backlit glow, land-pass anti-aliasing, shadow maps, full-detail oaks to ~400 m, native resolution, photo mode (pause, hide UI, 2× PNG) | capable | L2b | proposed |
 | L3 | Light and tuning, re-rendered flyovers ([brief](capable-agent-briefs.md#l3-light-and-tuning)) | capable | L2 | later |
-| L4 | [1 m lidar detail where the camera is close](tasks/L4-detail-patches.md): Hacienda first, then reservoir Shoreline views, Jenner; shared with H1/H2 | capable | — | todo |
+| L4 | [1 m lidar detail where the camera is close](tasks/L4-detail-patches.md): reservoir Shoreline views done, Hacienda deferred; shared with H1/H2 | capable | — | built on claude/water-usage-alternatives-ctk0dz; awaiting GPU review |
 
 ## Track Q — upkeep
 

@@ -67,40 +67,61 @@ Skip overlook and ridge views; at their distances 10 m already holds up.
    merge.
 
 ## Result
-- Status: paused for the user's decisions (survey done; no patches built yet)
+- Status: reservoir Shoreline patches built and wired in; needs the user's visual review on
+  a real GPU (not rendered on a GPU in the session that built it). Hacienda deferred by the user.
 - Commit: see `git log --grep "L4:"`
+- User decisions (2026-10-02): leave Hacienda for later; water levels vary, keep the bundle
+  level as the authority; keep roads and trails as the lidar shows them (adding them as features
+  may move up the queue later); move the Shoreline cameras back so a little bank shows in front.
+- Built:
+  - `pipeline/detail.py <id>`: finds the USGS 1 m project covering each close camera (cached S3
+    index, newest survey year first), reads a ~640 m window by HTTP range, resamples NAD83 to the
+    bundle's WGS84 UTM grid on a grid 10x the bundle's (~1 m), aligned to its cell lines, and
+    writes `detail-<view>.bin.gz` (height, shore distance, valley, blend weight) and `detail.json`.
+    1 m ground at or below the bundle's water level is water. ~200–240 KB per patch.
+  - `renderer/terrain.js`: loads `detail.json` when present; `sample()` reads the patch inside it
+    (camera, collisions, picking, oak placement and the mesh all follow); `coarse()` is the grid
+    alone; `gpuCells()` appends patch descriptors and cells after the grid.
+  - `renderer/water.cu`: `terrainSample()` reads a patch first (header `T[1].y` = patch count; the
+    native host's buffer has none, so it is unchanged); the procedural sub-grid relief and the
+    B1 shoreline warp fade to a quarter where the patch gives real relief (`.w` blend weight).
+  - `renderer/land/terrain-mesh.js`: grid cells under a patch are left out and the patch adds its
+    own 1 m mesh; its edge vertices lie on the grid's cell edges at the grid's heights (closed seam).
+  - `renderer/land/ground.js` `terrainAt()`: grass and impostors read the patch texture inside it.
+  - `pipeline/validate-bundles.mjs`: checks `detail.json` patches (viewpoint, size, fit, file).
+  - Shoreline cameras (`cameras.json` and `source.json`), walked back along their line of sight
+    from the `main` positions until the ray 20% up from the bottom of the frame lands on bank:
+    calaveras unchanged (already 1.7 m inland), san_antonio 14.5 m back, san_andreas 6.3 m back.
+    The 1 m data showed three of the old cameras standing in the water (San Antonio 12 m out).
+    crystal_springs: its bank is too steep (the rule wanted 22 m back and 16 m up), so it stands
+    1.7 m inland of the waterline (7.9 m back) and still shows open water at the bottom of frame.
+  - `scripts/verify.mjs`: the Shoreline viewpoint must be within 4 m of the waterline (was: over
+    water); the ripple click moves up to open water above the new strip of bank.
+  - Previews: `previews/l4-shoreline-10m-vs-1m.png` (plan views),
+    `previews/l4-shoreline-cpu-view.png` (CPU ray-cast of each new Shoreline framing, 10 m vs 1 m:
+    shape and framing only, no materials).
 - Checks:
-  - `python pipeline/detail_survey.py <dir>`: 4 Shoreline cameras surveyed against 1 m windows read from S3.
-  - `python -m pytest pipeline/tests -q`: `26 passed`.
-  - `node --test "pipeline/tests/*.test.mjs"`: `ℹ fail 0` (125 passed).
+  - `python -m pytest pipeline/tests -q`: `32 passed` (adds `test_detail.py`).
+  - `node --test "pipeline/tests/*.test.mjs"`: `ℹ fail 0` (128 passed; adds `terrain-detail.test.mjs`).
+  - `node pipeline/validate-bundles.mjs`: `Bundles valid.`; `node pipeline/validate-river-packages.mjs`: `River packages valid.`
+  - `npm run check`: all 21 kernels compile (`render_water: 107295 WGSL bytes`).
+  - `npm run build`: `Built Pages with 98 browser modules, …`; `npm run test:build`: `Built experience pages and river assets valid.`
   - `git diff --check`: no output.
-- Survey (`pipeline/detail_survey.py`, 640 m around each `shore` camera; plan views in
-  `previews/l4-shoreline-10m-vs-1m.png`):
-
-  | Bundle | 1 m tile | Lake level, 1 m vs bundle | Land within 300 m | …ahead of camera | 1 m − 10 m on land (RMS / p95 / max) |
-  |---|---|---|---|---|---|
-  | calaveras | `CA_SantaClaraCounty_2020_A20` x60y415 | −0.04 m | 66% | 24% | 1.20 / 2.20 / 3.6 m |
-  | san_antonio | `CA_AlamedaCounty_2021_B21` x60y416 | −0.03 m | 48% | 24% | 1.27 / 2.47 / 4.6 m |
-  | crystal_springs | `CA_CaliforniaGaps_B23` x55y416 | **−1.72 m** | 62% | 23% | 0.80 / 1.61 / 6.6 m |
-  | san_andreas | `CA_CaliforniaGaps_B23` x54y417 | **−2.05 m** | 90% | 45% | 0.53 / 1.24 / 2.4 m |
-
+  - Not run: `npm test` browser suites (need Microsoft Edge); frame timings.
 - Notes:
-  - **Hacienda is not a 1 m candidate as built.** Its Bridge and Beach views are an accepted
-    authored stage deliberately separate from 3DEP (`docs/river-pulse/authored-water.md`);
-    real terrain is only used by Map, seen from ~500 m up. Applying 1 m there would mean
-    rebuilding the authored beach on surveyed ground: the user's decision.
-  - **Shoreline cameras look out over the water.** Only about a quarter of the nearby land is
-    ahead of the default view (San Andreas: 45%). The visible gains are the waterline's true
-    shape (the 10 m grid turns it into stair-steps) and the banks beside the camera; the rest
-    shows when the visitor turns or walks.
-  - **The 1 m Peninsula survey caught both lakes ~2 m low.** At Crystal Springs and San
-    Andreas the 1 m lidar's hydro-flattened lake sits 1.7–2.1 m below the bundle level, so it
-    includes a ~2 m band of exposed bank. Keep the bundle level as the authority and replace
-    1 m ground below it with the modelled bed (step 2).
-  - 1 m adds roads, trails and berms that 10 m blurs out (visible at Calaveras and San
-    Andreas). The roadmap leaves man-made features out for now; decide whether patches keep
-    or smooth them.
-  - 1 m tiles are NAD83 UTM (EPSG:26910); bundles are WGS84 UTM (EPSG:32610). They differ by
-    roughly a metre here: reproject or offset before blending.
-  - The survey reads from S3 with rasterio; `pipeline/build.py`'s own 3DEP and NAIP hosts were
-    unreachable from the cloud session that ran it.
+  - Within 5 m of the waterline B1's illustrative 1:10 contact bank still replaces the lidar
+    bank, so the ebb stays visible; it now sits on the 1 m shoreline.
+  - The light bake (`bake_light`) stays on the 10 m grid; the 1 m relief is lit by its own
+    normals in the land pass.
+  - 1 m adds roads, trails and, at San Andreas, low flats in the water (the 1 m survey caught the
+    lake ~2 m low; ground above the bundle level stays land).
+  - Re-run `python pipeline/detail.py <id>` after moving a close camera or rebuilding a bundle;
+    `pipeline/build.py` does not touch `detail.json`.
+  - Survey numbers from the first pass (before the camera moves), for reference:
+
+    | Bundle | 1 m project | Lake level, 1 m vs bundle | 1 m − 10 m on land within 300 m (RMS / max) |
+    |---|---|---|---|
+    | calaveras | `CA_SantaClaraCounty_2020_A20` | −0.04 m | 1.20 / 3.6 m |
+    | san_antonio | `CA_AlamedaCounty_2021_B21` | −0.03 m | 1.27 / 4.6 m |
+    | crystal_springs | `CA_CaliforniaGaps_B23` | −1.72 m | 0.80 / 6.6 m |
+    | san_andreas | `CA_CaliforniaGaps_B23` | −2.05 m | 0.53 / 2.4 m |

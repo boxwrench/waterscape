@@ -88,7 +88,7 @@ export function createImpostors(terrain, biome, biomeBase, ground, speciesOrder,
       .add(noise(x.mul(4.12), z.mul(4.12)).mul(0.12))
       .add(noise(x.mul(8.36), z.mul(8.36)).mul(0.05));
   const gridUv = (x, z) => vec2(x.sub(x0).div(cell).add(0.5).div(w), z.sub(z0).div(cell).add(0.5).div(h));
-  const terr = (x, z) => texture(ground.terrainTex, gridUv(x, z)).level(0);
+  const terr = (x, z) => ground.terrainAt(x, z);
 
   // (row, frame, rotation, 1 if drawn) per card, for the fragment stage.
   const vCard = varying(vec4(0), "vImpostorCard");

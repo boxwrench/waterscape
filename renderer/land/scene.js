@@ -32,7 +32,16 @@ export async function createLandPass(rt, terrain, { biome, biomeBase, look }) {
   const ground = createGroundMaterial(terrain, biomeBase, biome, look),
     scene = new THREE.Scene();
   scene.add(new THREE.Mesh(geometry, ground.material));
-  const grass = createGrass(terrain, ground.terrainTex, ground.lightTex, ground.uniforms, look);
+  // 1 m detail patches fill the holes left in the grid mesh, with the same material.
+  for (const patch of grid.patches) {
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.BufferAttribute(patch.positions, 3));
+    g.setIndex(new THREE.BufferAttribute(patch.indices, 1));
+    g.computeVertexNormals();
+    g.computeBoundingSphere();
+    scene.add(new THREE.Mesh(g, ground.material));
+  }
+  const grass = createGrass(terrain, ground.terrainAt, ground.lightTex, ground.uniforms, look);
   scene.add(grass.mesh);
   let grassTier = -1;
   // Oak meshes near the camera (none if the biome has no baked trees).

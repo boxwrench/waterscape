@@ -62,7 +62,8 @@ try {
     };
   });
   assert.ok(
-    model.center < 0 && model.overlook > 0 && model.ridge > 0 && model.shoreline < 0,
+    // Shoreline stands on the bank a step back from the real (1 m) waterline.
+    model.center < 0 && model.overlook > 0 && model.ridge > 0 && Math.abs(model.shoreline) < 4,
     JSON.stringify(model),
   );
   // Lidar reservoir surface and a centre point that is actually on Calaveras Reservoir.
@@ -101,7 +102,8 @@ try {
   await page.locator("#toggle").click();
   await page.screenshot({ path: "previews/calaveras-shoreline.png" });
   await page.evaluate(() => window.waterscapeLab.resume());
-  await page.mouse.click(910, 740);
+  // Open water above the strip of bank at the bottom of the Shoreline view.
+  await page.mouse.click(910, 520);
   await page.waitForTimeout(150);
   const ripple = await page.evaluate(() => window.waterscapeLab.inspect());
   assert.ok(ripple.ripplePeak > 0.00001, "tap must generate ripples");

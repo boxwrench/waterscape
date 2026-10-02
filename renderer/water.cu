@@ -388,13 +388,30 @@ __device__ float3 sky(const float4 *L, float3 d, int season, float time) {
   return mix3(col, nearCol, smooth(nearR + .0015f, nearR - .0015f, e));
 }
 // Real terrain: USGS 3DEP lidar packed by pipeline/build.py into data/<id>/terrain.*.
-// The buffer describes itself: T[0] = (width, height, x0, z0), T[1].x = cell size, and cell
-// (row, col) is T[2 + row * width + col] = (height, signed shoreline distance, valley, 0).
+// The buffer describes itself: T[0] = (width, height, x0, z0), T[1] = (cell size, patches),
+// and cell (row, col) is T[2 + row * width + col] = (height, signed shoreline distance,
+// valley, 0). After the cells, each 1 m detail patch (pipeline/detail.py, at most two) has
+// two descriptor texels (x0, z0, step, first texel) and (width, height), and its own cells
+// with the blend weight in .w (0 at the patch edge, where it equals the bundle grid).
 // Local metres: x east, z south, y up from the reservoir surface.
 __device__ float4 terrainSample(const float4 *T, float x, float z) {
   float4 g = T[0];
   float cell = T[1].x;
-  int w = (int)g.x;
+  int w = (int)g.x, patches = (int)T[1].y;
+  for (int k = 0; k < 2; k++) {
+    if (k >= patches)
+      break;
+    int d = 2 + w * (int)g.y + 2 * k;
+    float4 a = T[d], b = T[d + 1];
+    float pu = (x - a.x) / a.z, pv = (z - a.y) / a.z;
+    if (pu >= 0.0f && pv >= 0.0f && pu <= b.x - 1.0f && pv <= b.y - 1.0f) {
+      pu = fminf(pu, b.x - 1.001f);
+      pv = fminf(pv, b.y - 1.001f);
+      int pw = (int)b.x, iu = (int)pu, iv = (int)pv, j = (int)a.w + iv * pw + iu;
+      float fu = pu - (float)iu, fv = pv - (float)iv;
+      return mix4(mix4(T[j], T[j + 1], fu), mix4(T[j + pw], T[j + pw + 1], fu), fv);
+    }
+  }
   float u = fminf(fmaxf((x - g.z) / cell, 0.0f), g.x - 1.001f),
         v = fminf(fmaxf((z - g.w) / cell, 0.0f), g.y - 1.001f);
   int iu = (int)u, iv = (int)v, i = 2 + iv * w + iu;
@@ -420,19 +437,20 @@ __device__ float bedDepth(float offshore, float depth, float slope) {
 }
 // Shoreline contact (Illustrative). Within 8 m of the lidar shoreline the bank is modelled
 // here, so the waterline is wherever the surface meets it, not a contour of the 10 m grid.
-// Warped shore distance: the lidar contour moved up to ~2.5 m either way at 4-40 m scales.
-__device__ float contactShore(float shore, float x, float z) {
-  return shore + 2.8f * (.9f * (noise(x * .025f + 31.0f, z * .025f - 17.0f) - .5f) +
+// Warped shore distance: the lidar contour moved up to ~2.5 m either way at 4-40 m scales,
+// a quarter of that where a 1 m detail patch (`fine`, its blend weight) gives the real shore.
+__device__ float contactShore(float shore, float x, float z, float fine) {
+  return shore + 2.8f * (1.0f - .75f * fine) * (.9f * (noise(x * .025f + 31.0f, z * .025f - 17.0f) - .5f) +
                          .6f * (noise(x * .09f - 5.0f, z * .09f + 11.0f) - .5f) +
                          .3f * (noise(x * .31f + 2.0f, z * .31f + 7.0f) - .5f));
 }
 // The contact bank: 1:10 through the waterline with a few centimetres of relief, blended
 // into `outside` (the lidar bank or modelled bed) between 5 and 8 m from the shoreline.
-__device__ float contactHeight(float shore, float x, float z, float outside) {
+__device__ float contactHeight(float shore, float x, float z, float outside, float fine) {
   float k = smooth(5.0f, 8.0f, fabsf(shore));
   if (k >= 1.0f)
     return outside;
-  float bank = .1f * contactShore(shore, x, z) + .06f * (noise(x * 1.7f, z * 1.7f) - .5f) +
+  float bank = .1f * contactShore(shore, x, z, fine) + .06f * (noise(x * 1.7f, z * 1.7f) - .5f) +
                .03f * (noise(x * 4.3f + 9.0f, z * 4.3f) - .5f);
   return lerp(bank, outside, k);
 }
@@ -446,14 +464,16 @@ __device__ float contactEbb(float s, float x, float z, float time, float energy)
 __device__ float terrainHeight(const float4 *T, float x, float z) {
   float4 s = terrainSample(T, x, z);
   if (s.y < 0)
-    return contactHeight(s.y, x, z, -bedDepth(-s.y, 40.0f, .35f));
-  // Sub-grid relief the 10 m lidar grid cannot hold, faded out at the waterline.
-  float detail = 2.2f * (fbm(x * .045f + 5.0f, z * .045f) - .5f) +
-                 .5f * (noise(x * .21f, z * .21f) - .5f);
+    return contactHeight(s.y, x, z, -bedDepth(-s.y, 40.0f, .35f), s.w);
+  // Sub-grid relief the 10 m lidar grid cannot hold, faded out at the waterline and where a
+  // 1 m detail patch carries the real relief (s.w).
+  float detail = (2.2f * (fbm(x * .045f + 5.0f, z * .045f) - .5f) +
+                  .5f * (noise(x * .21f, z * .21f) - .5f)) * (1.0f - s.w);
   // Past the edge of the survey the clamped lookup would smear the last row into a plateau;
   // let the land fall away under the haze so the painted far ridges take over instead.
   return contactHeight(s.y, x, z,
-                       s.x + detail * smooth(0.0f, 25.0f, s.y) - .25f * fmaxf(0.0f, terrainOutside(T, x, z)));
+                       s.x + detail * smooth(0.0f, 25.0f, s.y) - .25f * fmaxf(0.0f, terrainOutside(T, x, z)),
+                       s.w);
 }
 __device__ float terrainTrace(const float4 *T, float3 ro, float3 rd, int steps,
                               float maxDistance) {
@@ -746,7 +766,7 @@ __device__ float3 terrainShade(const float4 *T, const float4 *L, float3 p, float
                                   mul(skyC, (.45f + .25f * crownN.y) * baked.y)));
   // Contact zone: ground the ebb covered in the last couple of seconds is darker, drying out.
   if (fabsf(shore) < 8.0f && energy > 0.0f) {
-    float sw = contactShore(shore, p.x, p.z), wetted = 0.0f;
+    float sw = contactShore(shore, p.x, p.z, cell.w), wetted = 0.0f;
     // Metres up the 1:10 bank the ebb reached; a damp band a couple of metres wide behind it.
     float band = 2.0f + 1.5f * noise(p.x * .15f, p.z * .15f);
     for (int k = 0; k < 4; k++) {
@@ -816,11 +836,13 @@ __device__ float3 environment(const float4 *T, const float4 *L, float3 ro, float
 }
 __device__ float floorDepth(const float4 *T, float x, float z, float depth, float slope) {
   // Floor meets the surface at the waterline so the bank shows through shallow water.
-  float shore = shoreDistance(T, x, z), offshore = fmaxf(0, -shore);
+  float4 s = terrainSample(T, x, z);
+  float shore = s.y, offshore = fmaxf(0, -shore);
   float fade = smooth(0.0f, 12.0f, offshore);
   return -contactHeight(shore, x, z,
                         -(bedDepth(offshore, depth, slope) + .18f * (noise(x * .12f, z * .12f) - .5f) * fade +
-                          .08f * (noise(x * .55f + 7, z * .55f + 7) - .5f) * fade));
+                          .08f * (noise(x * .55f + 7, z * .55f + 7) - .5f) * fade),
+                        s.w);
 }
 __device__ float3 stone(const float4 *peb, float x, float z, float footprint) {
   float k = noise(x * .85f, z * .85f) * 8, ia = floorf(k), f = frac(k), u = x / .78f * 1024,
@@ -925,7 +947,8 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
     }
     float3 P = v3(camX + wd.x * t, camY + wd.y * t, camZ + wd.z * t);
     a = water(surface, rip, P.x, P.z, centerX, centerZ, t);
-    float shoreP = shoreDistance(terrain, P.x, P.z);
+    float4 sP = terrainSample(terrain, P.x, P.z);
+    float shoreP = sP.y;
     bool onReservoir = shoreP < -.5f && (landT < 0 || t < landT);
     // Contact zone: water where the surface stands above the modelled bank. Waves settle
     // to nothing as the depth does; the ebb lifts and lowers the mean surface.
@@ -936,7 +959,7 @@ __global__ void render_water(const float4 *surface, const float4 *rip, const flo
       a.x *= settle;
       a.y *= settle;
       a.z *= settle;
-      float surfaceY = a.x + contactEbb(contactShore(shoreP, P.x, P.z), P.x, P.z, time, energy);
+      float surfaceY = a.x + contactEbb(contactShore(shoreP, P.x, P.z, sP.w), P.x, P.z, time, energy);
       // Plain ground from the land pass hides the water only where the shader's own bank
       // rises into the ray; its 10 m triangles would otherwise cut the waterline straight.
       bool hidden = landT > 0 && t >= landT;

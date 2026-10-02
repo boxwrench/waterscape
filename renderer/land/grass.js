@@ -41,7 +41,7 @@ function tuftGeometry(cards, segments) {
   return g;
 }
 
-export function createGrass(terrain, terrainTex, lightTex, lightUniforms, look = landLook(null)) {
+export function createGrass(terrain, terrainAt, lightTex, lightUniforms, look = landLook(null)) {
   const [summerBase, summerTip, summerBright] = look.summer.blade;
   const geometries = [tuftGeometry(6, 3), tuftGeometry(3, 2), tuftGeometry(2, 1)],
     mask = new THREE.TextureLoader().load(new URL("../../data/biomes/diablo-oak/grass/fluffy-mask.jpg", import.meta.url).href),
@@ -75,7 +75,7 @@ export function createGrass(terrain, terrainTex, lightTex, lightUniforms, look =
       jz = hash(worldCell.add(17.3), kf),
       x = worldCell.x.add(jx).mul(CELL),
       z = worldCell.y.add(jz).mul(CELL),
-      g = texture(terrainTex, gridUv(x, z)).level(0),
+      g = terrainAt(x, z),
       light = texture(lightTex, gridUv(x, z)).level(0),
       d = vec2(x, z).sub(u.camPos).length(),
       // Fewer, shorter blades toward the edge; none in the water or on the bare bank.

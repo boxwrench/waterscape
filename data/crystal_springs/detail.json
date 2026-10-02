@@ -1,0 +1,39 @@
+{
+  "encoding": "gzip; 4 planar uint16 channels (height, shoreDistance, valley, weight); rows delta-coded from the row above",
+  "channels": {
+    "height": {
+      "offset": -250.0,
+      "scale": 0.05
+    },
+    "shoreDistance": {
+      "offset": -4000.0,
+      "scale": 0.25
+    },
+    "valley": {
+      "offset": 0,
+      "scale": 1.5273704789833822e-05
+    },
+    "weight": {
+      "offset": 0.0,
+      "scale": 1.5259021896696422e-05
+    }
+  },
+  "feather": 50.0,
+  "patches": [
+    {
+      "view": "shore",
+      "file": "detail-shore.bin.gz",
+      "i0": 305,
+      "j0": 477,
+      "cells": 61,
+      "sub": 10,
+      "width": 611,
+      "height": 611,
+      "source": "USGS 3DEP 1 m DEM, public domain",
+      "tiles": [
+        "USGS_1M_10_x55y416_CA_CaliforniaGaps_B23"
+      ],
+      "coverage": 1.0
+    }
+  ]
+}

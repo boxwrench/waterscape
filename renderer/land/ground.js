@@ -6,7 +6,7 @@ import * as THREE from "../../vendor/three/three.webgpu.js";
 import { landLook } from "../engine/look.js";
 import {
   Fn, texture, uniform, positionWorld, normalWorld, vec2, vec3, float, mix, smoothstep, dot,
-  max, normalize, clamp, mx_noise_float, sin,
+  max, normalize, clamp, mx_noise_float, sin, select,
 } from "../../vendor/three/three.tsl.js";
 
 // Mean linear luminance of each texture (measured once), so its detail can modulate the tuned
@@ -39,6 +39,8 @@ export function createGroundMaterial(terrain, biomeBase, biome, look = landLook(
   const { width: w, height: h, cell, x0, z0 } = terrain,
     // (height, shoreDistance, valley, 0) per lidar cell — the same data the shader samples.
     terrainTex = gridTexture(new Float32Array(terrain.cells), w, h),
+    // 1 m detail patches (height, shoreDistance, valley, weight) around close cameras.
+    patchTex = (terrain.patches ?? []).map((p) => ({ p, tex: gridTexture(p.data, p.width, p.height) })),
     // (sun visibility, sky openness) per cell, filled on the GPU by bake_light.
     lightTex = gridTexture(new Float32Array(w * h * 4).fill(1), w, h),
     u = {
@@ -49,6 +51,19 @@ export function createGroundMaterial(terrain, biomeBase, biome, look = landLook(
     };
 
   const gridUv = (p) => vec2(p.x.sub(x0).div(cell).add(0.5).div(w), p.z.sub(z0).div(cell).add(0.5).div(h));
+  // The terrain channels at (x, z): from a detail patch where there is one, else the grid —
+  // the same choice terrainSample() makes in water.cu. For vertex stages (explicit level 0).
+  const terrainAt = (x, z) => {
+    let g = texture(terrainTex, vec2(x.sub(x0).div(cell).add(0.5).div(w), z.sub(z0).div(cell).add(0.5).div(h))).level(0);
+    for (const { p, tex: t } of patchTex) {
+      const u = x.sub(p.x0).div(p.step),
+        v = z.sub(p.z0).div(p.step),
+        inside = u.greaterThanEqual(0).and(v.greaterThanEqual(0))
+          .and(u.lessThanEqual(p.width - 1)).and(v.lessThanEqual(p.height - 1));
+      g = select(inside, texture(t, vec2(u.add(0.5).div(p.width), v.add(0.5).div(p.height))).level(0), g);
+    }
+    return g;
+  };
   // Two rotated, offset scales blended by low-frequency noise hide the tiling repeat.
   const antiTile = (t, xz, scale) => {
     const a = texture(t, xz.div(scale)),
@@ -107,6 +122,7 @@ export function createGroundMaterial(terrain, biomeBase, biome, look = landLook(
   return {
     material,
     terrainTex,
+    terrainAt,
     lightTex,
     // Light uniforms shared with the grass (grass.js).
     uniforms: u,
