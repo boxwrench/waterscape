@@ -25,16 +25,22 @@ export const HACIENDA_EXTREMES = Object.freeze({
   }),
 });
 
-// The authored scene's water surface (y = 0) is its summer baseline of about 100 ft³/s. Height
-// above or below it follows the logarithm of discharge: 1.1 m per tenfold change. The real
-// swing from 1 ft to 49.7 ft of stage is about 15 m; the scene shows 5.5 m of it.
+// The authored scene's water surface (y = 0) is its summer baseline of about 100 ft³/s.
+// Below it the level falls 1.1 m per tenfold drop in discharge, which empties the channel at
+// the record low. Above it the level rises with the logarithm of discharge so the record high
+// (49.7 ft, a real rise of about 15 m) reaches the underside of the authored bridge steel, as
+// observers describe for the great floods. The bridge dimensions are photo-informed estimates;
+// this is an Illustrative mapping, and the real values stay in the readout.
 export const SCENE_BASELINE_CFS = 100;
-export const METRES_PER_DECADE = 1.1;
+export const METRES_PER_DECADE_BELOW = 1.1;
+export const BRIDGE_UNDERSIDE_M = 11.7;
 
 export function sceneWaterLevel(dischargeCfs) {
   if (dischargeCfs == null) return 0;
   const q = Number(dischargeCfs);
   if (!Number.isFinite(q) || q < 0) return 0;
-  const floor = HACIENDA_EXTREMES.low.dischargeCfs;
-  return Math.log10(Math.max(q, floor) / SCENE_BASELINE_CFS) * METRES_PER_DECADE;
+  const decades = Math.log10(Math.max(q, HACIENDA_EXTREMES.low.dischargeCfs) / SCENE_BASELINE_CFS);
+  if (decades <= 0) return decades * METRES_PER_DECADE_BELOW;
+  const recordDecades = Math.log10(HACIENDA_EXTREMES.high.dischargeCfs / SCENE_BASELINE_CFS);
+  return Math.min(decades / recordDecades, 1) * BRIDGE_UNDERSIDE_M;
 }

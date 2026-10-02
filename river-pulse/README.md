@@ -85,10 +85,12 @@ Bridge and Hacienda Beach offer **Selected time / Record low / Record high**. Th
 extremes come from USGS (`visual-bindings/hacienda-extremes.js`, each with its source URL; see
 [RP11](../docs/roadmap/tasks/RP11-hacienda-high-low.md)): record low flow 0.75 ft³/s
 (1977-05-06, no stage published) and record high stage 49.7 ft (90,100 ft³/s, 1955-12-23).
-Water height is an **Illustrative** compression of discharge, 1.1 m per tenfold change from
-the authored 100 ft³/s baseline, so the scene shows about 5.6 m of the real 15 m swing. Selected
-time follows the timeline. The water surface spreads past the banks and the terrain cuts the
-waterline. The readout always shows the real values.
+Water height is an **Illustrative** mapping of discharge: below the authored 100 ft³/s baseline
+it falls 1.1 m per tenfold drop (the record low empties the channel); above it the level rises
+with the log of discharge so the record high reaches the underside of the authored bridge steel
+(11.7 m), as the great floods do. The real rise is about 15 m, and the bridge dimensions are
+photo-informed estimates. Selected time follows the timeline. The water surface spreads past the
+banks and the terrain cuts the waterline. The readout always shows the real values.
 
 ## Layout
 

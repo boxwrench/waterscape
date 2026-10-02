@@ -30,6 +30,7 @@ highest annual peak discharge 102,000 ft³/s on 1986-02-18, qualified REGULATED
   the 1977 record-low discharge shown as discharge.
 - **The high is an annual peak** (the highest instantaneous value in a water year), not a
   daily value.
-- **Scale.** Latest stage is 1.07 ft and the record peak 49.7 ft: a 48.6 ft (14.8 m) swing.
-  The Bridge and Beach scenes are authored, so a literal rise would submerge them. Any
-  height mapping must be a declared Illustrative compression, with the real feet shown beside it.
+- **Scale.** Latest stage is 1.07 ft and the record peak 49.7 ft: a 48.6 ft (14.8 m) swing,
+  close to the authored bridge's 13 m deck line. The record high is mapped to the underside of
+  the bridge steel (11.7 m), as the user confirmed the great floods reach it; below the baseline
+  the level falls 1.1 m per decade of discharge. Declared Illustrative, with the real values shown.

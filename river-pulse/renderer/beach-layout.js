@@ -36,8 +36,8 @@ export function constrainBeachCamera(state, waterLevel = -Infinity) {
 // The surface is built wider than the banks so a high stage can spread over them. Each vertex
 // keeps the authored bed height; the shader derives depth from the surface height, so the
 // waterline follows the terrain as the level changes.
-export function beachWaterGrid({ flood = 34 } = {}) {
-  const positions = [], depths = [], beds = [], indices = [], across = 200, along = 250;
+export function beachWaterGrid({ flood = 64 } = {}) {
+  const positions = [], depths = [], beds = [], indices = [], across = 300, along = 250;
   for (let j = 0; j <= along; j++) {
     const z = 105 - j * 1.6, e = bankEdges(z), left = e.left - flood, width = e.right + flood - left;
     for (let i = 0; i <= across; i++) {
