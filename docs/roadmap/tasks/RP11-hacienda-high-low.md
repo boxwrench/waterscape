@@ -13,12 +13,12 @@ near Guerneville (Hacienda). Facts fetched 2026-10-02 from the USGS Water Data O
 | Highest annual peak since 2007 | 47.55 ft, 2019-02-28 | same |
 | Lowest annual peak | 7.31 ft, 2021-02-03 (an annual maximum, not a low-water stage) | same |
 | Continuous record begins | 2025-10-02 (about one year) | `.../collections/continuous/items?monitoring_location_id=USGS-11467000&parameter_code=00065&limit=1&sortby=time&f=json` |
-| Lowest stage in that year | **0.79 ft**, 2026-07-02 | `.../collections/continuous/items?...&parameter_code=00065&limit=2&sortby=value&f=json` |
-| Highest stage in that year | 9.99 ft, 2026-03-05 | same with `sortby=-value` |
+| Lowest stage in that year | **0.79 ft**, 2026-07-02 | all 35,102 continuous values paged and compared numerically (`parameter_code=00065`, `datetime=2025-10-02T00:00:00Z/..`, `limit=10000`) |
+| Highest stage in that year | **32.86 ft**, 2026-01-07 01:45 UTC | same paging |
 | Latest | 1.07 ft, 2026-10-02 13:15 UTC | `.../collections/latest-continuous/items?monitoring_location_id=USGS-11467000&parameter_code=00065&f=json` |
 
 Related discharge facts: lowest daily mean discharge of record 0.75 ft³/s on 1977-05-06
-(`.../collections/daily/items?monitoring_location_id=USGS-11467000&parameter_code=00060&statistic_id=00003&limit=1&sortby=value&f=json`);
+(all 31,778 daily means paged and compared numerically: `.../collections/daily/items?monitoring_location_id=USGS-11467000&parameter_code=00060&statistic_id=00003&limit=10000&f=json`; the highest daily mean is 97,700 ft³/s on 1986-02-18);
 highest annual peak discharge 102,000 ft³/s on 1986-02-18, qualified REGULATED
 (peaks collection, parameter 00060).
 
@@ -34,3 +34,25 @@ highest annual peak discharge 102,000 ft³/s on 1986-02-18, qualified REGULATED
   close to the authored bridge's 13 m deck line. The record high is mapped to the underside of
   the bridge steel (11.7 m), as the user confirmed the great floods reach it; below the baseline
   the level falls 1.1 m per decade of discharge. Declared Illustrative, with the real values shown.
+
+## Correction, 2026-10-02
+
+An earlier version of this file used `sortby=value` / `sortby=-value`. The USGS API sorts
+**values as text**, so "999" outranks "99.7" and "9.99" outranks "32.86". The earlier past-year
+high of 9.99 ft was wrong; the true value is 32.86 ft. Never use `sortby` on `value` for
+extremes: page the records and compare numbers. The peaks collection numbers were parsed as
+floats and are unaffected.
+
+## Jenner gauge, for the next river place
+
+USGS-11467270 (Russian River at Jenner, Highway 1), stream level NAVD88 (63160). Continuous
+record on this API begins 2025-10-02; all 35,099 values paged numerically:
+
+| Quantity | Value |
+|---|---|
+| Lowest | 0.17 ft, 2025-12-06 01:45 UTC |
+| Median | 5.05 ft |
+| Highest | 12.7 ft, 2026-06-10 (flat near 12.7 ft for hours; about 2,170 readings above 10 ft) |
+
+The sustained high plateau fits a lagoon held behind a closed sandbar, and the low fits an open,
+tidal mouth. The USGS record alone does not say which state the mouth was in.
