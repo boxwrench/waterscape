@@ -74,3 +74,22 @@ water body or biome needs lives under `data/`.
   asset pipeline), then `data/hetch_hetchy/` with `pipeline/locate.py "Hetch Hetchy Reservoir"
   sierra-granite`, NID `CA00123` (O'Shaughnessy Dam: 312 ft, 360,000 acre-ft, 1923) and CDEC
   station `HTH` for storage.
+- Techniques to adopt from the [Virtual Yosemite Photo Tour](../../resources/README.md#terrain-rocks--ground-materials)
+  (study only: no source or licence is published, so reimplement, never copy code):
+  - **Cliff colour.** NAIP cannot paint near-vertical granite (Kolana Rock, Hetch Hetchy
+    Dome, the walls behind Wapama and Tueeulala Falls). First check whether the 3DEP point
+    clouds covering Hetch Hetchy record return intensity, and use it as rock brightness on
+    steep faces. Then, if photos are available (our own, or public-domain NPS), place each by
+    matching its skyline against the elevation model and project its pixels onto the
+    lidar surface; record each photo's source and licence.
+  - **Terrain detail where people stand.** Keep the bundle's ~10 m grid, add a coarse ring
+    to the horizon, and a 1 m lidar patch around each journey camera so granite and shore
+    near the water hold up. Measure download and load time per patch (see P1b).
+  - **Depth precision.** Viewpoints mix water at the camera's feet with cliffs kilometres
+    away. If the land pass flickers, try a reversed depth buffer; `renderer/water.cu`
+    reads the land depth to composite water, so change both sides together and keep the
+    shoreline-contact checks passing.
+  - **Trees.** The `sierra-granite` species mix comes from site (aspect, slope, valley
+    channel, distance from water): ponderosa pine, incense cedar and black oak, with seasonal
+    colour on the black oaks. Allow a short list of landmark trees at real positions in
+    `land.json` for famous framing trees at viewpoints.
