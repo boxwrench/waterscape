@@ -72,6 +72,14 @@ data/biomes/<biome>/  (shared per landscape)          data/tours/<tour>.json (jo
 Terrain is USGS 3DEP lidar in a local frame: x east, z south, y up from the water surface,
 origin at the water's centroid; `terrain.json` records the UTM zone and origin.
 
+Optional 1 m detail (`pipeline/detail.py` → `detail-<view>.bin.gz`, `detail.json`) covers ~640 m
+around close cameras on a grid ten times finer than the bundle's and aligned to it. `Terrain`
+samples a patch where one exists (`coarse()` is the grid alone). `gpuCells()` appends each patch
+after the grid cells: header `T[1].y` is the patch count, then per patch two descriptor texels
+`(x0, z0, step, first texel)` and `(width, height)`, then its cells, whose `.w` is the blend
+weight (0 on the edge, where the patch equals the grid). `terrainSample()` in `water.cu` reads it
+the same way; a buffer without patches (the native host's) behaves as before.
+
 ## The engine (`renderer/engine/`)
 
 | Module | Interface |

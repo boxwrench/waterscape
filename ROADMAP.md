@@ -112,6 +112,11 @@ startup work. Keep their cost proportionate on integrated graphics.
    - Flyover videos and posters were re-rendered with the new land; refresh again after
      shoreline composition and lighting changes.
 
+3. **1 m lidar near the camera (L4)** — built for the reservoir Shoreline views and awaiting a
+   look on a real GPU: USGS 1 m patches around close cameras feed the land mesh and the water
+   kernel, so the bank and waterline follow the survey; Shoreline cameras stand on the bank with
+   a strip of it in frame. Reused by Hetch Hetchy's walls. Hacienda is deferred.
+
 ## A PC-only Ultra tier
 
 After water, reservoir-data and startup priorities, an opt-in quality level for screenshots
@@ -129,6 +134,8 @@ oaks to ~400 m, native resolution, and a photo mode that pauses, hides the inter
 5. **Crystal Springs and San Andreas reservoirs** — same oak-woodland biome, so they are data
    only.
 6. **Hetch Hetchy** — a new Sierra granite and conifer biome (ground, rock, pines and cedars).
+   USGS 1 m lidar (`CA_YosemiteNP_2019_D19`) covers the reservoir; granite walls are H2: 1 m
+   shape with procedural rock calibrated from the user's photos.
 7. **More tours** — beyond the Hetch Hetchy system, e.g. the State Water Project and the
    remaining California reservoirs; anyone can add their own lake with the guide.
 

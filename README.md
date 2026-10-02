@@ -49,7 +49,8 @@ interpretation. The full principle is in
 ## How a reservoir frame is made
 
 - **Land** — the water body's USGS 3DEP lidar is a triangle mesh drawn by
-  [three.js](https://threejs.org) on the page's WebGPU device.
+  [three.js](https://threejs.org) on the page's WebGPU device: a ~10 m grid, with 1 m lidar
+  patches around the cameras at the water's edge.
 - **Water** — a CUDA program ([`renderer/water.cu`](renderer/water.cu)), compiled to WebGPU by
   [cuda-webshader](https://github.com/SamG-Coder/cuda-webshader), simulates FFT waves and
   click ripples, then traces refraction, caustics and reflections. It reads each pixel's
@@ -82,6 +83,7 @@ Any US lake, reservoir or pond with 3DEP lidar coverage can become a stop:
    biome, a lon/lat box around the water and an on-water anchor point.
 2. `python pipeline/build.py <id>` — downloads the lidar and aerial photograph and writes the
    terrain, cameras and map inset.
+   Then `python pipeline/detail.py <id>` adds 1 m lidar around the cameras at the water's edge.
 3. Write `data/<id>/story.json` (facts, each with an https source) and `data/<id>/land.json`
    (the look: light presets, season, grass, trees, fog, water colour).
 4. `node pipeline/render-flyover.mjs <id>` — renders the flyover video and poster.

@@ -1,8 +1,44 @@
-# Handoff — 2026-09-30
+# Handoff — 2026-10-02
 
 Where things stand, for whoever picks this up next (person or agent). The plan lives in
 `ROADMAP.md` and `docs/roadmap/README.md`; this file is the snapshot of "what just happened
 and what's next".
+
+## 1 m lidar at the Shoreline views — L4 (cloud session, not merged)
+
+Branch `claude/water-usage-alternatives-ctk0dz` (pushed for review; merge after a look on a
+real GPU). Details and checks: [L4](roadmap/tasks/L4-detail-patches.md).
+
+- `pipeline/detail.py <id>` writes `detail-<view>.bin.gz` + `detail.json`: a ~640 m patch of the
+  USGS 1 m DEM around each close camera (read by HTTP range from S3, ~200–240 KB each). All four
+  reservoirs have one at their Shoreline camera. The bundle's water level stays the authority.
+- The renderer's `Terrain`, the water kernel's `terrainSample()` (patches appended to the
+  existing terrain buffer; the native host passes none), the land mesh, grass and impostors all
+  read the patch, so the bank and waterline near the camera follow the 1 m survey instead of
+  10 m stair-steps. Sub-grid noise and the B1 shoreline warp fade inside a patch.
+- Shoreline cameras moved onto the bank so a strip of it shows in front (user request): the 1 m
+  data showed three old cameras standing in the water. San Antonio 14.5 m back, San Andreas
+  6.3 m, Calaveras unchanged, Crystal Springs 1.7 m inland (its steep bank still shows only
+  water; ask the user whether to tilt it down). `scripts/verify.mjs` follows (viewpoint within
+  4 m of the waterline; ripple click on open water).
+- **Not yet seen on a GPU**: the cloud session's software WebGPU lost its device. Before
+  merging, run `npm start`, open each reservoir's Shoreline view, and run `npm test` (Edge).
+  `previews/l4-shoreline-cpu-view.png` is a CPU ray-cast of the new framings (shape only).
+- Hacienda (River Pulse) is deferred by the user: its Bridge/Beach views are the accepted
+  authored stage, separate from 3DEP.
+
+## Hetch Hetchy planning — H1 brief and H2 (same branch)
+
+- The [H1 brief](roadmap/capable-agent-briefs.md#h1-hetch-hetchy) now carries techniques from the
+  [Virtual Yosemite Photo Tour](../resources/README.md#terrain-rocks--ground-materials) (study
+  only; no source or licence) and the lidar check: USGS `CA_YosemiteNP_2019_D19` covers the
+  reservoir with 1 m DEM tiles (`USGS_1M_11_x25y421`, `x26y421`) and a ~34 pts/m² point cloud
+  with intensity, no RGB. The regional Sierra surveys and the AWS Entwine mirror do not cover it.
+- [H2](roadmap/tasks/H2-granite-walls.md): granite walls from 1 m lidar shape and procedural rock
+  (drainage-traced water streaks, ledges, curvature) calibrated from the user's own photos;
+  photo projection only as a fallback for one face. Needs H1 and L4.
+- `pipeline/build.py`'s 3DEP ImageServer and NAIP hosts were unreachable from the cloud
+  session; the same elevation data is on the S3 staged-products bucket if a fallback is needed.
 
 ## Jenner publication — RP10
 
