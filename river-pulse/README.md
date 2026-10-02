@@ -66,6 +66,19 @@ photographic references, CC0 ground materials, MIT tree assets and rendering lim
 See [River structure](../docs/river-pulse/river-structure.md) for how rivers, places and views
 are organised, and how to choose places for a new river.
 
+## Map flow bindings
+
+- **Reach dynamics (Derived, then Illustrative):** `visual-bindings/map-flow-dynamics.js`
+  derives, along the 3DHP centerline and 3DEP terrain, how steeply the ground falls
+  downstream and how sharply the line bends. The ribbon maps these to streak speed (steeper
+  runs faster) and speeds up and froths the outside bank of a bend. This is an Illustrative
+  binding: it is not velocity, shear stress or erosion, and the ordering within the reach is
+  all it claims. Two half-period-offset copies of the pattern are blended so changing speed
+  does not stretch it.
+- **Baseline drift:** with no discharge available the water drifts slowly (Setting). A recorded
+  zero stops it; reduced motion freezes it.
+- **Haze (Setting):** a light exponential haze on the Map gives the valley depth.
+
 ## Layout
 
 | Directory | Responsibility |

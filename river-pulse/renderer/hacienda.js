@@ -344,7 +344,7 @@ function updateWaterVisibility() {
     mapObjects.gaugeBeacon.visible = !authored;
     mapObjects.scene.background.setHex(authored ? 0x9ad8f2 : 0xc5d0c8);
     mapObjects.scene.fog.color.setHex(authored ? 0xb8dce7 : 0xc5d0c8);
-    mapObjects.scene.fog.density = authored ? 0.001 : 0.0001;
+    mapObjects.scene.fog.density = authored ? 0.001 : 0.00026;
     mapObjects.hemi.intensity = authored ? 1.1 : 1.8;
     mapObjects.sun.intensity = authored ? 2.5 : 2.3;
     mapObjects.sun.castShadow = authored;
@@ -439,7 +439,7 @@ async function main() {
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xc5d0c8);
-  scene.fog = new THREE.FogExp2(0xc5d0c8, 0.0001);
+  scene.fog = new THREE.FogExp2(0xc5d0c8, 0.00026);
 
   const grid = buildRiverTerrainGrid(terrain),
     geometry = new THREE.BufferGeometry();

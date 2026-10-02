@@ -1,8 +1,9 @@
 import * as THREE from "../../vendor/three/three.webgpu.js";
 import {
-  attribute, cameraPosition, color, dot, exp, float, fwidth, mix, mx_noise_vec3,
+  abs, attribute, cameraPosition, color, dot, exp, float, fract, fwidth, mix, mx_noise_vec3,
   normalize, positionWorld, pow, reflect, smoothstep, uniform, vec2, vec3,
 } from "../../vendor/three/three.tsl.js";
+import { reachDynamics } from "../visual-bindings/map-flow-dynamics.js";
 import { mapRibbonBinding } from "../visual-bindings/map-flow.js";
 import { buildMapRibbonSkeleton, mapRibbonPositions } from "./map-ribbon-geometry.js";
 
@@ -19,6 +20,12 @@ export function createMapFlow(document, terrain) {
   geometry.setAttribute("flowDistance", new THREE.BufferAttribute(skeleton.distances, 1));
   geometry.setAttribute("flowAcross", new THREE.BufferAttribute(skeleton.across, 1));
   geometry.setAttribute("flowTangent", new THREE.BufferAttribute(skeleton.tangents, 2));
+  // Derived from terrain and centerline: steeper reaches stream faster, and the outside of a
+  // bend runs faster with foam (Illustrative; not velocity or erosion).
+  const dynamics = reachDynamics(skeleton, (x, z) => terrain.ground(x, z)),
+    perVertex = (values) => Float32Array.from({ length: values.length * 2 }, (_, i) => values[i >> 1]);
+  geometry.setAttribute("flowSlope", new THREE.BufferAttribute(perVertex(dynamics.slope), 1));
+  geometry.setAttribute("flowBend", new THREE.BufferAttribute(perVertex(dynamics.bend), 1));
   geometry.setIndex(new THREE.BufferAttribute(skeleton.indices, 1));
   geometry.computeBoundingSphere();
 
@@ -28,13 +35,27 @@ export function createMapFlow(document, terrain) {
     tangent = attribute("flowTangent", "vec2"), cross = across.mul(displayWidth).mul(0.5);
   // Advected, warped noise provides broken surface detail without periodic wave
   // bands or a repeating texture. These scales/speeds are illustrative, not measured.
-  const drift = along.sub(clock.mul(4.5)),
-    warp = mx_noise_vec3(vec2(drift.mul(0.012), cross.mul(0.028))).xy.mul(1.7),
-    broadUV = vec2(drift.mul(0.095), cross.mul(0.065)).add(warp),
-    fineUV = vec2(along.sub(clock.mul(6.1)).mul(0.27), cross.mul(0.19))
-      .add(warp.mul(0.7)).add(vec2(19.3, 7.1)),
-    broad = mx_noise_vec3(broadUV),
-    fine = mx_noise_vec3(fineUV).mul(exp(fwidth(fineUV).length().mul(-1.2))),
+  // Speed varies along the reach, so two half-period-offset copies of the pattern are blended
+  // (flow-map technique); a single clock would stretch the pattern without limit.
+  const slopeRel = attribute("flowSlope", "float"), bend = attribute("flowBend", "float"),
+    outer = across.mul(bend).negate().clamp(0, 1),
+    speed = float(0.8).add(slopeRel.mul(0.55)).mul(float(1).add(outer.mul(0.5))),
+    period = 7, phaseA = fract(clock.div(period)), phaseB = fract(phaseA.add(0.5)),
+    weightA = float(1).sub(abs(phaseA.mul(2).sub(1))), weightB = float(1).sub(weightA);
+  const layer = (phase) => {
+    const seconds = phase.mul(period).mul(speed),
+      drift = along.sub(seconds.mul(4.5)),
+      warp = mx_noise_vec3(vec2(drift.mul(0.012), cross.mul(0.028))).xy.mul(1.7),
+      broadUV = vec2(drift.mul(0.095), cross.mul(0.065)).add(warp),
+      fineUV = vec2(along.sub(seconds.mul(6.1)).mul(0.27), cross.mul(0.19))
+        .add(warp.mul(0.7)).add(vec2(19.3, 7.1));
+    return { broad: mx_noise_vec3(broadUV), fine: mx_noise_vec3(fineUV).mul(exp(fwidth(fineUV).length().mul(-1.2))),
+      foam: mx_noise_vec3(vec2(drift.mul(0.21), cross.mul(0.33))).x };
+  };
+  const first = layer(phaseA), second = layer(phaseB),
+    broad = first.broad.mul(weightA).add(second.broad.mul(weightB)),
+    fine = first.fine.mul(weightA).add(second.fine.mul(weightB)),
+    froth = first.foam.mul(weightA).add(second.foam.mul(weightB)),
     slopes = broad.xy.mul(0.85).add(fine.xy.mul(0.38)),
     longitudinal = slopes.x, lateral = slopes.y;
   const normal = normalize(vec3(tangent.x.mul(longitudinal).sub(tangent.y.mul(lateral)), 1,
@@ -47,7 +68,8 @@ export function createMapFlow(document, terrain) {
       .add(broad.z.mul(0.12)).add(0.12).clamp(0, 1)),
     sun = normalize(vec3(-0.5, 0.83, 0.25)),
     glint = pow(dot(normal, normalize(sun.add(eye))).max(0), 45).mul(0.6),
-    rippled = mix(body, sky, fresnel.mul(0.85)).add(color(0xc4dfed).mul(glint)),
+    bankFoam = smoothstep(0.38, 0.9, across.abs()).mul(outer).mul(smoothstep(0.52, 0.78, froth.mul(0.5).add(0.5))),
+    rippled = mix(body, sky, fresnel.mul(0.85)).add(color(0xc4dfed).mul(glint)).add(color(0xe4eef0).mul(bankFoam.mul(0.5))),
     water = mix(color(0x586c78), rippled, known),
     rim = smoothstep(0.83, 0.92, across.abs()),
     material = new THREE.MeshBasicNodeMaterial({ side: THREE.DoubleSide });
