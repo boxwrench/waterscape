@@ -687,9 +687,6 @@ pre {
   .header-actions .place-link { font-size: 9px; padding: 6px; white-space: nowrap; }
 }
 
-.location-trail .trail-link { color: inherit; text-decoration: none; }
-.location-trail .trail-link:hover { text-decoration: underline; }
-
 .stage-buttons { display: flex; flex-wrap: wrap; gap: 4px; padding: 6px; max-width: 360px; }
 .stage-buttons[hidden] { display: none; }
 .stage-buttons button { font: inherit; font-size: 12px; padding: 7px 10px; border-radius: 8px; border: 0;
