@@ -14,7 +14,7 @@ with USGS discharge, history and seasonal context alongside the scene.
 
 | Experience | What it shows | Status |
 |---|---|---|
-| [Reservoirs](https://boxwrench.github.io/waterscape/) | Calaveras, San Antonio, Crystal Springs and San Andreas: lidar landscapes, sourced context, modeled water optics and aerial maps | Live journey and WebGPU explorer |
+| [Reservoirs](https://boxwrench.github.io/waterscape/) | Calaveras, San Antonio, Crystal Springs, San Andreas and Hetch Hetchy (with O'Shaughnessy Dam): lidar landscapes, sourced context, modeled water optics and aerial maps | Live journey and WebGPU explorer |
 | [River Pulse](https://boxwrench.github.io/waterscape/river-pulse/) | Hacienda Map with a flow-scaled water ribbon; authored gray steel bridge, rock outcrop, pebble beach and green reflective water; USGS discharge/history | Live prototype; illustrative water and authored setting, no local hydrodynamic model |
 
 **[Explore Jenner estuary →](https://boxwrench.github.io/waterscape/river-pulse/renderer/jenner.html)**

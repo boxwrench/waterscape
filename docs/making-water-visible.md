@@ -143,6 +143,10 @@ Exact binding, while an observed quantity can be shown through a Derived binding
 | Element | Binding class | Underlying state | Note |
 |---|---|---|---|
 | Terrain geometry above the waterline | Exact | Observed / processed | Directly follows the bundled USGS 3DEP elevation grid. The service export is bilinearly resampled to roughly 10 m cells and the bundle is quantized, so "Exact" means exact to the bundle grid, not raw lidar-point fidelity. |
+| O'Shaughnessy Dam | Derived | Observed / reported | Crest line traced from NAIP, crest elevation from 3DEP, height and length from NID; the cross-section is a generic gravity profile, not the as-built drawings. |
+| Dam outlet jets | Illustrative | Assumed | Two outlets placed by eye from a visitor's photograph, always shown releasing; not flow data. |
+| Tuolumne below the dam | Derived | Observed | Centre line and width traced from NAIP, surface from 3DEP; drawn as still water, no flow modelled. |
+| Drawdown band (Hetch Hetchy) | Illustrative | Derived from 3DEP | Bare bleached rock up to 10 m above the surveyed water, inside the full-pool zone flood-filled from the survey; the height is set by eye, not from storage records. |
 | Aerial map inset | Exact | Observed | USGS NAIP orthoimagery over exactly the terrain grid; its request URL is in `aerial.json`. The photograph's date is the service's, not the scene's. |
 | Facts and figures in `story.json` | Exact | Reported | Each summary/fact carries an https source; the bundle validator requires the source URL. |
 | Water surface and shoreline | Exact | Derived from 3DEP | The rendered surface is exactly `y = 0` at the bundle's `waterLevel`. The pipeline detects the anchor-connected hydro-flattened region in 3DEP and rounds its level to 0.1 m. This is the DEM/survey-time water surface, not a live gauge level. Within ~8 m of the shoreline the drawn edge is illustrative: it follows this shoreline to within about 2.5 m of modelled relief, plus the ebb. |

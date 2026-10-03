@@ -131,9 +131,28 @@ The rest of the look is optional (`renderer/engine/look.js`; Crystal Springs use
 | `vegetation.stands` | `1` groups the rarer species into ~80 m stands instead of scattering single trees |
 | `fog` | A Morning fog layer: `from` direction (`[0, 0]` everywhere), `edge`/`width` for a bank beyond a ridge line, `top`/`base` in metres above the water, `density` (1 default) and `overcast` 0–1 (closes the sky, dims the sun) |
 | `water.optics` | Water colour profile: `turbid` (default) or `green` |
+| `vegetation.bare` | 0–1: how bare of trees cliffs steeper than ~45° are (granite walls) |
+| `grass.summer: "granite"`, `grass.cover` | A dark evergreen shrub palette with no cured gold; `cover` the share of the near grass field that grows (1 default) |
+| `ground.rock` | Lowers the slope at which bare rock shows (0–0.4; domes and slabs) |
+| `ground.bathtub` | Height (m above the surveyed water) of the bare bleached drawdown band; the build stores the full-pool zone as a fourth terrain channel so it stops at dams |
+| `air.haze` | Multiplies the preset haze (clear high-Sierra air 0.5) |
+| `structures` | `true` loads `structures.json` (dams, outlets, rivers below them) |
 
 These are Setting or illustrative choices, not measurements; record where they came from
 (`fog.note`, the biome's sources) and keep [Making Water Visible](making-water-visible.md) in step.
+
+**Structures** (`data/<id>/structures.json`, Hetch Hetchy is the example). A dam lists its
+`crestUTM` line (traced from NAIP), `crestElevation` (3DEP along it), NID `height` and
+`length`, optional `outlets` (`along` 0–1, metres `below` the crest) and the URL behind
+each. The build floods the lake to the upstream face, carves the survey's smeared dam out
+from under the concrete and keeps trees off it; the renderer sweeps a generic gravity
+profile along the crest. A river below a dam lists `centreUTM`, `width` and `surface` per
+point (traced from NAIP, surface from 3DEP); the build cuts its channel and clears trees
+within `clearTrees` metres. Concrete is `data/structures/`.
+
+**Granite biomes.** A biome whose `ground` has `joints`, `slab` and `canyon` layers (each with
+its photo's linear `mean` colour) gets photographed rock sampled triplanar and untiled, in
+`ground.rock.albedo`; see `sierra-granite`.
 
 `water` shapes the lake bed, which lidar cannot see: the bed falls from the shoreline by
 `bankSlope` metres per metre (0.25 gives a wide, clear shallow band) down to `maxDepth` metres.

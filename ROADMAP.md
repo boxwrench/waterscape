@@ -52,6 +52,10 @@ The roadmap below describes the **reservoir experience**, rather than limiting t
 - **Shoreline contact (B1)** — organic waterline with a wave-energy ebb and a wet band.
 - **Aerial map inset** — USGS NAIP photograph per reservoir with the camera marked, in the
   explorer and on the journey.
+- **Hetch Hetchy (H1)** — `sierra-granite` biome (photographed CC0 granite, ponderosa pine and
+  black oak, bare cliffs, a bleached drawdown band), O'Shaughnessy Dam from NAIP, 3DEP and NID
+  with illustrative outlet jets, the Tuolumne's first ~760 m below it, and dam viewpoints. Not
+  yet on a tour.
 - **P1 loading improvements** — merged and deployed as `ab96848`: video keeps playing until
   the first live-frame report, tree downloads are staged, and next-video prefetch is deferred.
   Low-tier tree geometry fell from 9.8 MB to 1.2 MB. Local first handoff measured 16.1 → 14.6 s;
@@ -63,7 +67,7 @@ Reservoir scenes currently leave out everything man-made; land beyond the water 
 even where aerial photographs show suburbs. When structures are added, in this order:
 
 1. **Dams** — the structure that makes each reservoir, sourced from the National Inventory of
-   Dams.
+   Dams. O'Shaughnessy Dam is done (H1); the other four reservoirs' dams are not.
 2. **Adits and outlet structures** — intakes, towers and tunnel portals that move the water.
 3. **Roads and other buildings** — last, if at all.
 

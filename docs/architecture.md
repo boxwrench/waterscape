@@ -86,6 +86,12 @@ origin at the water's centroid; `terrain.json` records the UTM zone and origin.
 `renderer/minimap.js` (`createMinimap(parent, base, terrainMeta)`, `mapPoint`) draws a body's
 `aerial.jpg` with the camera marked, in the explorer and on the journey page.
 
+`renderer/land/structures.js` builds a body's `structures.json`: gravity dams swept along their
+crest, outlet plumes and a wet stain on the face, and still river ribbons below a dam.
+`renderer/land/granite.js` shades granite biomes' rock from photographs (triplanar, untiled,
+recoloured to the biome's albedo). The terrain may carry a fourth channel, `drawdown`
+(full-pool zone, 0–1), written by `pipeline/build.py` when `land.json` sets `ground.bathtub`.
+
 The page (`renderer/explore.js`) owns controls, input, readouts, the quality governor and
 journey messaging. It keeps `ws.settings` in sync with its controls and calls `ws.step(dt)`
 each animation frame.
