@@ -115,7 +115,7 @@ export async function validateTours(root) {
 
 export async function validateAll(root) {
   const dirs = (await readdir(path.join(root, "data"), { withFileTypes: true }))
-    .filter((d) => d.isDirectory() && !["biomes", "tours"].includes(d.name))
+    .filter((d) => d.isDirectory() && !["biomes", "tours", "structures"].includes(d.name))
     .map((d) => path.join(root, "data", d.name));
   return [...(await Promise.all(dirs.map(validateBundle))).flat(), ...(await validateTours(root)), ...(await validateBiomes(root))];
 }

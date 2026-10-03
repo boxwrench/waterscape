@@ -1,0 +1,192 @@
+{
+  "dams": [
+    {
+      "name": "O'Shaughnessy Dam",
+      "nid": "CA00123",
+      "type": "Gravity",
+      "crestUTM": [
+        [
+          254934.9,
+          4203764.4
+        ],
+        [
+          254963.0,
+          4203753.2
+        ],
+        [
+          254991.1,
+          4203734.4
+        ],
+        [
+          255016.1,
+          4203710.7
+        ],
+        [
+          255034.9,
+          4203687.6
+        ],
+        [
+          255049.2,
+          4203659.4
+        ],
+        [
+          255058.0,
+          4203631.3
+        ],
+        [
+          255063.0,
+          4203603.2
+        ],
+        [
+          255065.5,
+          4203571.9
+        ],
+        [
+          255066.1,
+          4203545.7
+        ]
+      ],
+      "utmZone": 11,
+      "crestElevation": 1163.4,
+      "height": 95.1,
+      "length": 274.3,
+      "sources": {
+        "height, length, type": "https://geospatial.sec.usace.army.mil/dls/rest/services/NID/National_Inventory_of_Dams_Public_Service/FeatureServer/0/query?where=NIDID%3D%27CA00123%27&outFields=DAM_HEIGHT,DAM_LENGTH,PRIMARY_DAM_TYPE&f=json",
+        "crest line": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer/exportImage?bbox=254587.97054700254,4203509.417535508,255287.97054700254,4204009.417535508&bboxSR=32611&imageSR=32611&size=1120,800&format=jpg&bandIds=0,1,2&f=image",
+        "crest elevation": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?bbox=254814.84554700254,4203485.667535508,255126.09554700254,4203824.417535508&bboxSR=32611&imageSR=32611&size=155,169&format=tiff&pixelType=F32&interpolation=RSP_BilinearInterpolation&f=image"
+      },
+      "note": "Crest line traced by hand from the NAIP image (275.6 m against NID's 900 ft); crest elevation is the 3DEP maximum along it (the toe lies 93.7 m lower, against NID's 312 ft). Cross-section is a generic gravity profile, not the as-built drawings."
+    }
+  ],
+  "rivers": [
+    {
+      "name": "Tuolumne River below O'Shaughnessy Dam",
+      "centreUTM": [
+        [
+          254958.0,
+          4203641.8
+        ],
+        [
+          254926.0,
+          4203627.4
+        ],
+        [
+          254894.0,
+          4203607.4
+        ],
+        [
+          254866.0,
+          4203583.4
+        ],
+        [
+          254842.0,
+          4203551.4
+        ],
+        [
+          254820.4,
+          4203507.4
+        ],
+        [
+          254798.0,
+          4203467.4
+        ],
+        [
+          254774.0,
+          4203431.4
+        ],
+        [
+          254746.0,
+          4203391.4
+        ],
+        [
+          254710.0,
+          4203357.0
+        ],
+        [
+          254670.0,
+          4203331.4
+        ],
+        [
+          254630.0,
+          4203315.4
+        ],
+        [
+          254590.0,
+          4203303.4
+        ],
+        [
+          254550.0,
+          4203295.4
+        ],
+        [
+          254510.0,
+          4203289.8
+        ],
+        [
+          254470.0,
+          4203295.4
+        ],
+        [
+          254430.0,
+          4203301.8
+        ],
+        [
+          254390.0,
+          4203307.4
+        ],
+        [
+          254350.0,
+          4203305.8
+        ]
+      ],
+      "width": [
+        36.0,
+        32.0,
+        17.6,
+        14.4,
+        11.2,
+        12.8,
+        14.4,
+        16.0,
+        19.2,
+        20.8,
+        19.2,
+        17.6,
+        19.2,
+        20.8,
+        17.6,
+        14.4,
+        14.4,
+        17.6,
+        16.0
+      ],
+      "surface": [
+        1067.3,
+        1067.3,
+        1067.3,
+        1067.3,
+        1066.9,
+        1066.9,
+        1066.8,
+        1065.9,
+        1065.9,
+        1065.9,
+        1065.9,
+        1065.9,
+        1065.7,
+        1065.7,
+        1065.4,
+        1064.5,
+        1063.6,
+        1063.6,
+        1063.6
+      ],
+      "clearTrees": 45,
+      "sources": {
+        "centre line and width": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer/exportImage?bbox=254037.97054700254,4203059.417535508,255037.97054700254,4203859.417535508&bboxSR=32611&imageSR=32611&size=1250,1000&format=jpg&bandIds=0,1,2&f=image",
+        "surface": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?bbox=254309.97054700254,4203249.817535508,254997.97054700254,4203681.817535508&bboxSR=32611&imageSR=32611&size=344,216&format=tiff&pixelType=F32&interpolation=RSP_BilinearInterpolation&f=image"
+      },
+      "note": "Traced by hand from NAIP for ~760 m below the dam; surface is the 3DEP minimum in the channel (the survey flattens the river), 1067.3 m at the plunge pool falling to 1063.6 m. Water is shown still; no flow is modelled."
+    }
+  ]
+}

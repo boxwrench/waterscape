@@ -115,7 +115,9 @@ export function createImpostors(terrain, biome, biomeBase, ground, speciesOrder,
           .add(float(1).sub(sm(0.62, 0.88, spur)).mul(look.cover)),
         0,
         1,
-      ).mul(sm(10, 35, g.y)),
+      )
+        .mul(float(1).sub(sm(0.25, 0.42, float(1).sub(float(6).div(len))).mul(look.bare)))
+        .mul(sm(10, 35, g.y)),
       d = vec2(x, z).sub(p.cam).length(),
       drawn = hash(cx, cz).lessThanEqual(density).and(d.greaterThanEqual(p.inner)).and(d.lessThan(p.outer)),
       radius = hash(cx.add(11), cz.add(5)).mul(3.2).add(3.4),

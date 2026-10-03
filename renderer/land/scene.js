@@ -8,13 +8,14 @@ import { createGroundMaterial } from "./ground.js";
 import { createGrass } from "./grass.js";
 import { createTrees } from "./trees.js";
 import { createImpostors } from "./impostors.js";
+import { createStructures } from "./structures.js";
 
 const NEAR = 1,
   FAR = 40000,
   // Same vertical field of view as ray() in water.cu.
   FOV_Y = (2 * Math.atan(0.62487) * 180) / Math.PI;
 
-export async function createLandPass(rt, terrain, { biome, biomeBase, look }) {
+export async function createLandPass(rt, terrain, { biome, biomeBase, look, structures }) {
   const renderer = new THREE.WebGPURenderer({
     canvas: document.createElement("canvas"),
     device: rt.device,
@@ -41,6 +42,9 @@ export async function createLandPass(rt, terrain, { biome, biomeBase, look }) {
   // Photographed oaks from the mesh range out to the impostor range.
   const impostors = trees ? createImpostors(terrain, biome, biomeBase, ground, trees.species, look) : null;
   if (impostors) scene.add(impostors.mesh);
+  // Dams (data/<id>/structures.json), always shown.
+  const built = await createStructures(terrain, structures, ground);
+  if (built) scene.add(built.group);
   let treeRange = 0,
     treesOn = true;
   let season = 1;

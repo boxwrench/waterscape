@@ -1,0 +1,39 @@
+{
+  "biome": "sierra-granite",
+  "vegetation": {
+    "density": 1.0,
+    "cover": 0.0,
+    "species": {
+      "ponderosa": 0.65,
+      "black-oak": 0.35
+    },
+    "stands": 1,
+    "bare": 1
+  },
+  "grass": {
+    "spring": "green",
+    "summer": "granite",
+    "cover": 0.15
+  },
+  "presets": [
+    "morning",
+    "midday",
+    "golden"
+  ],
+  "defaultPreset": "golden",
+  "defaultSeason": "summer",
+  "water": {
+    "maxDepth": 93.3,
+    "bankSlope": 0.35,
+    "maxDepthSource": "https://geospatial.sec.usace.army.mil/dls/rest/services/NID/National_Inventory_of_Dams_Public_Service/FeatureServer/0/query?where=NIDID%3D%27CA00123%27&outFields=HYDRAULIC_HEIGHT&f=json",
+    "note": "maxDepth is the dam's hydraulic height (streambed to maximum water level); bankSlope is metres of depth per metre from shore, an estimate."
+  },
+  "ground": {
+    "rock": 0.38
+  },
+  "air": {
+    "haze": 0.5,
+    "note": "Clear air at 1,150 m: half the presets' haze, matched by eye to the Commons photos."
+  },
+  "structures": true
+}

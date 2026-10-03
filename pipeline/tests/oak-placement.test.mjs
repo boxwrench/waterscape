@@ -43,3 +43,11 @@ test("stands group the rarer species instead of scattering it", async () => {
   assert.ok(agreeStands > 3 * agreeMixed, `${agreeStands} vs ${agreeMixed} of ${n}`);
   assert.equal(standPick(10, 20, 0.42, 0), 0.42);
 });
+
+test("bare cliffs lose their trees", async () => {
+  const { oakDensity } = await import("../../renderer/land/oak-placement.js");
+  // A 1:1 slope (45°) that the Diablo rule wooded; with bare cliffs it is open.
+  const cliff = { sample: (x, z, c) => (c === 0 ? x * 1.4 : c === 1 ? 200 : 0.9) };
+  assert.ok(oakDensity(cliff, 0, 0, 0, 0) > 0.5);
+  assert.ok(oakDensity(cliff, 0, 0, 0, 1) < 0.2);
+});

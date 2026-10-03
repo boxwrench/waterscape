@@ -1,0 +1,49 @@
+{
+  "source": "USGS National Map 3D Elevation Program (3DEP), public domain",
+  "name": "Hetch Hetchy Reservoir",
+  "biome": "sierra-granite",
+  "anchor": [
+    37.95299,
+    -119.77895
+  ],
+  "service": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer",
+  "bbox_lonlat": [
+    -119.8125,
+    37.8976,
+    -119.6373,
+    37.9813
+  ],
+  "crs": "EPSG:32611",
+  "utmZone": 11,
+  "verticalDatum": "NAVD88 metres (3DEP)",
+  "encoding": "gzip; 3 planar uint16 channels; rows delta-coded from the row above",
+  "width": 1539,
+  "height": 933,
+  "cell": [
+    10.439223329272092,
+    10.439223329272092
+  ],
+  "waterLevel": 1151.7,
+  "originUTM": [
+    259380.01310144013,
+    4203409.839176274
+  ],
+  "gridOrigin": [
+    -6869.904714508972,
+    -4057.871791918762
+  ],
+  "channels": {
+    "height": {
+      "offset": -250.0,
+      "scale": 0.05
+    },
+    "shoreDistance": {
+      "offset": -4000.0,
+      "scale": 0.25
+    },
+    "valley": {
+      "offset": 0,
+      "scale": 1.5273704789833822e-05
+    }
+  }
+}

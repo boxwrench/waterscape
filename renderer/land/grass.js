@@ -81,7 +81,9 @@ export function createGrass(terrain, terrainTex, lightTex, lightUniforms, look =
       // Fewer, shorter blades toward the edge; none in the water or on the bare bank.
       // A slow noise clumps tufts into patches with thin gaps between them.
       clump = smoothstep(0.3, 0.7, mx_noise_float(vec3(x.mul(0.22), z.mul(0.22), 3.1)).mul(0.5).add(0.5)),
-      keep = hash(worldCell.add(5.1), kf).lessThan(float(1).sub(smoothstep(u.radius.mul(0.6), u.radius, d)).mul(mix(float(0.5), float(1), clump))),
+      keep = hash(worldCell.add(5.1), kf).lessThan(
+        float(1).sub(smoothstep(u.radius.mul(0.6), u.radius, d)).mul(mix(float(0.5), float(1), clump)).mul(look.grassCover),
+      ),
       inside = x.greaterThanEqual(x0).and(x.lessThan(x0 + (w - 1) * cell)).and(z.greaterThanEqual(z0)).and(z.lessThan(z0 + (h - 1) * cell)),
       onLand = smoothstep(4, 7, g.x).mul(smoothstep(1, 4, g.y)),
       a = attribute("aBlade", "vec4"),

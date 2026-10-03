@@ -1,0 +1,597 @@
+{
+  "id": "sierra-granite",
+  "name": "Sierra granite with ponderosa pine and black oak",
+  "description": "Yosemite's lower montane canyon walls: bare pale granite cliffs and domes, with ponderosa pine and California black oak on ledges, talus and benches, and dry grass in patches.",
+  "sources": [
+    "https://www.sfpuc.gov/learning/come-visit/hetch-hetchy",
+    "https://ejournals.sierracollege.edu/jsnhb/v6n1/medeiros.html"
+  ],
+  "ground": {
+    "grass": {
+      "sharedFrom": "diablo-oak",
+      "licence": "CC0 1.0, ambientCG",
+      "source": "https://ambientcg.com/get?file=Grass004_1K-JPG.zip",
+      "files": [
+        "../diablo-oak/ground/grass_color.jpg",
+        "../diablo-oak/ground/grass_normal.jpg"
+      ]
+    },
+    "soil": {
+      "ambientcg": "Ground091",
+      "licence": "CC0 1.0, ambientCG",
+      "source": "https://ambientcg.com/get?file=Ground091_1K-JPG.zip",
+      "files": [
+        "ground/soil_color.jpg",
+        "ground/soil_normal.jpg"
+      ]
+    },
+    "rock": {
+      "ambientcg": "Rock034",
+      "licence": "CC0 1.0, ambientCG",
+      "source": "https://ambientcg.com/get?file=Rock034_1K-JPG.zip",
+      "files": [
+        "ground/rock_color.jpg",
+        "ground/rock_normal.jpg"
+      ],
+      "gain": [
+        5.0,
+        4.25,
+        4.3
+      ],
+      "albedo": [
+        0.4,
+        0.34,
+        0.27
+      ],
+      "note": "gain and albedo matched to sunlit granite (sRGB 175,162,144) in https://commons.wikimedia.org/wiki/File:Hetch_Hetchy_May_2011_001.jpg",
+      "streaks": 1,
+      "canyon": {
+        "below": -25,
+        "gain": 0.5
+      },
+      "fracture": {
+        "tilt": 0.8,
+        "crack": 0.65,
+        "large": 6,
+        "note": "Joint sets (two vertical, one sheeting) with angular block faces, by eye from the Commons photographs and the user's photos below the dam; set geometry in renderer/land/granite.js."
+      }
+    },
+    "ochre": {
+      "ambientcg": "Ground108",
+      "licence": "CC0 1.0, ambientCG",
+      "source": "https://ambientcg.com/get?file=Ground108_1K-JPG.zip",
+      "files": [
+        "ground/ochre_color.jpg",
+        "ground/ochre_normal.jpg"
+      ]
+    }
+  },
+  "trees": {
+    "variants": [
+      {
+        "id": "ponderosa-a",
+        "species": "ponderosa",
+        "preset": "Pine Medium",
+        "seed": 61,
+        "options": {
+          "branch": {
+            "length": {
+              "0": 60,
+              "1": 17
+            },
+            "children": {
+              "0": 70
+            },
+            "start": {
+              "1": 0.35
+            }
+          },
+          "leaves": {
+            "count": 45,
+            "size": 3
+          }
+        },
+        "lod": {
+          "branch": {
+            "children": {
+              "0": 34
+            }
+          },
+          "leafCountScale": 0.35,
+          "leafSizeScale": 1.6
+        }
+      },
+      {
+        "id": "ponderosa-b",
+        "species": "ponderosa",
+        "preset": "Pine Large",
+        "seed": 67,
+        "options": {
+          "branch": {
+            "length": {
+              "0": 70,
+              "1": 19
+            },
+            "children": {
+              "0": 76
+            },
+            "start": {
+              "1": 0.4
+            }
+          },
+          "leaves": {
+            "count": 45,
+            "size": 3
+          }
+        },
+        "lod": {
+          "branch": {
+            "children": {
+              "0": 36
+            }
+          },
+          "leafCountScale": 0.35,
+          "leafSizeScale": 1.6
+        }
+      },
+      {
+        "id": "black-oak-a",
+        "species": "black-oak",
+        "preset": "Oak Medium",
+        "seed": 71,
+        "options": {
+          "leaves": {
+            "count": 28,
+            "size": 3.2
+          }
+        }
+      },
+      {
+        "id": "black-oak-b",
+        "species": "black-oak",
+        "preset": "Oak Medium",
+        "seed": 79,
+        "options": {
+          "leaves": {
+            "count": 28,
+            "size": 3.2
+          }
+        }
+      }
+    ],
+    "tints": {
+      "ponderosa": {
+        "spring": [
+          0.33,
+          0.44,
+          0.28
+        ],
+        "summer": [
+          0.32,
+          0.41,
+          0.26
+        ]
+      },
+      "black-oak": {
+        "spring": [
+          0.46,
+          0.6,
+          0.3
+        ],
+        "summer": [
+          0.47,
+          0.53,
+          0.3
+        ]
+      }
+    },
+    "lod": {
+      "branch": {
+        "levels": 2
+      },
+      "leafCountScale": 0.3,
+      "leafSizeScale": 1.7
+    },
+    "impostors": {
+      "frames": 8,
+      "size": 256,
+      "elevation": 0.26,
+      "rows": [
+        {
+          "id": "ponderosa-a",
+          "size": 68.95088887075634,
+          "centre": [
+            2.1435976028442383,
+            30.362306594848633,
+            -0.5185046195983887
+          ],
+          "species": "ponderosa"
+        },
+        {
+          "id": "ponderosa-b",
+          "size": 80.97369157443329,
+          "centre": [
+            -0.212158203125,
+            36.28586959838867,
+            1.0644011497497559
+          ],
+          "species": "ponderosa"
+        },
+        {
+          "id": "black-oak-a",
+          "size": 86.89328074407217,
+          "centre": [
+            -1.449188232421875,
+            34.403499603271484,
+            0.5682411193847656
+          ],
+          "species": "black-oak"
+        },
+        {
+          "id": "black-oak-b",
+          "size": 81.2691901707826,
+          "centre": [
+            -0.3496665954589844,
+            31.693124771118164,
+            1.4032135009765625
+          ],
+          "species": "black-oak"
+        }
+      ]
+    },
+    "baked": [
+      {
+        "id": "ponderosa-a",
+        "species": "ponderosa",
+        "preset": "Pine Medium",
+        "seed": 61,
+        "options": {
+          "branch": {
+            "length": {
+              "0": 60,
+              "1": 17
+            },
+            "children": {
+              "0": 70
+            },
+            "start": {
+              "1": 0.35
+            }
+          },
+          "leaves": {
+            "count": 45,
+            "size": 3
+          }
+        },
+        "lod": {
+          "branch": {
+            "children": {
+              "0": 34
+            }
+          },
+          "leafCountScale": 0.35,
+          "leafSizeScale": 1.6
+        },
+        "file": "trees/ponderosa-a.bin",
+        "parts": {
+          "branches": {
+            "vertexCount": 5507,
+            "indexCount": 25776,
+            "offset": 0
+          },
+          "leaves": {
+            "vertexCount": 25200,
+            "indexCount": 37800,
+            "offset": 279328
+          }
+        },
+        "height": 60.725,
+        "crownRadius": 12.378,
+        "crownCentre": [
+          2.144,
+          -0.519
+        ]
+      },
+      {
+        "id": "ponderosa-b",
+        "species": "ponderosa",
+        "preset": "Pine Large",
+        "seed": 67,
+        "options": {
+          "branch": {
+            "length": {
+              "0": 70,
+              "1": 19
+            },
+            "children": {
+              "0": 76
+            },
+            "start": {
+              "1": 0.4
+            }
+          },
+          "leaves": {
+            "count": 45,
+            "size": 3
+          }
+        },
+        "lod": {
+          "branch": {
+            "children": {
+              "0": 36
+            }
+          },
+          "leafCountScale": 0.35,
+          "leafSizeScale": 1.6
+        },
+        "file": "trees/ponderosa-b.bin",
+        "parts": {
+          "branches": {
+            "vertexCount": 5969,
+            "indexCount": 27936,
+            "offset": 0
+          },
+          "leaves": {
+            "vertexCount": 27360,
+            "indexCount": 41040,
+            "offset": 302752
+          }
+        },
+        "height": 72.572,
+        "crownRadius": 12.171,
+        "crownCentre": [
+          -0.212,
+          1.064
+        ]
+      },
+      {
+        "id": "black-oak-a",
+        "species": "black-oak",
+        "preset": "Oak Medium",
+        "seed": 71,
+        "options": {
+          "leaves": {
+            "count": 28,
+            "size": 3.2
+          }
+        },
+        "file": "trees/black-oak-a.bin",
+        "parts": {
+          "branches": {
+            "vertexCount": 2780,
+            "indexCount": 9498,
+            "offset": 0
+          },
+          "leaves": {
+            "vertexCount": 32480,
+            "indexCount": 48720,
+            "offset": 126952
+          }
+        },
+        "height": 68.807,
+        "crownRadius": 30.108,
+        "crownCentre": [
+          -1.449,
+          0.568
+        ]
+      },
+      {
+        "id": "black-oak-b",
+        "species": "black-oak",
+        "preset": "Oak Medium",
+        "seed": 79,
+        "options": {
+          "leaves": {
+            "count": 28,
+            "size": 3.2
+          }
+        },
+        "file": "trees/black-oak-b.bin",
+        "parts": {
+          "branches": {
+            "vertexCount": 2780,
+            "indexCount": 9498,
+            "offset": 0
+          },
+          "leaves": {
+            "vertexCount": 32480,
+            "indexCount": 48720,
+            "offset": 126952
+          }
+        },
+        "height": 63.386,
+        "crownRadius": 29.977,
+        "crownCentre": [
+          -0.35,
+          1.403
+        ]
+      },
+      {
+        "id": "ponderosa-a-far",
+        "species": "ponderosa",
+        "preset": "Pine Medium",
+        "seed": 61,
+        "options": {
+          "branch": {
+            "length": {
+              "0": 60,
+              "1": 17
+            },
+            "children": {
+              "0": 34
+            },
+            "start": {
+              "1": 0.35
+            }
+          },
+          "leaves": {
+            "count": 16,
+            "size": 4.800000000000001
+          }
+        },
+        "lod": {
+          "branch": {
+            "children": {
+              "0": 34
+            }
+          },
+          "leafCountScale": 0.35,
+          "leafSizeScale": 1.6
+        },
+        "file": "trees/ponderosa-a-far.bin",
+        "parts": {
+          "branches": {
+            "vertexCount": 2735,
+            "indexCount": 12816,
+            "offset": 0
+          },
+          "leaves": {
+            "vertexCount": 4352,
+            "indexCount": 6528,
+            "offset": 138784
+          }
+        },
+        "height": 63.323,
+        "crownRadius": 12.918,
+        "crownCentre": [
+          2.411,
+          0.411
+        ]
+      },
+      {
+        "id": "ponderosa-b-far",
+        "species": "ponderosa",
+        "preset": "Pine Large",
+        "seed": 67,
+        "options": {
+          "branch": {
+            "length": {
+              "0": 70,
+              "1": 19
+            },
+            "children": {
+              "0": 36
+            },
+            "start": {
+              "1": 0.4
+            }
+          },
+          "leaves": {
+            "count": 16,
+            "size": 4.800000000000001
+          }
+        },
+        "lod": {
+          "branch": {
+            "children": {
+              "0": 36
+            }
+          },
+          "leafCountScale": 0.35,
+          "leafSizeScale": 1.6
+        },
+        "file": "trees/ponderosa-b-far.bin",
+        "parts": {
+          "branches": {
+            "vertexCount": 2889,
+            "indexCount": 13536,
+            "offset": 0
+          },
+          "leaves": {
+            "vertexCount": 4608,
+            "indexCount": 6912,
+            "offset": 146592
+          }
+        },
+        "height": 74.255,
+        "crownRadius": 12.885,
+        "crownCentre": [
+          -0.909,
+          0.885
+        ]
+      },
+      {
+        "id": "black-oak-a-far",
+        "species": "black-oak",
+        "preset": "Oak Medium",
+        "seed": 71,
+        "options": {
+          "leaves": {
+            "count": 8,
+            "size": 5.44
+          },
+          "branch": {
+            "levels": 2
+          }
+        },
+        "file": "trees/black-oak-a-far.bin",
+        "parts": {
+          "branches": {
+            "vertexCount": 1168,
+            "indexCount": 4680,
+            "offset": 0
+          },
+          "leaves": {
+            "vertexCount": 2520,
+            "indexCount": 3780,
+            "offset": 56096
+          }
+        },
+        "height": 63.868,
+        "crownRadius": 25.635,
+        "crownCentre": [
+          -2.177,
+          -2.893
+        ]
+      },
+      {
+        "id": "black-oak-b-far",
+        "species": "black-oak",
+        "preset": "Oak Medium",
+        "seed": 79,
+        "options": {
+          "leaves": {
+            "count": 8,
+            "size": 5.44
+          },
+          "branch": {
+            "levels": 2
+          }
+        },
+        "file": "trees/black-oak-b-far.bin",
+        "parts": {
+          "branches": {
+            "vertexCount": 1168,
+            "indexCount": 4680,
+            "offset": 0
+          },
+          "leaves": {
+            "vertexCount": 2520,
+            "indexCount": 3780,
+            "offset": 56096
+          }
+        },
+        "height": 61.93,
+        "crownRadius": 26.393,
+        "crownCentre": [
+          -0.102,
+          -1.047
+        ]
+      }
+    ],
+    "textures": {
+      "bark": "trees/bark.jpg",
+      "barkNormal": "trees/barkNormal.jpg",
+      "leaf": "trees/leaf.png",
+      "species": {
+        "black-oak": {
+          "bark": "trees/black-oak-bark.jpg",
+          "leaf": "trees/black-oak-leaf.png"
+        }
+      },
+      "impostorAlbedo": "trees/impostor-albedo.webp",
+      "impostorNormal": "trees/impostor-normal.webp"
+    },
+    "generator": "ez-tree 1.1.0 (MIT), pipeline/bake-trees.mjs"
+  }
+}

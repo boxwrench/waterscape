@@ -1,0 +1,11 @@
+{
+  "concrete": {
+    "ambientcg": "Concrete036",
+    "licence": "CC0 1.0, ambientCG",
+    "source": "https://ambientcg.com/get?file=Concrete036_1K-JPG.zip",
+    "files": [
+      "concrete_color.jpg",
+      "concrete_normal.jpg"
+    ]
+  }
+}

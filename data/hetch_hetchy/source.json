@@ -1,0 +1,65 @@
+{
+  "name": "Hetch Hetchy Reservoir",
+  "biome": "sierra-granite",
+  "anchor": [
+    37.95299,
+    -119.77895
+  ],
+  "bbox": [
+    -119.8125,
+    37.8976,
+    -119.6373,
+    37.9813
+  ],
+  "size": [
+    1539,
+    933
+  ],
+  "viewpoints": {
+    "overlook": {
+      "x": -2218,
+      "z": -2368,
+      "above": 3,
+      "yaw": -2.951,
+      "pitch": -0.143,
+      "speed": 40,
+      "label": "Northwest ridge"
+    },
+    "ridge": {
+      "x": -1027,
+      "z": 619,
+      "above": 3.0,
+      "yaw": 1.028,
+      "pitch": -0.25,
+      "speed": 40,
+      "label": "Southwest ridge"
+    },
+    "shore": {
+      "x": -2451.1,
+      "z": -1870,
+      "above": 1.4,
+      "yaw": -2.531,
+      "pitch": -0.42,
+      "speed": 4,
+      "label": "Shoreline"
+    },
+    "dam": {
+      "x": -4552,
+      "z": -367,
+      "above": 2,
+      "yaw": 2.059,
+      "pitch": -0.36,
+      "speed": 10,
+      "label": "O'Shaughnessy Dam"
+    },
+    "below": {
+      "x": -4514,
+      "z": -174,
+      "above": 3.8,
+      "yaw": 1.178,
+      "pitch": 0.244,
+      "speed": 6,
+      "label": "Below the dam"
+    }
+  }
+}

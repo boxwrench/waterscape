@@ -44,7 +44,26 @@ def build(rid, native=False):
     # Optional "extraAnchors": more water at the same level, e.g. a lake split by a causeway.
     extra = [cell_of(*a) for a in config.get("extraAnchors", [])]
     water, level = demlib.detect_water(dem, anchor=cell_of(anchor_lat, anchor_lon), extra=extra)
+    # Dams (structures.json): the water reaches their upstream face, below the crest.
+    structures = ROOT / "data" / rid / "structures.json"
+    built = json.loads(structures.read_text()) if structures.exists() else {}
+    footprints = []
+    for dam in built.get("dams", []):
+        crest = [((e - left) / sx - 0.5, (top - n) / sy - 0.5) for e, n in dam["crestUTM"]]
+        water = demlib.burn_dams(water, [crest], reach=30.0 / sx, always=15.0 / sx, below=dem < dam["crestElevation"] - 1)
+        # The modelled concrete replaces the survey's smeared dam surface under its footprint.
+        dem, foot = demlib.carve_dams(dem, water, [crest], [dam["crestElevation"]], sx, [dam["height"]])
+        footprints.append(foot)
+    # Rivers below the dams: cut their channel under the modelled water surface.
+    for river in built.get("rivers", []):
+        centre = [((e - left) / sx - 0.5, (top - n) / sy - 0.5) for e, n in river["centreUTM"]]
+        dem, foot = demlib.carve_river(dem, centre, river["width"], river["surface"], sx, clear=river.get("clearTrees", 0))
+        footprints.append(foot)
     height, sdf, valley = demlib.channels(dem, water, level, sx)
+    # A dam's footprint, and a river's canyon, read as land 9 m from the lake: no trees (they
+    # start at 10 m) and no water-contact shading (it ends at 8 m).
+    for foot in footprints:
+        sdf[foot] = 9.0
     rows, cols = np.nonzero(water)
     origin_e = left + (float(cols.mean()) + 0.5) * sx
     origin_n = top - (float(rows.mean()) + 0.5) * sy

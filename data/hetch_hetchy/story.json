@@ -1,0 +1,17 @@
+{
+  "id": "hetch_hetchy",
+  "name": "Hetch Hetchy Reservoir",
+  "place": "Tuolumne County, in Yosemite National Park",
+  "operator": "San Francisco Public Utilities Commission",
+  "summary": {
+    "value": "The start of the regional water system: Tuolumne River water impounded by O'Shaughnessy Dam, which passes through hydroelectric powerhouses on its way to the Bay Area.",
+    "source": "https://www.sfpuc.gov/about-us/our-systems/surface-water-water-rain-and-snowmelt"
+  },
+  "headline": "O'Shaughnessy Dam holds the Tuolumne River in Yosemite's Hetch Hetchy Valley, where the Bay Area's water begins.",
+  "facts": [
+    { "label": "Listed capacity", "value": "360,000 acre-feet", "featured": true, "source": "https://geospatial.sec.usace.army.mil/dls/rest/services/NID/National_Inventory_of_Dams_Public_Service/FeatureServer/0/query?where=NIDID%3D%27CA00123%27&outFields=MAX_STORAGE&f=json" },
+    { "label": "O'Shaughnessy Dam", "value": "312 ft tall, completed 1923", "source": "https://geospatial.sec.usace.army.mil/dls/rest/services/NID/National_Inventory_of_Dams_Public_Service/FeatureServer/0/query?where=NIDID%3D%27CA00123%27&outFields=DAM_HEIGHT,YEAR_COMPLETED&f=json" },
+    { "label": "Water system", "value": "Hetch Hetchy Regional Water System, serving 2.7 million customers", "source": "https://www.sfpuc.gov/about-us/our-systems" },
+    { "label": "USGS reference · 2019", "value": "1151.7 m (3,779 ft) above sea level", "source": "https://epqs.nationalmap.gov/v1/json?x=-119.77895&y=37.95299&units=Meters&wkid=4326&includeDate=true" }
+  ]
+}

@@ -41,9 +41,9 @@ export function fbm(x, z) {
 
 // Tree cover at (x, z), as in terrainShade: ravines, north-facing and steep ground, and grove
 // patches, thinned on spur crests and near the shore; `cover` (look.js) adds woodland everywhere
-// but the crests.
+// but the crests, and `bare` clears it from cliffs.
 // The terrain normal uses the lidar surface.
-export function oakDensity(terrain, x, z, cover = 0) {
+export function oakDensity(terrain, x, z, cover = 0, bare = 0) {
   const e = 3,
     h = (a, b) => terrain.sample(a, b, 0),
     nx = h(x - e, z) - h(x + e, z),
@@ -58,6 +58,7 @@ export function oakDensity(terrain, x, z, cover = 0) {
     grove = smooth(0.46, 0.64, fbm(x * 0.0065 + 13, z * 0.0065 - 4));
   return (
     sat(0.05 + 0.85 * valley + 0.55 * northFacing + 0.25 * steep + 0.75 * grove - 0.7 * smooth(0.62, 0.88, spur) + cover * (1 - smooth(0.62, 0.88, spur))) *
+    (1 - bare * smooth(0.25, 0.42, 1 - ny)) *
     smooth(10, 35, shore)
   );
 }
@@ -73,15 +74,15 @@ export function standPick(x, z, pick, stands) {
 
 // The oak of lattice cell (cx, cz), or null: trunk position, crown radius (m) and two hashes for
 // choosing its species and variant — the same numbers oakCrowns() uses.
-export function oakSite(terrain, cx, cz, cover = 0) {
+export function oakSite(terrain, cx, cz, cover = 0, bare = 0) {
   const x = (cx + 0.15 + 0.7 * hash(cx + 71, cz - 19)) * OAK_CELL,
     z = (cz + 0.15 + 0.7 * hash(cx - 33, cz + 57)) * OAK_CELL;
-  if (hash(cx, cz) > oakDensity(terrain, x, z, cover)) return null;
+  if (hash(cx, cz) > oakDensity(terrain, x, z, cover, bare)) return null;
   return { x, z, radius: 3.4 + 3.2 * hash(cx + 11, cz + 5), pick: hash(cx + 5, cz + 91), turn: hash(cx - 7, cz + 3) };
 }
 
 // Every oak within `range` metres of (x, z).
-export function oaksNear(terrain, x, z, range, cover = 0) {
+export function oaksNear(terrain, x, z, range, cover = 0, bare = 0) {
   const out = [],
     c0x = Math.floor((x - range) / OAK_CELL),
     c1x = Math.floor((x + range) / OAK_CELL),
@@ -89,7 +90,7 @@ export function oaksNear(terrain, x, z, range, cover = 0) {
     c1z = Math.floor((z + range) / OAK_CELL);
   for (let cz = c0z; cz <= c1z; cz++)
     for (let cx = c0x; cx <= c1x; cx++) {
-      const site = oakSite(terrain, cx, cz, cover);
+      const site = oakSite(terrain, cx, cz, cover, bare);
       if (site && Math.hypot(site.x - x, site.z - z) <= range) out.push(site);
     }
   return out;
