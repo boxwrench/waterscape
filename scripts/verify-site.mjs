@@ -64,14 +64,16 @@ try {
   assert.equal(new URL(page.url()).hash, "#stop=san_antonio");
   assert.deepEqual(
     await page.$$eval("#systemMap li", (li) => li.map((x) => x.classList.contains("active"))),
-    [false, true, false, false],
+    [false, true, false, false, false],
   );
   assert.equal(await page.isDisabled("#next"), false);
   // The last stop disables "Next".
   await page.keyboard.press("ArrowRight");
   await page.keyboard.press("ArrowRight");
-  assert.equal(await page.textContent("#stopName"), "San Andreas Lake");
+  await page.keyboard.press("ArrowRight");
+  assert.equal(await page.textContent("#stopName"), "Hetch Hetchy Reservoir");
   assert.equal(await page.isDisabled("#next"), true);
+  await page.keyboard.press("ArrowLeft");
   await page.keyboard.press("ArrowLeft");
   await page.keyboard.press("ArrowLeft");
   await page.click("#prev");
