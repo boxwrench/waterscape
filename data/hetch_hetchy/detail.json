@@ -1,6 +1,6 @@
 {
   "source": "USGS National Map 3D Elevation Program (3DEP) 1 m, public domain",
-  "encoding": "surface normal: red = x (east), green = z (south), 128 + 127\u00b7n",
+  "encoding": "red = normal x (east), green = normal z (south), 128 + 127\u00b7n; blue = local relief, metres above the 3 m-blurred surface, 128 + 127\u00b7h/1.5",
   "tiles": [
     {
       "name": "dam",

@@ -94,12 +94,16 @@ export function createGroundMaterial(terrain, biomeBase, biome, look = landLook(
               .mul(smoothstep(0, 40, nn.sub(b)))
               .mul(smoothstep(0, 40, float(top).sub(nn))),
             c = texture(t.tex, uv2).rgb.mul(255).sub(128).div(127),
-            n1 = vec3(c.x, max(float(1).sub(c.x.mul(c.x)).sub(c.y.mul(c.y)), 0).sqrt(), c.y);
-          return { n: mix(acc.n, n1, edge), w: max(acc.w, edge) };
+            n1 = vec3(c.x, max(float(1).sub(c.x.mul(c.x)).sub(c.y.mul(c.y)), 0).sqrt(), c.y),
+            // A plan-view map stretches down a near-vertical face: step back to a third there.
+            w = edge.mul(mix(float(1), float(0.35), smoothstep(0.55, 0.85, float(1).sub(nMesh.y))));
+          // h: metres above the 3 m-blurred surface (hollows negative), from the blue channel.
+          return { n: mix(acc.n, n1, w), w: max(acc.w, w), h: mix(acc.h, c.z.mul(1.5), edge) };
         },
-        { n: nMesh, w: float(0) },
+        { n: nMesh, w: float(0), h: float(0) },
       ),
       relief = fromTiles.w,
+      hollow = fromTiles.h,
       n0 = normalize(fromTiles.n),
       slope = float(1).sub(n0.y),
       valley = g.z,
@@ -156,9 +160,19 @@ export function createGroundMaterial(terrain, biomeBase, biome, look = landLook(
       // Wet only at the lake's own shore (the drawdown zone), not the canyon below a dam,
       // which lies far below the lake surface.
       albedo = mix(albedo, albedo.mul(0.45), wet.mul(g.w));
-      const sunLit = u.sunColor.mul(max(dot(n, u.sun), 0).mul(light.x)),
-        skyLit = u.fill.mul(n.y.mul(0.3).add(0.38).mul(light.y)),
-        bounce = vec3(0.2, 0.16, 0.08).mul(float(1).sub(n0.y).mul(0.25));
+      // Inside relief tiles: hollows and cracks see less sky (and a little less sun), edges a
+      // little more; the 10 m baked shadow gets firmer edges; the flat sky fill comes down a
+      // touch so sun and shade read on the rock.
+      // The baked light (sun visibility .x, sky openness .y) is one value per 10 m cell looked
+      // up from above: on a cliff each cell smears down the whole face into blobs. On steep
+      // ground it mostly gives way to the face's own angle to the sun and the 1 m hollows.
+      const occlusion = clamp(hollow.mul(0.36).add(1), 0.45, 1.15),
+        steepFace = smoothstep(0.4, 0.75, float(1).sub(nMesh.y)),
+        sunShadow = mix(mix(light.x, smoothstep(0.2, 0.8, light.x), relief), float(1), steepFace.mul(0.85)),
+        skyOpen = mix(light.y, float(0.8), steepFace.mul(0.7)),
+        sunLit = u.sunColor.mul(max(dot(n, u.sun), 0).mul(sunShadow).mul(clamp(hollow.mul(0.2).add(1), 0.7, 1.08))),
+        skyLit = u.fill.mul(n.y.mul(0.3).add(0.38).mul(skyOpen).mul(occlusion).mul(mix(float(1), float(0.85), relief))),
+        bounce = vec3(0.2, 0.16, 0.08).mul(float(1).sub(n0.y).mul(0.25)).mul(occlusion);
       return albedo.mul(sunLit.add(skyLit).add(bounce));
     }
     const soilW = max(bank, patch.mul(0.6));

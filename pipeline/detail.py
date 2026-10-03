@@ -4,7 +4,7 @@ the 10 m terrain grid cannot hold, used as lighting (surface normals) by the gro
 Usage:  python pipeline/detail.py <id>
 Reads "detail" from data/<id>/land.json: [{"name": ..., "centre": [lat, lon], "size": [w, h]}]
 (metres). For each tile writes data/<id>/detail-<name>.webp — the 1 m surface normal, x (east)
-in red and z (south) in green, 128 = level — and lists the tiles, their UTM extents and the
+in red and z (south) in green, 128 = level, and local relief in blue — and lists the tiles, their UTM extents and the
 request URLs in data/<id>/detail.json.
 """
 import io
@@ -16,6 +16,7 @@ from pathlib import Path
 
 import numpy as np
 from PIL import Image
+from scipy import ndimage
 
 import dem as demlib
 import geo
@@ -26,15 +27,21 @@ CHUNK = 1000  # metres per request; the service times out on larger 1 m exports
 
 
 def fetch_chunk(left, bottom, size_x, size_y, zone):
+    cache = ROOT / "pipeline" / ".cache" / f"3dep1m_{zone}_{left}_{bottom}_{size_x}_{size_y}.npy"
     url = (
         f"{demlib.SERVICE}/exportImage?bbox={left},{bottom},{left + size_x},{bottom + size_y}"
         f"&bboxSR=326{zone:02d}&imageSR=326{zone:02d}&size={int(size_x / RES)},{int(size_y / RES)}"
         "&format=tiff&pixelType=F32&interpolation=RSP_BilinearInterpolation&f=image"
     )
+    if cache.exists():
+        return np.load(cache), url
     for attempt in range(6):
         try:
             with urllib.request.urlopen(url, timeout=300) as r:
-                return np.array(Image.open(io.BytesIO(r.read())), dtype=np.float32), url
+                data = np.array(Image.open(io.BytesIO(r.read())), dtype=np.float32)
+            cache.parent.mkdir(parents=True, exist_ok=True)
+            np.save(cache, data)
+            return data, url
         except Exception as error:  # the service answers 502/504 under load; retry
             print(f"  retry {attempt + 1}: {error}")
             time.sleep(10 * (attempt + 1))
@@ -42,14 +49,17 @@ def fetch_chunk(left, bottom, size_x, size_y, zone):
 
 
 def encode_normals(dem, cell):
-    """RGB uint8: the surface normal's x (east) and z (south) as 128 + 127·n; blue unused."""
+    """RGB uint8: the surface normal's x (east) and z (south) as 128 + 127·n; blue the local
+    relief (metres above the 3 m-blurred surface, ±1.5 m as 128 ± 127): hollows and cracks
+    are dark, edges and knobs light."""
     gz, gx = np.gradient(dem, cell)  # rows run south, columns east
     nx, ny, nz = -gx, np.ones_like(gx), gz
     length = np.sqrt(nx * nx + ny * ny + nz * nz)
     rgb = np.zeros(dem.shape + (3,), np.uint8)
     rgb[..., 0] = np.clip(np.round(128 + 127 * nx / length), 0, 255)
     rgb[..., 1] = np.clip(np.round(128 + 127 * nz / length), 0, 255)
-    rgb[..., 2] = 128
+    local = np.clip(dem - ndimage.gaussian_filter(dem, 3.0 / cell), -1.5, 1.5)
+    rgb[..., 2] = np.clip(np.round(128 + 127 * local / 1.5), 0, 255)
     return rgb
 
 
@@ -80,7 +90,7 @@ def build(rid):
         print(f"{rid}: detail {tile['name']} {w}x{h} m at {RES} m -> {file} ({(out / file).stat().st_size // 1024} KB)")
     (out / "detail.json").write_text(json.dumps({
         "source": "USGS National Map 3D Elevation Program (3DEP) 1 m, public domain",
-        "encoding": "surface normal: red = x (east), green = z (south), 128 + 127·n",
+        "encoding": "red = normal x (east), green = normal z (south), 128 + 127·n; blue = local relief, metres above the 3 m-blurred surface, 128 + 127·h/1.5",
         "tiles": tiles,
     }, indent=2) + "\n")
 
