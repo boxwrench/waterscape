@@ -37,5 +37,19 @@
     "haze": 0.5,
     "note": "Clear air at 1,150 m: half the presets' haze, matched by eye to the Commons photos."
   },
-  "structures": true
+  "structures": true,
+  "detail": [
+    {
+      "name": "dam",
+      "centre": [
+        37.9475,
+        -119.7913
+      ],
+      "size": [
+        2000,
+        1600
+      ],
+      "note": "O'Shaughnessy Dam, the canyon below it and the lake beside it: 1 m 3DEP relief as lighting (pipeline/detail.py)."
+    }
+  ]
 }

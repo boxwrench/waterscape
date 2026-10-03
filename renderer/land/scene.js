@@ -15,7 +15,7 @@ const NEAR = 1,
   // Same vertical field of view as ray() in water.cu.
   FOV_Y = (2 * Math.atan(0.62487) * 180) / Math.PI;
 
-export async function createLandPass(rt, terrain, { biome, biomeBase, look, structures }) {
+export async function createLandPass(rt, terrain, { biome, biomeBase, look, structures, detail }) {
   const renderer = new THREE.WebGPURenderer({
     canvas: document.createElement("canvas"),
     device: rt.device,
@@ -30,7 +30,7 @@ export async function createLandPass(rt, terrain, { biome, biomeBase, look, stru
   geometry.setIndex(new THREE.BufferAttribute(grid.indices, 1));
   geometry.computeVertexNormals();
   geometry.computeBoundingSphere();
-  const ground = createGroundMaterial(terrain, biomeBase, biome, look),
+  const ground = createGroundMaterial(terrain, biomeBase, biome, look, detail),
     scene = new THREE.Scene();
   scene.add(new THREE.Mesh(geometry, ground.material));
   const grass = createGrass(terrain, ground.terrainTex, ground.lightTex, ground.uniforms, look);

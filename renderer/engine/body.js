@@ -18,8 +18,10 @@ export async function loadBody(id, onProgress = () => {}) {
       json(`../biomes/${terrain.meta.biome}/biome.json`),
     ]),
     // Dams and other structures (renderer/land/structures.js), where land.json lists them.
-    structures = land.structures ? await json("structures.json") : null;
-  return { id, base, terrain, viewpoints: cameras.viewpoints, flyover: cameras.flyover, land, biome, structures };
+    structures = land.structures ? await json("structures.json") : null,
+    // 1 m relief tiles (pipeline/detail.py), where land.json lists them.
+    detail = land.detail?.length ? { ...(await json("detail.json")), base } : null;
+  return { id, base, terrain, viewpoints: cameras.viewpoints, flyover: cameras.flyover, land, biome, structures, detail };
 }
 
 // A named viewpoint as a camera pose, standing `above` metres over the lidar ground.

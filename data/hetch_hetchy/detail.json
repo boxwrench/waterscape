@@ -1,0 +1,23 @@
+{
+  "source": "USGS National Map 3D Elevation Program (3DEP) 1 m, public domain",
+  "encoding": "surface normal: red = x (east), green = z (south), 128 + 127\u00b7n",
+  "tiles": [
+    {
+      "name": "dam",
+      "file": "detail-dam.webp",
+      "extentUTM": [
+        253733,
+        4202866,
+        255733,
+        4204466
+      ],
+      "cell": 1.0,
+      "sources": [
+        "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?bbox=253733,4203466,254733,4204466&bboxSR=32611&imageSR=32611&size=1000,1000&format=tiff&pixelType=F32&interpolation=RSP_BilinearInterpolation&f=image",
+        "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?bbox=254733,4203466,255733,4204466&bboxSR=32611&imageSR=32611&size=1000,1000&format=tiff&pixelType=F32&interpolation=RSP_BilinearInterpolation&f=image",
+        "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?bbox=253733,4202866,254733,4203466&bboxSR=32611&imageSR=32611&size=1000,600&format=tiff&pixelType=F32&interpolation=RSP_BilinearInterpolation&f=image",
+        "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?bbox=254733,4202866,255733,4203466&bboxSR=32611&imageSR=32611&size=1000,600&format=tiff&pixelType=F32&interpolation=RSP_BilinearInterpolation&f=image"
+      ]
+    }
+  ]
+}

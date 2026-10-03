@@ -30,7 +30,15 @@ export function gridTexture(data, width, height) {
   return t;
 }
 
-export function createGroundMaterial(terrain, biomeBase, biome, look = landLook(null)) {
+export function createGroundMaterial(terrain, biomeBase, biome, look = landLook(null), detail = null) {
+  // 1 m relief tiles (pipeline/detail.py): surface normals that replace the 10 m mesh's inside
+  // each tile, fading out over its outer 40 m. Scene x/z → UTM via the terrain's origin.
+  const [originE, originN] = terrain.meta.originUTM,
+    tiles = (detail?.tiles ?? []).map((t) => {
+      const tex = new THREE.TextureLoader().load(new URL(t.file, detail.base).href);
+      tex.anisotropy = 8;
+      return { ...t, tex };
+    });
   // A layer's listed files (colour, normal; may point into another biome), else the convention.
   const files = (layer, kind) =>
     new URL(biome.ground[layer].files?.[kind === "color" ? 0 : 1] ?? `ground/${layer}_${kind}.jpg`, biomeBase).href,
@@ -73,7 +81,26 @@ export function createGroundMaterial(terrain, biomeBase, biome, look = landLook(
       xz = vec2(p.x, p.z),
       g = texture(terrainTex, gridUv(p)),
       light = texture(lightTex, gridUv(p)),
-      n0 = normalize(normalWorld),
+      nMesh = normalize(normalWorld),
+      // Inside a relief tile the lidar's own 1 m normal; `relief` is how much of it applies.
+      fromTiles = tiles.reduce(
+        (acc, t) => {
+          const [l, b, r, top] = t.extentUTM,
+            e = p.x.add(originE),
+            nn = float(originN).sub(p.z),
+            uv2 = vec2(e.sub(l).div(r - l), nn.sub(b).div(top - b)),
+            edge = smoothstep(0, 40, e.sub(l))
+              .mul(smoothstep(0, 40, float(r).sub(e)))
+              .mul(smoothstep(0, 40, nn.sub(b)))
+              .mul(smoothstep(0, 40, float(top).sub(nn))),
+            c = texture(t.tex, uv2).rgb.mul(255).sub(128).div(127),
+            n1 = vec3(c.x, max(float(1).sub(c.x.mul(c.x)).sub(c.y.mul(c.y)), 0).sqrt(), c.y);
+          return { n: mix(acc.n, n1, edge), w: max(acc.w, edge) };
+        },
+        { n: nMesh, w: float(0) },
+      ),
+      relief = fromTiles.w,
+      n0 = normalize(fromTiles.n),
       slope = float(1).sub(n0.y),
       valley = g.z,
       macro = mx_noise_float(vec3(xz.mul(0.012), 3)).mul(0.5).add(0.5);
@@ -120,7 +147,7 @@ export function createGroundMaterial(terrain, biomeBase, biome, look = landLook(
           .add(mx_noise_float(vec3(xz.mul(0.02), 51)).mul(14))
           .add(mx_noise_float(vec3(xz.mul(0.08), 53)).mul(6)),
         deep = canyon ? float(1).sub(smoothstep(canyon.below - 25, canyon.below + 20, edgeY)) : float(0),
-        stone = graniteRock(tex, biome.ground, p, n0, slope, band, deep),
+        stone = graniteRock(tex, biome.ground, p, n0, slope, band, deep, relief),
         cover = max(rockW, max(band, deep)),
         nm = antiTile(tex.grass.normal, xz, 2.6).rgb,
         bump = vec3(nm.x.mul(2).sub(1), 0, float(1).sub(nm.y.mul(2))).mul(0.35),

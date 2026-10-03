@@ -74,11 +74,13 @@ function photo(layer, mean, target, p, n, scale, upright = false) {
 
 // { albedo, normal } for granite at world p, smooth terrain normal n0 and steepness `slope`
 // (1 - n.y). `bank` is 0-1 over the drawdown band, `deep` 0-1 below the dam.
-export function graniteRock(tex, g, p, n0, slope, bank, deep) {
+// `relief` (0-1): where measured 1 m relief already shapes n0, the photos' bump and the
+// slow bend are mostly turned off.
+export function graniteRock(tex, g, p, n0, slope, bank, deep, relief = float(0)) {
   const target = vec3(...g.rock.albedo),
     wall = smoothstep(0.15, 0.45, slope),
     // Slowly turning big faces (no hard steps: at this size they read as polygons).
-    bend = normalize(n0.add(mx_noise_vec3(p.mul(0.012)).mul(0.35))),
+    bend = normalize(n0.add(mx_noise_vec3(p.mul(0.012)).mul(float(0.35).mul(float(1).sub(relief))))),
     // Walls: jointed rock at 7 m, its tone varied by the same photo at 31 m.
     up = !!g.joints.upright,
     near = photo(tex.joints, g.joints.mean, target, p, bend, 7, up),
@@ -106,5 +108,5 @@ export function graniteRock(tex, g, p, n0, slope, bank, deep) {
     untiledNormal(tex.canyon.normal, p, bend, 6),
     deep,
   );
-  return { albedo, normal: normalize(bend.add(offset.mul(0.8))) };
+  return { albedo, normal: normalize(bend.add(offset.mul(mix(float(0.8), float(0.25), relief)))) };
 }

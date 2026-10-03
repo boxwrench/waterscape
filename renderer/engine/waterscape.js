@@ -135,6 +135,7 @@ export async function createWaterscape(
       biome: body.biome,
       look,
       structures: body.structures,
+      detail: body.detail,
       biomeBase: new URL(`../../data/biomes/${terrain.meta.biome}/`, import.meta.url),
     });
     diag.land = { shared: landPass.shared, error: null };
