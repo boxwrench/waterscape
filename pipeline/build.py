@@ -111,7 +111,9 @@ def build(rid, native=False):
 
     grid = cameras.Grid(height, sdf, grid_origin[0], grid_origin[1], sx)
     views = config.get("viewpoints") or cameras.search_viewpoints(grid)
-    cams = {"viewpoints": views, "flyover": cameras.flyover_keys(grid, views["overlook"])}
+    # A pinned "flyover" in source.json (duration and keys, as cameras.json) replaces the
+    # generated glide from the overlook.
+    cams = {"viewpoints": views, "flyover": config.get("flyover") or cameras.flyover_keys(grid, views["overlook"])}
     (out / "cameras.json").write_text(json.dumps(cams, indent=2) + "\n")
     area = water.sum() * sx * sy / 1e6
     print(f"{rid}: water {level:.1f} m, {area:.2f} km2, grid {w}x{h} @ {sx:.2f} m, origin {grid_origin}")

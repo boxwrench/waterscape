@@ -61,5 +61,75 @@
       "speed": 6,
       "label": "Below the dam"
     }
+  },
+  "flyover": {
+    "duration": 12,
+    "keys": [
+      {
+        "t": 0,
+        "x": -4710,
+        "y": -55.8,
+        "z": 78.4,
+        "yaw": 0.8577,
+        "pitch": 0.1
+      },
+      {
+        "t": 1.36,
+        "x": -4606,
+        "y": -36.6,
+        "z": -21.6,
+        "yaw": 0.879,
+        "pitch": 0.1
+      },
+      {
+        "t": 2.67,
+        "x": -4538,
+        "y": -10,
+        "z": -141.6,
+        "yaw": 0.7484,
+        "pitch": 0.1
+      },
+      {
+        "t": 3.4,
+        "x": -4486,
+        "y": 6.8,
+        "z": -197.6,
+        "yaw": 1.0776,
+        "pitch": 0.1
+      },
+      {
+        "t": 4.1,
+        "x": -4422,
+        "y": 23.7,
+        "z": -232,
+        "yaw": 1.3802,
+        "pitch": 0.02
+      },
+      {
+        "t": 4.99,
+        "x": -4330.8,
+        "y": 46.7,
+        "z": -249.6,
+        "yaw": 1.3802,
+        "pitch": -0.14
+      },
+      {
+        "t": 8.26,
+        "x": -3987.2,
+        "y": 66.7,
+        "z": -315.9,
+        "yaw": 1.3802,
+        "pitch": -0.09
+      },
+      {
+        "t": 12,
+        "x": -3594.4,
+        "y": 81.7,
+        "z": -391.7,
+        "yaw": 1.3802,
+        "pitch": -0.09
+      }
+    ],
+    "note": "Hand-made: up the Tuolumne canyon from ~400 m downstream (river trace in structures.json), over O'Shaughnessy Dam's crest at +35 m, and out over the lake."
   }
 }
