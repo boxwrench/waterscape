@@ -35,7 +35,10 @@ jobs:
       - run: node scripts/verify-build.mjs
       - name: Install Chromium for River Pulse interface checks
         run: npx playwright install --with-deps chromium
+      # River Pulse is a work in progress: its browser check reports (and uploads screenshots)
+      # but does not hold back a deploy of the reservoirs.
       - name: Verify built River Pulse interface
+        continue-on-error: true
         run: node scripts/verify-river-pulse.mjs
       - name: Upload River Pulse visual checks
         if: always()

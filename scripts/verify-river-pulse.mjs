@@ -23,6 +23,15 @@ const browser = await chromium.launch({
     "--enable-unsafe-swiftshader",
   ],
 });
+// SwiftShader renders the scene on the CPU, so an animation frame can take seconds in CI and
+// Playwright's "stable" check (two frames at the same position) outlasts the default 30 s.
+// Give every action on every page more room; the checks themselves are unchanged.
+const openPage = browser.newPage.bind(browser);
+browser.newPage = async (options) => {
+  const page = await openPage(options);
+  page.setDefaultTimeout(120000);
+  return page;
+};
 const errors = [];
 function feature(time, value, daily = false) {
   return {
