@@ -19,7 +19,8 @@ on Preetham et al. 1999 and the work of Simon Wallner, Martin Upitis and zz85.
 
 `data/biomes/*/ground/` are resized from ambientCG materials (https://ambientcg.com), CC0 1.0
 Universal; each biome's `biome.json` records the asset ids and download URLs (Grass004,
-Ground109, Rock030 for `diablo-oak`).
+Ground109, Rock030 for `diablo-oak`; Ground091, Ground108, Rock034, Rock020, Rock043L and
+Rock058 for `sierra-granite`). `data/structures/` holds ambientCG Concrete036, CC0 1.0.
 
 ## Fluffy grass
 
