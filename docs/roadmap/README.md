@@ -81,7 +81,7 @@ versioned long-lived asset caching or a different host.
 | W2 | [Add Crystal Springs Reservoir](tasks/W2-crystal-springs.md) | small | W1 | done 2026-09-29, with Peninsula biome and morning fog |
 | W3 | [Add San Andreas Lake](tasks/W3-san-andreas.md) | small | W1 | done 2026-09-29 |
 | W4 | [Add both to the Hetch Hetchy tour](tasks/W4-tour.md) | small | W2, W3 | done 2026-09-29 |
-| H1 | Hetch Hetchy: Sierra granite + conifer biome, then the bundle ([brief](capable-agent-briefs.md#h1-hetch-hetchy)) | capable | L1, L2 | done 2026-10-03, with O'Shaughnessy Dam; not on a tour |
+| H1 | Hetch Hetchy: Sierra granite + conifer biome, then the bundle ([brief](capable-agent-briefs.md#h1-hetch-hetchy)) | capable | L1, L2 | done 2026-10-03, with O'Shaughnessy Dam; fifth tour stop |
 
 ## Track T — water level and timeline
 

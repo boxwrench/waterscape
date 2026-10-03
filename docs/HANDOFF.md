@@ -153,7 +153,7 @@ its outlets and the river below are in `structures.json` (sources inside) and dr
 `renderer/land/structures.js`; the build floods to the dam face, carves the survey's smeared
 dam and the river channel, and writes a full-pool drawdown channel for the bleached band.
 Granite is photographed CC0 rock (`renderer/land/granite.js`). Explorer viewpoint buttons now
-wrap. Not on a tour yet. Open: rock silhouettes stay smooth (10 m lidar); the canyon rock is
+wrap. Fifth stop on the Hetch Hetchy tour. Open: rock silhouettes stay smooth (10 m lidar); the canyon rock is
 paler than photos; the aerial photo could colour the granite tops; Hetch Hetchy has CDEC
 storage (`HTH`) for T1/T2.
 

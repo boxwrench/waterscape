@@ -54,8 +54,8 @@ The roadmap below describes the **reservoir experience**, rather than limiting t
   explorer and on the journey.
 - **Hetch Hetchy (H1)** — `sierra-granite` biome (photographed CC0 granite, ponderosa pine and
   black oak, bare cliffs, a bleached drawdown band), O'Shaughnessy Dam from NAIP, 3DEP and NID
-  with illustrative outlet jets, the Tuolumne's first ~760 m below it, and dam viewpoints. Not
-  yet on a tour.
+  with illustrative outlet jets, the Tuolumne's first ~760 m below it, and dam viewpoints; the
+  fifth stop on the Hetch Hetchy tour.
 - **P1 loading improvements** — merged and deployed as `ab96848`: video keeps playing until
   the first live-frame report, tree downloads are staged, and next-video prefetch is deferred.
   Low-tier tree geometry fell from 9.8 MB to 1.2 MB. Local first handoff measured 16.1 → 14.6 s;
