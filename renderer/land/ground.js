@@ -4,7 +4,7 @@
 // the baked light map (bake_light). Trees are still drawn by the water kernel on top.
 import * as THREE from "../../vendor/three/three.webgpu.js";
 import { landLook } from "../engine/look.js";
-import { graniteRock } from "./granite.js";
+import { graniteRock, triplanar } from "./granite.js";
 import {
   Fn, texture, uniform, positionWorld, normalWorld, vec2, vec3, float, mix, smoothstep, dot,
   max, normalize, clamp, mx_noise_float, sin,
@@ -98,7 +98,7 @@ export function createGroundMaterial(terrain, biomeBase, biome, look = landLook(
             // A plan-view map stretches down a near-vertical face: step back to a third there.
             w = edge.mul(mix(float(1), float(0.35), smoothstep(0.55, 0.85, float(1).sub(nMesh.y))));
           // h: metres above the 3 m-blurred surface (hollows negative), from the blue channel.
-          return { n: mix(acc.n, n1, w), w: max(acc.w, w), h: mix(acc.h, c.z.mul(1.5), edge) };
+          return { n: mix(acc.n, n1, w), w: max(acc.w, w), h: mix(acc.h, c.z.mul(1.5), w) };
         },
         { n: nMesh, w: float(0), h: float(0) },
       ),
@@ -122,7 +122,8 @@ export function createGroundMaterial(terrain, biomeBase, biome, look = landLook(
       soilTint = mx_noise_float(vec3(xz.mul(0.008), 17)).mul(0.25).add(1.0),
       soil = soilPhoto.mul(1.25).mul(soilTint).mul(rings.mul(0.22).add(0.86)),
       // Brightness per biome: Diablo sandstone and greywacke 2.1, pale Sierra granite brighter.
-      rockPhoto = antiTile(tex.rock.colour, xz, 4.3).rgb.mul(rockGain),
+      // Projected from three sides: from above alone it stretches down steep faces.
+      rockPhoto = triplanar(tex.rock.colour, p, n0, 4.3).rgb.mul(rockGain),
       // Streaked walls (biome rock.streaks, 0 default): fine noise across the ground becomes
       // vertical water streaks on a cliff face, plus broad rust staining.
       streak = mx_noise_float(vec3(xz.mul(0.035), 23)).mul(0.5).add(0.5).mul(0.6).add(mx_noise_float(vec3(xz.mul(0.11), 31)).mul(0.2).add(0.2)),
@@ -191,8 +192,10 @@ export function createGroundMaterial(terrain, biomeBase, biome, look = landLook(
     const nm = mix(antiTile(tex.grass.normal, xz, 2.6).rgb, antiTile(tex.rock.normal, xz, 4.3).rgb, rockW),
       bump = vec3(nm.x.mul(2).sub(1), 0, float(1).sub(nm.y.mul(2))).mul(0.35),
       n = normalize(n0.add(bump)),
-      sunLit = u.sunColor.mul(max(dot(n, u.sun), 0).mul(light.x)),
-      skyLit = u.fill.mul(n0.y.mul(0.3).add(0.38).mul(light.y)),
+      // Baked light on steep faces gives way to the face's own angle (see the granite branch).
+      steepFace = smoothstep(0.4, 0.75, float(1).sub(nMesh.y)),
+      sunLit = u.sunColor.mul(max(dot(n, u.sun), 0).mul(mix(light.x, float(1), steepFace.mul(0.85)))),
+      skyLit = u.fill.mul(n0.y.mul(0.3).add(0.38).mul(mix(light.y, float(0.8), steepFace.mul(0.7)))),
       bounce = vec3(0.2, 0.16, 0.08).mul(float(1).sub(n0.y).mul(0.25));
     return albedo.mul(sunLit.add(skyLit).add(bounce));
   })();

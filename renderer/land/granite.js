@@ -6,7 +6,7 @@
 // normal map perturbs the terrain normal. Big faces turn slowly with a low-frequency bend.
 // Setting only; tuned to photographs of Hetch Hetchy (data/biomes/sierra-granite/biome.json).
 import {
-  texture, vec2, vec3, float, abs, pow, dot, mix, normalize, smoothstep, mx_noise_float, mx_noise_vec3,
+  texture, vec2, vec3, float, abs, pow, dot, mix, normalize, smoothstep, mx_noise_float, cameraPosition, mx_noise_vec3,
 } from "../../vendor/three/three.tsl.js";
 
 const LUMA = vec3(0.2126, 0.7152, 0.0722);
@@ -77,7 +77,14 @@ function photo(layer, mean, target, p, n, scale, upright = false) {
 // `relief` (0-1): where measured 1 m relief already shapes n0, the photos' bump and the
 // slow bend are mostly turned off.
 export function graniteRock(tex, g, p, n0, slope, bank, deep, relief = float(0)) {
+  // Far away a tiling photo repeats in rows (a 31 m tile seen from 2 km is a stamp): fade the
+  // photos toward their mean beyond ~300 m and let broad 100-400 m patches carry the variation.
   const target = vec3(...g.rock.albedo),
+    dist = cameraPosition.sub(p).length(),
+    farFade = smoothstep(250, 900, dist),
+    broad = mx_noise_float(p.mul(0.004).add(19)).mul(0.16).add(mx_noise_float(p.mul(0.011).add(23)).mul(0.1)).add(1),
+    // A layer's colour far away: its base colour in broad patches.
+    calm = (c, base = target) => mix(c, base.mul(broad), farFade),
     wall = smoothstep(0.15, 0.45, slope),
     // Slowly turning big faces (no hard steps: at this size they read as polygons).
     bend = normalize(n0.add(mx_noise_vec3(p.mul(0.012)).mul(float(0.35).mul(float(1).sub(relief))))),
@@ -86,10 +93,12 @@ export function graniteRock(tex, g, p, n0, slope, bank, deep, relief = float(0))
     near = photo(tex.joints, g.joints.mean, target, p, bend, 7, up),
     far = triplanar(tex.joints.colour, p, bend, 31, up).rgb,
     variation = dot(far, LUMA).div(dot(vec3(...g.joints.mean), LUMA)).max(0.05),
-    // Water stains: the same photo stretched 6× tall on walls reads as vertical streaks.
-    streaks = dot(texture(tex.joints.colour, vec2(p.x.add(p.z).div(18), p.y.div(110))).rgb, LUMA)
-      .div(dot(vec3(...g.joints.mean), LUMA))
-      .max(0.05),
+    // Water stains: the same photo stretched 6× tall on walls reads as vertical streaks; two
+    // offset copies chosen by slow noise so they do not band, gone by ~600 m.
+    along = p.x.add(p.z),
+    streakTex = (a, o) => dot(texture(tex.joints.colour, vec2(a.div(18).add(o), p.y.div(110))).rgb, LUMA),
+    streakRaw = mix(streakTex(along, 0), streakTex(along.mul(0.73), 0.37), smoothstep(-0.3, 0.3, mx_noise_float(p.mul(0.01).add(29)))),
+    streaks = mix(streakRaw.div(dot(vec3(...g.joints.mean), LUMA)).max(0.05), float(1), smoothstep(200, 600, dist)),
     walls = near.mul(variation).mul(mix(float(1), pow(streaks, 0.8), wall)),
     // Gentle ground: smooth weathered slab, mottled at 60 m.
     slab = photo(tex.slab, g.slab.mean, target, p, bend, 9).mul(mx_noise_float(p.mul(0.017)).mul(0.18).add(1)),
@@ -98,9 +107,9 @@ export function graniteRock(tex, g, p, n0, slope, bank, deep, relief = float(0))
     // Below a dam: the fractured-rock photo's texture in the same granite colour, a little
     // darker where the river keeps it wet.
     canyon = photo(tex.canyon, g.canyon.mean, target.mul(g.rock.canyon?.gain ?? 1), p, bend, 6);
-  let albedo = mix(slab, walls, wall);
+  let albedo = mix(calm(slab), calm(walls), wall);
   albedo = mix(albedo, bleached, bank);
-  albedo = mix(albedo, canyon, deep);
+  albedo = mix(albedo, calm(canyon, target.mul(g.rock.canyon?.gain ?? 1)), deep);
   const offset = mix(
     mix(untiledNormal(tex.slab.normal, p, bend, 9), untiledNormal(tex.joints.normal, p, bend, 7, up), wall).add(
       triplanarNormal(tex.joints.normal, p, bend, 31, up).mul(wall.mul(1.3)),
@@ -108,5 +117,6 @@ export function graniteRock(tex, g, p, n0, slope, bank, deep, relief = float(0))
     untiledNormal(tex.canyon.normal, p, bend, 6),
     deep,
   );
-  return { albedo, normal: normalize(bend.add(offset.mul(mix(float(0.8), float(0.25), relief)))) };
+  // The photos' bump tiles too: it fades with the colour far away.
+  return { albedo, normal: normalize(bend.add(offset.mul(mix(float(0.8), float(0.25), relief)).mul(float(1).sub(farFade)))) };
 }

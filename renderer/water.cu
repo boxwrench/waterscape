@@ -733,6 +733,10 @@ __device__ float3 terrainShade(const float4 *T, const float4 *L, float3 p, float
   ground = mix3(ground, mul(bank, .45f), wet);
   // Lighting: sun with terrain shadows, sky dome, warm bounce.
   float2 baked = bakeStride > 0 ? bakedLight(T, B, bakeStride, p.x, p.z) : make_float2(1.0f, 1.0f);
+  // The bake is one value per 10 m cell looked up from above: on a cliff it smears down the
+  // face. On steep ground it gives way to the face's own angle (as renderer/land/ground.js).
+  float steepFace = smooth(.4f, .75f, 1.0f - n.y);
+  baked = make_float2(lerp(baked.x, 1.0f, .85f * steepFace), lerp(baked.y, .8f, .7f * steepFace));
   float shadow = bakeStride > 0 ? baked.x
                                 : (shadowSteps > 0 ? terrainShadow(T, add(p, mul(n, .6f)), sun, shadowSteps) : 1.0f);
   float3 sunC = lightRad(L), skyC = lightFill(L),
