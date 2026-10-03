@@ -20,7 +20,12 @@ export async function loadBody(id, onProgress = () => {}) {
     // Dams and other structures (renderer/land/structures.js), where land.json lists them.
     structures = land.structures ? await json("structures.json") : null,
     // 1 m relief tiles (pipeline/detail.py), where land.json lists them.
-    detail = land.detail?.length ? { ...(await json("detail.json")), base } : null;
+    detail = land.detail?.length ? await json("detail.json").then((d) => ({
+      ...d,
+      // Only the tiles land.json lists (a tile can be turned off without refetching).
+      tiles: d.tiles.filter((t) => land.detail.some((l) => l.name === t.name)),
+      base,
+    })) : null;
   return { id, base, terrain, viewpoints: cameras.viewpoints, flyover: cameras.flyover, land, biome, structures, detail };
 }
 

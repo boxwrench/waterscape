@@ -50,6 +50,30 @@
         1600
       ],
       "note": "O'Shaughnessy Dam, the canyon below it and the lake beside it: 1 m 3DEP relief as lighting (pipeline/detail.py)."
+    },
+    {
+      "name": "north",
+      "centre": [
+        37.96113,
+        -119.7651
+      ],
+      "size": [
+        2000,
+        2200
+      ],
+      "note": "North shore: the Northwest ridge and Shoreline viewpoints and the slopes below them."
+    },
+    {
+      "name": "south",
+      "centre": [
+        37.94135,
+        -119.76322
+      ],
+      "size": [
+        2600,
+        2000
+      ],
+      "note": "South walls across the lake, Kolana Rock and the Southwest ridge viewpoint."
     }
   ]
 }
