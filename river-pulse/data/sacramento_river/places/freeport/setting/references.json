@@ -48,5 +48,10 @@
     "filename": "7e483bf7d3f7bffde17b3e16c8235d626dc8a742ce7a779dad30989446177056.jpg",
     "use": "Reference only. Crest-to-forward-leaf and crest-to-counterweight links meet shared joints; the long moving arm joins rear and forward joints. First leaf panels and narrow crest walkway fitted visually. Photographer, capture date and source URL not supplied; image not redistributed."
   },
+  "riverfront_setting": {
+    "reference": "User-supplied aerial photograph, recorded above",
+    "use": "East/tender-house-side roofed marina north of bridge, curving levee roads, low village/farm buildings, agricultural parcels and mixed leafy/bare riparian cover are original procedural visual reconstructions. Boat/slip counts, dimensions, positions, materials and foliage are authored; no current inventory, surveyed property boundary, species or season is asserted.",
+    "assets": "Original boat/building/road/grass geometry and original soil noise. Existing licensed reservoir tree bakes and CC0 rock maps retain their notices. Reference image is not bundled."
+  },
   "photo_fitted_geometry": "Fixed-span splits, elevation above illustrative water, steel sections, link pivots, counterweight sizes, pier/fender geometry and setting location are authored estimates fitted to photos. East pony length uses the documented 101-foot span. Model represents a closed bridge, not its current operating condition."
 }

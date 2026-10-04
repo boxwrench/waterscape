@@ -55,13 +55,13 @@ export const FREEPORT_BRIDGE_ANGLES = {
   east: { ...bridgeCamera(91, 7.9, 0, 0, 8.4), label: "East approach" },
   west: { ...bridgeCamera(-83, 7.9, 0, 0, 8.4), label: "West approach" },
   underside: { ...bridgeCamera(59, 1.6, 31, 61, 6.2, 0), label: "Piers and underside" },
-  above: { ...bridgeCamera(0, 110, -150, 0, 7, 0), label: "Above the bridge" },
+  above: { ...bridgeCamera(0, 190, -435, 0, 7, 0), fov: 35, label: "Above the bridge" },
 };
 
 export function freeportBridgeCamera(angle, portrait = false) {
   const view = FREEPORT_BRIDGE_ANGLES[angle];
   if (!portrait) return { ...view };
-  if (angle === "above") return { ...view, ...bridgeCamera(155, 125, 60, 0, 7, 0) };
+  if (angle === "above") return { ...view, ...bridgeCamera(155, 125, 60, 0, 7, 0), fov: 55 };
   if (angle === "underside") return { ...view, ...bridgeCamera(64, 1.6, 31, 66, 4.5, 0) };
   if (angle !== "east" && angle !== "west") {
     // Include both the forward leaf-head joint and rear counterweight in portrait.

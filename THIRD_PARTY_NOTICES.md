@@ -28,6 +28,9 @@ Freeport reference photos by Dicklyon (CC BY-SA 4.0) and Nathan Holth / Historic
 were studied for bridge geometry and composition; no photo files are redistributed.
 Archived state-submitted 2012 NBI dimensions and Caltrans' 2003 historic inventory inform
 the reconstruction. Procedural weathering, road and sign textures are original.
+The user's supplied aerial photograph also informed the riverfront setting; it is
+not redistributed. Soil texture, grass clumps, boats, marina, roads and village/farm
+building geometry are original procedural assets.
 Source links are recorded in
 `river-pulse/data/sacramento_river/places/freeport/setting/references.json`.
 

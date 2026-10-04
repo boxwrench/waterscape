@@ -3,7 +3,7 @@ import { FREEPORT_BRIDGE, FREEPORT_BRIDGE_ANGLES, bridgeToWorld, worldToBridge }
 
 export const FREEPORT_VIEWS = {
   bridge: { ...FREEPORT_BRIDGE_ANGLES.southeast, angle: "southeast", speed: 8, label: "Freeport bridge · Reference reconstruction" },
-  bank: { x: 108, z: 210, yaw: -0.54, pitch: -0.055, speed: 5, label: "Riverbank · Authored setting" },
+  bank: { x: 76, z: -390, yaw: -2.78, pitch: -0.04, speed: 5, label: "Marina shore · Photo-informed setting" },
   terrain: { x: -900, y: 1250, z: 1400, yaw: 0.57, pitch: -0.67, speed: 160, label: "USGS terrain · Survey elevations" },
 };
 
@@ -28,8 +28,8 @@ export function constrainFreeportCamera(state, view, terrain = null) {
   } else if (view === "bridge" && ["east", "west", "underside", "above"].includes(state.angle)) {
     const p = worldToBridge(state.x, state.z), b = FREEPORT_BRIDGE;
     if (state.angle === "above") {
-      p.x = Math.max(-160, Math.min(160, p.x)); p.z = Math.max(-150, Math.min(150, p.z));
-      state.y = Math.max(30, Math.min(140, state.y));
+      p.x = Math.max(-160, Math.min(160, p.x)); p.z = Math.max(-500, Math.min(500, p.z));
+      state.y = Math.max(30, Math.min(240, state.y));
     } else if (state.angle === "underside") {
       p.x = Math.max(24, Math.min(64, p.x)); p.z = Math.max(14, Math.min(44, p.z)); state.y = 1.6;
     } else {
@@ -45,7 +45,7 @@ export function constrainFreeportCamera(state, view, terrain = null) {
     state.x = center + side * Math.max(halfWidth + 4, Math.min(halfWidth + 110, distance));
     state.y = freeportGround(state.x, state.z) + 1.8;
   } else {
-    state.z = Math.max(5, Math.min(420, state.z));
+    state.z = Math.max(-490, Math.min(420, state.z));
     const { center, halfWidth } = freeportChannel(state.z);
     state.x = Math.max(center + halfWidth + 4, Math.min(center + halfWidth + 155, state.x));
     state.y = freeportGround(state.x, state.z) + (view === "bank" ? 1.8 : 3.5);

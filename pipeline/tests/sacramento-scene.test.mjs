@@ -11,6 +11,7 @@ import { riverDestination } from "../../river-pulse/data-model/overview-navigati
 import * as THREE from "../../vendor/three/three.webgpu.js";
 import { createFreeportBridge } from "../../river-pulse/renderer/freeport-bridge.js";
 import { FREEPORT_BRIDGE, FREEPORT_BRIDGE_ANGLES, bridgeToWorld, worldToBridge, freeportBridgeCamera } from "../../river-pulse/renderer/freeport-bridge-layout.js";
+import { freeportLeveeRoad, freeportMarinaLayout } from "../../river-pulse/renderer/freeport-riverfront-layout.js";
 
 const base = new URL("../../river-pulse/data/sacramento_river/places/freeport/", import.meta.url),
   json = async file => JSON.parse(await readFile(new URL(file, base), "utf8"));
@@ -26,8 +27,8 @@ test("Freeport bank, road and underside cameras stay in their intended domains",
         assert.ok(Math.abs(local.z) <= 2.80001);
         assert.equal(state.y, FREEPORT_BRIDGE.deckY + 1.7);
       } else if (angle === "above") {
-        assert.ok(Math.abs(local.x) <= 160.001 && Math.abs(local.z) <= 150.001);
-        assert.ok(state.y >= 30 && state.y <= 140);
+        assert.ok(Math.abs(local.x) <= 160.001 && Math.abs(local.z) <= 500.001);
+        assert.ok(state.y >= 30 && state.y <= 240);
       } else if (angle === "underside") {
         assert.ok(local.x >= 23.999 && local.x <= 64.001);
         assert.ok(local.z >= 13.999 && local.z <= 44.001);
@@ -41,9 +42,29 @@ test("Freeport bank, road and underside cameras stay in their intended domains",
       }
     }
   }
-  const bank = constrainFreeportCamera({ ...FREEPORT_VIEWS.bank, x: -10000, z: 10000 }, "bank");
-  assert.ok(bank.z >= 5 && bank.z <= 420);
-  assert.ok(bank.x >= freeportChannel(bank.z).center + freeportChannel(bank.z).halfWidth + 4);
+  for (const position of [FREEPORT_VIEWS.bank, { x: -10000, z: 10000 }, { x: 10000, z: -10000 }]) {
+    const bank = constrainFreeportCamera({ ...FREEPORT_VIEWS.bank, ...position }, "bank");
+    assert.ok(bank.z >= -490 && bank.z <= 420);
+    assert.ok(bank.x >= freeportChannel(bank.z).center + freeportChannel(bank.z).halfWidth + 4);
+    assert.ok(bank.y >= freeportGround(bank.x, bank.z) + 1.799);
+  }
+});
+
+test("Freeport marina stays on water and levee roads follow dry ground", () => {
+  for (const side of [-1, 1]) for (let z = -1600; z <= 1600; z += 37) {
+    const road = freeportLeveeRoad(side, z);
+    assert.ok(freeportGround(road.x, road.z) > 0);
+    assert.ok(road.y > freeportGround(road.x, road.z));
+  }
+  const marina = freeportMarinaLayout();
+  for (const roof of marina.roofs) for (const z of [roof.z0, roof.z1]) {
+    assert.ok(freeportGround(roof.x - roof.width / 2, z) < 0);
+    assert.ok(freeportGround(roof.x + roof.width / 2, z) < 0);
+  }
+  for (const boat of marina.boats) {
+    assert.ok(freeportGround(boat.x - boat.length / 2, boat.z) < 0);
+    assert.ok(freeportGround(boat.x + boat.length / 2, boat.z) < 0);
+  }
 });
 
 test("Freeport reconstruction has finite, bounded 3D structure for every angle", () => {

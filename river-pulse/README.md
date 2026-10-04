@@ -30,10 +30,12 @@ California DWR geometry is a fallback if the local centerline cannot load.
   panel. San Joaquin, Eel, Tuolumne and American have source-linked planned entries.
   See the [Sacramento foundation](../docs/river-pulse/sacramento-foundation.md).
 
-- **Freeport (local RP14):** detailed closed green steel bridge with both bank sides,
+- **Freeport (local RP16):** detailed closed green steel bridge with both bank sides,
   east/west approaches, underside and overhead views. Archived bridge dimensions anchor
   the horizontal envelope; heights and small components are photo-fitted. Reflective river,
-  stone levee and shared broadleaf meshes remain authored. Terrain shows bundled
+  soil/grass banks, curving levee roads, roofed marina, boats, village/farm buildings
+  and shared riparian meshes remain photo-informed setting. Riverbank opens the marina
+  shore and Above includes the riverfront. Terrain shows bundled
   3DEP/3DHP geography and aligned NAIP imagery.
   Discharge is independent of the fixed shoreline and authored optical ripples.
   [Scene notes](../docs/river-pulse/sacramento-freeport-scene.md).

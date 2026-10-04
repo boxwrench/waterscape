@@ -32,10 +32,10 @@ function motionLabel() {
 $("#pause").onclick = () => { paused = !paused; motionLabel(); };
 reducedMotion.addEventListener("change", motionLabel); motionLabel();
 function setView(view) {
-  activeView = view; Object.assign(state, FREEPORT_VIEWS[view]); keys.clear(); constrainFreeportCamera(state, view, terrain);
+  activeView = view; Object.assign(state, { fov: 55 }, FREEPORT_VIEWS[view]); keys.clear(); constrainFreeportCamera(state, view, terrain);
   $("#bridge-angle-control").hidden = view !== "bridge";
   if (view === "bridge") setBridgeAngle($("#bridge-angle").value);
-  if (innerWidth < 600 && view === "bank") { state.yaw = -0.30; state.pitch = -0.025; }
+  if (innerWidth < 600 && view === "bank") { state.yaw = -2.86; state.pitch = -0.04; }
   for (const button of document.querySelectorAll("[data-view]")) {
     const active = button.dataset.view === view; button.classList.toggle("active", active); button.setAttribute("aria-pressed", String(active));
   }
@@ -43,7 +43,7 @@ function setView(view) {
   if (view !== "bridge") $("#scene-state").textContent = FREEPORT_VIEWS[view].label;
 }
 function setBridgeAngle(angle) {
-  Object.assign(state, freeportBridgeCamera(angle, innerWidth < 600), { angle, speed: angle === "above" ? 16 : ["east", "west", "underside"].includes(angle) ? 4 : 8 });
+  Object.assign(state, { fov: 55 }, freeportBridgeCamera(angle, innerWidth < 600), { angle, speed: angle === "above" ? 16 : ["east", "west", "underside"].includes(angle) ? 4 : 8 });
   constrainFreeportCamera(state, "bridge"); keys.clear();
   const target = state.target, dx = target.x - state.x, dz = target.z - state.z;
   state.yaw = Math.atan2(dx, -dz); state.pitch = Math.atan2(target.y - state.y, Math.hypot(dx, dz));
@@ -123,7 +123,8 @@ async function main() {
   renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.03; renderer.shadowMap.enabled = true;
   const scene = new THREE.Scene(); scene.background = new THREE.Color(0xc9dce1); scene.fog = new THREE.FogExp2(0xc9dce1, 0.00018);
   scene.add(new THREE.HemisphereLight(0xdceaf1, 0x5b5942, 2));
-  const sun = new THREE.DirectionalLight(0xfff1d0, 2.5); sun.position.set(-500, 700, 350); sun.castShadow = true;
+  const sun = new THREE.DirectionalLight(0xfff1d0, 2.5); sun.position.set(-500, 700, 170);
+  sun.target.position.set(0, 0, -180); scene.add(sun.target); sun.castShadow = true;
   sun.shadow.mapSize.set(2048, 2048); sun.shadow.normalBias = 0.25;
   Object.assign(sun.shadow.camera, { left: -350, right: 350, top: 350, bottom: -350, near: 1, far: 1600 }); scene.add(sun);
   const noise = createJennerNoise(), [maps, loadedTerrain, hydrography, aerial] = await Promise.all([
@@ -150,6 +151,7 @@ async function main() {
     const forward = Number(keys.has("w") || keys.has("ArrowUp")) - Number(keys.has("s") || keys.has("ArrowDown")),
       strafe = Number(keys.has("d") || keys.has("ArrowRight")) - Number(keys.has("a") || keys.has("ArrowLeft"));
     if (forward || strafe) { const length = Math.hypot(forward, strafe); move(forward / length * state.speed * dt, strafe / length * state.speed * dt); }
+    if (camera.fov !== state.fov) { camera.fov = state.fov; camera.updateProjectionMatrix(); }
     camera.position.set(state.x, state.y, state.z); camera.rotation.set(state.pitch, -state.yaw, 0); water.update(seconds, reducedMotion.matches);
     try { renderer.render(scene, camera); if (firstFrame) { firstFrame = false; $("#loading").hidden = true; } }
     catch (error) { renderer.setAnimationLoop(null); fail(error); }

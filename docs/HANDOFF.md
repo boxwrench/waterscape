@@ -1,5 +1,22 @@
 # Handoff — 2026-10-04
 
+## Freeport riverfront setting — RP16
+
+Draft checkpoint: the user redirected work to an Eel River visual study before
+acceptance. Desktop views were inspected and 12 focused tests, package validation
+and the full build passed. Phone, Evidence/pause and final comparative review remain
+unfinished. This setting is not an accepted visual baseline.
+
+After the user accepted the bridge and asked to move on, `task/RP16` builds its
+surroundings from their aerial reference. Earthy shoreline/grass materials replace
+the pale repeating banks. Levee roads and bridge ramps, roofed marina/slips, original
+boats, village/farm buildings, utility poles, fields and layered riparian vegetation
+give the scene a riverfront. Riverbank starts on the marina shore; desktop Above
+includes a wider corridor. Structures are batched; existing licensed tree/rock assets
+are reused. New placements, materials, counts and dimensions are Setting estimates,
+not surveyed or current-condition records. The accepted bridge mesh, water bindings
+and geographic terrain are retained. No push or merge.
+
 ## Freeport upper-link connections — RP15
 
 The user's aerial reference exposed a missing forward tower link. `task/RP15`

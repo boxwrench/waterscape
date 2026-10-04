@@ -1,4 +1,4 @@
-# Sacramento at Freeport — RP13 / RP14 / RP15
+# Sacramento at Freeport — RP13–RP16
 
 The user's next step after the accepted California overview is the first detailed
 Sacramento place. Freeport already supplies a pinned USGS discharge series and separate
@@ -40,6 +40,19 @@ truss rises from its heel to the forward head before tapering toward the center.
 Shared endpoints keep members, pivot plates, pins and catwalk aligned on both
 assemblies. Roof bracing follows both upper-link slopes and the crest walkway is
 narrow. The photo is not bundled; component positions remain visual estimates.
+
+RP16 develops the surrounding riverfront from the same supplied aerial reference.
+Two long roofed marina rows, floating docks, boarding ramps and original moored
+boat meshes sit north of the bridge on the tender-house side. Curving levee roads,
+bridge approach ramps, small village/farm buildings, utility poles and agricultural
+parcels establish the corridor. Earthy wet/dry soil and grass replace the pale
+repeated bank texture; local grass clumps, shrubs and smaller mixed leafy/bare trees
+give the shoreline depth. The soil uses original mipmapped procedural noise,
+separate from the water noise. Surrounding structures are batched by material.
+Riverbank starts beside the marina; desktop Above widens to include the riverfront.
+Boat/slip counts, dimensions, positions, foliage and building styles are authored
+setting choices, not a current inventory, parcel survey or seasonal observation.
+The accepted bridge geometry and scientific data/terrain bindings are retained.
 
 The [archived 2012 NBI sheet](https://historicbridges.org/california/freeportbridge/nbisheet.pdf)
 provides total length 198.9 m, main span 68.9 m, roadway 6.4 m and deck 6.8 m.
