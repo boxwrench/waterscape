@@ -36,3 +36,25 @@ The broad lowland reach gets deciduous foliage and levees rather than Hacienda's
 
 Never infer water level, local current or bank inundation from Freeport discharge.
 Setting coordinates/dimensions are artistic estimates, not surveyed geometry.
+
+## Result
+
+- Status: done
+- Commit: `8d51d62`
+- Checks:
+  - `node --test pipeline/tests/sacramento-scene.test.mjs pipeline/tests/river-pulse-sacramento.test.mjs pipeline/tests/california-overview.test.mjs`: 10 pass, 0 fail.
+  - `node pipeline/validate-river-packages.mjs`: River packages valid.
+  - `npm run test:build`: 109 browser modules; Built experience pages and river assets valid.
+  - Browser: default desktop and 390 × 844 phone renders inspected; Bridge/Riverbank/Terrain,
+    Evidence, Pause/Resume and Explore exercised; History opens Sacramento's individual
+    page, and the California map's Sacramento label opens Freeport. No console errors/warnings.
+    Phone scroll width equals viewport width. Temporary viewport reset; bridge preview left open.
+  - `git diff --check` and staged whitespace check: clean.
+- Notes: first authored Freeport baseline, with separate sourced terrain and imagery.
+  Close-view geometry remains approximate; no hydraulics or native-GPU performance claim.
+  Graphics/data independence is present in initialization and source-selection architecture;
+  a forced graphics outage was not injected through the browser. Tests cover current,
+  stale, future, missing and distinct source products. The initial test assertion referred
+  to a nonexistent state field; corrected to inspect selected quantities/model fields.
+  Network/process sandbox restrictions required approved reruns; source acquisition and
+  all final checks succeeded. Builds on local RP11/RP12 work. No push, merge or publication.
