@@ -1,4 +1,4 @@
-# Sacramento at Freeport — RP13
+# Sacramento at Freeport — RP13 / RP14
 
 The user's next step after the accepted California overview is the first detailed
 Sacramento place. Freeport already supplies a pinned USGS discharge series and separate
@@ -18,10 +18,31 @@ The [Dicklyon Freeport photograph](https://commons.wikimedia.org/wiki/File:Freep
 (CC BY-SA 4.0, reference only) was inspected for green steel, approach shape and foliage.
 The [HistoricBridges side view](https://historicbridges.org/bridges/browser/?bridgebrowser=california/freeportbridge/)
 was inspected for the low closed leaves, counterweight towers, piers and reflected bridge.
-Neither photo is redistributed. The reconstruction is approximate, rather than an
-engineering/as-built model; bridge dimensions, deck elevation, levee section and vegetation
-placement are authored estimates. No dates or dimensions from secondary references are
-shown as factual UI. The two tree mesh variants convey broadleaf cover, not a botanical census.
+Neither photo is redistributed. RP14 replaces the generic crossing with a detailed
+multi-angle reconstruction: tapered bascule leaves, laced fixed counterweight trusses,
+upper links/trunnions, exposed concrete weights, east Warren pony approach, west stringers,
+rounded piers and timber fenders. Railings, riveted gussets, overhead/under-deck bracing,
+catwalks, signals and a hip-roof tender house support close inspection. Fixed roof braces
+leave the counterweight bays open. Original procedural textures supply weathering.
+Geometry is batched by material to avoid thousands of draw calls.
+
+Close-up top-strut review uses Holth's [open paired roof braces](https://historicbridges.org/california/freeportbridge/day3_freeportbridge02997.jpg),
+[lattice headers and sway frames](https://historicbridges.org/california/freeportbridge/day3_freeportbridge02984.jpg)
+and [upper links/platform](https://historicbridges.org/california/freeportbridge/day3_freeportbridge03008.jpg).
+The roof X members have cross ties, center plates and transverse struts; header lacing
+faces vertically, while the portal sway diagonals use angle members. The tower platform
+has a floor and two-tier rails. These component dimensions remain photo-fitted.
+
+The [archived 2012 NBI sheet](https://historicbridges.org/california/freeportbridge/nbisheet.pdf)
+provides total length 198.9 m, main span 68.9 m, roadway 6.4 m and deck 6.8 m.
+The [Caltrans historic inventory](https://historicbridges.org/california/freeportbridge/24C0001.pdf)
+and Nathan Holth's original gallery supply arrangement and visual evidence. The documented
+101-foot east pony span is converted to metres. Remaining span splits, deck/steel elevations,
+sections, weight sizes, link pivots, pier/fender sizes and placement are photo-fitted estimates.
+This is not a surveyed engineering/as-built model, and no numerical photogrammetric accuracy
+is claimed. Background town, vegetation and material condition are not fully reconstructed.
+Portal signs copy archival photos and are not current clearance information.
+The two tree mesh variants convey broadleaf cover, not a botanical census.
 
 ## Two coordinate frames
 
@@ -74,9 +95,14 @@ synthetic display readings. Tests use clearly isolated synthetic fixtures only.
 ## Controls and limits
 
 Bridge, Riverbank and Terrain buttons reset bounded cameras and disclose their frame.
-Drag looks; wheel/WASD moves. Close cameras stay on the eastern authored bank and
-reset to ground-relative height; Terrain stays inside the loaded DEM at least 50 m above
-ground. Keyboard movement is canvas-only and clears on blur/visibility changes.
-Explore hides the title/card; Escape closes Evidence. Phone views frame a bridge tower;
+Bridge angle adds four bank sides, east/west road approaches, underside and above.
+The same complete model renders every angle. Drag looks; wheel/WASD moves.
+Bank cameras stay on the selected bank at ground-relative eye height; approach cameras
+stay inside the deck at deck-relative height. Underside is a bounded river-level inspection
+camera; Above stays above the model. Terrain stays inside the loaded DEM at least 50 m
+above ground. Keyboard movement is canvas-only and clears on blur/visibility changes.
+Explore hides the title/card; Escape closes Evidence. Phone bank views frame the nearest
+counterweight assembly; the overhead camera looks along the bridge to keep it in portrait.
+Crossing the phone breakpoint reframes the selected bridge angle. Phone views retain the angle selector;
 controls retain keyboard focus and touch targets. No native-GPU performance guarantee
 is implied by browser visual checks.

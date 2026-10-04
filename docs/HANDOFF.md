@@ -1,4 +1,23 @@
-# Handoff — 2026-10-03
+# Handoff — 2026-10-04
+
+## Freeport bridge reconstruction — RP14
+
+`task/RP14` replaces RP13's generic bridge with detailed laced/built-up green steel,
+tapered closed leaves, Pratt counterweight support spans, upper links and trunnions,
+exposed concrete weights, east Warren pony/west stringer approaches, rounded piers,
+timber fenders/ladders, road surfaces, railings, signals and a hip-roof tender house.
+Eight selectable angles cover both sides, both approaches, underside and above.
+Close-up upper-bracing review adds paired open diagonals, cross ties/center plates,
+vertical lattice headers, angle-member sway frames and a railed top platform.
+The archived 2012 NBI anchors length/span/roadway/deck width. Unreported heights and
+small components are fitted to original photos, not surveyed/as-built geometry.
+Evidence/reference metadata preserves that distinction and identifies archival signs.
+Scientific observations, water bindings and geographic terrain remain independent.
+Verification: 11 focused tests pass, river packages validate, and the complete build
+passes. Eight desktop/phone angles and evidence/pause/navigation controls were inspected;
+no console errors. Local previews include bridge, east approach, underside and overhead.
+See [scene notes](river-pulse/sacramento-freeport-scene.md) and
+[task](roadmap/tasks/RP14-freeport-bridge-fidelity.md). No push or merge.
 
 ## Sacramento at Freeport — RP13
 

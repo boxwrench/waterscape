@@ -35,7 +35,10 @@ pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 10px; max-heigh
 .views { display: inline-flex; padding: 5px; gap: 2px; }
 .views button { padding: 12px 23px; background: none; border: 1px solid transparent; border-radius: 5px; font-size: 12px; }
 .views button.active { background: #e1e8ca1b; border-color: #e1e8ca3a; }
-.scene-note { position: absolute; right: 0; top: 15px; display: flex; gap: 18px; align-items: center; font-size: 11px; color: var(--muted); }
+.bridge-angle { display: inline-flex; gap: 12px; align-items: center; padding: 10px 12px; margin-left: 10px; font-size: 11px; }
+.bridge-angle select { font: inherit; color: var(--cream); background: #263d36; border: 1px solid var(--line); border-radius: 4px; padding: 7px; }
+.bridge-angle select:focus-visible { outline: 2px solid #e4edae; outline-offset: 3px; }
+.scene-note { margin-top: 12px; display: flex; gap: 18px; align-items: center; font-size: 11px; color: var(--muted); }
 .scene-note button { background: none; border: 0; border-bottom: 1px solid var(--line); font-size: 11px; padding: 3px; }
 .controls-copy { font-size: 10px; color: var(--muted); margin: 12px 0 0; }
 body.exploring .place-card { opacity: 0; pointer-events: none; }
@@ -53,6 +56,9 @@ body.exploring .place-card { opacity: 0; pointer-events: none; }
   .subtitle { font-size: 15px; margin-bottom: 15px; } .river-name { font-size: 11px; }
   .flow-card { position: fixed; left: 22px; bottom: 151px; width: 255px; padding: 13px 15px; } #flow-value { font-size: 25px; } #flow-time { margin-bottom: 10px; }
   .river-controls { left: 14px; right: 14px; bottom: 18px; } .views { display: flex; width: 100%; } .views button { flex: 1; padding: 13px 6px; }
+  .bridge-angle { display: flex; justify-content: space-between; margin: 7px 0 0; padding: 6px 12px; }
+  .bridge-angle select { padding: 5px; }
+  body:has(#bridge-angle-control:not([hidden])) .flow-card { bottom: 197px; }
   .scene-note { font-size: 10px; gap: 12px; } .controls-copy { font-size: 9px; }
   .inspector { top: 72px; bottom: 155px; left: 14px; right: 14px; width: auto; padding: 20px; }
   .error { left: 14px; right: 14px; bottom: 155px; max-width: none; }

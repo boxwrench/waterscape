@@ -3,6 +3,7 @@ import { color, mix, positionWorld, smoothstep, texture, vec3 } from "../../vend
 import { freeportChannel, freeportGround, freeportGrid } from "./freeport-layout.js";
 import { seededRandom } from "./bank-setting-layout.js";
 import { grayStone } from "./beach-materials.js";
+import { createFreeportBridge } from "./freeport-bridge.js";
 
 export async function createFreeportSetting(noise, maps) {
   const group = new THREE.Group(), grid = freeportGrid(), geometry = new THREE.BufferGeometry();
@@ -20,52 +21,10 @@ export async function createFreeportSetting(noise, maps) {
       color: i % 3 ? 0x7c8351 : 0x8c855f, roughness: 1 }));
     field.rotation.x = -Math.PI / 2; field.position.set(side * 690, 2.6, -1900 + i * 540); group.add(field);
   }
-  addBridge(group); addBanks(group, maps); await addTrees(group);
+  group.add(createFreeportBridge()); addBanks(group, maps); await addTrees(group);
   group.name = "Freeport authored levee and bridge setting";
   group.userData = { bindingClass: "setting", surveyed: false };
   return group;
-}
-
-function addBridge(group) {
-  const steel = new THREE.MeshStandardNodeMaterial({ color: 0x698778, metalness: 0.32, roughness: 0.6 }),
-    concrete = new THREE.MeshStandardNodeMaterial({ color: 0xb2b5a8, roughness: 0.95 }),
-    road = new THREE.MeshStandardNodeMaterial({ color: 0x595c55, roughness: 0.94 }),
-    bridge = new THREE.Group(), unit = new THREE.BoxGeometry(1, 1, 1);
-  bridge.position.set(-18, 0, -95); bridge.rotation.y = -0.04; bridge.name = "Freeport green steel crossing · approximate";
-  function box(x, y, z, sx, sy, sz, material) {
-    const mesh = new THREE.Mesh(unit, material); mesh.position.set(x, y, z); mesh.scale.set(sx, sy, sz);
-    mesh.castShadow = true; mesh.receiveShadow = true; bridge.add(mesh); return mesh;
-  }
-  function beam(a, b, thickness = 0.3) {
-    const start = new THREE.Vector3(...a), end = new THREE.Vector3(...b), delta = end.clone().sub(start), mesh = new THREE.Mesh(unit, steel);
-    mesh.position.copy(start.add(end).multiplyScalar(0.5)); mesh.scale.set(thickness, delta.length(), thickness);
-    mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), delta.normalize()); mesh.castShadow = true; bridge.add(mesh);
-  }
-  box(0, 7.8, 0, 330, 0.65, 8.5, road);
-  // Two counterweight towers and the low central closed leaves: distinctive bascule silhouette.
-  for (const x of [-67, 67]) {
-    box(x, 3, 0, 5.5, 9, 13, concrete);
-    for (const z of [-4.7, 4.7]) {
-      box(x, 15, z, 1.1, 15, 0.7, steel);
-      box(x + Math.sign(x) * 9, 18.7, z, 15, 5.6, 1.1, steel);
-      beam([x - 10, 8, z], [x, 22, z], 0.55);
-    }
-    beam([x, 22, -4.7], [x, 22, 4.7], 0.55);
-    box(x + Math.sign(x) * 11, 18, 0, 8, 5, 8, concrete);
-    for (let z = -8; z <= 8; z += 4) box(x - 5, 0, z, 0.6, 6.8, 0.6, road);
-  }
-  for (let z of [-4.5, 4.5]) {
-    for (let i = 0; i < 20; i++) {
-      const x = -160 + i * 16, top = Math.abs(x + 8) < 110 ? 17 : 10.7;
-      beam([x, 8.5, z], [x, top, z], 0.25);
-      beam([x, top, z], [x + 16, top, z], 0.3);
-      beam([x, 8.5, z], [x + 16, top, z], 0.24);
-      beam([x, 8.5, z], [x + 16, 8.5, z], 0.3);
-      if (top > 12) beam([x, top, -4.5], [x + 16, top, 4.5], 0.18);
-    }
-  }
-  for (const x of [-157, 157]) box(x, 3.5, 0, 8, 8, 12, concrete);
-  group.add(bridge);
 }
 
 function addBanks(group, maps) {
@@ -113,6 +72,12 @@ async function addTrees(group) {
     placements.push({ x, z, h, yaw: random() * 6.28 });
   }
   // A few nearby canopies frame the river without blocking either bank camera.
+  // Lower riparian groups break the bare far-bank strip visible through the steel.
+  for (let i = 0; i < 130; i++) {
+    const z = (random() - 0.5) * 1100, side = i % 2 ? -1 : 1, { center, halfWidth } = freeportChannel(z);
+    if (Math.abs(z + 95) < 22 || (side > 0 && z > -70 && z < 430)) continue;
+    placements.push({ x: center + side * (halfWidth + 10 + random() * 22), z, h: 5 + random() * 9, yaw: random() * 6.28 });
+  }
   placements.push({ x: 146, z: 445, h: 22, yaw: 1 }, { x: 162, z: -45, h: 18, yaw: 2 },
     { x: -145, z: -10, h: 23, yaw: 1.6 }, { x: -166, z: -45, h: 28, yaw: 0.9 });
   for (const [variantIndex, id] of ["coast-live-a", "coast-live-b-far"].entries()) {

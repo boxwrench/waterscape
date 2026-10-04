@@ -41,7 +41,8 @@
         <details><summary>Source record and selection</summary><pre id="record">Waiting for USGS.</pre></details>
         <a href="../river.html?river=sacramento_river">Open tidally filtered daily history</a>
         <h3>The close views</h3>
-        <p>The bridge, levees, trees and bank cameras are a photo-informed, approximate setting. Their dimensions and local coordinates are authored rather than surveyed.</p>
+        <p>The bridge is a detailed, photo-informed reconstruction in its closed position. Its overall length, central span and roadway/deck widths follow the archived 2012 National Bridge Inventory. Heights, member sections, span splits, piers, counterweights, levees and local placement are fitted to photos rather than surveyed.</p>
+        <p>Bridge angle shows both banks, both road approaches and the underside. Portal signs reproduce the reference photographs; they are not current clearance or travel information.</p>
         <p>The fixed shoreline, green-brown color, clarity and ripples are illustrative. Discharge does not drive water level, bank flooding, wave speed or local current direction.</p>
         <h3>The terrain view</h3>
         <p>USGS 3DEP elevation in NAVD88, resampled to approximately 7.7 m cells with no vertical exaggeration. USGS/USDA NAIP aerial imagery follows the same terrain grid; it is a service mosaic, not a current photograph. USGS 3DHP lines share the geographic frame; their display width is symbolic. This is survey geography, not today's water surface or bathymetry.</p>
@@ -51,6 +52,8 @@
         <h3>Visual references</h3>
         <p><a href="https://commons.wikimedia.org/wiki/File:Freeport_Bridge_from_Freeport.jpg" target="_blank" rel="noopener">Freeport bridge · Dicklyon</a><br><small>CC BY-SA 4.0 · photo studied, not embedded</small></p>
         <p><a href="https://historicbridges.org/bridges/browser/?bridgebrowser=california/freeportbridge/" target="_blank" rel="noopener">Freeport side-view photographs</a><br><small>HistoricBridges.org · reference only</small></p>
+        <p><a href="https://historicbridges.org/california/freeportbridge/nbisheet.pdf" target="_blank" rel="noopener">Archived bridge dimensions · 2012 NBI</a><br>
+        <a href="https://historicbridges.org/california/freeportbridge/24C0001.pdf" target="_blank" rel="noopener">Caltrans historic inventory · 2003 survey</a></p>
         <p class="resource-note">Reflective water and shared bank materials continue Hacienda's visual work. Sea-detail noise is reused from Jenner's credited MIT Tidewater adaptation. No measured water quality or hydraulic simulation is implied.</p>
       </aside>
     </main>
@@ -60,6 +63,18 @@
         <button data-view="bank" aria-pressed="false">Riverbank</button>
         <button data-view="terrain" aria-pressed="false">Terrain</button>
       </div>
+      <label class="bridge-angle glass" id="bridge-angle-control">Bridge angle
+        <select id="bridge-angle" aria-label="Bridge angle">
+          <option value="southeast">Southeast bank</option>
+          <option value="northeast">Northeast bank</option>
+          <option value="southwest">Southwest bank</option>
+          <option value="northwest">Northwest bank</option>
+          <option value="east">East approach</option>
+          <option value="west">West approach</option>
+          <option value="underside">Piers and underside</option>
+          <option value="above">Above the bridge</option>
+        </select>
+      </label>
       <div class="scene-note"><span id="scene-state">Preparing Freeport</span><button id="pause" aria-pressed="false">Pause water</button></div>
       <p class="controls-copy">Drag to look <i>·</i> Scroll or WASD to move <i>·</i> Explore hides the title</p>
     </footer>

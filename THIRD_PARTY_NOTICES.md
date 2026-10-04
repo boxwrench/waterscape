@@ -24,8 +24,11 @@ image is an aligned USGS/USDA NAIP Plus export (public domain); `aerial.json` re
 the request, extent and credit. Shared CC0 Hacienda rock maps, original MIT ez-tree
 coast-live mesh/leaf/bark assets from `data/biomes/diablo-oak`, and the already credited
 MIT Tidewater noise adaptation are reused unchanged. Existing licenses remain applicable.
-Freeport reference photos by Dicklyon (CC BY-SA 4.0) and HistoricBridges.org were studied
-for composition only; no photo files are redistributed. Source links are recorded in
+Freeport reference photos by Dicklyon (CC BY-SA 4.0) and Nathan Holth / HistoricBridges.org
+were studied for bridge geometry and composition; no photo files are redistributed.
+Archived state-submitted 2012 NBI dimensions and Caltrans' 2003 historic inventory inform
+the reconstruction. Procedural weathering, road and sign textures are original.
+Source links are recorded in
 `river-pulse/data/sacramento_river/places/freeport/setting/references.json`.
 
 ## three.js

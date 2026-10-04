@@ -8,19 +8,59 @@ import { freeportDischarge } from "../../river-pulse/visual-bindings/freeport-di
 import { parseLatestContinuousFeature } from "../../river-pulse/adapters/usgs.js";
 import { riverDestination } from "../../river-pulse/data-model/overview-navigation.js";
 
+import * as THREE from "../../vendor/three/three.webgpu.js";
+import { createFreeportBridge } from "../../river-pulse/renderer/freeport-bridge.js";
+import { FREEPORT_BRIDGE, FREEPORT_BRIDGE_ANGLES, bridgeToWorld, worldToBridge, freeportBridgeCamera } from "../../river-pulse/renderer/freeport-bridge-layout.js";
+
 const base = new URL("../../river-pulse/data/sacramento_river/places/freeport/", import.meta.url),
   json = async file => JSON.parse(await readFile(new URL(file, base), "utf8"));
 
-test("Freeport close-view cameras stay on dry authored banks during large movement", () => {
-  for (const view of ["bridge", "bank"]) {
-    const start = constrainFreeportCamera({ ...FREEPORT_VIEWS[view] }, view);
-    assert.ok(freeportGround(start.x, start.z) > 0);
-    for (const [x, z] of [[-10000, 10000], [10000, -10000], [0, 150]]) {
-      const state = constrainFreeportCamera({ ...start, x, z }, view), channel = freeportChannel(state.z);
-      assert.ok(state.x >= channel.center + channel.halfWidth + 4);
-      assert.ok(state.z >= 5 && state.z <= 420);
-      assert.ok(state.y >= freeportGround(state.x, state.z) + 1.8);
+test("Freeport bank, road and underside cameras stay in their intended domains", () => {
+  for (const angle of Object.keys(FREEPORT_BRIDGE_ANGLES)) for (const portrait of [false, true]) {
+    const camera = freeportBridgeCamera(angle, portrait);
+    for (const [x, z] of [[camera.x, camera.z], [-10000, 10000], [10000, -10000], [0, 150]]) {
+      const state = constrainFreeportCamera({ ...camera, angle, x, z }, "bridge");
+      assert.ok([state.x, state.y, state.z].every(Number.isFinite));
+      const local = worldToBridge(state.x, state.z), channel = freeportChannel(state.z);
+      if (angle === "east" || angle === "west") {
+        assert.ok(Math.abs(local.z) <= 2.80001);
+        assert.equal(state.y, FREEPORT_BRIDGE.deckY + 1.7);
+      } else if (angle === "above") {
+        assert.ok(Math.abs(local.x) <= 160.001 && Math.abs(local.z) <= 150.001);
+        assert.ok(state.y >= 30 && state.y <= 140);
+      } else if (angle === "underside") {
+        assert.ok(local.x >= 23.999 && local.x <= 64.001);
+        assert.ok(local.z >= 13.999 && local.z <= 44.001);
+        assert.equal(state.y, 1.6);
+      } else {
+        assert.ok(Math.abs(state.x - channel.center) >= channel.halfWidth + 3.999);
+        assert.ok(freeportGround(state.x, state.z) > 0);
+        assert.ok(state.y >= freeportGround(state.x, state.z) + 1.799);
+        assert.equal(state.z < -100, angle.includes("north"));
+        assert.equal(state.x < channel.center, angle.includes("west"));
+      }
     }
+  }
+  const bank = constrainFreeportCamera({ ...FREEPORT_VIEWS.bank, x: -10000, z: 10000 }, "bank");
+  assert.ok(bank.z >= 5 && bank.z <= 420);
+  assert.ok(bank.x >= freeportChannel(bank.z).center + freeportChannel(bank.z).halfWidth + 4);
+});
+
+test("Freeport reconstruction has finite, bounded 3D structure for every angle", () => {
+  const bridge = createFreeportBridge(), bounds = new THREE.Box3().setFromObject(bridge);
+  assert.ok(bridge.children.length < 20, "Detailed steel must be batched to avoid thousands of draw calls");
+  assert.ok(bounds.max.y > 20 && bounds.max.y < 23, "Counterweight towers must rise above fixed trusses");
+  assert.ok(bounds.min.y < 0, "Pier/fender piles extend below the illustrative waterline");
+  let vertices = 0;
+  for (const mesh of bridge.children) {
+    assert.ok(mesh.geometry.attributes.position.array.every(Number.isFinite));
+    assert.ok(mesh.geometry.attributes.normal.array.every(Number.isFinite));
+    vertices += mesh.geometry.attributes.position.count;
+  }
+  assert.ok(vertices > 10000, "The bridge must include its three-dimensional member detail");
+  for (const p of [[0, 0, 0], [91, 7.9, -2], [-83, 7.9, 2]]) {
+    const world = bridgeToWorld(...p), local = worldToBridge(world.x, world.z);
+    assert.ok(Math.abs(local.x - p[0]) < 1e-10 && Math.abs(local.z - p[2]) < 1e-10);
   }
 });
 

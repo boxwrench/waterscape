@@ -11,8 +11,37 @@
     {
       "url": "https://historicbridges.org/bridges/browser/?bridgebrowser=california/freeportbridge/",
       "use": "Reference only; side-view silhouette, counterweight towers and piers. No photographs redistributed."
+    },
+    {
+      "url": "https://historicbridges.org/california/freeportbridge/nbisheet.pdf",
+      "creator": "State-submitted FHWA National Bridge Inventory (2012), archived by HistoricBridges.org",
+      "use": "Overall length 198.9 m, maximum span 68.9 m, roadway 6.4 m, deck 6.8 m. Archival dimensions, not a current inspection."
+    },
+    {
+      "url": "https://historicbridges.org/california/freeportbridge/24C0001.pdf",
+      "creator": "Caltrans historic bridge inventory, survey 2003-03-13",
+      "use": "Reference only: arrangement, north-side tender house, piers and approaches. PDF not redistributed."
+    },
+    {
+      "url": "https://historicbridges.org/bridges/browser/photos.php?bridgebrowser=california/freeportbridge/&gallerynum=1&gallerysize=1",
+      "creator": "Nathan Holth, 2013-04-06",
+      "use": "Reference only: southeast/northeast views, east/west portals, tapered bascule webs, fixed Pratt support webs, counterweight links, trunnions, machinery, house, railing and underside. No photos redistributed."
     }
   ],
   "shared_assets": "Hacienda bank materials (CC0) and Jenner noise adaptation (MIT Tidewater); retain original notices.",
-  "limitations": "Authored width, deck, bank profile, trees and optics are estimates. No hydraulic or survey accuracy is claimed for the close views."
+  "limitations": "Photo-based reconstruction with documented horizontal envelope. No survey/as-built fidelity, live clearance, stage, hydraulics, material condition or complete reproduction of the surrounding town is claimed.",
+  "bridge_dimensions": {
+    "source": "https://historicbridges.org/california/freeportbridge/nbisheet.pdf",
+    "record_year": 2012,
+    "overall_length_m": 198.9,
+    "main_span_m": 68.9,
+    "roadway_width_m": 6.4,
+    "deck_width_m": 6.8
+  },
+  "upper_bracing_detail_references": {
+    "paired_members_center_plate_and_cross_ties": "https://historicbridges.org/california/freeportbridge/day3_freeportbridge02997.jpg",
+    "lattice_headers_and_portal_sway_frames": "https://historicbridges.org/california/freeportbridge/day3_freeportbridge02984.jpg",
+    "upper_links_and_maintenance_platform": "https://historicbridges.org/california/freeportbridge/day3_freeportbridge03008.jpg"
+  },
+  "photo_fitted_geometry": "Fixed-span splits, elevation above illustrative water, steel sections, link pivots, counterweight sizes, pier/fender geometry and setting location are authored estimates fitted to photos. East pony length uses the documented 101-foot span. Model represents a closed bridge, not its current operating condition."
 }

@@ -68,7 +68,8 @@ The local [river atlas](http://localhost:5173/river-pulse/) shows California's r
 and selectable river courses. It includes Sacramento,
 San Joaquin, Eel, Tuolumne and American River entries alongside the Russian River.
 Sacramento now opens a [Freeport scene](http://localhost:5173/river-pulse/renderer/freeport.html)
-with Bridge, Riverbank and sourced Terrain views, plus USGS discharge and separate history.
+with a detailed reference bridge, eight bridge angles, Riverbank and sourced Terrain views,
+plus USGS discharge and separate history.
 The other four are planned placeholders. Select Russian River to open Hacienda or a
 planned river to open its individual page. See the
 [Freeport scene notes](docs/river-pulse/sacramento-freeport-scene.md). These additions are local,

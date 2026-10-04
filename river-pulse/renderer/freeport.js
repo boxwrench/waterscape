@@ -10,11 +10,12 @@ import { loadBankMaterials } from "./bank-materials.js";
 import { loadRiverTerrain } from "./terrain.js";
 import { buildRiverTerrainGrid } from "./terrain-mesh.js";
 import { loadHydrography } from "./hydrography.js";
+import { FREEPORT_BRIDGE_ANGLES, freeportBridgeCamera } from "./freeport-bridge-layout.js";
 
 const $ = selector => document.querySelector(selector), canvas = $("#scene"), keys = new Set(),
   reducedMotion = matchMedia("(prefers-reduced-motion: reduce)"), state = { ...FREEPORT_VIEWS.bridge },
   base = "../data/sacramento_river/places/freeport/";
-let activeView = "bridge", paused = false, dragging = null, terrain = null, world = null, manifest = null;
+let activeView = "bridge", paused = false, dragging = null, terrain = null, world = null, manifest = null, portraitView = innerWidth < 600;
 constrainFreeportCamera(state, activeView);
 
 function inspect(open) {
@@ -32,13 +33,23 @@ $("#pause").onclick = () => { paused = !paused; motionLabel(); };
 reducedMotion.addEventListener("change", motionLabel); motionLabel();
 function setView(view) {
   activeView = view; Object.assign(state, FREEPORT_VIEWS[view]); keys.clear(); constrainFreeportCamera(state, view, terrain);
-  if (innerWidth < 600 && view !== "terrain") { state.yaw = view === "bridge" ? -0.34 : -0.30; state.pitch = -0.025; }
+  $("#bridge-angle-control").hidden = view !== "bridge";
+  if (view === "bridge") setBridgeAngle($("#bridge-angle").value);
+  if (innerWidth < 600 && view === "bank") { state.yaw = -0.30; state.pitch = -0.025; }
   for (const button of document.querySelectorAll("[data-view]")) {
     const active = button.dataset.view === view; button.classList.toggle("active", active); button.setAttribute("aria-pressed", String(active));
   }
   if (world) { world.setting.visible = view !== "terrain"; world.water.mesh.visible = view !== "terrain"; world.map.visible = view === "terrain"; }
-  $("#scene-state").textContent = FREEPORT_VIEWS[view].label;
+  if (view !== "bridge") $("#scene-state").textContent = FREEPORT_VIEWS[view].label;
 }
+function setBridgeAngle(angle) {
+  Object.assign(state, freeportBridgeCamera(angle, innerWidth < 600), { angle, speed: angle === "above" ? 16 : ["east", "west", "underside"].includes(angle) ? 4 : 8 });
+  constrainFreeportCamera(state, "bridge"); keys.clear();
+  const target = state.target, dx = target.x - state.x, dz = target.z - state.z;
+  state.yaw = Math.atan2(dx, -dz); state.pitch = Math.atan2(target.y - state.y, Math.hypot(dx, dz));
+  $("#scene-state").textContent = `${FREEPORT_BRIDGE_ANGLES[angle].label} · Reference reconstruction`;
+}
+$("#bridge-angle").onchange = e => setBridgeAngle(e.target.value);
 for (const button of document.querySelectorAll("[data-view]")) button.onclick = () => setView(button.dataset.view);
 
 async function refreshDischarge() {
@@ -124,7 +135,12 @@ async function main() {
   const water = createFreeportWater(noise), setting = await createFreeportSetting(noise, maps), map = terrainMap(terrain, hydrography, aerial);
   scene.add(createFreeportSky(noise), setting, water.mesh, map); world = { setting, water, map }; setView(activeView);
   const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 16000); camera.rotation.order = "YXZ";
-  function resize() { renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); }
+  function resize() {
+    renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+    const portrait = innerWidth < 600;
+    if (portrait !== portraitView && activeView === "bridge") setBridgeAngle($("#bridge-angle").value);
+    portraitView = portrait;
+  }
   window.addEventListener("resize", resize); resize();
   window.freeportScene = { renderer, scene, camera, terrain, state, ...world, get view() { return activeView; }, get paused() { return paused; } };
   let previous = performance.now(), seconds = 0, firstFrame = true;
