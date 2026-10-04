@@ -121,10 +121,11 @@ and MIT vegetation resources are reused.
 
 ## WebGPU & rendering architecture
 
-| Resource | Status | Why it matters | Visual / cost | Upstream licence / reuse |
-|---|---|---|---|---|
-| [cuda-webshader](https://github.com/SamG-Coder/cuda-webshader) · [demo](https://samg-coder.github.io/cuda-webshader/) | **Used** | CUDA-to-WebGPU compiler/runtime vendored by Waterscape to compile CUDA-authored water kernels for the browser. | **Enabler / workload dependent** | **MIT** |
-| [three.js](https://github.com/mrdoob/three.js) | **Used** | Waterscape's browser 3D/rendering foundation, vendored at r186. Its current WebGPU examples are also useful baselines when evaluating custom techniques. | **Enabler / workload dependent** | **MIT** |
+| Resource | Preview | Status | Why it matters | Visual / cost | Upstream licence / reuse |
+|---|---|---|---|---|---|
+| [cuda-webshader](https://github.com/SamG-Coder/cuda-webshader) · [demo](https://samg-coder.github.io/cuda-webshader/) | — | **Used** | CUDA-to-WebGPU compiler/runtime vendored by Waterscape to compile CUDA-authored water kernels for the browser. | **Enabler / workload dependent** | **MIT** |
+| [Secret River / ForestSideScroll](https://github.com/SamG-Coder/ForestSideScroll) · [demo](https://samg-coder.github.io/ForestSideScroll/) | <img src="https://raw.githubusercontent.com/SamG-Coder/ForestSideScroll/main/docs/scene.png" width="160" alt="Secret River procedural riverbank scene"> | **Candidate** | Playable Australian riverbank rendered as a CUDA-WebShader/WebGPU compute path tracer: procedural trees, ferns, rocks, bank and riverbed geometry, GPU BVH traversal, generated material maps, animated water normals, Fresnel reflection/refraction with Beer-Lambert absorption, temporal reprojection/filtering and an optional material-aware oil-paint resolve. No Three.js, imported meshes or photographic textures are required by the running scene. **Waterscape use:** unusually relevant reference because it shares the existing `cuda-webshader` path; study its procedural riverbank construction, dense vegetation/rock representation, shallow/deep water treatment, temporal stabilization and quality-vs-cost measurements for high-end or reference-mode scenes without treating the whole path tracer as a drop-in renderer. | **Very high / high** | **MIT** |
+| [three.js](https://github.com/mrdoob/three.js) | — | **Used** | Waterscape's browser 3D/rendering foundation, vendored at r186. Its current WebGPU examples are also useful baselines when evaluating custom techniques. | **Enabler / workload dependent** | **MIT** |
 
 ## Data storytelling & interaction
 
@@ -171,4 +172,4 @@ Screenshots and social posts are good intake material, but this catalog should n
 
 ## Useful tags for future growth
 
-`water` · `river` · `reservoir` · `coast` · `fluids` · `PIC/FLIP` · `foam` · `caustics` · `rain` · `particles` · `terrain` · `rocks` · `vegetation` · `trees` · `grass` · `wind` · `GIS` · `Three.js` · `WebGPU` · `WebGL` · `shaders` · `reflection` · `SSR` · `TAA` · `GTAO` · `post-processing` · `MatCap` · `lighting` · `volumetrics` · `atmosphere` · `data-viz` · `interaction` · `performance` · `LOD` · `Blender` · `3D-assets` · `GLB` · `baking` · `agent-workflow` · `workflow`
+`water` · `river` · `reservoir` · `coast` · `fluids` · `PIC/FLIP` · `foam` · `caustics` · `rain` · `particles` · `terrain` · `rocks` · `vegetation` · `trees` · `grass` · `wind` · `GIS` · `Three.js` · `WebGPU` · `WebGL` · `shaders` · `reflection` · `SSR` · `TAA` · `GTAO` · `post-processing` · `MatCap` · `lighting` · `volumetrics` · `atmosphere` · `data-viz` · `interaction` · `performance` · `LOD` · `path-tracing` · `procedural-geometry` · `temporal-filtering` · `Blender` · `3D-assets` · `GLB` · `baking` · `agent-workflow` · `workflow`
