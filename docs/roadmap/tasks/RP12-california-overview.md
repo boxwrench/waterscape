@@ -37,3 +37,19 @@ are copied by this pass.
 - `npm run test:build`
 - `git diff --check`
 - Browser review of desktop/mobile overview, river links and destination pages.
+
+## Result
+- Status: done
+- Commit: f8939c3
+- Checks: focused overview tests 3 passed; production build: Built experience pages and
+  river assets valid; git diff --check clean.
+- Browser: full California silhouette inspected on desktop; mobile 390px layout
+  inspected with no horizontal overflow and enlarged map labels. Keyboard Tab changed
+  the preview/highlight. Sacramento map link opened its Freeport page; Eel map link
+  opened its planned page; Back restored the overview. All six destination files are
+  checked by the focused tests. Russian River maps to the existing Hacienda scene.
+  Browser error/warning logs were empty. Preview saved in previews/california-overview.png.
+- Notes: DWR service unavailable, so USGS 3DHP supplied 6,477 named flowlines. Smaller
+  direct 3DEP relief export succeeded after the initial image URL timed out. Test
+  aspect-ratio comparison was corrected to use a floating-point tolerance. Assets are
+  bundled; ordinary builds/viewing do not refetch them. Work remains local on task/RP12.
