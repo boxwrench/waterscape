@@ -5,6 +5,7 @@ import math
 from pathlib import Path
 
 import numpy as np
+import geo
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "river-pulse/data/tuolumne_river/foundation/poopenaut"
@@ -53,6 +54,16 @@ def main():
     assert features and any("Tuolumne" in str(f["properties"].get("gnisidlabel", "")) for f in features)
     for feature in features:
         assert finite_coordinates(feature["geometry"]["coordinates"])
+    layout = read("layout.json")
+    assert layout["source"] == hydro["source"] and layout["lines"]
+    assert finite_coordinates(layout["lines"])
+    named = next(f for f in features if f["properties"].get("gnisidlabel") == "Tuolumne River")
+    coordinates = named["geometry"]["coordinates"]
+    lon, lat = coordinates[0] if named["geometry"]["type"] == "LineString" else coordinates[0][0]
+    e, n = geo.utm(lat, lon, meta["utmZone"])
+    x, z = layout["lines"][0][0]
+    assert abs(x - (e - meta["originUTM"][0])) < 0.01
+    assert abs(z - (meta["originUTM"][1] - n)) < 0.01
     aerial = read("aerial.json")
     assert aerial["crs"] == meta["crs"] and len(aerial["extent"]) == 4
     assert (OUT / "aerial.jpg").read_bytes().startswith(b"\xff\xd8")
@@ -67,7 +78,7 @@ def main():
             assert xmin <= x <= xmax and zmin <= z <= zmax, f"{camera['id']} leaves the DEM"
         assert camera["groundClearance"] > 0
     print(f"Tuolumne foundation valid: {meta['width']}x{meta['height']} @ {meta['cell'][0]:.2f} m; "
-        f"{len(features)} mapped flowlines; state CalWater unit/area; five proposed cameras.")
+        f"{len(features)} mapped flowlines; state CalWater unit/area; five review cameras.")
 
 
 if __name__ == "__main__":

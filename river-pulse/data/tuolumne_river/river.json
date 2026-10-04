@@ -2,12 +2,12 @@
   "schema_version": "river-pulse-river-0.1",
   "id": "tuolumne_river",
   "name": "Tuolumne River",
-  "status": "planned",
+  "status": "in_development",
   "summary": "Yosemite's high Sierra meadows, granite canyons and Hetch Hetchy, connected by the river.",
-  "scenes": [],
+  "scenes": [{"name": "Poopenaut Valley form study", "entry": "../../renderer/tuolumne.html"}],
   "next_steps": [
     "Poopenaut Valley is selected: source terrain, aerial imagery, river layout and California CalWater watershed context are acquired in foundation/poopenaut/.",
-    "Review a plain-form runtime scene from five fixed camera proposals before adding detailed water, granite, vegetation or structures.",
+    "Review the Poopenaut Valley plain-form runtime from five calibrated cameras before detailed water, granite, vegetation or structures.",
     "Check native 1 m NCALM lidar footprint coverage and horizontal/vertical datums before a finer terrain pass; no live gauge binding is established."
   ],
   "references": [

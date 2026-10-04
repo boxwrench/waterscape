@@ -1,15 +1,15 @@
 {
-  "version": "poopenaut-foundation-v1",
+  "version": "poopenaut-runtime-v3",
   "coordinateFrame": "Local x east, z south relative to terrain origin; metres. Resolve camera y from terrain plus the recorded clearance before implementation.",
-  "status": "Proposed fixed cameras; not yet rendered or visually accepted.",
+  "status": "Calibrated against actual runtime, mapped river and aerial context; awaiting human acceptance.",
   "seed": 19041,
   "seedInterpretation": "Reserved for reproducible future vegetation/rock scatter; no scatter has been generated.",
   "cameras": [
-    {"id": "overview", "label": "Valley and dam transition", "positionXZ": [-900, 2200], "groundClearance": 1100, "targetXZ": [250, -700], "targetGroundClearance": 50, "fov": 48},
-    {"id": "primary", "label": "Poopenaut valley silhouette", "positionXZ": [750, 650], "groundClearance": 400, "targetXZ": [-650, -450], "targetGroundClearance": 40, "fov": 52},
-    {"id": "eye", "label": "Valley floor", "positionXZ": [-650, -350], "groundClearance": 1.8, "targetXZ": [100, -900], "targetGroundClearance": 30, "fov": 58},
-    {"id": "shore", "label": "River contact candidate", "positionXZ": [-650, -350], "groundClearance": 2.0, "targetXZ": [-500, -450], "targetGroundClearance": 0.3, "fov": 60},
+    {"id": "overview", "label": "Valley and dam transition", "positionXZ": [-600, 3300], "groundClearance": 900, "targetXZ": [1200, 600], "targetGroundClearance": 30, "fov": 48},
+    {"id": "primary", "label": "Poopenaut valley silhouette", "positionXZ": [-300, 1700], "groundClearance": 350, "targetXZ": [700, 1100], "targetGroundClearance": 10, "fov": 52},
+    {"id": "eye", "label": "Valley floor", "positionXZ": [540, 1010], "groundClearance": 1.8, "targetXZ": [680, 1100], "targetGroundClearance": 1.8, "fov": 58},
+    {"id": "shore", "label": "Mapped river contact", "positionXZ": [600, 1050], "groundClearance": 2.0, "targetXZ": [680, 1080], "targetGroundClearance": 0.3, "fov": 60},
     {"id": "dam", "label": "Upstream transition to Hetch Hetchy", "positionXZ": [2500, -1300], "groundClearance": 250, "targetXZ": [3800, -1900], "targetGroundClearance": 35, "fov": 52}
   ],
-  "limitations": "Authored compositions inside the DEM, not surveyed access points. Eye/shore positions must be moved onto a visibly verified dry bank during the first plain-form pass, then versioned and frozen. No camera-matched reference claim."
+  "limitations": "Authored compositions inside the DEM, not surveyed access points. Calibrated from source geography and actual runtime; dry-bank positions in archival imagery do not establish present access or river stage. No camera-matched reference claim. Version changes invalidate same-camera comparisons with RP19 proposals."
 }

@@ -1,5 +1,9 @@
 # Tuolumne River: Poopenaut Valley foundation
 
+This records the RP19 source-data checkpoint. RP21 now adds an actual
+[plain-form runtime and visual review](tuolumne-visual-review.md); the river is
+in development and visual acceptance remains pending.
+
 RP19 starts the next river in parallel with Eel's source audit. The first place is
 Poopenaut Valley and its upstream transition to O'Shaughnessy Dam. It connects an
 existing Waterscape reservoir to a distinct downstream river environment. NPS
@@ -96,7 +100,7 @@ archive coordinate is not a surveyed camera position.
   is visible across the reservoir and must not be mistaken for a physical feature.
 - No browser scene exists for this reach. No motion, performance or phone view
   claims; no human visual acceptance claimed.
-- River remains `planned`. Foundation stays outside deployable `places/` so the
+- At the RP19 checkpoint the river remained `planned`. Foundation stayed outside deployable `places/` so the
   registry cannot advertise terrain research as an available scene.
 - Next bounded pass: plain-form runtime review, then a separately reviewed native
   lidar refinement where actual footprint coverage and datum reconciliation permit.
@@ -106,6 +110,7 @@ Reproduce acquisition deliberately:
 ```powershell
 python pipeline/build_river_terrain.py river-pulse/data/tuolumne_river/foundation/poopenaut/source.json
 python pipeline/build_tuolumne_foundation.py
+python pipeline/build_tuolumne_layout.py
 python pipeline/render_tuolumne_reference_sheet.py
 python pipeline/validate_tuolumne_foundation.py
 ```
