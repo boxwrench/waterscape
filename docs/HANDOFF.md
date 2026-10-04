@@ -1,5 +1,18 @@
 # Handoff — 2026-10-03
 
+## California relief overview — RP12
+
+`task/RP12` replaces the index catalog with a sourced California relief map. Census
+boundary, USGS 3DHP named river reaches (including American forks) and 3DEP tinted
+hillshade are bundled locally. The six river lines and labels are links; hover/keyboard
+focus updates a compact preview. Russian River opens Hacienda; Sacramento and the four
+planned rivers open `river.html?river=<id>`. Existing observations moved to that page.
+Desktop fits the whole state; mobile enlarges map labels and retains full river links.
+The user's reservoir/Russian River visuals and saved resource library informed terrain
+depth, sea palette and geographic storytelling. No upstream implementation was copied.
+Focused map checks, build checks and desktop/mobile navigation pass. No publication.
+See [overview notes](river-pulse/california-overview.md).
+
 ## River atlas and Sacramento foundation — RP11
 
 `task/RP11` adds river-level discovery and a local atlas at `/river-pulse/`. Sacramento

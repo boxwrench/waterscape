@@ -23,7 +23,10 @@ California DWR geometry is a fallback if the local centerline cannot load.
 
 ## Current state
 
-- **River atlas:** `/river-pulse/` now opens a river selector. Sacramento is the second
+- **River atlas:** `/river-pulse/` opens a California relief map with selectable rivers.
+  The Russian River opens Hacienda; other rivers open their individual
+  `river.html?river=<id>` pages. See the [overview notes](../docs/river-pulse/california-overview.md).
+  Sacramento is the second
   river in development, with a Freeport observation and tidally filtered daily history
   panel. San Joaquin, Eel, Tuolumne and American have source-linked planned entries.
   See the [Sacramento foundation](../docs/river-pulse/sacramento-foundation.md).

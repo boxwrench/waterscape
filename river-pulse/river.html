@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#193b43">
+    <title>River Pulse · California rivers · Waterscape</title>
+    <link rel="stylesheet" href="./river.css">
+  </head>
+  <body>
+    <a class="skip" href="#river-detail">Skip to selected river</a>
+    <header><a class="brand" href="./">River Pulse</a><nav aria-label="Waterscape"><a href="./">California overview</a><a href="./renderer/hacienda.html">Hacienda</a><a href="./renderer/jenner.html">Jenner</a></nav></header>
+    <main>
+      <div class="intro"><h1>Follow the river.</h1><p>Explore its places, observations and sources. Return to the California overview to choose another river.</p></div>
+      <div class="atlas">
+        <nav id="river-list" aria-label="Choose a river"><p>Loading rivers…</p></nav>
+        <section id="river-detail" aria-labelledby="river-name" tabindex="-1"><p role="status">Loading the river atlas…</p></section>
+      </div>
+      <noscript><p>The river atlas needs JavaScript. You can still open Hacienda Bridge or Jenner Estuary using the links above.</p></noscript>
+    </main>
+    <footer>Waterscape <span>Real observations. Places to explore.</span></footer>
+    <script type="module" src="./river.js"></script>
+  </body>
+</html>

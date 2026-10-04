@@ -8,6 +8,15 @@ The compiler and runtime in `vendor/cuda-webshader/` are from SamG-Coder/cuda-we
 
 Playwright is a development dependency used for browser validation and is not shipped to the browser.
 
+## California river overview
+
+`river-pulse/data/california-overview.json` derives from U.S. Census Bureau TIGERweb
+2022 generalized California boundary and USGS 3D Hydrography Program named flowlines.
+`california-relief.jpg` is the USGS 3DEP elevation-tinted hillshade export. These federal
+datasets are U.S. Government public-domain works. Source requests, retrieval time,
+projection and processing notes are preserved in the overview JSON and
+`docs/river-pulse/california-overview.md`. The rendering and navigation code are original.
+
 ## three.js
 
 `vendor/three/` is three.js r186 (https://github.com/mrdoob/three.js), MIT License,

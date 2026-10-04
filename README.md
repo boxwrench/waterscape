@@ -62,10 +62,14 @@ interpretation. The full principle is in
 
 ## River Pulse views
 
-The local [river atlas](http://localhost:5173/river-pulse/) now includes Sacramento,
+![California relief overview with selectable river courses](previews/california-overview.png)
+
+The local [river atlas](http://localhost:5173/river-pulse/) shows California's relief
+and selectable river courses. It includes Sacramento,
 San Joaquin, Eel, Tuolumne and American River entries alongside the Russian River.
 Sacramento starts with a source-backed Freeport discharge/history panel; the other four
-are planned placeholders. Sacramento's 3D setting is next. See the
+are planned placeholders. Select Russian River to open Hacienda, or another river to
+open its individual page. Sacramento's 3D setting is next. See the
 [data foundation](docs/river-pulse/sacramento-foundation.md). This addition is local,
 pending review and publication.
 
