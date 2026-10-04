@@ -1,0 +1,15 @@
+{
+  "id": "tuolumne_poopenaut_rp19_v1",
+  "name": "Tuolumne River / Poopenaut Valley geographic foundation",
+  "anchor": [37.929, -119.828],
+  "anchorInterpretation": "Authored local coordinate origin inside the study extent; not a surveyed open-water point, gauge or water level.",
+  "bbox": [-119.88, 37.9, -119.77, 37.965],
+  "size": [768, 512],
+  "extentInterpretation": "Authored study window covering Poopenaut Valley and the downstream-to-dam transition, based on NPS river context; bounds are not a protected-area or river-corridor boundary.",
+  "layoutReference": "https://www.nps.gov/yose/getinvolved/trp.htm",
+  "mapReference": "https://www.nps.gov/yose/learn/management/upload/trpmgmtzoningmap.pdf",
+  "verticalExaggeration": 1,
+  "elevationRequest": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?bbox=-119.88,37.9,-119.77,37.965&bboxSR=4326&imageSR=32611&size=768,512&format=tiff&pixelType=F32&noDataInterpretation=esriNoDataMatchAny&interpolation=RSP_BilinearInterpolation&f=image",
+  "stage": "source-data foundation; no runtime scene",
+  "lidarStatus": "Generic 3DEP mosaic export. Native product resolution and raw lidar project not established; requesting a fine output grid does not establish 1 m lidar coverage."
+}

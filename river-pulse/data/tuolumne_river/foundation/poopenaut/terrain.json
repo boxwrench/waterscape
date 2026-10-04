@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "river-pulse-terrain-0.1",
+  "id": "tuolumne_poopenaut_rp19_v1",
+  "name": "Tuolumne River / Poopenaut Valley geographic foundation",
+  "source": "USGS National Map 3D Elevation Program (3DEP), public domain",
+  "sourceService": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer",
+  "sourceConfig": "source.json",
+  "bboxLonLat": [
+    -119.88,
+    37.9,
+    -119.77,
+    37.965
+  ],
+  "anchor": [
+    37.929,
+    -119.828
+  ],
+  "crs": "EPSG:32611",
+  "utmZone": 11,
+  "verticalDatum": "NAVD88 metres (3DEP)",
+  "verticalOrigin": {
+    "type": "absolute",
+    "datum": "NAVD88",
+    "units": "metres"
+  },
+  "encoding": "gzip; 1 planar uint16 elevation channel; rows delta-coded from the row above",
+  "width": 768,
+  "height": 512,
+  "cell": [
+    14.662657252205463,
+    14.662657252205463
+  ],
+  "originUTM": [
+    251445.07335707624,
+    4201709.724566822
+  ],
+  "gridOrigin": [
+    -5349.7444939145935,
+    -4128.229617489502
+  ],
+  "channels": {
+    "elevation": {
+      "offset": -250.0,
+      "scale": 0.05
+    }
+  }
+}
