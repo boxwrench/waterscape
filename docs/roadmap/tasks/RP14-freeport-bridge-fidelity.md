@@ -42,3 +42,22 @@ maintenance platform and two-tier rails.
 - https://commons.wikimedia.org/wiki/File:Freeport_Bridge_from_Freeport.jpg
 
 Photographs are studied as references, not redistributed.
+
+## Result
+
+- Status: done
+- Commit: `9011472`
+- Checks:
+  - `node --test pipeline/tests/sacramento-scene.test.mjs pipeline/tests/river-pulse-sacramento.test.mjs pipeline/tests/california-overview.test.mjs`: 11 pass, 0 fail.
+  - `node pipeline/validate-river-packages.mjs`: `River packages valid.`
+  - `npm run test:build`: `Built experience pages and river assets valid.` (111 browser modules).
+  - Browser: all eight angles inspected at desktop and phone sizes; Evidence, pause/resume,
+    Explore and Bridge/Riverbank/Terrain controls checked; phone has no horizontal overflow;
+    console error logs empty. Top-strut correction reviewed from approach, overhead and
+    underside views. Temporary viewport override reset; final scene left open.
+  - `git diff --check` and `git diff --cached --check`: pass.
+- Notes: Same complete bridge model in every view. Photo-fitting improves visual fidelity
+  but does not establish surveyed/photogrammetric accuracy. Horizontal NBI dimensions and
+  documented east pony length are distinguished from estimated elevations/components.
+  Reference photographs and scratch PDFs are not bundled. Local previews updated. Water
+  and observation bindings retain their existing interpretation. No push or merge.
