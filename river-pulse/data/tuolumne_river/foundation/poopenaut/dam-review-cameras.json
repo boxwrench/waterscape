@@ -1,0 +1,7 @@
+{
+  "version": "oshaughnessy-dam-reuse-v1",
+  "interpretation": "Authored close view for the reused dam. Original five poopenaut-runtime-v3 cameras are retained. Not surveyed access or a matched photograph.",
+  "cameras": [
+    { "id": "dam-close", "label": "O’Shaughnessy Dam · reused reservoir model", "positionXZ": [3230, -1800], "groundClearance": 50, "targetXZ": [3555, -1945], "targetElevation": 1115, "fov": 52, "phoneFov": 84 }
+  ]
+}

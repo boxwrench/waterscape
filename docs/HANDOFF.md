@@ -1,5 +1,36 @@
 # Handoff — 2026-10-04
 
+## Tuolumne reuses the existing reservoir dam — RP22
+
+Complete locally on `task/RP22`, awaiting human visual acceptance. User identified
+the existing Hetch Hetchy dam as the correct reusable asset. The Tuolumne scene now
+imports its original crest/profile and weathered concrete material from the shared
+reservoir module. Direct UTM 11 / NAVD88 translation retains source coordinates,
+height and scale. Original metadata is unchanged. No reservoir water level,
+synthetic bathymetry, river ribbon or illustrative outlet jets are imported.
+
+Actual initial render showed the coarse native DEM piercing the dam face. A
+bounded authored cut in the render mesh follows the reservoir contact-clearance
+principle; native source cells remain intact. Dam-off and Source aerial restore
+native geometry. Five v3 cameras remain fixed; a separate dam close camera has a
+phone FOV adjustment. All six desktop/phone views, native/dam comparison, plain
+form/aerial, guide toggle, Evidence and featured California context were inspected.
+No browser errors or phone overflow; all six camera buttons are 44 px high.
+
+Five focused dam/profile/coordinate/contact tests, source validation, river package
+checks and full 117-module build pass. Dam on adds 1,256 triangles and one draw call
+(790,251 / 4 total at close view); resident CPU geometry is 25.69 MiB and texture
+RGBA/mip estimate 13.33 MiB. Native baseline in the same loaded page retains those
+assets; original RP21 had 21.11 MiB / 8 MiB. GPU timing/full memory and foreground
+FPS are unmeasured. Coarse terrain contact, bare surroundings and river water still
+need later passes. [Actual gallery](../previews/tuolumne/rp22/review.html) and
+[reuse notes](river-pulse/tuolumne-dam-reuse.md) retain evidence and limitations.
+Live close view: http://localhost:5174/river-pulse/renderer/tuolumne.html?view=dam-close .
+Work is isolated in `C:/Github/waterscape-tuolumne-rp19`; never pushed or merged.
+Cheaper agent audited the transform/reviewed integration and drafted reuse notes;
+root checked the arithmetic, integrated the scene and inspected actual renders.
+Earlier Eel entries below preserve this worktree's inherited historical checkpoint.
+
 ## Eel River visual baseline — RP17
 
 The user redirected RP16's unfinished surroundings to an Eel River trial of their

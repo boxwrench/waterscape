@@ -1,9 +1,11 @@
 import * as THREE from "../../vendor/three/three.webgpu.js";
 import { loadRiverTerrain } from "./terrain.js";
 import { buildRiverTerrainGrid } from "./terrain-mesh.js";
+import { createTuolumneDam, damContactPositions } from "./tuolumne-dam.js";
 
 const $ = id => document.getElementById(id), base = "../data/tuolumne_river/foundation/poopenaut/", started = performance.now();
-let active = "overview";
+const requestedView = new URLSearchParams(location.search).get("view");
+let active = ["overview", "primary", "eye", "shore", "dam", "dam-close"].includes(requestedView) ? requestedView : "overview";
 $("evidence").onclick = () => {
   $("sources").hidden = !$("sources").hidden;
   $("evidence").setAttribute("aria-expanded", String(!$("sources").hidden));
@@ -57,7 +59,15 @@ async function main() {
   const renderer = new THREE.WebGPURenderer({ canvas: $("scene"), antialias: true, forceWebGL: !navigator.gpu });
   await renderer.init(); renderer.setPixelRatio(Math.min(devicePixelRatio, 1.25));
   renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 0.9;
-  const [terrain, layout, presets, aerial] = await Promise.all([loadRiverTerrain(base + "terrain"), json("layout.json"), json("review-cameras.json"), new THREE.TextureLoader().loadAsync(base + "aerial.jpg")]);
+  const [terrain, layout, presets, aerial, structures, damPresets] = await Promise.all([
+    loadRiverTerrain(base + "terrain"), json("layout.json"), json("review-cameras.json"),
+    new THREE.TextureLoader().loadAsync(base + "aerial.jpg"),
+    fetch("../../data/hetch_hetchy/structures.json").then(response => {
+      if (!response.ok) throw new Error(`Reservoir dam metadata: ${response.status}`);
+      return response.json();
+    }),
+    json("dam-review-cameras.json"),
+  ]);
   aerial.colorSpace = THREE.SRGBColorSpace;
   const scene = new THREE.Scene(); scene.background = new THREE.Color(0xc2d6dc);
   scene.add(new THREE.HemisphereLight(0xe5eef0, 0x69624e, 0.8));
@@ -73,29 +83,51 @@ async function main() {
   const form = new THREE.MeshStandardNodeMaterial({ color: 0x958e82, roughness: 1 }),
     photo = new THREE.MeshBasicNodeMaterial({ map: aerial }), land = new THREE.Mesh(geometry, form), guide = riverGuide(layout, terrain);
   scene.add(land, guide);
-  const camera = new THREE.PerspectiveCamera(48, 1, 1, 20000), geometryBytes = [geometry, guide.geometry].reduce((sum, g) => sum + Object.values(g.attributes).reduce((n, a) => n + a.array.byteLength, 0) + (g.index?.array.byteLength ?? 0), 0);
+  const dam = await createTuolumneDam(terrain, structures, sun), damMeshes = [],
+    plainDam = new THREE.MeshStandardNodeMaterial({ color: 0xaaa193, roughness: 1, side: THREE.DoubleSide });
+  dam.group.traverse(mesh => { if (mesh.isMesh) { damMeshes.push(mesh); mesh.userData.studyMaterial = mesh.material; } });
+  scene.add(dam.group);
+  const nativePosition = geometry.getAttribute("position"),
+    contactPosition = new THREE.BufferAttribute(damContactPositions(grid.positions, terrain, structures), 3);
+  geometry.setAttribute("position", contactPosition); geometry.computeVertexNormals(); geometry.computeBoundingSphere();
+  const camera = new THREE.PerspectiveCamera(48, 1, 1, 20000),
+    geometryBytes = nativePosition.array.byteLength + [geometry, guide.geometry, ...damMeshes.map(mesh => mesh.geometry)].reduce((sum, g) => sum + Object.values(g.attributes).reduce((n, a) => n + a.array.byteLength, 0) + (g.index?.array.byteLength ?? 0), 0),
+    concrete = dam.textures[0], concreteMiB = concrete.image.width * concrete.image.height * 4 * 4 / 3 / 1048576;
   let firstMs = null;
   function render() {
     renderer.render(scene, camera); firstMs ??= performance.now() - started;
     $("loading").hidden = true;
-    $("metrics").textContent = `${renderer.info.render.triangles.toLocaleString()} triangles · ${renderer.info.render.drawCalls} draw calls · ${(geometryBytes / 1048576).toFixed(2)} MiB CPU geometry buffers\nSource texture 1536×1024; RGBA+mips estimate 8.0 MiB · First frame ${firstMs.toFixed(0)} ms\nStatic scene rendered on view/control changes. GPU timing, full browser/GPU memory and foreground FPS are unmeasured.`;
+    $("metrics").textContent = `${renderer.info.render.triangles.toLocaleString()} triangles · ${renderer.info.render.drawCalls} draw calls · ${(geometryBytes / 1048576).toFixed(2)} MiB CPU geometry buffers\nResident texture RGBA+mips estimate ${(8 + concreteMiB).toFixed(2)} MiB (aerial 8.0 + concrete ${concreteMiB.toFixed(2)}) · First frame ${firstMs.toFixed(0)} ms\nStatic scene rendered on view/control changes. GPU timing, full browser/GPU memory and foreground FPS are unmeasured.`;
   }
   function view(id) {
-    active = id; const preset = presets.cameras.find(c => c.id === id);
+    active = id; const preset = [...presets.cameras, ...damPresets.cameras].find(c => c.id === id);
     if (!preset) throw new Error(`Unknown review camera ${id}`);
     const [x, z] = preset.positionXZ, [tx, tz] = preset.targetXZ;
     camera.position.set(x, terrain.ground(x, z) + preset.groundClearance, z);
-    camera.lookAt(tx, terrain.ground(tx, tz) + preset.targetGroundClearance, tz);
+    camera.lookAt(tx, preset.targetElevation ?? terrain.ground(tx, tz) + preset.targetGroundClearance, tz);
     camera.near = ["overview", "primary", "dam"].includes(id) ? 10 : 0.5;
-    camera.fov = innerWidth < 600 && id === "overview" ? 65 : preset.fov; camera.updateProjectionMatrix();
+    camera.fov = innerWidth < 600 ? (preset.phoneFov ?? (id === "overview" ? 65 : preset.fov)) : preset.fov; camera.updateProjectionMatrix();
+    document.body.classList.toggle("dam-focus", id === "dam-close");
     $("view-label").textContent = preset.label;
     for (const button of document.querySelectorAll("[data-camera]")) button.setAttribute("aria-pressed", String(button.dataset.camera === id));
-    $("environment").textContent = `${renderer.backend.isWebGPUBackend ? "WebGPU" : "WebGL2"} · ${innerWidth}×${innerHeight} · DPR ${renderer.getPixelRatio()} · ${presets.version}`;
+    $("environment").textContent = `${renderer.backend.isWebGPUBackend ? "WebGPU" : "WebGL2"} · ${innerWidth}×${innerHeight} · DPR ${renderer.getPixelRatio()} · ${id === "dam-close" ? damPresets.version : presets.version}`;
     render();
   }
   function resize() { renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; view(active); }
   for (const button of document.querySelectorAll("[data-camera]")) button.onclick = () => view(button.dataset.camera);
-  $("mode").onchange = () => { land.material = $("mode").value === "aerial" ? photo : form; render(); };
+  function presentation() {
+    const mode = $("mode").value;
+    land.material = mode === "aerial" ? photo : form;
+    dam.group.visible = $("dam").checked && mode !== "aerial";
+    const position = dam.group.visible ? contactPosition : nativePosition;
+    if (geometry.getAttribute("position") !== position) {
+      geometry.setAttribute("position", position); geometry.computeVertexNormals(); geometry.computeBoundingSphere();
+    }
+    for (const mesh of damMeshes) mesh.material = mode === "form" ? plainDam : mesh.userData.studyMaterial;
+    render();
+  }
+  $("mode").onchange = presentation;
+  $("dam").onchange = presentation;
   $("guide").onchange = () => { guide.visible = $("guide").checked; render(); };
   window.addEventListener("resize", resize); resize();
 }

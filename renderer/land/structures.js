@@ -200,7 +200,7 @@ function riverMaterial(u) {
   return m;
 }
 
-export async function createStructures(terrain, structures, ground) {
+export async function createStructures(terrain, structures, ground, options = {}) {
   // Outlets per dam as (along metres, metres below the crest), for the face's wet stain.
   const wetTerm = (q, top, frames) =>
     frames.reduce((acc, { along, below }) => {
@@ -214,13 +214,17 @@ export async function createStructures(terrain, structures, ground) {
     rivers = structures?.rivers ?? [];
   if (!dams.length && !rivers.length) return null;
   const load = (file, colour) => {
-      const t = new THREE.TextureLoader().load(new URL(`../../data/structures/${file}`, import.meta.url).href);
-      t.wrapS = t.wrapT = THREE.RepeatWrapping;
-      t.anisotropy = 8;
-      if (colour) t.colorSpace = THREE.SRGBColorSpace;
-      return t;
+      const url = new URL(`../../data/structures/${file}`, import.meta.url).href,
+        configure = t => {
+          t.wrapS = t.wrapT = THREE.RepeatWrapping;
+          t.anisotropy = 8;
+          if (colour) t.colorSpace = THREE.SRGBColorSpace;
+          return t;
+        };
+      const loader = new THREE.TextureLoader();
+      return options.waitForTextures ? loader.loadAsync(url).then(configure) : configure(loader.load(url));
     },
-    concrete = load("concrete_color.jpg", true),
+    concrete = await load("concrete_color.jpg", true),
     u = ground.uniforms,
     n = normalize(normalWorld);
   // Weathered grey-tan concrete as in photographs of the downstream face: the texture tinted
@@ -246,7 +250,7 @@ export async function createStructures(terrain, structures, ground) {
       // (or over the ground) would change it and turn the dam into plain ground.
       m = new THREE.MeshBasicNodeMaterial({ side: THREE.DoubleSide, blending: THREE.NoBlending });
     m.colorNode = albedo.mul(u.sunColor.mul(max(dot(n, u.sun), 0)).add(u.fill.mul(n.y.mul(0.3).add(0.55).mul(0.8))));
-    m.opacityNode = float(0.5);
+    m.opacityNode = float(options.packShadedTag === false ? 1 : 0.5);
     return m;
   };
   const group = new THREE.Group();
@@ -265,7 +269,7 @@ export async function createStructures(terrain, structures, ground) {
       mesh = new THREE.Mesh(damGeometry(dam, terrain.meta, side), damMaterial(wetFrames, dam.crestElevation - terrain.meta.waterLevel));
     mesh.name = dam.name;
     group.add(mesh);
-    outlets.forEach((o, k) => {
+    if (options.showOutletJets !== false) outlets.forEach((o, k) => {
       const jet = new THREE.Mesh(plumeGeometry(dam, terrain.meta, side, o), plumeMaterial(u, 13 + k * 5));
       jet.name = `${dam.name} outlet ${k + 1}`;
       group.add(jet);
@@ -279,5 +283,5 @@ export async function createStructures(terrain, structures, ground) {
       group.add(mesh);
     }
   }
-  return { group };
+  return { group, textures: [concrete] };
 }
