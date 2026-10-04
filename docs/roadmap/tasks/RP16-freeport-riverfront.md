@@ -30,3 +30,14 @@ the supplied photograph or claim boat counts, botanical species or current seaso
 - Browser: bridge bank/approach/overhead views and Riverbank; desktop/phone;
   Evidence and pause controls; no console errors/overflow. Update local previews.
 - `git diff --check`
+
+## Result
+
+- Status: blocked (saved draft; user redirected work to Eel River).
+- Commit: 23afad0
+- Checks: focused Node tests — 12 pass, 0 fail; river validation — River packages valid.;
+  `npm run test:build` — Built experience pages and river assets valid.;
+  `git diff --check` — exit 0.
+- Notes: desktop bridge, approach, overview and marina views inspected. Phone,
+  Evidence/pause and final comparative review are unfinished. Preview screenshots
+  are draft evidence; the surrounding setting has not been accepted by the user.
