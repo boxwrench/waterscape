@@ -1,0 +1,10 @@
+{
+  "schema_version": "river-pulse-river-0.1",
+  "id": "eel_river",
+  "name": "Eel River",
+  "status": "planned",
+  "summary": "Northern California's mountain canyons and redwood country, continuing to the Pacific coast.",
+  "scenes": [],
+  "next_steps": ["Select a reach, verify its gauge sources, then build terrain and a local scene."],
+  "references": [{ "label": "National Wild and Scenic Rivers System", "url": "https://www.fws.gov/rivers/river/eel" }]
+}

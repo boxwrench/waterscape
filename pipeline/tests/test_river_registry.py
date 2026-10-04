@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from pipeline.build_river_registry import build_registry, discover_places, registry_text
+from pipeline.build_river_registry import build_registry, discover_places, discover_rivers, registry_text
 
 
 def write_place(root: Path, river: str, place_id: str, *, name=None, capabilities=None):
@@ -77,3 +77,18 @@ def test_committed_registry_matches_current_place_packages():
     data_root = repo_root / "river-pulse" / "data"
     registry = data_root / "registry.json"
     assert registry.read_text(encoding="utf-8") == registry_text(data_root)
+
+
+def test_planned_river_discovery_without_fake_places(tmp_path):
+    path = tmp_path / "new_river" / "river.json"
+    path.parent.mkdir()
+    manifest = {"schema_version": "river-pulse-river-0.1", "id": "new_river",
+                "name": "New River", "summary": "Reserved for future work.",
+                "status": "planned", "references": [{"url": "https://example.test/"}]}
+    path.write_text(json.dumps(manifest), encoding="utf-8")
+    assert build_registry(tmp_path)["places"] == []
+    assert discover_rivers(tmp_path)[0]["status"] == "planned"
+    manifest["id"] = "wrong_directory"
+    path.write_text(json.dumps(manifest), encoding="utf-8")
+    with pytest.raises(ValueError, match="must match directory"):
+        discover_rivers(tmp_path)

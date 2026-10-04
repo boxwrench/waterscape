@@ -62,6 +62,13 @@ interpretation. The full principle is in
 
 ## River Pulse views
 
+The local [river atlas](http://localhost:5173/river-pulse/) now includes Sacramento,
+San Joaquin, Eel, Tuolumne and American River entries alongside the Russian River.
+Sacramento starts with a source-backed Freeport discharge/history panel; the other four
+are planned placeholders. Sacramento's 3D setting is next. See the
+[data foundation](docs/river-pulse/sacramento-foundation.md). This addition is local,
+pending review and publication.
+
 Map keeps sourced terrain and river centerlines. Its blue water ribbon widens/narrows with
 selected discharge relative to the loaded history; seasonal condition colors the border.
 Ripple scale and motion are exaggerated. Width is a visual comparison, not measured banks,

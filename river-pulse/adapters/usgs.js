@@ -2,6 +2,7 @@ import { quantity } from "../data-model/quantity.js";
 
 export const USGS_API_ROOT = "https://api.waterdata.usgs.gov/ogcapi/v1";
 export const DISCHARGE_PARAMETER_CODE = "00060";
+export const TIDALLY_FILTERED_DISCHARGE_PARAMETER_CODE = "72137";
 export const GAGE_HEIGHT_PARAMETER_CODE = "00065";
 export const STREAM_LEVEL_NAVD88_PARAMETER_CODE = "63160";
 export const DAILY_MEAN_STATISTIC_ID = "00003";
@@ -54,6 +55,7 @@ function numericValue(properties) {
 
 function phenomenonForParameter(parameterCode) {
   if (parameterCode === DISCHARGE_PARAMETER_CODE) return "discharge";
+  if (parameterCode === TIDALLY_FILTERED_DISCHARGE_PARAMETER_CODE) return "tidally_filtered_discharge";
   if (parameterCode === GAGE_HEIGHT_PARAMETER_CODE) return "gage_height";
   if (parameterCode === STREAM_LEVEL_NAVD88_PARAMETER_CODE) return "water_surface_elevation";
   return `usgs:${parameterCode}`;

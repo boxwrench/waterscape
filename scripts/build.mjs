@@ -26,6 +26,7 @@ async function moduleGraph(file) {
 const htmlFiles = [
     "index.html",
     "renderer/explore.html",
+    "river-pulse/index.html",
     "river-pulse/renderer/hacienda.html",
     "river-pulse/renderer/jenner.html",
   ],

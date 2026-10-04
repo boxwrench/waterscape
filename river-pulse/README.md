@@ -23,11 +23,15 @@ California DWR geometry is a fallback if the local centerline cannot load.
 
 ## Current state
 
+- **River atlas:** `/river-pulse/` now opens a river selector. Sacramento is the second
+  river in development, with a Freeport observation and tidally filtered daily history
+  panel. San Joaquin, Eel, Tuolumne and American have source-linked planned entries.
+  See the [Sacramento foundation](../docs/river-pulse/sacramento-foundation.md).
+
 - **Hacienda Bridge:** real USGS 3DEP terrain, USGS 3DHP cartographic centerlines,
   USGS discharge/history, time selection and seasonal context; Map, Bridge and Hacienda
   Beach viewpoints.
-- **Jenner:** authored place manifest, common package-loader tests and a USGS NAVD88
-  water-level adapter. No Jenner 3D scene yet.
+- **Jenner:** authored coastal scene and an independent USGS NAVD88 water-level card.
 - **Not implemented:** local hydrodynamic simulation, forecasts, a complete river
   corridor. Package capabilities describe intent, not
   guaranteed data availability. Offline replay has a tested data contract, not a finished UI.

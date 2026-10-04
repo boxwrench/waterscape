@@ -1,0 +1,10 @@
+{
+  "schema_version": "river-pulse-river-0.1",
+  "id": "tuolumne_river",
+  "name": "Tuolumne River",
+  "status": "planned",
+  "summary": "Yosemite's high Sierra meadows, granite canyons and Hetch Hetchy, connected by the river.",
+  "scenes": [],
+  "next_steps": ["Select a reach, verify its gauge sources, then build terrain and a local scene."],
+  "references": [{ "label": "National Wild and Scenic Rivers System", "url": "https://www.fws.gov/rivers/river/tuolumne" }]
+}

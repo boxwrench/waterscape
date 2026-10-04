@@ -1,4 +1,17 @@
-# Handoff — 2026-09-30
+# Handoff — 2026-10-03
+
+## River atlas and Sacramento foundation — RP11
+
+`task/RP11` adds river-level discovery and a local atlas at `/river-pulse/`. Sacramento
+is the next river in development; San Joaquin, Eel, Tuolumne and American are source-linked
+placeholders. Russian River scenes keep their URLs and gain a Rivers link. Freeport is
+the first registered Sacramento data place: instantaneous `00060` and tidally filtered
+daily `72137` are kept distinct, with pinned source series, quality/time evidence,
+45-minute display freshness and a separate daily chart. No Sacramento 3D scene or terrain
+is claimed. See [foundation](river-pulse/sacramento-foundation.md) and
+[task](roadmap/tasks/RP11-river-atlas-sacramento.md). Next work is to choose the first
+Sacramento viewpoint, gather photo references and build its terrain/centerline crop.
+Local tests/build pass and desktop/mobile atlas was inspected; no publication.
 
 Where things stand, for whoever picks this up next (person or agent). The plan lives in
 `ROADMAP.md` and `docs/roadmap/README.md`; this file is the snapshot of "what just happened

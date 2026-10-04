@@ -1,0 +1,18 @@
+{
+  "schema_version": "river-pulse-river-0.1",
+  "id": "sacramento_river",
+  "name": "Sacramento River",
+  "status": "in_development",
+  "summary": "California's largest river. Start with observations at Freeport, south of Sacramento, before building its local setting.",
+  "first_place": "freeport",
+  "scenes": [],
+  "next_steps": [
+    "Choose the first Sacramento shoreline viewpoint and gather photo references.",
+    "Acquire a bounded USGS terrain and river-centerline package for that reach.",
+    "Build the local water and bank setting with the observation panel alongside it."
+  ],
+  "references": [
+    { "label": "California DWR Sacramento River region", "url": "https://water.ca.gov/-/media/DWR-Website/Web-Pages/Work-With-Us/Grants-And-Loans/Sustainable-Groundwater/Technical-Assistance/Educational-Material-Dec-2022/Sacramento_River_Lesson_Plan_11_11_22.pdf" },
+    { "label": "USGS Sacramento River at Freeport", "url": "https://waterdata.usgs.gov/monitoring-location/USGS-11447650/" }
+  ]
+}

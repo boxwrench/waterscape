@@ -9,6 +9,7 @@ from pathlib import Path
 
 PLACE_SCHEMA = "river-pulse-place-0.1"
 REGISTRY_SCHEMA = "river-pulse-registry-0.1"
+RIVER_SCHEMA = "river-pulse-river-0.1"
 REQUIRED_FIELDS = (
     "schema_version",
     "minimum_engine_version",
@@ -79,8 +80,30 @@ def discover_places(data_root: Path) -> list[dict]:
 def build_registry(data_root: Path) -> dict:
     return {
         "schema_version": REGISTRY_SCHEMA,
+        "rivers": discover_rivers(data_root),
         "places": discover_places(data_root),
     }
+
+
+def discover_rivers(data_root: Path) -> list[dict]:
+    entries = []
+    for path in sorted(Path(data_root).glob("*/river.json")):
+        manifest = _load_json(path)
+        if manifest.get("schema_version") != RIVER_SCHEMA:
+            raise ValueError(f"{path}: unsupported river schema")
+        if manifest.get("id") != path.parent.name:
+            raise ValueError(f"{path}: river id must match directory")
+        for field in ("name", "summary", "status"):
+            if not isinstance(manifest.get(field), str) or not manifest[field].strip():
+                raise ValueError(f"{path}: {field} is required")
+        if manifest["status"] not in ("available", "in_development", "planned"):
+            raise ValueError(f"{path}: unsupported river status")
+        if not manifest.get("references"):
+            raise ValueError(f"{path}: references are required")
+        entries.append({"id": manifest["id"], "name": manifest["name"],
+                        "status": manifest["status"],
+                        "manifest": path.relative_to(data_root).as_posix()})
+    return entries
 
 
 def registry_text(data_root: Path) -> str:

@@ -3,11 +3,22 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="refresh" content="0; url=./renderer/hacienda.html">
-    <title>River Pulse · Waterscape</title>
+    <meta name="theme-color" content="#193b43">
+    <title>River Pulse · California rivers · Waterscape</title>
+    <link rel="stylesheet" href="./atlas.css">
   </head>
   <body>
-    <p><a href="./renderer/hacienda.html">Explore River Pulse at Hacienda Bridge</a></p>
-    <p><a href="../">Waterscape reservoirs</a></p>
+    <a class="skip" href="#river-detail">Skip to selected river</a>
+    <header><a class="brand" href="./">River Pulse</a><nav aria-label="Waterscape"><a href="./renderer/hacienda.html">Hacienda</a><a href="./renderer/jenner.html">Jenner</a><a href="../">Reservoirs</a></nav></header>
+    <main>
+      <div class="intro"><h1>California, by river.</h1><p>Follow the water through its places. Begin with the Russian River, or see the next river taking shape.</p></div>
+      <div class="atlas">
+        <nav id="river-list" aria-label="Choose a river"><p>Loading rivers…</p></nav>
+        <section id="river-detail" aria-labelledby="river-name" tabindex="-1"><p role="status">Loading the river atlas…</p></section>
+      </div>
+      <noscript><p>The river atlas needs JavaScript. You can still open Hacienda Bridge or Jenner Estuary using the links above.</p></noscript>
+    </main>
+    <footer>Waterscape <span>Real observations. Places to explore.</span></footer>
+    <script type="module" src="./atlas.js"></script>
   </body>
 </html>

@@ -1,5 +1,43 @@
 {
   "schema_version": "river-pulse-registry-0.1",
+  "rivers": [
+    {
+      "id": "american_river",
+      "name": "American River",
+      "status": "planned",
+      "manifest": "american_river/river.json"
+    },
+    {
+      "id": "eel_river",
+      "name": "Eel River",
+      "status": "planned",
+      "manifest": "eel_river/river.json"
+    },
+    {
+      "id": "russian_river",
+      "name": "Russian River",
+      "status": "available",
+      "manifest": "russian_river/river.json"
+    },
+    {
+      "id": "sacramento_river",
+      "name": "Sacramento River",
+      "status": "in_development",
+      "manifest": "sacramento_river/river.json"
+    },
+    {
+      "id": "san_joaquin_river",
+      "name": "San Joaquin River",
+      "status": "planned",
+      "manifest": "san_joaquin_river/river.json"
+    },
+    {
+      "id": "tuolumne_river",
+      "name": "Tuolumne River",
+      "status": "planned",
+      "manifest": "tuolumne_river/river.json"
+    }
+  ],
   "places": [
     {
       "river_pack": "russian_river",
@@ -27,6 +65,17 @@
         "observed_water_surface_elevation",
         "precipitation_context",
         "upstream_discharge_context"
+      ]
+    },
+    {
+      "river_pack": "sacramento_river",
+      "id": "freeport",
+      "name": "Sacramento River at Freeport",
+      "hydrologic_context": "tidally_influenced_river_reach",
+      "manifest": "sacramento_river/places/freeport/place.json",
+      "supported_capabilities": [
+        "historical_tidally_filtered_discharge",
+        "observed_discharge"
       ]
     }
   ]

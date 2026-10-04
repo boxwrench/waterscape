@@ -1,8 +1,8 @@
 // Presentation mapping for exact daily values. Input quantities remain unchanged.
 
-export function dailyHydrograph(quantities, { width = 320, height = 86, padding = 7 } = {}) {
+export function dailyHydrograph(quantities, { width = 320, height = 86, padding = 7, phenomenon = "discharge" } = {}) {
   const values = quantities
-    .filter((q) => q.availability === "present" && q.phenomenon === "discharge" && Number.isFinite(Number(q.value)))
+    .filter((q) => q.availability === "present" && q.phenomenon === phenomenon && Number.isFinite(Number(q.value)))
     .map((q) => ({ quantity: q, time: Date.parse(q.time.valid_start), value: Number(q.value) }))
     .filter((p) => Number.isFinite(p.time))
     .sort((a, b) => a.time - b.time || String(a.quantity.quantity_id).localeCompare(String(b.quantity.quantity_id)));

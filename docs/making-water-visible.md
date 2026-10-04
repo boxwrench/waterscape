@@ -160,6 +160,8 @@ Exact binding, while an observed quantity can be shown through a Derived binding
 | Hacienda water optics | Derived | Modeled surface/bed and authored light | Fresnel reflections, refraction and approximate caustics consume illustrative ripples and modeled bed geometry. Green color/clarity follows visual references, not measured water quality. See [authored-water notes](river-pulse/authored-water.md). |
 
 | Jenner gauge card | Exact | Observed USGS 63160 / NAVD88 | Source water level at Highway 1; stale/missing values remain unavailable. No gauge-to-coast level conversion. |
+| Sacramento Freeport observation | Exact | Observed USGS 00060 | Source series is selected at or before the requested time with a 45-minute display freshness policy. Stale/missing values stay explicit; no river-wide state or local hydraulics are inferred. |
+| Sacramento Freeport daily chart | Exact | Derived USGS 72137 / 00003 | Tidally filtered daily means retain their separate phenomenon and provenance. The chart leaves gaps open and does not substitute them for instantaneous discharge. |
 | Jenner coast, rocks, sand spit and vegetation | Setting | Photo-informed authored reconstruction | Fixed open-mouth composition, not surveyed terrain or today’s observed mouth status. |
 | Jenner swell, foam, swash and water colors | Illustrative | Authored surface and depth profile | Contrasts calm estuary with Pacific surf; not measured tide, currents, waves or water quality. Optical calculations consume authored inputs. See [Jenner scene](river-pulse/jenner-scene.md). |
 

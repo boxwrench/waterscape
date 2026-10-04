@@ -14,7 +14,11 @@ export async function validateRiverPackages(root) {
   for (const river of await readdir(data, { withFileTypes: true })) {
     if (!river.isDirectory()) continue;
     const places = path.join(data, river.name, "places");
-    for (const place of await readdir(places, { withFileTypes: true })) {
+    // Planned river packages have river metadata but no authored places yet.
+    let placeEntries;
+    try { placeEntries = await readdir(places, { withFileTypes: true }); }
+    catch (error) { if (error.code !== "ENOENT") throw error; placeEntries = []; }
+    for (const place of placeEntries) {
       if (!place.isDirectory()) continue;
       const dir = path.join(places, place.name), manifest = await json(path.join(dir, "place.json"));
       assert.equal(manifest.schema_version, "river-pulse-place-0.1");
@@ -53,6 +57,27 @@ export async function validateRiverPackages(root) {
   }
   discovered.sort((a, b) => a.river_pack.localeCompare(b.river_pack) || a.id.localeCompare(b.id));
   assert.deepEqual(registry.places, discovered, "River registry is stale; run pipeline/build_river_registry.py");
+  const rivers = [];
+  for (const river of await readdir(data, { withFileTypes: true })) {
+    if (!river.isDirectory()) continue;
+    const manifest = await json(path.join(data, river.name, "river.json"));
+    assert.equal(manifest.schema_version, "river-pulse-river-0.1");
+    assert.equal(manifest.id, river.name);
+    assert.ok(["available", "in_development", "planned"].includes(manifest.status));
+    assert.ok(typeof manifest.name === "string" && manifest.name.trim());
+    assert.ok(typeof manifest.summary === "string" && manifest.summary.trim());
+    assert.ok(manifest.references?.length > 0);
+    for (const reference of manifest.references) assert.match(reference.url, /^https:\/\//);
+    for (const scene of manifest.scenes ?? []) {
+      const entry = path.resolve(data, river.name, scene.entry);
+      assert.ok(entry.startsWith(path.join(root, "river-pulse") + path.sep));
+      await readFile(entry);
+    }
+    rivers.push({ id: manifest.id, name: manifest.name, status: manifest.status,
+      manifest: `${river.name}/river.json` });
+  }
+  rivers.sort((a, b) => a.id.localeCompare(b.id));
+  assert.deepEqual(registry.rivers, rivers, "River catalog is stale");
   return discovered;
 }
 
