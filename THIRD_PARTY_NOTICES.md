@@ -29,6 +29,13 @@ Perkins at UC Santa Cruz. Dataset credit and CC BY 4.0 license:
 https://portal.opentopography.org/datasetMetadata?otCollectionID=OT.092012.26910.4.
 No survey DEM, VRT or LAS/LAZ point cloud is redistributed here.
 
+RP20 Eel forest reuses unchanged ez-tree 1.1.0 (MIT) conifer meshes, bark/needle
+maps and the eight-angle color/normal tree atlas from `data/biomes/peninsula-oak-fir`.
+The complete generator license is included at
+`river-pulse/data/russian_river/places/hacienda_bridge/setting/LICENSE-ez-tree`.
+`setting.json` records the reused files. Scatter, atlas fitting/lighting and rock
+surface noise are original code; vegetation is authored Setting, not a species survey.
+
 Clearwater's original source, optical design and embedded seabed texture are by Aurélien / Lumaris, copyright 2026 Lumaris, distributed under the MIT license in `LICENSE`. The original application remains in Git history; the unmodified extracted seabed image used by both applications is `renderer/assets/seabed.jpg`.
 
 The compiler and runtime in `vendor/cuda-webshader/` are from SamG-Coder/cuda-webshader, copyright 2026 SamG-Coder and CUDA WebShader contributors. Their MIT license is included in that directory. Snapshot commit: `9011955806cee30636ba24ae34b22d218e84196f`. Only modules reachable from the browser entry are retained; the retained module implementations are unchanged.

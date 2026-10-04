@@ -1,5 +1,5 @@
 {
-  "study": "RP17 — first form pass, not an accepted finished scene",
+  "study": "RP17 first form baseline accepted; RP20 authored bluff/forest pass awaiting human review. Finished environment remains ahead.",
   "source_geometry": {
     "terrain": "terrain.json",
     "flowlines": "hydrography.json",
@@ -22,9 +22,9 @@
     "terrain_cover": "Coarse palette chosen from aligned aerial pixels, not a land-cover or species classification product.",
     "water": "Authored image-color threshold inside the mapped river footprint; DEM-following height plus 0.18 m rendering clearance. Interpolated boundaries, green color and moving highlights are visual choices, not measured level, flow, velocity, depth or inundation.",
     "camera_version": 1,
-    "random_scatter": false,
-    "reserved_future_scatter_seed": 17041,
-    "structures_and_vegetation": "Not modeled in this first pass."
+    "random_scatter": true,
+    "scatter_seed": 17041,
+    "structures_and_vegetation": "Image-informed forest Setting and procedural rock surfaces in RP20; generic assets/heights/counts are authored, not surveyed species or trees. Detailed structures remain ahead. See setting.json."
   },
   "review": "../../../../../docs/river-pulse/eel-visual-review.md"
 }

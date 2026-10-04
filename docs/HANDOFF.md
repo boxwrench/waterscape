@@ -1,5 +1,48 @@
 # Handoff — 2026-10-04
 
+## Eel bluff and forest pass — RP20
+
+Complete locally on `task/RP20`; this visual pass awaits human acceptance.
+The [actual comparison gallery](../previews/eel/rp20/review.html) and
+[review record](river-pulse/eel-bluff-forest-review.md) preserve five fixed desktop
+and phone views, the original primary baseline, source/form presentations, failed
+iterations and measured costs. Deterministic Setting trees reuse licensed reservoir
+mesh/atlas assets; authored rock grain and weathering improve the forest silhouette
+and exposed faces. Geographic elevations, river geometry and v1 cameras are retained.
+California CalWater remains featured and visible in Evidence. No new fine DEM,
+species inventory, measured stage or bathymetry is claimed.
+
+Seven focused tests, river package validation and the complete 119-module build
+pass. Browser errors are empty, phone width is 390 px, and all ten gallery images
+load. Paired primary views increase triangles from 305,292 to 1,261,548 and draw
+calls from 3 to 8. Resident CPU geometry is 17.94 MiB; texture RGBA/mip estimate is
+44.3 MiB. CPU submission stayed similar in this sample, but GPU time/memory and
+foreground FPS remain unmeasured. Palette-only correction followed cost sampling.
+
+Still below the reservoir visual benchmark: cliff forms remain soft at 14 m,
+some trees look procedural, and close water/shore contact and structures are weak.
+Next bounded pass after visual review: shoreline and close water. No push or merge.
+
+## Parallel Tuolumne first runtime form — RP21
+
+The delegated Tuolumne branch now has an actual plain-form Poopenaut scene in
+`C:/Github/waterscape-tuolumne-rp19`, branch `task/RP21`, implementation
+`6d8f5e2` and Result `0d74dcb`. It is not merged into this checkout.
+Local scene: http://localhost:5174/river-pulse/renderer/tuolumne.html ; actual
+review: http://localhost:5174/previews/tuolumne/review.html . Root inspected the
+final primary render. Native 14.66 m terrain, aligned archival source aerial,
+mapped river guide and actual California CalWater watershed geometry are present.
+The cyan line is a mapped guide; there is no water surface, observed channel width,
+stage or bathymetry. Native 1 m LiDAR has not been acquired.
+
+Actual rendering corrected the proposed RP19 camera positions; calibrated v3
+cameras and five desktop/phone views are preserved in that checkout's
+`docs/river-pulse/tuolumne-visual-review.md`. Focused tests, data/source checks and
+116-module build pass. Agent reports no browser errors/phone overflow and 788,995
+triangles, three draw calls, 21.11 MiB CPU buffers and 8 MiB texture estimate.
+No final visual acceptance, GPU cost or FPS claim. RP19 below is the earlier
+foundation checkpoint; RP21 supersedes its statement that no runtime scene exists.
+
 ## California source context and elevation audit — RP18
 
 Complete on `task/RP18`. The user accepted RP17's first

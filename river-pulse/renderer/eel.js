@@ -3,10 +3,11 @@ import { cameraPosition, color, dot, float, mix, normalize, positionWorld, pow, 
 import { loadRiverTerrain } from "./terrain.js";
 import { buildRiverTerrainGrid } from "./terrain-mesh.js";
 import { EEL_CAMERAS, reviewCamera, clippedWaterTriangle } from "./eel-layout.js";
+import { createEelSetting } from "./eel-setting.js";
 
 const $ = id => document.getElementById(id), base = "../data/eel_river/places/scotia_bluffs/",
   started = performance.now(), reduced = matchMedia("(prefers-reduced-motion: reduce)");
-let active = "overview", paused = reduced.matches, mode = "study", pass = "refined", measure = null;
+let active = "overview", paused = reduced.matches, mode = "study", pass = "refined", measure = null, settingPass = "detail";
 $("evidence").onclick = () => {
   $("sources").hidden = !$("sources").hidden;
   $("evidence").setAttribute("aria-expanded", String(!$("sources").hidden));
@@ -67,7 +68,7 @@ function classify(terrain, image, waterbodies) {
     else tint.setRGB(0.34 + luma * 0.42, 0.34 + luma * 0.40, 0.26 + luma * 0.35, THREE.SRGBColorSpace);
     colors.set([tint.r, tint.g, tint.b], k * 3);
   }
-  return { wet, colors };
+  return { wet, colors, pixels, mapped: Uint8Array.from({ length: w * h }, (_, k) => footprint[k * 4 + 3] > 127 ? 1 : 0) };
 }
 
 function waterGeometry(terrain, wet, refined) {
@@ -131,10 +132,12 @@ async function main() {
     waterForm = new THREE.MeshBasicNodeMaterial({ color: 0x427b80, side: THREE.DoubleSide,
       polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }), waterStudy = water.material;
   scene.add(land, water);
+  const setting = await createEelSetting(terrain, classified, aerial); scene.add(setting.group);
   const camera = new THREE.PerspectiveCamera(48, 1, 1, 15000);
   function setCamera(id) {
     active = id;
     const view = reviewCamera(id, terrain); camera.position.fromArray(view.position); camera.lookAt(...view.target);
+    setting.setCamera(view.position, view.target);
     camera.near = ["overview", "bend"].includes(id) ? 10 : 0.5;
     camera.fov = innerWidth < 600 && id === "overview" ? 65 : view.fov; camera.updateProjectionMatrix();
     $("view-label").textContent = view.label;
@@ -143,7 +146,9 @@ async function main() {
   }
   function presentation() {
     mode = $("mode").value; pass = $("pass").value;
-    land.material = mode === "form" ? formMaterial : mode === "aerial" ? aerialMaterial : studyMaterial;
+    settingPass = $("setting-pass").value;
+    land.material = mode === "form" ? formMaterial : mode === "aerial" ? aerialMaterial : settingPass === "detail" ? setting.material : studyMaterial;
+    setting.group.visible = mode === "study" && settingPass === "detail";
     water.visible = mode !== "aerial"; water.material = mode === "form" ? waterForm : waterStudy;
     water.geometry = pass === "baseline" ? baseline : refined; cancelMeasurement();
   }
@@ -152,15 +157,18 @@ async function main() {
     $("environment").textContent = `${renderer.backend.isWebGPUBackend ? "WebGPU" : "WebGL2"} · ${innerWidth}×${innerHeight} · DPR ${renderer.getPixelRatio()} · camera presets v1`;
   }
   for (const button of document.querySelectorAll("[data-camera]")) button.onclick = () => setCamera(button.dataset.camera);
-  $("mode").onchange = presentation; $("pass").onchange = presentation; window.addEventListener("resize", resize);
+  $("mode").onchange = presentation; $("pass").onchange = presentation; $("setting-pass").onchange = presentation; window.addEventListener("resize", resize);
   let loadMs = 0, frame = 0, last = performance.now(), seconds = 0;
-  const geometryBytes = [landGeometry, baseline, refined].reduce((sum, g) => sum + Object.values(g.attributes).reduce((n, a) => n + a.array.byteLength, 0) + (g.index?.array.byteLength ?? 0), 0);
+  const meshes = setting.group.children, geometries = [landGeometry, baseline, refined, ...meshes.map(mesh => mesh.geometry)],
+    geometryBytes = geometries.reduce((sum, g) => sum + Object.values(g.attributes).reduce((n, a) => n + a.array.byteLength, 0) + (g.index?.array.byteLength ?? 0), 0)
+      + meshes.reduce((sum, mesh) => sum + mesh.instanceMatrix.array.byteLength + (mesh.instanceColor?.array.byteLength ?? mesh.instanceMatrix.count * 12), 0),
+    textureBytes = [aerial, ...setting.textures].reduce((sum, map) => sum + map.image.width * map.image.height * 4 * 4 / 3, 0);
   function cancelMeasurement() {
     measure = null; $("measure").disabled = false; $("measure").textContent = "Measure 120 frames";
     $("metrics").textContent = "Select a fixed view, then measure 120 frames. Switching view or presentation resets the sample.";
   }
   $("measure").onclick = () => {
-    measure = { intervals: [], cpu: [], warmup: 12, camera: active, mode, pass };
+    measure = { intervals: [], cpu: [], warmup: 12, camera: active, mode, pass, settingPass };
     $("measure").disabled = true; $("metrics").textContent = "Warming up, then sampling 120 rendered frames…";
   };
   resize(); presentation();
@@ -177,11 +185,12 @@ async function main() {
       if (measure.cpu.length === 120) {
         const percentile = (values, p) => [...values].sort((a, b) => a - b)[Math.floor((values.length - 1) * p)],
           triangles = renderer.info.render.triangles, calls = renderer.info.render.drawCalls;
-        $("metrics").textContent = `${measure.camera} / ${measure.mode} / ${measure.pass} · ${innerWidth}×${innerHeight} · DPR ${renderer.getPixelRatio()} · ${renderer.backend.isWebGPUBackend ? "WebGPU" : "WebGL2"}\n` +
+        $("metrics").textContent = `${measure.camera} / ${measure.mode} / ${measure.pass} / ${measure.settingPass} · ${innerWidth}×${innerHeight} · DPR ${renderer.getPixelRatio()} · ${renderer.backend.isWebGPUBackend ? "WebGPU" : "WebGL2"}\n` +
           `${triangles.toLocaleString()} rendered triangles · ${calls} draw calls · ${(geometryBytes / 1048576).toFixed(2)} MiB geometry buffers (both passes resident)\n` +
           `Frame interval p50 ${percentile(measure.intervals, 0.5).toFixed(2)} ms / p95 ${percentile(measure.intervals, 0.95).toFixed(2)} ms\n` +
           `CPU render submission p50 ${percentile(measure.cpu, 0.5).toFixed(2)} ms / p95 ${percentile(measure.cpu, 0.95).toFixed(2)} ms\n` +
-          `First frame ${loadMs.toFixed(0)} ms · 1 source texture (${aerial.image.width}×${aerial.image.height}, RGBA+mips estimate ${(aerial.image.width * aerial.image.height * 4 * 4 / 3 / 1048576).toFixed(1)} MiB)\nGPU time and total browser memory are not measured.`;
+          `First frame ${loadMs.toFixed(0)} ms · 6 textures, RGBA+mips estimate ${(textureBytes / 1048576).toFixed(1)} MiB\n` +
+          `${setting.treeCount} authored tree sites; ${setting.detailCount()} detailed near this camera. GPU time and total browser memory are not measured.`;
         measure = null; $("measure").disabled = false;
       }
     }
