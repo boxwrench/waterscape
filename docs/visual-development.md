@@ -33,6 +33,26 @@ comparable detailed passes, not from a coarse Eel study versus a developed bridg
 4. Record seeds and inputs. Keep a plain form mode without textures, fog, vegetation
    or effects that could conceal weak geometry. Establish recognizable forms there.
 
+## California source policy
+
+Use and feature suitable California state data for California scenes. Start with
+state sources such as DWR elevation surveys, CalWater watershed boundaries and CDEC
+observations where their coverage and purpose fit the reach. Federal terrain,
+hydrography and imagery remain useful supplements. A state-hosted federal dataset
+must retain its federal origin; hosting alone does not make it state-authored data.
+
+Before choosing a source, record geographic coverage, acquisition/observation date,
+horizontal CRS, vertical units and datum, original source grid or point spacing,
+runtime sampling and processing. Check coverage rather than inferring it from a
+dataset title. Distinguish raw LiDAR points, LiDAR-derived bare-earth DEMs and
+resampled elevation-service exports. Quantization precision is neither horizontal
+resolution nor measured accuracy. Unknown source resolution or dates stay unknown.
+
+Feature state data through a useful visual or observation, with the agency and
+source link visible. Preserve the acquired inputs and query metadata for offline
+review. For RP18, actual CalWater geometry locates Scotia Bluffs within the Eel River
+hydrologic unit and Lower Eel River hydrologic area; it does not drive water levels.
+
 ## One bounded iteration
 
 1. Capture the actual local runtime from the fixed cameras before editing. Preserve
@@ -85,6 +105,8 @@ Acceptance: awaiting human / accepted by human / needs another pass
 Next bounded pass:
 ```
 
-For Eel, native terrain is the geographic backbone. The water surface is a labeled
-visual proxy. The contact fix does not turn that proxy into a measured water level.
+For Eel, source elevations preserved in a resampled grid are the geographic
+backbone; the approximately 14.05 m runtime grid is not a native 1 m LiDAR product.
+The water surface is a labeled visual proxy. The contact fix does not turn that
+proxy into a measured water level.
 Future passes must preserve that distinction when adding more convincing optics.

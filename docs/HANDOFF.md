@@ -1,16 +1,63 @@
 # Handoff — 2026-10-04
 
+## California source context and elevation audit — RP18
+
+Complete on `task/RP18`. The user accepted RP17's first
+form baseline with "looks good" and asked about 1 m LiDAR, actual reference inputs
+and using/featuring California state data. RP18 preserves the accepted 3D scene and
+fixed cameras while adding a state CalWater watershed inset and visible provenance.
+Bundled polygons identify the Eel River hydrologic unit (1111) and Lower Eel River
+hydrologic area (11111). State/interagency authorship is credited separately from
+State Water Boards hosting; these 1999/2004 hybrid drainage/administrative boundaries
+provide geographic context, not flood or jurisdiction data.
+
+Current local terrain is a 384×384 resampled 3DEP export at 14.05296785 m cells,
+not a native 1 m LiDAR product. Elevations are preserved without exaggeration;
+0.05 m encoding precision is not spatial resolution or accuracy. No local 1 m DEM
+or raw LiDAR point cloud is bundled. The checked DWR NoCAL Wildfires 2018 footprint
+catalog did not intersect this study extent. The actual CA09_Perkins survey
+footprint verifies partial 1 m availability at the station, but not the main bluff
+review targets; this NCALM/NSF/UC Santa Cruz project is not state agency data.
+Full-study 1 m availability remains unverified; a failed National Map catalog
+request is not evidence of absence. See the [source audit](river-pulse/eel-source-audit.md).
+The [workflow](visual-development.md) now requires a California source search and
+coverage/date/CRS/vertical-datum/source-resolution/runtime-sampling audit, while
+retaining federal origins for state-hosted federal products. Source inputs and
+limitations are in the [Eel review](river-pulse/eel-visual-review.md).
+
+Verification: five focused source/geometry tests, river package validation and
+the complete 117-module build pass. Actual state inset and entry button inspected
+at 980×876 and 390×844; phone width remains 390 px and browser errors are empty.
+Screenshots are `previews/eel/rp18-*.png`. Full watershed inputs add approximately
+1.23 MiB uncompressed; 3D geometry is unchanged. New frame/GPU/memory cost is not
+measured for this UI pass. No push or merge.
+
+## Parallel Tuolumne foundation — RP19
+
+At the user's request a separate agent started Tuolumne at Poopenaut Valley in
+`C:/Github/waterscape-tuolumne-rp19`, branch `task/RP19`, commits `615acb1` and
+`951e73d`. This foundation is not merged into this checkout. It includes a
+14.66 m unexaggerated terrain bundle, mapped river lines, aligned source aerial,
+actual California CalWater unit/area and five proposed cameras. Its reviewed
+source sheet visibly features state geometry. Source validator passes; no runtime
+scene or human visual acceptance is claimed. NCALM's 2010 Poopenaut 1 m project
+is an available lead; its full footprint and native raster are not acquired.
+Next: actual plain-form scene and fixed-view review. See that checkout's
+`docs/river-pulse/tuolumne-foundation.md` and RP19 task Result.
+
 ## Eel River visual baseline — RP17
 
 The user redirected RP16's unfinished surroundings to an Eel River trial of their
 research/form/fixed-camera/render/compare workflow. `task/RP17` starts Scotia Bluffs
-with native 3DEP elevations, aligned NAIP imagery and mapped 3DHP footprints.
+with preserved 3DEP elevations in a resampled grid, aligned NAIP imagery and mapped
+3DHP footprints.
 The scene has five fixed cameras, plain form/source modes, boundary comparison,
 highlight pause and visible 120-frame cost measurement. Water/cover classification
 and surface optics are explicitly authored; no gauge or hydraulic values are bound.
 The first actual render exposed triangular water/terrain gaps; related plane/depth
 corrections are preserved in before/after evidence. Detailed vegetation/structures
-and convincing close water remain future passes. Awaiting human visual acceptance.
+and convincing close water remain future passes. The user subsequently accepted
+this first form baseline on 2026-10-04; the detailed environment remains unfinished.
 The [reusable process](visual-development.md) and [review record](river-pulse/eel-visual-review.md)
 explain provenance, weak points and measurement limits. Work is local; never pushed.
 Verification: 9 focused tests, river validation, registry regeneration check and
@@ -19,7 +66,7 @@ highlight pause and actual moving frames inspected. No console errors or phone
 overflow. Refined boundary adds approximately 0.99% rendered triangles with the
 same three draw calls; automated frame pacing prevents an FPS claim. The user
 endorses combining this workflow with Sacramento's detailed photo-based modeling;
-that endorsement does not accept Eel's current visual baseline.
+the later "looks good" accepts the first form baseline, not a finished environment.
 
 ## Freeport riverfront setting — RP16
 

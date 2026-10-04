@@ -12,6 +12,10 @@ $("evidence").onclick = () => {
   $("evidence").setAttribute("aria-expanded", String(!$("sources").hidden));
 };
 $("close").onclick = () => { $("sources").hidden = true; $("evidence").setAttribute("aria-expanded", "false"); $("evidence").focus(); };
+$("state-credit").onclick = () => {
+  $("sources").hidden = false; $("sources").scrollTop = 0;
+  $("evidence").setAttribute("aria-expanded", "true"); $("close").focus();
+};
 window.addEventListener("keydown", event => { if (event.key === "Escape") $("close").click(); });
 $("clean").onclick = () => $("clean").setAttribute("aria-pressed", String(document.body.classList.toggle("clean")));
 function pauseLabel() {

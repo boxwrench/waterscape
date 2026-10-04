@@ -4,7 +4,8 @@ RP17 trials the user's research → form → fixed cameras → render → compar
 workflow. [Open the study](../../river-pulse/renderer/eel.html) or
 [actual runtime comparison](../../previews/eel/review.html).
 
-**Acceptance: awaiting human review.** This is a first landform/contact pass. It is
+**Acceptance: first form baseline accepted by the user on 2026-10-04 ("looks good").**
+This acceptance covers RP17's landform/contact pass. It is
 not a finished environment, a photo-identical reconstruction or a hydraulic model.
 
 ## Research and coordinate frame
@@ -13,8 +14,11 @@ not a finished environment, a photo-identical reconstruction or a hydraulic mode
   supplies the WGS84 anchor, 40.49149394275497, -124.09974068101218. It does not supply
   the scene's water level. The anchor is a station location, not an open-water sample.
 - [USGS 3DEP](https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer)
-  supplies the 384×384 native elevation grid, approximately 14.05 m cells, NAVD88
-  metres and local UTM zone 10. No vertical exaggeration or authored terrain carving.
+  supplies a 384×384 service export, resampled to 14.05296785 m cells, NAVD88
+  metres and local UTM zone 10 (EPSG:32610). Source elevations are preserved without
+  vertical exaggeration or authored terrain carving; the grid is not a native 1 m
+  LiDAR DEM. Its 0.05 m encoding increment is quantization precision, not spatial
+  resolution or measured accuracy. No raw LAS/LAZ or 1 m DEM is bundled locally.
 - [USGS 3DHP](https://3dhp.nationalmap.gov/arcgis/rest/services/usgs_3dhp_all/FeatureServer)
   supplies flowlines and mapped river footprints in the same geographic frame.
 - [USGS/USDA NAIP mosaic](https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer)
@@ -26,6 +30,31 @@ not a finished environment, a photo-identical reconstruction or a hydraulic mode
   The vegetated crest, exposed bluff face and river below it are review cues.
   Different viewpoint/season prevents a precise photographic overlay comparison.
   The original photograph is not bundled.
+- [California Water Boards CalWater service](https://gispublic.waterboards.ca.gov/arcgis/rest/services/Hydrography/CalWater_Boundaries/MapServer)
+  supplies the actual Eel River hydrologic unit (IDNUM 1111) and Lower Eel River
+  hydrologic area (RBUA 11111). RP18 features these state/interagency boundaries in
+  the scene's California context inset, with the station anchor and study extent.
+  The California Interagency Watershed Mapping Committee credits DWR, CDF, DFG,
+  SWRCB and federal partners; the State Water Boards host the service. The boundaries
+  were finalized in 1999, with CalWater 2.2.1 attribution/documentation updated in
+  May 2004. They combine drainage and administrative boundaries: geographic context,
+  not a flood map, current wetted footprint or legal jurisdiction map. Service
+  metadata, complete source queries and WGS84 geometry are bundled locally.
+
+### Elevation availability audit
+
+The accepted scene currently uses the roughly 14 m 3DEP export above. Requesting
+finer pixels from a mosaic would not establish a native 1 m source. RP18 separately
+checks project footprints and catalog metadata before claiming finer local coverage;
+availability, a downloaded product and the grid actually rendered are distinct.
+The checked DWR `CA_NoCAL_Wildfires_B5a_2018` catalog returned no intersecting
+footprints for this study extent. That result applies to this project only. A
+failed National Map product-catalog request does not establish absence of 1 m data;
+full-study 1 m coverage remains unverified. A separate actual survey footprint
+confirms partial 1 m availability from NCALM's 2009 CA09_Perkins research project
+at the station, but not the primary, eye-level, shoreline or bend camera targets.
+Nothing from that DEM is downloaded or rendered. The [source audit](eel-source-audit.md)
+records coverage, datum, license and the distinction between state and research inputs.
 
 The water height is a DEM-following visual proxy with rendering clearance, not
 observed stage or bathymetry. Water optics, colors and highlights are illustrative.
@@ -110,7 +139,7 @@ extent at the far end: extending geographic coverage is a future form correction
 not something to hide with fog. These images validate the implementation rather
 than a photographed or measured water state.
 
-## Next acceptance question
+## Accepted baseline and next bounded pass
 
 Verification: Overview, primary bluffs, eye level, shoreline and downstream bend
 were inspected at 980×876 and 390×844, plus desktop form/source-aerial modes. Phone
@@ -121,8 +150,12 @@ handling is implemented; changing the operating-system preference was not tested
 The focused geometry/provenance/navigation suite passes 9 tests, packages validate
 and the full build includes the new Eel page and local assets.
 
-Is this reach and its major bend/bluff composition a useful starting baseline?
-If accepted, the next bounded pass should address the bluff/forest silhouette and
+The user accepted this reach and its major bend/bluff composition as the first
+form baseline. RP18 adds source context and resolution disclosure while preserving
+that terrain, water geometry and camera set. Its data/context checks are recorded
+separately from RP17's visual and performance measurements above.
+
+The next detailed visual pass should address the bluff/forest silhouette and
 close terrain scale, then shoreline/water presentation. Detailed vegetation and
 structures must be compared from these same cameras rather than concealing a weak
 form. The reusable process is [documented here](../visual-development.md).

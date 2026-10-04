@@ -1,0 +1,181 @@
+{
+  "source": "https://gispublic.waterboards.ca.gov/arcgis/rest/services/Hydrography/CalWater_Boundaries/MapServer?f=pjson",
+  "retrieval_time": "2026-10-04T20:27:51.119200+00:00",
+  "metadata": {
+    "currentVersion": 11.5,
+    "cimVersion": "3.5.0",
+    "serviceDescription": "This dataset includes calwater221 boundaries dissolved by Hydrologic Unit, Region, Area, Subarea, SPW, and PW. \n\nThe California Interagency Watershed Map of 1999 (Calwater 2.2, updated May 2004, \"calw221\") is the State of California's working definition of watershed boundaries.  Previous Calwater versions (1.2 and 2.2) described California watersheds, beginning with the division of the State's 101 million acres into ten Hydrologic Regions (HR).  Each HR is progressively subdivided into six smaller, nested levels: the Hydrologic Unit (HU, major rivers), Hydrologic Area (HA, major tributaries), Hydrologic Sub-Area (HSA), Super Planning Watershed (SPWS), and Planning Watershed (PWS).   At the Planning Watershed (the most detailed level), where implemented, polygons range in size from approximately 3,000 to 10,000 acres.  At all levels, a total of 7035 polygons represent the State's watersheds.  The present version, Calwater 2.2.1, refines the watershed coding structure and documentation (database fields were added and some were renamed).   There are significant watershed boundary, code, and name differences between Calwater versions 1.2 (1995), 2.0 (1998), and 2.2 (1999).  The differences between versions 2.2 (1999) and 2.2.1 (2004) are attribute field names and some inserted lines that identify differences between State and federal watersheds.\n\nCalwater 2.2.1 most accurately delineates true watersheds in mountainous terrain.  However, neither Calwater 2.2.1 nor any of its predecessors is a \"pure\" watershed map because administrative boundaries such as the State border were used to delineate watershed areas.  Some of the boundaries, particularly in developed valley areas, also have legal and administrative purposes other than the representation of actual drainage divides.  Examples include the so-called \"Legal Delta\" (California Water Code, Chapter 2, the Delta, Sec. 12220) and other district boundaries.  Neither is Calwater a legal map document, as it does not represent State of California Regional Water Quality Control Board (RWQCB) jurisdictions, officiated by the State Water Resources Control Board (SWRCB) under California Water Code Section 13200.  Calwater is a hybrid, a spatial cross-reference for use in local, State, and federal information communities.\n\nThe California Resources Agency (CRA) Department of Forestry and Fire Protection (CDF) contracted with Tierra Data Systems for the original digital production in 1993, based on Hydrologic Basin Planning Maps  published in hardcopy (SWRCB, 1986).  The State of California Stephen P. Teale Data Center GIS Solutions Group (Teale) under the direction of the California Department of Water Resrouces (DWR) and CDF, finalized the current version in ESRI ArcInfo coverage format in 1999 with USDA Forest Service and RWQCB/SWRCB inputs. The CRA California Spatial Information Library (CaSIL) is the current distributor of the coverage in the Teale Albers Conical Equal-Area projection, North American Datum of 1983. The California Department of Fish and Game (DFG) authored Calwater attribution design and documentation culminating in May 2004 with this Federal Geographic Data Committee (FGDC-STD-001-1998) standard metadata.",
+    "mapName": "Layers",
+    "description": "",
+    "copyrightText": "California Interagency Watershed Mapping Committee: California Department of Water Resources (DWR), California Department of Forestry and Fire Protection (CDF), California Department of Fish and Game (DFG), California State Water Resources Control Board (SWRCB), USDA Forest Service (USFS) Pacific Southwest Region (R5), USDA Natural Resources Conservation Service (NRCS), U.S. Geologic Survey (USGS), USDI Bureau of Reclamation (USBR), USDI Bureau of Land Management (BLM), U.S. Environmental Protection Agency (USEPA) Region IX, Stephen P. Teale Data Center (Teale GIS Solutions Group).",
+    "supportsDynamicLayers": true,
+    "layers": [
+      {
+        "id": 0,
+        "name": "CalWater_Hydrologic_PW",
+        "parentLayerId": -1,
+        "defaultVisibility": true,
+        "subLayerIds": null,
+        "minScale": 0,
+        "maxScale": 0,
+        "type": "Feature Layer",
+        "geometryType": "esriGeometryPolygon",
+        "supportsDynamicLegends": true
+      },
+      {
+        "id": 1,
+        "name": "CalWater_Hydrologic_SPW",
+        "parentLayerId": -1,
+        "defaultVisibility": true,
+        "subLayerIds": null,
+        "minScale": 0,
+        "maxScale": 0,
+        "type": "Feature Layer",
+        "geometryType": "esriGeometryPolygon",
+        "supportsDynamicLegends": true
+      },
+      {
+        "id": 2,
+        "name": "CalWater_Hydrologic_Subarea",
+        "parentLayerId": -1,
+        "defaultVisibility": true,
+        "subLayerIds": null,
+        "minScale": 0,
+        "maxScale": 0,
+        "type": "Feature Layer",
+        "geometryType": "esriGeometryPolygon",
+        "supportsDynamicLegends": true
+      },
+      {
+        "id": 3,
+        "name": "CalWater_Hydrologic_Area",
+        "parentLayerId": -1,
+        "defaultVisibility": true,
+        "subLayerIds": null,
+        "minScale": 0,
+        "maxScale": 0,
+        "type": "Feature Layer",
+        "geometryType": "esriGeometryPolygon",
+        "supportsDynamicLegends": true
+      },
+      {
+        "id": 4,
+        "name": "CalWater_Hydrologic_Region",
+        "parentLayerId": -1,
+        "defaultVisibility": true,
+        "subLayerIds": null,
+        "minScale": 0,
+        "maxScale": 0,
+        "type": "Feature Layer",
+        "geometryType": "esriGeometryPolygon",
+        "supportsDynamicLegends": true
+      },
+      {
+        "id": 5,
+        "name": "CalWater_Hydrologic_Unit",
+        "parentLayerId": -1,
+        "defaultVisibility": true,
+        "subLayerIds": null,
+        "minScale": 0,
+        "maxScale": 0,
+        "type": "Feature Layer",
+        "geometryType": "esriGeometryPolygon",
+        "supportsDynamicLegends": true
+      }
+    ],
+    "tables": [],
+    "spatialReference": {
+      "wkt2": "PROJCRS[\"NAD_1983_Albers\",BASEGEOGCRS[\"GCS_North_American_1983\",DATUM[\"D_North_American_1983\",ELLIPSOID[\"GRS_1980\",6378137.0,298.257222101,LENGTHUNIT[\"Meter\",1.0]]],PRIMEM[\"Greenwich\",0.0,ANGLEUNIT[\"Degree\",0.0174532925199433]],CS[ellipsoidal,2],AXIS[\"Latitude (lat)\",north,ORDER[1]],AXIS[\"Longitude (lon)\",east,ORDER[2]],ANGLEUNIT[\"Degree\",0.0174532925199433]],CONVERSION[\"Albers\",METHOD[\"Albers\"],PARAMETER[\"False_Easting\",0.0,LENGTHUNIT[\"Meter\",1.0]],PARAMETER[\"False_Northing\",-4000000.0,LENGTHUNIT[\"Meter\",1.0]],PARAMETER[\"Central_Meridian\",-120.0,ANGLEUNIT[\"Degree\",0.0174532925199433]],PARAMETER[\"Standard_Parallel_1\",34.0,ANGLEUNIT[\"Degree\",0.0174532925199433]],PARAMETER[\"Standard_Parallel_2\",40.5,ANGLEUNIT[\"Degree\",0.0174532925199433]],PARAMETER[\"Latitude_Of_Origin\",0.0,ANGLEUNIT[\"Degree\",0.0174532925199433]]],CS[Cartesian,2],AXIS[\"Easting (X)\",east,ORDER[1]],AXIS[\"Northing (Y)\",north,ORDER[2]],LENGTHUNIT[\"Meter\",1.0]]",
+      "wkt": "PROJCS[\"NAD_1983_Albers\",GEOGCS[\"GCS_North_American_1983\",DATUM[\"D_North_American_1983\",SPHEROID[\"GRS_1980\",6378137.0,298.257222101]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Albers\"],PARAMETER[\"False_Easting\",0.0],PARAMETER[\"False_Northing\",-4000000.0],PARAMETER[\"Central_Meridian\",-120.0],PARAMETER[\"Standard_Parallel_1\",34.0],PARAMETER[\"Standard_Parallel_2\",40.5],PARAMETER[\"Latitude_Of_Origin\",0.0],UNIT[\"Meter\",1.0]]",
+      "xyTolerance": 0.001,
+      "zTolerance": 2,
+      "mTolerance": 2,
+      "falseX": -16909700,
+      "falseY": -8597000,
+      "xyUnits": 266332319.7555542,
+      "falseZ": 0,
+      "zUnits": 1,
+      "falseM": -100000,
+      "mUnits": 10000
+    },
+    "singleFusedMapCache": false,
+    "initialExtent": {
+      "xmin": -447429.57122598565,
+      "ymin": -311163.27701237757,
+      "xmax": 613529.8621294836,
+      "ymax": 502770.1938558204,
+      "spatialReference": {
+        "wkt2": "PROJCRS[\"NAD_1983_Albers\",BASEGEOGCRS[\"GCS_North_American_1983\",DATUM[\"D_North_American_1983\",ELLIPSOID[\"GRS_1980\",6378137.0,298.257222101,LENGTHUNIT[\"Meter\",1.0]]],PRIMEM[\"Greenwich\",0.0,ANGLEUNIT[\"Degree\",0.0174532925199433]],CS[ellipsoidal,2],AXIS[\"Latitude (lat)\",north,ORDER[1]],AXIS[\"Longitude (lon)\",east,ORDER[2]],ANGLEUNIT[\"Degree\",0.0174532925199433]],CONVERSION[\"Albers\",METHOD[\"Albers\"],PARAMETER[\"False_Easting\",0.0,LENGTHUNIT[\"Meter\",1.0]],PARAMETER[\"False_Northing\",-4000000.0,LENGTHUNIT[\"Meter\",1.0]],PARAMETER[\"Central_Meridian\",-120.0,ANGLEUNIT[\"Degree\",0.0174532925199433]],PARAMETER[\"Standard_Parallel_1\",34.0,ANGLEUNIT[\"Degree\",0.0174532925199433]],PARAMETER[\"Standard_Parallel_2\",40.5,ANGLEUNIT[\"Degree\",0.0174532925199433]],PARAMETER[\"Latitude_Of_Origin\",0.0,ANGLEUNIT[\"Degree\",0.0174532925199433]]],CS[Cartesian,2],AXIS[\"Easting (X)\",east,ORDER[1]],AXIS[\"Northing (Y)\",north,ORDER[2]],LENGTHUNIT[\"Meter\",1.0]]",
+        "wkt": "PROJCS[\"NAD_1983_Albers\",GEOGCS[\"GCS_North_American_1983\",DATUM[\"D_North_American_1983\",SPHEROID[\"GRS_1980\",6378137.0,298.257222101]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Albers\"],PARAMETER[\"False_Easting\",0.0],PARAMETER[\"False_Northing\",-4000000.0],PARAMETER[\"Central_Meridian\",-120.0],PARAMETER[\"Standard_Parallel_1\",34.0],PARAMETER[\"Standard_Parallel_2\",40.5],PARAMETER[\"Latitude_Of_Origin\",0.0],UNIT[\"Meter\",1.0]]",
+        "xyTolerance": 0.001,
+        "zTolerance": 2,
+        "mTolerance": 2,
+        "falseX": -16909700,
+        "falseY": -8597000,
+        "xyUnits": 266332319.7555542,
+        "falseZ": 0,
+        "zUnits": 1,
+        "falseM": -100000,
+        "mUnits": 10000
+      }
+    },
+    "fullExtent": {
+      "xmin": -373985.55012984946,
+      "ymin": -604500.1399354413,
+      "xmax": 540085.841033347,
+      "ymax": 450043.0351263415,
+      "spatialReference": {
+        "wkt2": "PROJCRS[\"NAD_1983_Albers\",BASEGEOGCRS[\"GCS_North_American_1983\",DATUM[\"D_North_American_1983\",ELLIPSOID[\"GRS_1980\",6378137.0,298.257222101,LENGTHUNIT[\"Meter\",1.0]]],PRIMEM[\"Greenwich\",0.0,ANGLEUNIT[\"Degree\",0.0174532925199433]],CS[ellipsoidal,2],AXIS[\"Latitude (lat)\",north,ORDER[1]],AXIS[\"Longitude (lon)\",east,ORDER[2]],ANGLEUNIT[\"Degree\",0.0174532925199433]],CONVERSION[\"Albers\",METHOD[\"Albers\"],PARAMETER[\"False_Easting\",0.0,LENGTHUNIT[\"Meter\",1.0]],PARAMETER[\"False_Northing\",-4000000.0,LENGTHUNIT[\"Meter\",1.0]],PARAMETER[\"Central_Meridian\",-120.0,ANGLEUNIT[\"Degree\",0.0174532925199433]],PARAMETER[\"Standard_Parallel_1\",34.0,ANGLEUNIT[\"Degree\",0.0174532925199433]],PARAMETER[\"Standard_Parallel_2\",40.5,ANGLEUNIT[\"Degree\",0.0174532925199433]],PARAMETER[\"Latitude_Of_Origin\",0.0,ANGLEUNIT[\"Degree\",0.0174532925199433]]],CS[Cartesian,2],AXIS[\"Easting (X)\",east,ORDER[1]],AXIS[\"Northing (Y)\",north,ORDER[2]],LENGTHUNIT[\"Meter\",1.0]]",
+        "wkt": "PROJCS[\"NAD_1983_Albers\",GEOGCS[\"GCS_North_American_1983\",DATUM[\"D_North_American_1983\",SPHEROID[\"GRS_1980\",6378137.0,298.257222101]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Albers\"],PARAMETER[\"False_Easting\",0.0],PARAMETER[\"False_Northing\",-4000000.0],PARAMETER[\"Central_Meridian\",-120.0],PARAMETER[\"Standard_Parallel_1\",34.0],PARAMETER[\"Standard_Parallel_2\",40.5],PARAMETER[\"Latitude_Of_Origin\",0.0],UNIT[\"Meter\",1.0]]",
+        "xyTolerance": 0.001,
+        "zTolerance": 2,
+        "mTolerance": 2,
+        "falseX": -16909700,
+        "falseY": -8597000,
+        "xyUnits": 266332319.7555542,
+        "falseZ": 0,
+        "zUnits": 1,
+        "falseM": -100000,
+        "mUnits": 10000
+      }
+    },
+    "datesInUnknownTimezone": false,
+    "minScale": 0,
+    "maxScale": 0,
+    "units": "esriMeters",
+    "supportedImageFormatTypes": "PNG32,PNG24,PNG,JPG,DIB,TIFF,EMF,PS,PDF,GIF,SVG,SVGZ,BMP",
+    "documentInfo": {
+      "Title": "",
+      "Author": "",
+      "Comments": "",
+      "Subject": "",
+      "Category": "",
+      "Version": "10.1",
+      "AntialiasingMode": "None",
+      "TextAntialiasingMode": "Force",
+      "Keywords": "CalWater,watershed,water"
+    },
+    "supportsQueryDomains": true,
+    "capabilities": "Map,Query,Data",
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "exportTilesAllowed": false,
+    "referenceScale": 0.0,
+    "supportsDatumTransformation": true,
+    "archivingInfo": {
+      "supportsHistoricMoment": false
+    },
+    "supportsClipping": true,
+    "supportsSpatialFilter": true,
+    "supportsTimeRelation": true,
+    "supportsQueryDataElements": true,
+    "mapUnits": {
+      "uwkid": 9001
+    },
+    "maxSelectionCount": 2000,
+    "maxRecordCount": 1000,
+    "maxImageHeight": 4096,
+    "maxImageWidth": 4096,
+    "supportedExtensions": "KmlServer",
+    "resampling": false
+  }
+}

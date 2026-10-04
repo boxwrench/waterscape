@@ -1,0 +1,277 @@
+{
+  "source": "https://gis.water.ca.gov/arcgisimg/rest/services/elevation/CA_NoCAL_Wildfires_B5a_2018/ImageServer?f=pjson",
+  "retrieval_time": "2026-10-04T20:27:51.119200+00:00",
+  "metadata": {
+    "currentVersion": 11.3,
+    "serviceDescription": "This dataset is standard one-meter resolution digital elevation model (DEM) produced through the 3D Elevation Program (3DEP) . The elevations in this DEM represent the topographic bare-earth surface. USGS standard one-meter DEMs are produced exclusively from high resolution light detection and ranging (lidar) source data of one-meter or higher resolution. One-meter DEM surfaces are seamless within collection projects, but, not necessarily seamless across projects. The spatial reference used for tiles of the one-meter DEM within the conterminous United States (CONUS) is Universal Transverse Mercator (UTM) in units of meters, and in conformance with the North American Datum of 1983 (NAD83). All bare earth elevation values are in meters and are referenced to the North American Vertical Datum of 1988 (NAVD88). Each tile is distributed in the UTM Zone in which it lies. If a tile crosses two UTM zones, it is delivered in both zones. The one-meter DEM is the highest resolution standard DEM offered in the 3DEP product suite. Other 3DEP products are nationally seamless DEMs in resolutions of 1/3, 1, and 2 arc seconds. These seamless DEMs were referred to as the National Elevation Dataset (NED) from about 2000 through 2015 at which time they became the seamless DEM layers under the 3DEP program and lost the NED branding. Other 3DEP products include five-meter DEMs in Alaska as well as various source datasets including the lidar point cloud and interferometric synthetic aperture radar (Ifsar) digital surface models and intensity images. All 3DEP products are public domain.DWR makes no warranties or guarantees \u2014 either expressed or implied \u2014 as to the completeness, accuracy, or correctness of the data. DWR neither accepts nor assumes liability arising from or for any incorrect, incomplete, or misleading subject data. This is an official DWR Image Service, published on 02/14/2020 by the Division of Engineering, Geodetic Branch, Geospatial Data Support Section, who may be contacted at gis@water.ca.gov.",
+    "name": "elevation/CA_NoCAL_Wildfires_B5a_2018",
+    "description": "This dataset is standard one-meter resolution digital elevation model (DEM) produced through the 3D Elevation Program (3DEP) . The elevations in this DEM represent the topographic bare-earth surface. USGS standard one-meter DEMs are produced exclusively from high resolution light detection and ranging (lidar) source data of one-meter or higher resolution. One-meter DEM surfaces are seamless within collection projects, but, not necessarily seamless across projects. The spatial reference used for tiles of the one-meter DEM within the conterminous United States (CONUS) is Universal Transverse Mercator (UTM) in units of meters, and in conformance with the North American Datum of 1983 (NAD83). All bare earth elevation values are in meters and are referenced to the North American Vertical Datum of 1988 (NAVD88). Each tile is distributed in the UTM Zone in which it lies. If a tile crosses two UTM zones, it is delivered in both zones. The one-meter DEM is the highest resolution standard DEM offered in the 3DEP product suite. Other 3DEP products are nationally seamless DEMs in resolutions of 1/3, 1, and 2 arc seconds. These seamless DEMs were referred to as the National Elevation Dataset (NED) from about 2000 through 2015 at which time they became the seamless DEM layers under the 3DEP program and lost the NED branding. Other 3DEP products include five-meter DEMs in Alaska as well as various source datasets including the lidar point cloud and interferometric synthetic aperture radar (Ifsar) digital surface models and intensity images. All 3DEP products are public domain.DWR makes no warranties or guarantees \u2014 either expressed or implied \u2014 as to the completeness, accuracy, or correctness of the data. DWR neither accepts nor assumes liability arising from or for any incorrect, incomplete, or misleading subject data. This is an official DWR Image Service, published on 02/14/2020 by the Division of Engineering, Geodetic Branch, Geospatial Data Support Section, who may be contacted at gis@water.ca.gov.",
+    "extent": {
+      "xmin": 569994,
+      "ymin": 4209994,
+      "xmax": 680006,
+      "ymax": 4350006,
+      "spatialReference": {
+        "wkid": 26910,
+        "latestWkid": 26910
+      }
+    },
+    "initialExtent": {
+      "xmin": 569994,
+      "ymin": 4209994,
+      "xmax": 680006,
+      "ymax": 4350006,
+      "spatialReference": {
+        "wkid": 26910,
+        "latestWkid": 26910
+      }
+    },
+    "fullExtent": {
+      "xmin": 569994,
+      "ymin": 4209994,
+      "xmax": 680006,
+      "ymax": 4350006,
+      "spatialReference": {
+        "wkid": 26910,
+        "latestWkid": 26910
+      }
+    },
+    "sortableFields": "",
+    "bandCount": 1,
+    "pixelType": "F32",
+    "minValues": [
+      -7.415948390960693
+    ],
+    "maxValues": [
+      803.7045288085938
+    ],
+    "meanValues": [
+      61.026268677179715
+    ],
+    "stdvValues": [
+      112.04142131252915
+    ],
+    "hasMultidimensions": false,
+    "pixelSizeX": 1,
+    "pixelSizeY": 1,
+    "meanPixelSize": 1,
+    "datasetFormat": "AMD",
+    "uncompressedSize": 61612000576,
+    "blockWidth": 2048,
+    "blockHeight": 256,
+    "compressionType": "None",
+    "bandNames": [
+      "Band_1"
+    ],
+    "allowCopy": true,
+    "allowAnalysis": true,
+    "itemAccess": false,
+    "inspectionCapabilities": "",
+    "minPixelSize": 0,
+    "maxPixelSize": 0,
+    "copyrightText": "Origin, U.S. Geological Survey",
+    "serviceDataType": "esriImageServiceDataTypeGeneric",
+    "serviceSourceType": "esriImageServiceSourceTypeMosaicDataset",
+    "objectIdField": "OBJECTID",
+    "fields": [
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID",
+        "domain": null
+      },
+      {
+        "name": "Shape",
+        "type": "esriFieldTypeGeometry",
+        "alias": "Shape",
+        "domain": null
+      },
+      {
+        "name": "Name",
+        "type": "esriFieldTypeString",
+        "alias": "Name",
+        "domain": null,
+        "length": 200
+      },
+      {
+        "name": "MinPS",
+        "type": "esriFieldTypeDouble",
+        "alias": "MinPS",
+        "domain": null
+      },
+      {
+        "name": "MaxPS",
+        "type": "esriFieldTypeDouble",
+        "alias": "MaxPS",
+        "domain": null
+      },
+      {
+        "name": "LowPS",
+        "type": "esriFieldTypeDouble",
+        "alias": "LowPS",
+        "domain": null
+      },
+      {
+        "name": "HighPS",
+        "type": "esriFieldTypeDouble",
+        "alias": "HighPS",
+        "domain": null
+      },
+      {
+        "name": "Category",
+        "type": "esriFieldTypeInteger",
+        "alias": "Category",
+        "domain": {
+          "type": "codedValue",
+          "name": "MosaicCatalogItemCategoryDomain",
+          "description": "Catalog item categories.",
+          "codedValues": [
+            {
+              "name": "Unknown",
+              "code": 0
+            },
+            {
+              "name": "Primary",
+              "code": 1
+            },
+            {
+              "name": "Overview",
+              "code": 2
+            },
+            {
+              "name": "Unprocessed Overview",
+              "code": 3
+            },
+            {
+              "name": "Partial Overview",
+              "code": 4
+            },
+            {
+              "name": "Inactive",
+              "code": 5
+            },
+            {
+              "name": "Uploaded",
+              "code": 253
+            },
+            {
+              "name": "Incomplete",
+              "code": 254
+            },
+            {
+              "name": "Custom",
+              "code": 255
+            }
+          ],
+          "mergePolicy": "esriMPTDefaultValue",
+          "splitPolicy": "esriSPTDefaultValue"
+        }
+      },
+      {
+        "name": "Tag",
+        "type": "esriFieldTypeString",
+        "alias": "Tag",
+        "domain": null,
+        "length": 100
+      },
+      {
+        "name": "GroupName",
+        "type": "esriFieldTypeString",
+        "alias": "GroupName",
+        "domain": null,
+        "length": 100
+      },
+      {
+        "name": "ProductName",
+        "type": "esriFieldTypeString",
+        "alias": "ProductName",
+        "domain": null,
+        "length": 100
+      },
+      {
+        "name": "CenterX",
+        "type": "esriFieldTypeDouble",
+        "alias": "CenterX",
+        "domain": null
+      },
+      {
+        "name": "CenterY",
+        "type": "esriFieldTypeDouble",
+        "alias": "CenterY",
+        "domain": null
+      },
+      {
+        "name": "ZOrder",
+        "type": "esriFieldTypeInteger",
+        "alias": "ZOrder",
+        "domain": null
+      },
+      {
+        "name": "Shape_Length",
+        "type": "esriFieldTypeDouble",
+        "alias": "Shape_Length",
+        "domain": null
+      },
+      {
+        "name": "Shape_Area",
+        "type": "esriFieldTypeDouble",
+        "alias": "Shape_Area",
+        "domain": null
+      }
+    ],
+    "capabilities": "Image,Metadata,Catalog",
+    "defaultMosaicMethod": "Northwest",
+    "allowedMosaicMethods": "NorthWest,Center,LockRaster,ByAttribute,Nadir,Viewpoint,Seamline,None",
+    "sortField": "",
+    "sortValue": null,
+    "sortAscending": true,
+    "mosaicOperator": "First",
+    "maxDownloadSizeLimit": 2048,
+    "defaultCompressionQuality": 75,
+    "defaultResamplingMethod": "Bilinear",
+    "maxImageHeight": 4100,
+    "maxImageWidth": 15000,
+    "maxRecordCount": 1000,
+    "maxDownloadImageCount": 20,
+    "maxMosaicImageCount": 20,
+    "allowRasterFunction": true,
+    "rasterFunctionInfos": [
+      {
+        "name": "None",
+        "description": "",
+        "help": ""
+      }
+    ],
+    "rasterTypeInfos": [
+      {
+        "name": "Raster Dataset",
+        "description": "Supports all ArcGIS Raster Datasets",
+        "help": ""
+      }
+    ],
+    "mensurationCapabilities": "None",
+    "hasHistograms": true,
+    "hasColormap": false,
+    "hasRasterAttributeTable": false,
+    "minScale": 0,
+    "maxScale": 0,
+    "exportTilesAllowed": false,
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": true,
+    "editFieldsInfo": null,
+    "ownershipBasedAccessControlForRasters": null,
+    "allowComputeTiePoints": false,
+    "useStandardizedQueries": true,
+    "advancedQueryCapabilities": {
+      "useStandardizedQueries": true,
+      "supportsStatistics": true,
+      "supportsOrderBy": true,
+      "supportsDistinct": true,
+      "supportsPagination": true
+    },
+    "spatialReference": {
+      "wkid": 26910,
+      "latestWkid": 26910
+    }
+  }
+}

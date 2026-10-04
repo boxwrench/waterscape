@@ -10,6 +10,25 @@ Ellin Beltz's *Scotia Bluffs Railroad Bridge 2016* photograph (CC BY-SA 4.0) was
 inspected as a reference; the photograph is not distributed. Its source and license
 links are recorded in the scene Evidence panel and `references.json`.
 
+The bundled `calwater-unit.geojson` and `calwater-area.geojson` derive from
+[CalWater 2.2.1](https://gispublic.waterboards.ca.gov/arcgis/rest/services/Hydrography/CalWater_Boundaries/MapServer),
+hosted by the California State Water Resources Control Board. Service credit:
+California Interagency Watershed Mapping Committee, including DWR, CDF, DFG,
+SWRCB, USFS, NRCS, USGS, USBR, BLM, USEPA Region IX and the Stephen P. Teale Data
+Center. The state/interagency dataset was finalized in 1999 with attribution and
+documentation updated in May 2004. Source service metadata and query URLs are
+preserved in the Eel place package. These data are credited separately from the
+federal public-domain inputs above; no CC0 or other blanket license is inferred.
+The context inset and display code are original.
+
+`lidar-reference-footprint.geojson` preserves OpenTopography's actual CA09_Perkins
+raster coverage boundary for audit; it is not rendered elevation data. Source:
+https://github.com/OpenTopography/Data_Catalog_Spatial_Boundaries/blob/main/OpenTopography_Raster/CA09_Perkins.geojson.
+The referenced survey was collected by NCALM in 2009, funded by NSF for Jonathan
+Perkins at UC Santa Cruz. Dataset credit and CC BY 4.0 license:
+https://portal.opentopography.org/datasetMetadata?otCollectionID=OT.092012.26910.4.
+No survey DEM, VRT or LAS/LAZ point cloud is redistributed here.
+
 Clearwater's original source, optical design and embedded seabed texture are by Aurélien / Lumaris, copyright 2026 Lumaris, distributed under the MIT license in `LICENSE`. The original application remains in Git history; the unmodified extracted seabed image used by both applications is `renderer/assets/seabed.jpg`.
 
 The compiler and runtime in `vendor/cuda-webshader/` are from SamG-Coder/cuda-webshader, copyright 2026 SamG-Coder and CUDA WebShader contributors. Their MIT license is included in that directory. Snapshot commit: `9011955806cee30636ba24ae34b22d218e84196f`. Only modules reachable from the browser entry are retained; the retained module implementations are unchanged.

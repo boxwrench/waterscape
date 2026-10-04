@@ -1,0 +1,6 @@
+{
+  "source": "https://tnmaccess.nationalmap.gov/api/v1/products?datasets=Digital+Elevation+Model+%28DEM%29+1+meter&bbox=-124.128%2C40.479%2C-124.065%2C40.521&max=50&outputFormat=JSON",
+  "retrieval_time": "2026-10-04T20:27:51.119200+00:00",
+  "status": "unverified",
+  "error": "<urlopen error [WinError 10054] An existing connection was forcibly closed by the remote host>"
+}
