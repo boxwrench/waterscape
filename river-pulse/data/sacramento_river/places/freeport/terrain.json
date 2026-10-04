@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "river-pulse-terrain-0.1",
+  "id": "freeport",
+  "name": "Sacramento River at Freeport",
+  "source": "USGS National Map 3D Elevation Program (3DEP), public domain",
+  "sourceService": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer",
+  "sourceConfig": "source.json",
+  "bboxLonLat": [
+    -121.519,
+    38.441,
+    -121.486,
+    38.474
+  ],
+  "anchor": [
+    38.4556638888889,
+    -121.501616666667
+  ],
+  "crs": "EPSG:32610",
+  "utmZone": 10,
+  "verticalDatum": "NAVD88 metres (3DEP)",
+  "verticalOrigin": {
+    "type": "absolute",
+    "datum": "NAVD88",
+    "units": "metres"
+  },
+  "encoding": "gzip; 1 planar uint16 elevation channel; rows delta-coded from the row above",
+  "width": 384,
+  "height": 480,
+  "cell": [
+    7.726681649147395,
+    7.726681649147455
+  ],
+  "originUTM": [
+    630739.3020665273,
+    4257437.149013832
+  ],
+  "gridOrigin": [
+    -1559.7262217685347,
+    -2053.173382855952
+  ],
+  "channels": {
+    "elevation": {
+      "offset": -250.0,
+      "scale": 0.05
+    }
+  }
+}

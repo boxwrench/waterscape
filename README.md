@@ -67,11 +67,14 @@ interpretation. The full principle is in
 The local [river atlas](http://localhost:5173/river-pulse/) shows California's relief
 and selectable river courses. It includes Sacramento,
 San Joaquin, Eel, Tuolumne and American River entries alongside the Russian River.
-Sacramento starts with a source-backed Freeport discharge/history panel; the other four
-are planned placeholders. Select Russian River to open Hacienda, or another river to
-open its individual page. Sacramento's 3D setting is next. See the
-[data foundation](docs/river-pulse/sacramento-foundation.md). This addition is local,
+Sacramento now opens a [Freeport scene](http://localhost:5173/river-pulse/renderer/freeport.html)
+with Bridge, Riverbank and sourced Terrain views, plus USGS discharge and separate history.
+The other four are planned placeholders. Select Russian River to open Hacienda or a
+planned river to open its individual page. See the
+[Freeport scene notes](docs/river-pulse/sacramento-freeport-scene.md). These additions are local,
 pending review and publication.
+
+![Sacramento River Freeport bridge and reflective water](previews/freeport-bridge.png)
 
 Map keeps sourced terrain and river centerlines. Its blue water ribbon widens/narrows with
 selected discharge relative to the loaded history; seasonal condition colors the border.

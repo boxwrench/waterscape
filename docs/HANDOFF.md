@@ -1,5 +1,18 @@
 # Handoff — 2026-10-03
 
+## Sacramento at Freeport — RP13
+
+`task/RP13` continues Sacramento with `/river-pulse/renderer/freeport.html`.
+The California overview opens it directly. Bridge/Riverbank use explicitly approximate
+photo-informed green steel, levees, stone banks, shared detailed broadleaf meshes,
+reflections and optical ripples. Terrain switches to a separate sourced coordinate
+frame: 3DEP NAVD88 elevation, 3DHP Sacramento centerline and aligned NAIP imagery.
+Live matched Freeport discharge starts independently of graphics; stale/missing values
+stay explicit. The existing distinct tidally filtered daily history remains on the
+individual river page. No discharge-to-stage/current/flood conversion is made.
+See [scene notes](river-pulse/sacramento-freeport-scene.md) and
+[task](roadmap/tasks/RP13-sacramento-freeport.md). Work is local; no push or merge.
+
 ## California relief overview — RP12
 
 `task/RP12` replaces the index catalog with a sourced California relief map. Census

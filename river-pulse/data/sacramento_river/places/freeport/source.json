@@ -1,0 +1,9 @@
+{
+  "id": "freeport",
+  "name": "Sacramento River at Freeport",
+  "anchor": [38.4556638888889, -121.501616666667],
+  "anchorSource": "https://waterdata.usgs.gov/monitoring-location/USGS-11447650/",
+  "bbox": [-121.519, 38.441, -121.486, 38.474],
+  "size": [384, 480],
+  "scope": "Authored display crop around the sourced gauge anchor, not watershed bounds."
+}

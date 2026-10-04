@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#263d36">
+    <title>Sacramento River · Freeport · River Pulse</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='8' fill='%23263d36'/%3E%3Cpath d='M7 13c10-8 16 8 26 0M7 21c10-8 16 8 26 0M7 29c10-8 16 8 26 0' fill='none' stroke='%23e0e8c8' stroke-width='2'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="./freeport.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#flow-card">Skip to discharge observation</a>
+    <canvas id="scene" tabindex="0" aria-label="Freeport river scene. Drag to look, scroll or use WASD to move. Select a viewpoint below."></canvas>
+    <div class="shade" aria-hidden="true"></div>
+    <header class="topbar">
+      <a class="brand" href="../"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M7 12c10-9 16 9 26 0M7 20c10-9 16 9 26 0M7 28c10-9 16 9 26 0"/></svg><span>River Pulse</span></a>
+      <span class="trail">Sacramento River <i>/</i> Freeport</span>
+      <nav class="actions" aria-label="River navigation and scene controls">
+        <a href="../">California</a>
+        <a href="../river.html?river=sacramento_river">History</a>
+        <button id="explore" aria-pressed="false">Explore</button>
+        <button id="inspect" aria-expanded="false" aria-controls="inspector">Evidence</button>
+      </nav>
+    </header>
+    <main>
+      <section class="place-card" aria-labelledby="place-title">
+        <p class="river-name">Sacramento River</p>
+        <h1 id="place-title">Freeport.</h1>
+        <p class="subtitle">Along the river levees.</p>
+        <section id="flow-card" class="flow-card glass" aria-label="Latest Freeport discharge" tabindex="-1" aria-live="polite">
+          <div class="flow-heading"><span>Discharge at Freeport</span><span id="flow-quality">Checking</span></div>
+          <strong id="flow-value">—</strong>
+          <p id="flow-time">Connecting to USGS…</p>
+          <a href="https://waterdata.usgs.gov/monitoring-location/USGS-11447650/" target="_blank" rel="noopener">USGS 11447650 <span>Source record</span></a>
+        </section>
+      </section>
+      <aside id="inspector" class="glass inspector" aria-label="Freeport evidence and representation" hidden>
+        <div class="panel-heading"><h2>Behind the river</h2><button id="inspect-close" aria-label="Close evidence">×</button></div>
+        <h3>Discharge observation</h3>
+        <p id="evidence-summary">Checking the Freeport source series.</p>
+        <details><summary>Source record and selection</summary><pre id="record">Waiting for USGS.</pre></details>
+        <a href="../river.html?river=sacramento_river">Open tidally filtered daily history</a>
+        <h3>The close views</h3>
+        <p>The bridge, levees, trees and bank cameras are a photo-informed, approximate setting. Their dimensions and local coordinates are authored rather than surveyed.</p>
+        <p>The fixed shoreline, green-brown color, clarity and ripples are illustrative. Discharge does not drive water level, bank flooding, wave speed or local current direction.</p>
+        <h3>The terrain view</h3>
+        <p>USGS 3DEP elevation in NAVD88, resampled to approximately 7.7 m cells with no vertical exaggeration. USGS/USDA NAIP aerial imagery follows the same terrain grid; it is a service mosaic, not a current photograph. USGS 3DHP lines share the geographic frame; their display width is symbolic. This is survey geography, not today's water surface or bathymetry.</p>
+        <a href="https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer" target="_blank" rel="noopener">USGS 3DEP elevation</a><br>
+        <a href="https://3dhp.nationalmap.gov/arcgis/rest/services/usgs_3dhp_all/FeatureServer/50" target="_blank" rel="noopener">USGS 3DHP flowlines</a>
+        <br><a href="https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer" target="_blank" rel="noopener">USGS/USDA NAIP imagery</a>
+        <h3>Visual references</h3>
+        <p><a href="https://commons.wikimedia.org/wiki/File:Freeport_Bridge_from_Freeport.jpg" target="_blank" rel="noopener">Freeport bridge · Dicklyon</a><br><small>CC BY-SA 4.0 · photo studied, not embedded</small></p>
+        <p><a href="https://historicbridges.org/bridges/browser/?bridgebrowser=california/freeportbridge/" target="_blank" rel="noopener">Freeport side-view photographs</a><br><small>HistoricBridges.org · reference only</small></p>
+        <p class="resource-note">Reflective water and shared bank materials continue Hacienda's visual work. Sea-detail noise is reused from Jenner's credited MIT Tidewater adaptation. No measured water quality or hydraulic simulation is implied.</p>
+      </aside>
+    </main>
+    <footer class="river-controls">
+      <div class="views glass" role="group" aria-label="Freeport viewpoints">
+        <button data-view="bridge" class="active" aria-pressed="true">Bridge</button>
+        <button data-view="bank" aria-pressed="false">Riverbank</button>
+        <button data-view="terrain" aria-pressed="false">Terrain</button>
+      </div>
+      <div class="scene-note"><span id="scene-state">Preparing Freeport</span><button id="pause" aria-pressed="false">Pause water</button></div>
+      <p class="controls-copy">Drag to look <i>·</i> Scroll or WASD to move <i>·</i> Explore hides the title</p>
+    </footer>
+    <div id="loading" role="status"><span class="loading-ring"></span><strong>Entering Sacramento River</strong><p id="status">Preparing the water and levees…</p></div>
+    <div id="error" class="glass error" role="status" hidden></div>
+    <script type="module" src="./freeport.js"></script>
+  </body>
+</html>

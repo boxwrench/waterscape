@@ -5,7 +5,7 @@ import path from "node:path";
 import { validateRiverPackages } from "../pipeline/validate-river-packages.mjs";
 
 const root = path.resolve("dist"),
-  pages = ["index.html", "renderer/explore.html", "river-pulse/index.html", "river-pulse/river.html", "river-pulse/renderer/hacienda.html", "river-pulse/renderer/jenner.html"];
+  pages = ["index.html", "renderer/explore.html", "river-pulse/index.html", "river-pulse/river.html", "river-pulse/renderer/hacienda.html", "river-pulse/renderer/jenner.html", "river-pulse/renderer/freeport.html"];
 for (const page of pages) {
   const html = await readFile(path.join(root, page), "utf8");
   for (const [, ref] of html.matchAll(/(?:src|href)=["']([^"']+)["']/g)) {

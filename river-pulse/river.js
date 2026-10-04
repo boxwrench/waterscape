@@ -37,7 +37,7 @@ async function loadGaugePlace(river, token) {
   const observations = element("section", null, "observation"), current = element("div"), daily = element("div");
   observations.setAttribute("aria-label", "Freeport observations");
   observations.append(element("h3", "First place: Freeport"),
-    element("p", "This observation belongs to Freeport, south of Sacramento. The local 3D setting is still to come.", "note"));
+    element("p", "This observation belongs to Freeport, south of Sacramento. Explore the bridge and riverbank from the Freeport scene link above.", "note"));
   for (const node of [current, daily]) { node.setAttribute("aria-live", "polite"); node.append(element("p", "Loading USGS observations…")); }
   observations.append(current, daily); detail.append(observations);
   const loaded = await loadPlaceFromRegistry({ registryUrl: "./data/registry.json", riverPack: river.id,

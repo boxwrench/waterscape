@@ -24,12 +24,17 @@ California DWR geometry is a fallback if the local centerline cannot load.
 ## Current state
 
 - **River atlas:** `/river-pulse/` opens a California relief map with selectable rivers.
-  The Russian River opens Hacienda; other rivers open their individual
+  The Russian River opens Hacienda; Sacramento opens Freeport; planned rivers open their individual
   `river.html?river=<id>` pages. See the [overview notes](../docs/river-pulse/california-overview.md).
-  Sacramento is the second
-  river in development, with a Freeport observation and tidally filtered daily history
+  Sacramento is the second river with an immersive local scene, a Freeport observation and tidally filtered daily history
   panel. San Joaquin, Eel, Tuolumne and American have source-linked planned entries.
   See the [Sacramento foundation](../docs/river-pulse/sacramento-foundation.md).
+
+- **Freeport (local RP13):** photo-informed green steel bridge, reflective river, stone
+  levee and shared detailed broadleaf meshes. Bridge/Riverbank views use approximate
+  geometry; Terrain shows bundled 3DEP/3DHP geography and aligned NAIP imagery.
+  Discharge is independent of the fixed shoreline and authored optical ripples.
+  [Scene notes](../docs/river-pulse/sacramento-freeport-scene.md).
 
 - **Hacienda Bridge:** real USGS 3DEP terrain, USGS 3DHP cartographic centerlines,
   USGS discharge/history, time selection and seasonal context; Map, Bridge and Hacienda

@@ -17,6 +17,17 @@ datasets are U.S. Government public-domain works. Source requests, retrieval tim
 projection and processing notes are preserved in the overview JSON and
 `docs/river-pulse/california-overview.md`. The rendering and navigation code are original.
 
+## Sacramento Freeport scene resources
+
+Freeport's bundled terrain and flowlines derive from USGS 3DEP and 3DHP. Its aerial
+image is an aligned USGS/USDA NAIP Plus export (public domain); `aerial.json` records
+the request, extent and credit. Shared CC0 Hacienda rock maps, original MIT ez-tree
+coast-live mesh/leaf/bark assets from `data/biomes/diablo-oak`, and the already credited
+MIT Tidewater noise adaptation are reused unchanged. Existing licenses remain applicable.
+Freeport reference photos by Dicklyon (CC BY-SA 4.0) and HistoricBridges.org were studied
+for composition only; no photo files are redistributed. Source links are recorded in
+`river-pulse/data/sacramento_river/places/freeport/setting/references.json`.
+
 ## three.js
 
 `vendor/three/` is three.js r186 (https://github.com/mrdoob/three.js), MIT License,

@@ -8,6 +8,14 @@
   "anchor": { "latitude": 38.4556638888889, "longitude": -121.501616666667 },
   "time_zone": "America/Los_Angeles",
   "horizontal_crs": "EPSG:32610",
+  "terrain_source": "source.json",
+  "vertical_datum": "NAVD88",
+  "authored_scene": {
+    "entry": "../../../../renderer/freeport.html",
+    "binding_class": "setting",
+    "surveyed": false,
+    "references": "setting/references.json"
+  },
   "supported_capabilities": ["observed_discharge", "historical_tidally_filtered_discharge"],
   "data_bindings": [
     {
@@ -39,7 +47,8 @@
     "This gauge describes Freeport, not every Sacramento River reach or the downtown waterfront.",
     "Instantaneous discharge (00060) and tidally filtered daily discharge (72137) are distinct source products.",
     "Discharge alone does not determine local water level, depth, velocity or inundation.",
-    "No Sacramento terrain or authored 3D setting is installed yet."
+    "The close views use an approximate photo-informed setting; the Terrain view uses a separate sourced 3DEP/3DHP coordinate frame.",
+    "Fixed shoreline, surface optics and ripples are illustrative and independent of observed discharge."
   ],
   "references": [
     { "label": "USGS station and WGS84 gauge anchor", "url": "https://waterdata.usgs.gov/monitoring-location/USGS-11447650/" },

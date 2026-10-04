@@ -1,8 +1,8 @@
 # California river overview — RP12
 
 `/river-pulse/` now opens a statewide relief atlas. Named river geometry and its labels
-are native links: Russian River opens Hacienda, and Sacramento, San Joaquin, Eel,
-Tuolumne and American open `river.html?river=<id>`. Russian River's preview also links
+are native links: Russian River opens Hacienda; Sacramento opens its Freeport scene
+(RP13). San Joaquin, Eel, Tuolumne and American open `river.html?river=<id>`. Russian River's preview also links
 to Jenner. Details and observations from RP11 are preserved in `river.js`/`river.css`.
 
 Hover or keyboard focus highlights a river and changes the preview. Enter follows the
@@ -50,5 +50,5 @@ upstream code, textures or reference photos are copied into this map.
 
 Desktop keeps the whole California silhouette visible. Mobile uses larger SVG label
 boxes and a stacked map, preview and river list. The existing local 3D scenes retain
-their own rendering and water systems. Sacramento still has a data foundation, not a
-finished local terrain/3D scene.
+their own rendering and water systems. Sacramento now has a first authored Freeport
+scene and a separately sourced terrain view; see [scene notes](sacramento-freeport-scene.md).

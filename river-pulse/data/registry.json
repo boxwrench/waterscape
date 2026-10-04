@@ -22,7 +22,7 @@
     {
       "id": "sacramento_river",
       "name": "Sacramento River",
-      "status": "in_development",
+      "status": "available",
       "manifest": "sacramento_river/river.json"
     },
     {

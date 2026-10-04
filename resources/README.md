@@ -61,8 +61,14 @@ Jenner coastal evaluation (RP9): [scene and resource notes](../docs/river-pulse/
 The periodic noise generator from Tidewater’s `SeaDetail.js` is adapted under MIT at pinned
 revision `4811ba48d795197de5621985f404e765c0b7c0ef`; the license ships in the Jenner package.
 Its surf/foam techniques informed independently authored TSL. The full FFT engine remains a
-candidate; none of Tidewater’s third-party assets are imported. Existing CC0 rock/pebble/grass
+candidate; none of Tidewater's third-party assets are imported. Existing CC0 rock/pebble/grass
 and MIT vegetation resources are reused.
+
+Freeport (RP13) continues this approach with the existing irregular noise, planar reflections,
+CC0 stone materials and detailed MIT ez-tree broadleaf bakes from the reservoir work.
+Its broad lowland river and green steel crossing are original approximate geometry;
+the separate terrain view uses aligned USGS 3DEP/3DHP/NAIP data.
+See [Freeport notes](../docs/river-pulse/sacramento-freeport-scene.md).
 
 ## Rivers, currents & coastal flow
 

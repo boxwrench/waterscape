@@ -1,0 +1,17 @@
+{
+  "file": "aerial.jpg",
+  "width": 1024,
+  "height": 1280,
+  "source": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer/exportImage?bbox=629175.713,4255785.379,632142.758,4259494.186&bboxSR=32610&imageSR=32610&size=1024,1280&format=jpg&bandIds=0,1,2&f=image",
+  "service": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer",
+  "credit": "USGS, USDA, The National Map: Orthoimagery (NAIP Plus), public domain",
+  "crs": "EPSG:32610",
+  "extent": [
+    629175.7125039342,
+    4255785.378545922,
+    632142.7582572068,
+    4259494.185737513
+  ],
+  "retrieval_time": "2026-10-04T03:34:39.729435+00:00",
+  "interpretation": "Service mosaic imagery, not current conditions; exact terrain cell-edge extent."
+}

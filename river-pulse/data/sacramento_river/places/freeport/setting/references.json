@@ -1,0 +1,18 @@
+{
+  "binding_class": "setting",
+  "surveyed": false,
+  "references": [
+    {
+      "url": "https://commons.wikimedia.org/wiki/File:Freeport_Bridge_from_Freeport.jpg",
+      "creator": "Dicklyon",
+      "license": "CC BY-SA 4.0",
+      "use": "Reference only; green steel, approach profile and leafy bank. Image not redistributed."
+    },
+    {
+      "url": "https://historicbridges.org/bridges/browser/?bridgebrowser=california/freeportbridge/",
+      "use": "Reference only; side-view silhouette, counterweight towers and piers. No photographs redistributed."
+    }
+  ],
+  "shared_assets": "Hacienda bank materials (CC0) and Jenner noise adaptation (MIT Tidewater); retain original notices.",
+  "limitations": "Authored width, deck, bank profile, trees and optics are estimates. No hydraulic or survey accuracy is claimed for the close views."
+}

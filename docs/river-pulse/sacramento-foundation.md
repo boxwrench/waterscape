@@ -1,6 +1,6 @@
 # Sacramento River foundation
 
-Sacramento is the second River Pulse river in development. San Joaquin, Eel, Tuolumne
+Sacramento is the second River Pulse river with a local scene (RP13). San Joaquin, Eel, Tuolumne
 and American are river-level placeholders, with no fabricated gauges, anchors or scenes.
 The river atlas at `/river-pulse/` discovers packages from the generated registry.
 Hacienda and Jenner retain their existing scene URLs.
@@ -36,8 +36,8 @@ source's local aggregation boundary. The source date remains visible in each rec
 Observation and daily chart bindings are Exact to selected source quantities; daily
 means remain derived statistics. Freeport data does not describe the downtown waterfront
 or every reach. No discharge-to-depth, stage, velocity or flood conversion is made.
-No Sacramento terrain, shoreline, bridge or 3D setting is installed.
+RP13 adds the [first Freeport scene](sacramento-freeport-scene.md): an approximate
+photo-informed bridge/bank setting and a separate 3DEP/3DHP/NAIP terrain view.
 
-Next: select a local viewpoint, acquire photos, build a bounded 3DEP terrain/3DHP
-centerline crop, then author the banks and water. Lengths are omitted from factual UI
+Next: review/refine Freeport and choose the next local Sacramento viewpoint. Lengths are omitted from factual UI
 until the different definitions in the initial brief have an authoritative source.
