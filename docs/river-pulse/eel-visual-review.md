@@ -49,6 +49,9 @@ water edges; the refined selector clips continuous classification triangles and
 smooths the field locally. Both reuse the same camera, input data and lighting.
 The before overview screenshot preserves the actual earlier contact defect; it is
 not a recreated failure. Code tests now cover the observed triangle-plane mismatch.
+The preserved before image has its review panel open; the after image has it
+collapsed. Camera, viewport, terrain presentation and lighting match, while those
+UI overlays differ. Use the exposed river region to assess the contact correction.
 
 The readable river bend and exposed bluff relationship improve the first form
 study. The 14 m terrain and interpolated cover palette remain visibly smooth and
