@@ -1,0 +1,10 @@
+{
+  "id": "scotia_bluffs",
+  "name": "Eel River at Scotia Bluffs",
+  "anchor": [40.49149394275497, -124.09974068101218],
+  "anchor_source": "https://waterdata.usgs.gov/monitoring-location/USGS-11477000/",
+  "anchor_note": "USGS station location; not a water-level or open-water measurement.",
+  "bbox": [-124.128, 40.479, -124.065, 40.521],
+  "size": [384, 384],
+  "extent_note": "Author-selected study extent; native elevations retained without exaggeration."
+}

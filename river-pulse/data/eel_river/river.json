@@ -2,9 +2,9 @@
   "schema_version": "river-pulse-river-0.1",
   "id": "eel_river",
   "name": "Eel River",
-  "status": "planned",
-  "summary": "Northern California's mountain canyons and redwood country, continuing to the Pacific coast.",
-  "scenes": [],
-  "next_steps": ["Select a reach, verify its gauge sources, then build terrain and a local scene."],
+  "status": "in_development",
+  "summary": "A first visual study of Scotia Bluffs: the Eel's river bend, gravel bars and steep valley sides. Review the landforms before detailed vegetation and water work.",
+  "scenes": [{ "name": "Scotia Bluffs visual study", "entry": "../../renderer/eel.html" }],
+  "next_steps": ["Review the fixed cameras and accept or refine the major forms before detailed setting work."],
   "references": [{ "label": "National Wild and Scenic Rivers System", "url": "https://www.fws.gov/rivers/river/eel" }]
 }

@@ -1,5 +1,10 @@
 # Waterscape
 
+Eel River now has a local [Scotia Bluffs visual study](river-pulse/renderer/eel.html)
+with fixed review cameras and a plain form mode. It is a first landform pass,
+awaiting visual acceptance. See the [reusable visual workflow](docs/visual-development.md)
+and [actual runtime comparison](previews/eel/review.html).
+
 **Making water visible.** Waterscape is an umbrella for explorable visual representations of
 real water systems. Public data supplies the evidence; scientific state and explicit visual
 bindings connect that evidence to landscapes, charts, animation and interaction.

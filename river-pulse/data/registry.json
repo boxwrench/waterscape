@@ -10,7 +10,7 @@
     {
       "id": "eel_river",
       "name": "Eel River",
-      "status": "planned",
+      "status": "in_development",
       "manifest": "eel_river/river.json"
     },
     {
@@ -39,6 +39,17 @@
     }
   ],
   "places": [
+    {
+      "river_pack": "eel_river",
+      "id": "scotia_bluffs",
+      "name": "Scotia Bluffs visual study",
+      "hydrologic_context": "river_reach",
+      "manifest": "eel_river/places/scotia_bluffs/place.json",
+      "supported_capabilities": [
+        "terrain_context",
+        "visual_study"
+      ]
+    },
     {
       "river_pack": "russian_river",
       "id": "hacienda_bridge",

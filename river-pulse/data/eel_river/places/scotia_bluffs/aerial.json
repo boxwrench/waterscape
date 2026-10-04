@@ -1,0 +1,15 @@
+{
+  "source": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer/exportImage?bbox=404389.42828757735%2C4481134.476280934%2C409785.7679429277%2C4486530.815936284&bboxSR=32610&imageSR=32610&size=1536%2C1536&format=jpg&bandIds=0%2C1%2C2&f=image",
+  "credit": "USGS, USDA, The National Map: Orthoimagery (NAIP Plus), public domain",
+  "crs": "EPSG:32610",
+  "extent": [
+    404389.42828757735,
+    4481134.476280934,
+    409785.7679429277,
+    4486530.815936284
+  ],
+  "width": 1536,
+  "height": 1536,
+  "retrieval_time": "2026-10-04T17:55:07.992333+00:00",
+  "interpretation": "Service mosaic, not current conditions or a water-level survey."
+}

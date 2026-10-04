@@ -1,0 +1,30 @@
+{
+  "study": "RP17 — first form pass, not an accepted finished scene",
+  "source_geometry": {
+    "terrain": "terrain.json",
+    "flowlines": "hydrography.json",
+    "mapped_waterbodies": "waterbodies.json",
+    "imagery": "aerial.json",
+    "interpretation": "One shared UTM zone 10 frame. Elevation has no vertical exaggeration. Extent/resampling are build choices. Service mosaics and mapped extents are not current conditions."
+  },
+  "photographs": [{
+    "title": "Scotia Bluffs Railroad Bridge 2016",
+    "author": "Ellin Beltz",
+    "date": "2016-03-16",
+    "url": "https://commons.wikimedia.org/wiki/File:Scotia_Bluffs_Railroad_Bridge_2016.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "use": "Inspected as a visual reference; original photograph is not bundled. Vegetated bluff crown, exposed face and river/rail relationship inform review. The photograph and mosaic are different seasonal records."
+  }],
+  "authored": {
+    "binding_class": "setting",
+    "water_binding_class": "illustrative",
+    "terrain_cover": "Coarse palette chosen from aligned aerial pixels, not a land-cover or species classification product.",
+    "water": "Authored image-color threshold inside the mapped river footprint; DEM-following height plus 0.18 m rendering clearance. Interpolated boundaries, green color and moving highlights are visual choices, not measured level, flow, velocity, depth or inundation.",
+    "camera_version": 1,
+    "random_scatter": false,
+    "reserved_future_scatter_seed": 17041,
+    "structures_and_vegetation": "Not modeled in this first pass."
+  },
+  "review": "../../../../../docs/river-pulse/eel-visual-review.md"
+}

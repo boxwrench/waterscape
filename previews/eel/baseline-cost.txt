@@ -1,0 +1,6 @@
+overview / study / baseline · 980×876 · DPR 1.25
+302,291 rendered triangles · 3 draw calls · 10.62 MiB geometry buffers (both passes resident)
+Frame interval p50 1016.40 ms / p95 1016.57 ms
+CPU render submission p50 0.62 ms / p95 0.88 ms
+First frame 162 ms · 1 source texture (1536×1536, RGBA+mips estimate 12.0 MiB)
+GPU time and total browser memory are not measured.

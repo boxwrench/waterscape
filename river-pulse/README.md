@@ -27,8 +27,15 @@ California DWR geometry is a fallback if the local centerline cannot load.
   The Russian River opens Hacienda; Sacramento opens Freeport; planned rivers open their individual
   `river.html?river=<id>` pages. See the [overview notes](../docs/river-pulse/california-overview.md).
   Sacramento is the second river with an immersive local scene, a Freeport observation and tidally filtered daily history
-  panel. San Joaquin, Eel, Tuolumne and American have source-linked planned entries.
+  panel. Eel has an in-development Scotia Bluffs visual study. San Joaquin, Tuolumne
+  and American have source-linked planned entries.
   See the [Sacramento foundation](../docs/river-pulse/sacramento-foundation.md).
+
+- **Eel / Scotia Bluffs (local RP17):** first form pass with native 3DEP terrain,
+  mapped river footprints, aligned NAIP source view and explicitly illustrative
+  water. Five fixed review cameras, plain form mode and runtime cost controls support
+  comparison. Trees, structures and convincing close water are later passes.
+  [Actual review](../previews/eel/review.html) · [Process](../docs/visual-development.md).
 
 - **Freeport (local RP16):** detailed closed green steel bridge with both bank sides,
   east/west approaches, underside and overhead views. Archived bridge dimensions anchor

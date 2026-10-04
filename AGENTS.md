@@ -55,6 +55,10 @@ Microsoft Edge must be installed (the browser tests use it).
    quotes in JS.
 8. **Commit message**: the task title, e.g. `W2: Add Crystal Springs Reservoir`.
 
+For substantial visual tasks, follow [visual development](docs/visual-development.md):
+research first, fixed cameras, form mode, actual before/after runtime evidence,
+bounded corrections, recorded costs and an explicit human acceptance checkpoint.
+
 ## When you finish
 
 Append a short **Result** section to the bottom of your task file:

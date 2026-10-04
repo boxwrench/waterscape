@@ -33,10 +33,11 @@ test("a competing Freeport series or a different station cannot replace the conf
   assert.equal(latestAtOrBefore(matches, "2026-10-03T13:00:00Z", { maximumAgeMs: 45 * 60000 }).reason, "stale");
   assert.equal(latestAtOrBefore(matches, "2026-10-03T11:00:00Z").quantity, null);
 });
-test("the atlas distinguishes four planned rivers from Sacramento's installed data place", async () => {
+test("the atlas distinguishes three planned rivers and Eel's visual study from Sacramento's data place", async () => {
   const registry = JSON.parse(await readFile(new URL("../../river-pulse/data/registry.json", import.meta.url), "utf8"));
   assert.equal(registry.rivers.length, 6);
-  assert.equal(registry.rivers.filter(r => r.status === "planned").length, 4);
+  assert.equal(registry.rivers.filter(r => r.status === "planned").length, 3);
+  assert.equal(registry.rivers.find(r => r.id === "eel_river").status, "in_development");
   assert.equal(registry.places.find(p => p.river_pack === "sacramento_river").id, "freeport");
   for (const river of registry.rivers.filter(r => r.status === "planned"))
     assert.equal(registry.places.some(p => p.river_pack === river.id), false);

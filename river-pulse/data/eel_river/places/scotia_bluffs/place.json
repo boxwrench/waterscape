@@ -1,0 +1,21 @@
+{
+  "schema_version": "river-pulse-place-0.1",
+  "minimum_engine_version": "0.1.0",
+  "id": "scotia_bluffs",
+  "river_pack": "eel_river",
+  "name": "Scotia Bluffs visual study",
+  "hydrologic_context": "river_reach",
+  "anchor": { "latitude": 40.49149394275497, "longitude": -124.09974068101218 },
+  "horizontal_crs": "EPSG:32610",
+  "terrain_source": "source.json",
+  "supported_capabilities": ["terrain_context", "visual_study"],
+  "data_bindings": [],
+  "authored_scene": { "entry": "../../../../renderer/eel.html", "binding_class": "setting", "surveyed": false },
+  "constraints": ["Native 3DEP elevations are retained without exaggeration.", "Mapped waterbody footprint is archival geographic context, not the current wetted extent.", "Surface height follows DEM samples as a visual proxy, not measured stage or bathymetry.", "No current discharge, velocity, inundation or species inventory is presented."],
+  "references": [
+    { "label": "USGS station anchor", "url": "https://waterdata.usgs.gov/monitoring-location/USGS-11477000/" },
+    { "label": "USGS 3DEP", "url": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer" },
+    { "label": "USGS mapped waterbodies", "url": "https://3dhp.nationalmap.gov/arcgis/rest/services/usgs_3dhp_all/FeatureServer/60" },
+    { "label": "Scotia Bluffs photograph — Ellin Beltz, CC BY-SA 4.0", "url": "https://commons.wikimedia.org/wiki/File:Scotia_Bluffs_Railroad_Bridge_2016.jpg" }
+  ]
+}

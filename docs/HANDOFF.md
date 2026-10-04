@@ -1,5 +1,26 @@
 # Handoff — 2026-10-04
 
+## Eel River visual baseline — RP17
+
+The user redirected RP16's unfinished surroundings to an Eel River trial of their
+research/form/fixed-camera/render/compare workflow. `task/RP17` starts Scotia Bluffs
+with native 3DEP elevations, aligned NAIP imagery and mapped 3DHP footprints.
+The scene has five fixed cameras, plain form/source modes, boundary comparison,
+highlight pause and visible 120-frame cost measurement. Water/cover classification
+and surface optics are explicitly authored; no gauge or hydraulic values are bound.
+The first actual render exposed triangular water/terrain gaps; related plane/depth
+corrections are preserved in before/after evidence. Detailed vegetation/structures
+and convincing close water remain future passes. Awaiting human visual acceptance.
+The [reusable process](visual-development.md) and [review record](river-pulse/eel-visual-review.md)
+explain provenance, weak points and measurement limits. Work is local; never pushed.
+Verification: 9 focused tests, river validation, registry regeneration check and
+complete build pass. Five desktop/phone cameras, form/source modes, Evidence,
+highlight pause and actual moving frames inspected. No console errors or phone
+overflow. Refined boundary adds approximately 0.99% rendered triangles with the
+same three draw calls; automated frame pacing prevents an FPS claim. The user
+endorses combining this workflow with Sacramento's detailed photo-based modeling;
+that endorsement does not accept Eel's current visual baseline.
+
 ## Freeport riverfront setting — RP16
 
 Draft checkpoint: the user redirected work to an Eel River visual study before

@@ -31,6 +31,7 @@ const htmlFiles = [
     "river-pulse/renderer/hacienda.html",
     "river-pulse/renderer/jenner.html",
     "river-pulse/renderer/freeport.html",
+    "river-pulse/renderer/eel.html",
   ],
   htmlAssets = new Set();
 for (const entry of htmlFiles) {
@@ -59,6 +60,7 @@ for (const file of [
     "river-pulse/renderer/hacienda.html",
     "river-pulse/renderer/jenner.html",
     "river-pulse/renderer/freeport.html",
+    "river-pulse/renderer/eel.html",
     "river-pulse/index.html",
     "river-pulse/river.html",
     "river-pulse/renderer/hacienda.css",

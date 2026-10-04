@@ -1,5 +1,15 @@
 # Third-party notices
 
+## Eel River / Scotia Bluffs study
+
+Bundled 3DEP elevations, 3DHP flowlines/waterbody geometry and USGS/USDA NAIP mosaic
+imagery are U.S. Government public-domain data. Acquisition URLs, geographic frames
+and mosaic limitations are recorded in the Eel place package. Coarse cover colors,
+water classification, clipped surface geometry and highlights are original code.
+Ellin Beltz's *Scotia Bluffs Railroad Bridge 2016* photograph (CC BY-SA 4.0) was
+inspected as a reference; the photograph is not distributed. Its source and license
+links are recorded in the scene Evidence panel and `references.json`.
+
 Clearwater's original source, optical design and embedded seabed texture are by Aurélien / Lumaris, copyright 2026 Lumaris, distributed under the MIT license in `LICENSE`. The original application remains in Git history; the unmodified extracted seabed image used by both applications is `renderer/assets/seabed.jpg`.
 
 The compiler and runtime in `vendor/cuda-webshader/` are from SamG-Coder/cuda-webshader, copyright 2026 SamG-Coder and CUDA WebShader contributors. Their MIT license is included in that directory. Snapshot commit: `9011955806cee30636ba24ae34b22d218e84196f`. Only modules reachable from the browser entry are retained; the retained module implementations are unchanged.

@@ -1,0 +1,6050 @@
+{
+  "schemaVersion": "river-pulse-hydrography-0.1",
+  "source": "U.S. Geological Survey 3D Hydrography Program (3DHP)",
+  "sourceService": "https://3dhp.nationalmap.gov/arcgis/rest/services/usgs_3dhp_all/FeatureServer/50",
+  "sourceQuery": "https://3dhp.nationalmap.gov/arcgis/rest/services/usgs_3dhp_all/FeatureServer/50/query?where=1%3D1&geometry=-124.128%2C40.479%2C-124.065%2C40.521&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=id3dhp%2Cmainstemid%2Cgnisid%2Cgnisidlabel%2Cfeaturetype%2Cfeaturetypelabel%2Cflowdirection%2Cflowdirectionlabel%2Cstreamorder%2Clengthkm%2Chydrosequence%2Cdnhydrosequence%2Cuphydrosequence%2Cworkunitid&returnGeometry=true&returnZ=false&returnM=false&outSR=4326&resultRecordCount=2500&f=geojson",
+  "sourceLicense": "U.S. Government public domain",
+  "bboxLonLat": [
+    -124.128,
+    40.479,
+    -124.065,
+    40.521
+  ],
+  "anchor": [
+    40.49149394275497,
+    -124.09974068101218
+  ],
+  "crs": "EPSG:32610",
+  "coordinateFrame": "local metres: x east, z south; origin at configured anchor",
+  "featureFilter": "all 3DHP Flowline feature types intersecting configured bbox",
+  "features": [
+    {
+      "id": "1KVA1",
+      "name": "Eel River",
+      "featureType": "Waterbody Connector",
+      "featureTypeCode": 5,
+      "mainstemId": "https://geoconnex.us/ref/mainstems/1767344",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 8,
+      "lengthKm": 0.42950263,
+      "hydrosequence": 2656420,
+      "downstreamHydrosequence": 2620061,
+      "upstreamHydrosequence": 2692199,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            766.92,
+            -626.94
+          ],
+          [
+            801.53,
+            -668.61
+          ],
+          [
+            874.69,
+            -814.93
+          ],
+          [
+            920.1,
+            -983.96
+          ],
+          [
+            930.23,
+            -1016.42
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "1PPED",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/8366822",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 2,
+      "lengthKm": 0.66395753,
+      "hydrosequence": 2829508,
+      "downstreamHydrosequence": 2795733,
+      "upstreamHydrosequence": 2862471,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            2549.89,
+            -2698.86
+          ],
+          [
+            2542.5,
+            -2753.9
+          ],
+          [
+            2521.31,
+            -2868.28
+          ],
+          [
+            2509.25,
+            -2938.16
+          ],
+          [
+            2485.68,
+            -2989.17
+          ],
+          [
+            2455.58,
+            -3033.91
+          ],
+          [
+            2427.32,
+            -3097.66
+          ],
+          [
+            2400.35,
+            -3133.91
+          ],
+          [
+            2394.44,
+            -3178.36
+          ],
+          [
+            2402.96,
+            -3216.3
+          ],
+          [
+            2400.38,
+            -3269.17
+          ],
+          [
+            2390.41,
+            -3322.99
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "1UK8S",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/7126502",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 2,
+      "lengthKm": 0.26579407,
+      "hydrosequence": 2989175,
+      "downstreamHydrosequence": 2958147,
+      "upstreamHydrosequence": 3019955,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            3134.86,
+            -1078.18
+          ],
+          [
+            3120.62,
+            -1059.45
+          ],
+          [
+            3108.3,
+            -1048.63
+          ],
+          [
+            3094.19,
+            -1040.87
+          ],
+          [
+            3069.57,
+            -1021.66
+          ],
+          [
+            3054.12,
+            -1004.17
+          ],
+          [
+            3038.0,
+            -983.02
+          ],
+          [
+            3021.98,
+            -968.58
+          ],
+          [
+            2990.51,
+            -936.66
+          ],
+          [
+            2946.69,
+            -892.67
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "247MI",
+      "name": null,
+      "featureType": "Waterbody Connector",
+      "featureTypeCode": 5,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/1049883",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.044087610000000006,
+      "hydrosequence": 2761845,
+      "downstreamHydrosequence": 2727224,
+      "upstreamHydrosequence": 2795718,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            -917.46,
+            1118.15
+          ],
+          [
+            -873.28,
+            1123.04
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "2DWC2",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/3117646",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.67654176,
+      "hydrosequence": 2894948,
+      "downstreamHydrosequence": 2862471,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            2139.96,
+            -1750.73
+          ],
+          [
+            2167.23,
+            -1870.86
+          ],
+          [
+            2186.42,
+            -1988.97
+          ],
+          [
+            2221.13,
+            -2058.29
+          ],
+          [
+            2281.73,
+            -2133.63
+          ],
+          [
+            2327.38,
+            -2173.23
+          ],
+          [
+            2379.75,
+            -2236.0
+          ],
+          [
+            2422.97,
+            -2341.14
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "2NL0J",
+      "name": "Nanning Creek",
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/6905808",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 3,
+      "lengthKm": 0.26778397,
+      "hydrosequence": 2727227,
+      "downstreamHydrosequence": 2692201,
+      "upstreamHydrosequence": 2761850,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            1342.61,
+            -749.35
+          ],
+          [
+            1322.05,
+            -764.23
+          ],
+          [
+            1293.11,
+            -790.18
+          ],
+          [
+            1266.46,
+            -805.14
+          ],
+          [
+            1225.82,
+            -822.7
+          ],
+          [
+            1207.73,
+            -838.76
+          ],
+          [
+            1178.88,
+            -872.64
+          ],
+          [
+            1157.28,
+            -902.16
+          ],
+          [
+            1137.32,
+            -915.21
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "2SG5J",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/8957758",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 2,
+      "lengthKm": 0.40479182,
+      "hydrosequence": 2829493,
+      "downstreamHydrosequence": 2795724,
+      "upstreamHydrosequence": 2862452,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            2143.47,
+            -968.18
+          ],
+          [
+            2124.4,
+            -953.78
+          ],
+          [
+            2104.82,
+            -947.92
+          ],
+          [
+            2061.28,
+            -925.88
+          ],
+          [
+            2047.8,
+            -921.17
+          ],
+          [
+            2033.36,
+            -903.85
+          ],
+          [
+            2022.18,
+            -886.9
+          ],
+          [
+            1968.6,
+            -841.21
+          ],
+          [
+            1937.63,
+            -801.36
+          ],
+          [
+            1903.38,
+            -740.19
+          ],
+          [
+            1860.89,
+            -705.95
+          ],
+          [
+            1852.91,
+            -701.79
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "3252E",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/8072327",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 2,
+      "lengthKm": 0.42530119,
+      "hydrosequence": 3050173,
+      "downstreamHydrosequence": 3019958,
+      "upstreamHydrosequence": 3080220,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            2655.54,
+            641.76
+          ],
+          [
+            2681.3,
+            628.66
+          ],
+          [
+            2731.83,
+            584.13
+          ],
+          [
+            2749.04,
+            572.76
+          ],
+          [
+            2791.28,
+            558.03
+          ],
+          [
+            2818.28,
+            542.49
+          ],
+          [
+            2830.79,
+            516.43
+          ],
+          [
+            2842.26,
+            475.11
+          ],
+          [
+            2856.13,
+            438.09
+          ],
+          [
+            2867.93,
+            418.73
+          ],
+          [
+            2893.12,
+            402.58
+          ],
+          [
+            2914.58,
+            392.47
+          ],
+          [
+            2952.67,
+            368.54
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "3BSQ8",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/11114168",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 2,
+      "lengthKm": 1.5600090100000001,
+      "hydrosequence": 2727226,
+      "downstreamHydrosequence": 2692200,
+      "upstreamHydrosequence": 2761848,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            1053.3,
+            852.37
+          ],
+          [
+            1052.99,
+            827.36
+          ],
+          [
+            1056.93,
+            803.64
+          ],
+          [
+            1071.99,
+            767.85
+          ],
+          [
+            1143.37,
+            662.01
+          ],
+          [
+            1146.04,
+            642.54
+          ],
+          [
+            1127.17,
+            539.29
+          ],
+          [
+            1114.65,
+            515.36
+          ],
+          [
+            1085.56,
+            450.99
+          ],
+          [
+            1079.18,
+            423.49
+          ],
+          [
+            1078.93,
+            393.6
+          ],
+          [
+            1065.53,
+            291.03
+          ],
+          [
+            1027.28,
+            176.57
+          ],
+          [
+            972.21,
+            41.17
+          ],
+          [
+            961.12,
+            -0.41
+          ],
+          [
+            960.89,
+            -30.9
+          ],
+          [
+            965.95,
+            -97.3
+          ],
+          [
+            965.14,
+            -130.83
+          ],
+          [
+            936.9,
+            -217.13
+          ],
+          [
+            905.39,
+            -283.96
+          ],
+          [
+            879.32,
+            -346.46
+          ],
+          [
+            858.76,
+            -410.12
+          ],
+          [
+            844.59,
+            -501.12
+          ],
+          [
+            827.55,
+            -554.36
+          ],
+          [
+            810.33,
+            -592.97
+          ],
+          [
+            794.88,
+            -605.07
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "3BSR5",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/7126502",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 2,
+      "lengthKm": 0.2897989,
+      "hydrosequence": 2894928,
+      "downstreamHydrosequence": 2862453,
+      "upstreamHydrosequence": 2926817,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            2624.44,
+            -626.72
+          ],
+          [
+            2580.91,
+            -607.09
+          ],
+          [
+            2539.1,
+            -576.49
+          ],
+          [
+            2510.07,
+            -545.75
+          ],
+          [
+            2482.84,
+            -512.54
+          ],
+          [
+            2415.82,
+            -465.19
+          ],
+          [
+            2394.96,
+            -454.46
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "3LH53",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/12585246",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.67354282,
+      "hydrosequence": 2989176,
+      "downstreamHydrosequence": 2958147,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            3398.21,
+            -423.9
+          ],
+          [
+            3368.13,
+            -437.47
+          ],
+          [
+            3322.92,
+            -451.22
+          ],
+          [
+            3287.87,
+            -471.45
+          ],
+          [
+            3258.1,
+            -511.43
+          ],
+          [
+            3220.77,
+            -551.51
+          ],
+          [
+            3196.08,
+            -594.73
+          ],
+          [
+            3183.88,
+            -627.9
+          ],
+          [
+            3159.23,
+            -674.43
+          ],
+          [
+            3134.7,
+            -730.86
+          ],
+          [
+            3102.33,
+            -764.27
+          ],
+          [
+            3062.45,
+            -801.07
+          ],
+          [
+            3027.48,
+            -827.91
+          ],
+          [
+            3002.48,
+            -844.72
+          ],
+          [
+            2946.69,
+            -892.67
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "3MQL",
+      "name": "Nanning Creek",
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/6905808",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 3,
+      "lengthKm": 0.30224206000000003,
+      "hydrosequence": 2926819,
+      "downstreamHydrosequence": 2894929,
+      "upstreamHydrosequence": 2958149,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            2735.98,
+            -98.5
+          ],
+          [
+            2715.9,
+            -120.19
+          ],
+          [
+            2685.89,
+            -158.34
+          ],
+          [
+            2655.12,
+            -185.54
+          ],
+          [
+            2614.62,
+            -214.67
+          ],
+          [
+            2580.81,
+            -242.51
+          ],
+          [
+            2554.33,
+            -270.27
+          ],
+          [
+            2525.54,
+            -312.29
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "3MSN",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/10587317",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 1.19325568,
+      "hydrosequence": 2692211,
+      "downstreamHydrosequence": 2656431,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            741.41,
+            -2410.5
+          ],
+          [
+            769.48,
+            -2462.99
+          ],
+          [
+            799.11,
+            -2511.23
+          ],
+          [
+            835.19,
+            -2559.39
+          ],
+          [
+            863.21,
+            -2607.65
+          ],
+          [
+            905.79,
+            -2659.96
+          ],
+          [
+            938.93,
+            -2731.4
+          ],
+          [
+            952.59,
+            -2792.52
+          ],
+          [
+            974.59,
+            -2876.79
+          ],
+          [
+            989.66,
+            -2920.98
+          ],
+          [
+            1024.2,
+            -2975.5
+          ],
+          [
+            1061.86,
+            -3021.53
+          ],
+          [
+            1082.44,
+            -3120.6
+          ],
+          [
+            1091.12,
+            -3171.22
+          ],
+          [
+            1103.32,
+            -3245.03
+          ],
+          [
+            1094.14,
+            -3285.3
+          ],
+          [
+            1083.35,
+            -3325.59
+          ],
+          [
+            1094.87,
+            -3344.46
+          ],
+          [
+            1106.37,
+            -3361.23
+          ],
+          [
+            1109.93,
+            -3388.66
+          ],
+          [
+            1092.35,
+            -3401.56
+          ],
+          [
+            1055.47,
+            -3418.92
+          ],
+          [
+            1039.45,
+            -3427.57
+          ],
+          [
+            1033.34,
+            -3453.62
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "3QBIW",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/4337147",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.24529598,
+      "hydrosequence": 2862451,
+      "downstreamHydrosequence": 2829493,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            2324.77,
+            -817.0
+          ],
+          [
+            2272.24,
+            -850.66
+          ],
+          [
+            2239.64,
+            -864.27
+          ],
+          [
+            2199.68,
+            -894.47
+          ],
+          [
+            2162.15,
+            -918.04
+          ],
+          [
+            2143.47,
+            -968.18
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "3QBJ4",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/11114168",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.5659317,
+      "hydrosequence": 2761848,
+      "downstreamHydrosequence": 2727226,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            1310.13,
+            1339.25
+          ],
+          [
+            1291.86,
+            1250.27
+          ],
+          [
+            1245.17,
+            1110.22
+          ],
+          [
+            1174.05,
+            988.88
+          ],
+          [
+            1112.21,
+            899.36
+          ],
+          [
+            1053.3,
+            852.37
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "3ZZPZ",
+      "name": null,
+      "featureType": "Waterbody Connector",
+      "featureTypeCode": 5,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/3301198",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 8,
+      "lengthKm": 0.36200124000000006,
+      "hydrosequence": 2428680,
+      "downstreamHydrosequence": 2388122,
+      "upstreamHydrosequence": 2468525,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            -1828.36,
+            -2054.12
+          ],
+          [
+            -1949.94,
+            -2003.45
+          ],
+          [
+            -2034.29,
+            -1966.49
+          ],
+          [
+            -2105.52,
+            -1946.26
+          ],
+          [
+            -2171.94,
+            -1944.26
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "3ZZQF",
+      "name": "Eel River",
+      "featureType": "Waterbody Connector",
+      "featureTypeCode": 5,
+      "mainstemId": "https://geoconnex.us/ref/mainstems/1767344",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 8,
+      "lengthKm": 0.59628921,
+      "hydrosequence": 2388121,
+      "downstreamHydrosequence": 2346745,
+      "upstreamHydrosequence": 2468525,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            -1828.36,
+            -2054.12
+          ],
+          [
+            -1891.69,
+            -2045.93
+          ],
+          [
+            -1988.73,
+            -2084.55
+          ],
+          [
+            -2416.18,
+            -2018.31
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "3ZZQG",
+      "name": "Eel River",
+      "featureType": "Waterbody Connector",
+      "featureTypeCode": 5,
+      "mainstemId": "https://geoconnex.us/ref/mainstems/1767344",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 8,
+      "lengthKm": 0.12398923,
+      "hydrosequence": 2468525,
+      "downstreamHydrosequence": 2388121,
+      "upstreamHydrosequence": 2507599,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            -1704.14,
+            -2068.06
+          ],
+          [
+            -1828.36,
+            -2054.12
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "42J27",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/3465943",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.87511378,
+      "hydrosequence": 2656430,
+      "downstreamHydrosequence": 2620070,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            513.21,
+            -2786.23
+          ],
+          [
+            555.58,
+            -2812.55
+          ],
+          [
+            574.67,
+            -2826.95
+          ],
+          [
+            590.06,
+            -2840.17
+          ],
+          [
+            604.27,
+            -2855.24
+          ],
+          [
+            618.47,
+            -2870.31
+          ],
+          [
+            657.33,
+            -2908.25
+          ],
+          [
+            676.59,
+            -2937.28
+          ],
+          [
+            685.37,
+            -2957.91
+          ],
+          [
+            692.86,
+            -2974.27
+          ],
+          [
+            702.83,
+            -2991.83
+          ],
+          [
+            706.74,
+            -3012.51
+          ],
+          [
+            708.09,
+            -3023.47
+          ],
+          [
+            713.72,
+            -3035.61
+          ],
+          [
+            723.67,
+            -3101.94
+          ],
+          [
+            720.29,
+            -3125.13
+          ],
+          [
+            712.58,
+            -3142.3
+          ],
+          [
+            702.37,
+            -3156.45
+          ],
+          [
+            698.4,
+            -3180.89
+          ],
+          [
+            701.0,
+            -3194.26
+          ],
+          [
+            704.1,
+            -3197.88
+          ],
+          [
+            714.17,
+            -3224.58
+          ],
+          [
+            719.91,
+            -3245.25
+          ],
+          [
+            744.38,
+            -3303.47
+          ],
+          [
+            778.34,
+            -3389.64
+          ],
+          [
+            786.7,
+            -3426.12
+          ],
+          [
+            788.8,
+            -3448.04
+          ],
+          [
+            789.02,
+            -3465.71
+          ],
+          [
+            788.04,
+            -3485.23
+          ],
+          [
+            790.12,
+            -3507.15
+          ],
+          [
+            788.21,
+            -3552.29
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "44U21",
+      "name": "Nanning Creek",
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/6905808",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 3,
+      "lengthKm": 0.19247504000000001,
+      "hydrosequence": 2692201,
+      "downstreamHydrosequence": 2656421,
+      "upstreamHydrosequence": 2727227,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            1137.32,
+            -915.21
+          ],
+          [
+            1121.2,
+            -926.21
+          ],
+          [
+            1103.83,
+            -952.03
+          ],
+          [
+            1052.93,
+            -977.64
+          ],
+          [
+            971.23,
+            -1003.46
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "44U28",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/11616049",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 1.06448265,
+      "hydrosequence": 2761860,
+      "downstreamHydrosequence": 2727237,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            1949.04,
+            -2108.24
+          ],
+          [
+            1962.48,
+            -2152.46
+          ],
+          [
+            1977.69,
+            -2209.33
+          ],
+          [
+            2005.78,
+            -2263.94
+          ],
+          [
+            2027.42,
+            -2318.62
+          ],
+          [
+            2042.57,
+            -2371.27
+          ],
+          [
+            2043.25,
+            -2426.21
+          ],
+          [
+            2041.03,
+            -2508.65
+          ],
+          [
+            2053.47,
+            -2603.6
+          ],
+          [
+            2055.71,
+            -2654.3
+          ],
+          [
+            2007.79,
+            -2692.92
+          ],
+          [
+            1983.91,
+            -2718.57
+          ],
+          [
+            1977.98,
+            -2760.91
+          ],
+          [
+            1973.65,
+            -2803.23
+          ],
+          [
+            1957.89,
+            -2833.01
+          ],
+          [
+            1919.78,
+            -2882.08
+          ],
+          [
+            1900.79,
+            -2911.9
+          ],
+          [
+            1881.7,
+            -2933.27
+          ],
+          [
+            1852.78,
+            -2942.08
+          ],
+          [
+            1817.45,
+            -2955.19
+          ],
+          [
+            1775.66,
+            -2966.27
+          ],
+          [
+            1736.71,
+            -2984.29
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "4EIRS",
+      "name": "Nanning Creek",
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/6905808",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 3,
+      "lengthKm": 0.28750219000000005,
+      "hydrosequence": 2761850,
+      "downstreamHydrosequence": 2727227,
+      "upstreamHydrosequence": 2795724,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            1630.31,
+            -745.3
+          ],
+          [
+            1547.34,
+            -739.6
+          ],
+          [
+            1491.17,
+            -733.56
+          ],
+          [
+            1426.56,
+            -734.93
+          ],
+          [
+            1359.6,
+            -743.06
+          ],
+          [
+            1342.61,
+            -749.35
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "4H1T2",
+      "name": "Eel River",
+      "featureType": "Waterbody Connector",
+      "featureTypeCode": 5,
+      "mainstemId": "https://geoconnex.us/ref/mainstems/1767344",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 8,
+      "lengthKm": 0.48246013,
+      "hydrosequence": 2620061,
+      "downstreamHydrosequence": 2583347,
+      "upstreamHydrosequence": 2656420,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            930.23,
+            -1016.42
+          ],
+          [
+            923.99,
+            -1073.97
+          ],
+          [
+            865.96,
+            -1177.1
+          ],
+          [
+            831.55,
+            -1238.28
+          ],
+          [
+            721.29,
+            -1414.34
+          ],
+          [
+            706.36,
+            -1435.63
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "4JD7U",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/7126502",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 2,
+      "lengthKm": 0.18727678,
+      "hydrosequence": 2958147,
+      "downstreamHydrosequence": 2926817,
+      "upstreamHydrosequence": 2989175,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            2946.69,
+            -892.67
+          ],
+          [
+            2931.64,
+            -874.78
+          ],
+          [
+            2915.63,
+            -862.18
+          ],
+          [
+            2880.64,
+            -843.08
+          ],
+          [
+            2854.32,
+            -834.25
+          ],
+          [
+            2834.05,
+            -820.47
+          ],
+          [
+            2808.74,
+            -795.17
+          ],
+          [
+            2799.71,
+            -782.07
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "4O7JC",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/7857024",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.84798696,
+      "hydrosequence": 2620063,
+      "downstreamHydrosequence": 2583348,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            528.85,
+            -2226.36
+          ],
+          [
+            504.97,
+            -2252.01
+          ],
+          [
+            482.68,
+            -2275.54
+          ],
+          [
+            448.89,
+            -2282.3
+          ],
+          [
+            386.1,
+            -2291.53
+          ],
+          [
+            336.13,
+            -2294.26
+          ],
+          [
+            286.24,
+            -2303.34
+          ],
+          [
+            249.23,
+            -2310.14
+          ],
+          [
+            217.11,
+            -2321.1
+          ],
+          [
+            152.6,
+            -2321.91
+          ],
+          [
+            107.47,
+            -2324.58
+          ],
+          [
+            68.5,
+            -2303.93
+          ],
+          [
+            44.07,
+            -2285.22
+          ],
+          [
+            27.5,
+            -2249.5
+          ],
+          [
+            19.04,
+            -2217.9
+          ],
+          [
+            8.81,
+            -2173.65
+          ],
+          [
+            -13.05,
+            -2102.07
+          ],
+          [
+            -16.44,
+            -2038.42
+          ],
+          [
+            -22.98,
+            -1979.07
+          ],
+          [
+            -26.2,
+            -1969.1
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "57KJM",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/1049883",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.58398512,
+      "hydrosequence": 2862446,
+      "downstreamHydrosequence": 2829486,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            -1526.95,
+            999.36
+          ],
+          [
+            -1449.17,
+            1030.07
+          ],
+          [
+            -1378.88,
+            1054.07
+          ],
+          [
+            -1293.5,
+            1081.57
+          ],
+          [
+            -1205.51,
+            1102.49
+          ],
+          [
+            -1097.15,
+            1107.16
+          ],
+          [
+            -1006.39,
+            1108.3
+          ],
+          [
+            -955.58,
+            1113.93
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "5CEPQ",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/3265784",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.37248469,
+      "hydrosequence": 3080219,
+      "downstreamHydrosequence": 3050173,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            2290.11,
+            582.66
+          ],
+          [
+            2350.73,
+            573.49
+          ],
+          [
+            2403.58,
+            580.73
+          ],
+          [
+            2463.96,
+            591.37
+          ],
+          [
+            2529.39,
+            602.07
+          ],
+          [
+            2587.25,
+            612.68
+          ],
+          [
+            2655.54,
+            641.76
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "5H9N2",
+      "name": "Eel River",
+      "featureType": "Waterbody Connector",
+      "featureTypeCode": 5,
+      "mainstemId": "https://geoconnex.us/ref/mainstems/1767344",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 8,
+      "lengthKm": 0.59192172,
+      "hydrosequence": 2545869,
+      "downstreamHydrosequence": 2507599,
+      "upstreamHydrosequence": 2583347,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            -31.37,
+            -1953.09
+          ],
+          [
+            -156.72,
+            -1964.38
+          ],
+          [
+            -307.98,
+            -1986.21
+          ],
+          [
+            -456.62,
+            -2049.17
+          ],
+          [
+            -571.35,
+            -2060.63
+          ],
+          [
+            -607.65,
+            -2079.42
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "5H9WA",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/8072327",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 1.0508739,
+      "hydrosequence": 3080220,
+      "downstreamHydrosequence": 3050173,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            2249.13,
+            1587.31
+          ],
+          [
+            2269.06,
+            1552.19
+          ],
+          [
+            2288.76,
+            1485.36
+          ],
+          [
+            2325.11,
+            1402.89
+          ],
+          [
+            2351.68,
+            1322.74
+          ],
+          [
+            2363.93,
+            1268.01
+          ],
+          [
+            2372.08,
+            1248.61
+          ],
+          [
+            2395.05,
+            1162.92
+          ],
+          [
+            2425.96,
+            1077.95
+          ],
+          [
+            2441.97,
+            1012.91
+          ],
+          [
+            2448.06,
+            962.38
+          ],
+          [
+            2457.62,
+            928.34
+          ],
+          [
+            2473.16,
+            902.93
+          ],
+          [
+            2519.6,
+            843.74
+          ],
+          [
+            2532.12,
+            817.07
+          ],
+          [
+            2554.39,
+            789.3
+          ],
+          [
+            2573.07,
+            757.21
+          ],
+          [
+            2593.5,
+            731.24
+          ],
+          [
+            2632.12,
+            662.81
+          ],
+          [
+            2655.54,
+            641.76
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "5VTD3",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/1435197",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.47598306000000007,
+      "hydrosequence": 2862470,
+      "downstreamHydrosequence": 2829508,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            2662.14,
+            -2245.25
+          ],
+          [
+            2640.15,
+            -2294.12
+          ],
+          [
+            2615.16,
+            -2362.05
+          ],
+          [
+            2603.16,
+            -2436.16
+          ],
+          [
+            2597.81,
+            -2527.1
+          ],
+          [
+            2549.43,
+            -2660.83
+          ],
+          [
+            2549.89,
+            -2698.86
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "65KU7",
+      "name": "Eel River",
+      "featureType": "Waterbody Connector",
+      "featureTypeCode": 5,
+      "mainstemId": "https://geoconnex.us/ref/mainstems/1767344",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 8,
+      "lengthKm": 1.09954639,
+      "hydrosequence": 2507599,
+      "downstreamHydrosequence": 2468525,
+      "upstreamHydrosequence": 2545869,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            -607.65,
+            -2079.42
+          ],
+          [
+            -712.86,
+            -2056.8
+          ],
+          [
+            -831.41,
+            -2045.34
+          ],
+          [
+            -1118.23,
+            -2052.97
+          ],
+          [
+            -1590.81,
+            -2024.68
+          ],
+          [
+            -1704.14,
+            -2068.06
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "6FAPS",
+      "name": "Dean Creek",
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/6058084",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 2,
+      "lengthKm": 0.59825357,
+      "hydrosequence": 2795721,
+      "downstreamHydrosequence": 2761847,
+      "upstreamHydrosequence": 2829490,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            -2635.48,
+            1406.7
+          ],
+          [
+            -2591.27,
+            1383.51
+          ],
+          [
+            -2516.43,
+            1349.16
+          ],
+          [
+            -2458.22,
+            1327.38
+          ],
+          [
+            -2431.31,
+            1321.65
+          ],
+          [
+            -2365.96,
+            1313.37
+          ],
+          [
+            -2256.92,
+            1297.31
+          ],
+          [
+            -2224.44,
+            1282.46
+          ],
+          [
+            -2171.6,
+            1247.73
+          ],
+          [
+            -2125.94,
+            1202.56
+          ],
+          [
+            -2093.34,
+            1179.16
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "6K4G8",
+      "name": "Eel River",
+      "featureType": "Waterbody Connector",
+      "featureTypeCode": 5,
+      "mainstemId": "https://geoconnex.us/ref/mainstems/1767344",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 8,
+      "lengthKm": 1.02954761,
+      "hydrosequence": 2692199,
+      "downstreamHydrosequence": 2656420,
+      "upstreamHydrosequence": 2727224,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            -62.33,
+            -37.25
+          ],
+          [
+            23.09,
+            -90.73
+          ],
+          [
+            420.25,
+            -281.15
+          ],
+          [
+            606.87,
+            -449.23
+          ],
+          [
+            731.46,
+            -593.91
+          ],
+          [
+            766.92,
+            -626.94
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "6K4H7",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/4407284",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.7898232700000001,
+      "hydrosequence": 2727228,
+      "downstreamHydrosequence": 2692201,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            1684.72,
+            -1419.19
+          ],
+          [
+            1659.04,
+            -1430.07
+          ],
+          [
+            1618.64,
+            -1424.22
+          ],
+          [
+            1582.9,
+            -1403.53
+          ],
+          [
+            1551.99,
+            -1382.77
+          ],
+          [
+            1519.65,
+            -1376.83
+          ],
+          [
+            1485.45,
+            -1349.78
+          ],
+          [
+            1449.6,
+            -1320.63
+          ],
+          [
+            1421.84,
+            -1293.5
+          ],
+          [
+            1389.25,
+            -1266.42
+          ],
+          [
+            1351.52,
+            -1216.17
+          ],
+          [
+            1329.99,
+            -1169.94
+          ],
+          [
+            1303.53,
+            -1117.43
+          ],
+          [
+            1280.45,
+            -1077.56
+          ],
+          [
+            1246.11,
+            -1039.94
+          ],
+          [
+            1223.24,
+            -1016.98
+          ],
+          [
+            1193.59,
+            -966.62
+          ],
+          [
+            1168.97,
+            -933.11
+          ],
+          [
+            1137.32,
+            -915.21
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "6K4HJ",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/4602637",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 1.0757572100000001,
+      "hydrosequence": 2468526,
+      "downstreamHydrosequence": 2428681,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            -1811.41,
+            -1009.65
+          ],
+          [
+            -1822.58,
+            -1043.31
+          ],
+          [
+            -1827.38,
+            -1049.47
+          ],
+          [
+            -1856.39,
+            -1071.15
+          ],
+          [
+            -1876.94,
+            -1085.42
+          ],
+          [
+            -1891.43,
+            -1097.8
+          ],
+          [
+            -1902.27,
+            -1108.89
+          ],
+          [
+            -1959.0,
+            -1156.52
+          ],
+          [
+            -1970.92,
+            -1178.61
+          ],
+          [
+            -1981.12,
+            -1192.76
+          ],
+          [
+            -1994.35,
+            -1208.16
+          ],
+          [
+            -2003.8,
+            -1232.66
+          ],
+          [
+            -2006.16,
+            -1240.0
+          ],
+          [
+            -2012.15,
+            -1299.22
+          ],
+          [
+            -2024.76,
+            -1315.22
+          ],
+          [
+            -2051.2,
+            -1347.23
+          ],
+          [
+            -2068.69,
+            -1362.69
+          ],
+          [
+            -2082.48,
+            -1381.76
+          ],
+          [
+            -2090.86,
+            -1395.26
+          ],
+          [
+            -2104.25,
+            -1447.25
+          ],
+          [
+            -2116.25,
+            -1463.24
+          ],
+          [
+            -2128.83,
+            -1482.9
+          ],
+          [
+            -2136.58,
+            -1497.62
+          ],
+          [
+            -2144.88,
+            -1516.01
+          ],
+          [
+            -2144.57,
+            -1542.83
+          ],
+          [
+            -2138.21,
+            -1564.7
+          ],
+          [
+            -2137.96,
+            -1585.44
+          ],
+          [
+            -2142.05,
+            -1600.12
+          ],
+          [
+            -2156.46,
+            -1618.58
+          ],
+          [
+            -2158.76,
+            -1629.58
+          ],
+          [
+            -2154.86,
+            -1650.25
+          ],
+          [
+            -2158.9,
+            -1669.2
+          ],
+          [
+            -2167.2,
+            -1687.58
+          ],
+          [
+            -2160.21,
+            -1711.88
+          ],
+          [
+            -2158.86,
+            -1722.24
+          ],
+          [
+            -2167.26,
+            -1733.3
+          ],
+          [
+            -2167.06,
+            -1749.76
+          ],
+          [
+            -2155.25,
+            -1769.74
+          ],
+          [
+            -2155.01,
+            -1789.24
+          ],
+          [
+            -2169.99,
+            -1810.76
+          ],
+          [
+            -2165.52,
+            -1827.17
+          ],
+          [
+            -2151.31,
+            -1842.24
+          ],
+          [
+            -2151.65,
+            -1866.03
+          ],
+          [
+            -2164.6,
+            -1904.58
+          ],
+          [
+            -2169.11,
+            -1928.96
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "6SKDP",
+      "name": "Dean Creek",
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/6058084",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 2,
+      "lengthKm": 2.7057360100000003,
+      "hydrosequence": 2761847,
+      "downstreamHydrosequence": 2727225,
+      "upstreamHydrosequence": 2795721,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            -2093.34,
+            1179.16
+          ],
+          [
+            -2077.1,
+            1147.05
+          ],
+          [
+            -2066.55,
+            1130.11
+          ],
+          [
+            -2059.66,
+            1114.95
+          ],
+          [
+            -2054.49,
+            1090.63
+          ],
+          [
+            -2052.4,
+            1069.93
+          ],
+          [
+            -2044.82,
+            1046.84
+          ],
+          [
+            -2036.68,
+            1029.87
+          ],
+          [
+            -2016.28,
+            1005.74
+          ],
+          [
+            -1989.11,
+            978.02
+          ],
+          [
+            -1974.24,
+            956.86
+          ],
+          [
+            -1977.53,
+            926.33
+          ],
+          [
+            -1982.78,
+            906.77
+          ],
+          [
+            -1978.82,
+            881.21
+          ],
+          [
+            -1969.9,
+            849.62
+          ],
+          [
+            -1946.32,
+            816.37
+          ],
+          [
+            -1947.13,
+            782.21
+          ],
+          [
+            -1936.62,
+            769.53
+          ],
+          [
+            -1905.3,
+            750.41
+          ],
+          [
+            -1876.49,
+            737.95
+          ],
+          [
+            -1851.34,
+            724.83
+          ],
+          [
+            -1839.45,
+            698.76
+          ],
+          [
+            -1826.64,
+            647.1
+          ],
+          [
+            -1816.12,
+            633.81
+          ],
+          [
+            -1803.81,
+            625.43
+          ],
+          [
+            -1721.79,
+            597.15
+          ],
+          [
+            -1684.31,
+            573.83
+          ],
+          [
+            -1653.51,
+            546.16
+          ],
+          [
+            -1639.91,
+            530.47
+          ],
+          [
+            -1608.5,
+            504.62
+          ],
+          [
+            -1507.74,
+            440.0
+          ],
+          [
+            -1408.7,
+            366.2
+          ],
+          [
+            -1382.95,
+            354.32
+          ],
+          [
+            -1295.4,
+            323.05
+          ],
+          [
+            -1257.88,
+            296.06
+          ],
+          [
+            -1228.43,
+            279.35
+          ],
+          [
+            -1173.22,
+            251.97
+          ],
+          [
+            -1151.11,
+            237.61
+          ],
+          [
+            -1135.57,
+            212.8
+          ],
+          [
+            -1076.97,
+            206.79
+          ],
+          [
+            -1059.8,
+            198.47
+          ],
+          [
+            -1038.42,
+            195.05
+          ],
+          [
+            -1023.73,
+            189.74
+          ],
+          [
+            -994.88,
+            173.64
+          ],
+          [
+            -961.79,
+            160.62
+          ],
+          [
+            -884.35,
+            157.89
+          ],
+          [
+            -786.85,
+            112.12
+          ],
+          [
+            -725.16,
+            -0.53
+          ],
+          [
+            -706.4,
+            -39.32
+          ],
+          [
+            -684.8,
+            -61.01
+          ],
+          [
+            -663.34,
+            -71.72
+          ],
+          [
+            -637.65,
+            -78.13
+          ],
+          [
+            -615.72,
+            -77.26
+          ],
+          [
+            -591.4,
+            -71.48
+          ],
+          [
+            -577.47,
+            -63.99
+          ],
+          [
+            -550.88,
+            -44.78
+          ],
+          [
+            -524.85,
+            -29.22
+          ],
+          [
+            -504.08,
+            -32.63
+          ],
+          [
+            -488.63,
+            -49.51
+          ],
+          [
+            -467.16,
+            -60.85
+          ],
+          [
+            -437.89,
+            -61.71
+          ],
+          [
+            -414.15,
+            -57.76
+          ],
+          [
+            -383.08,
+            -56.78
+          ],
+          [
+            -362.32,
+            -58.98
+          ],
+          [
+            -356.68,
+            -71.7
+          ],
+          [
+            -349.86,
+            -81.38
+          ],
+          [
+            -339.39,
+            -89.18
+          ],
+          [
+            -272.91,
+            -92.65
+          ],
+          [
+            -231.95,
+            -101.3
+          ],
+          [
+            -194.17,
+            -99.64
+          ],
+          [
+            -180.74,
+            -104.11
+          ],
+          [
+            -161.44,
+            -94.62
+          ],
+          [
+            -148.63,
+            -85.06
+          ],
+          [
+            -123.79,
+            -71.96
+          ],
+          [
+            -87.79,
+            -57.38
+          ],
+          [
+            -68.44,
+            -48.01
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "6TUXI",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/6837496",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.4287281,
+      "hydrosequence": 2958148,
+      "downstreamHydrosequence": 2926817,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            3042.94,
+            -438.08
+          ],
+          [
+            3008.21,
+            -484.73
+          ],
+          [
+            2976.13,
+            -541.25
+          ],
+          [
+            2938.96,
+            -594.53
+          ],
+          [
+            2914.23,
+            -634.45
+          ],
+          [
+            2889.74,
+            -694.19
+          ],
+          [
+            2867.5,
+            -730.78
+          ],
+          [
+            2799.71,
+            -782.07
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "6YQL0",
+      "name": "Nanning Creek",
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/6905808",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 3,
+      "lengthKm": 0.21935042000000002,
+      "hydrosequence": 2862453,
+      "downstreamHydrosequence": 2829494,
+      "upstreamHydrosequence": 2894929,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            2394.96,
+            -454.46
+          ],
+          [
+            2267.32,
+            -485.87
+          ],
+          [
+            2247.29,
+            -493.44
+          ],
+          [
+            2216.53,
+            -520.62
+          ],
+          [
+            2189.71,
+            -520.94
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "73L7X",
+      "name": "Nanning Creek",
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/6905808",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 3,
+      "lengthKm": 0.17943402,
+      "hydrosequence": 2958149,
+      "downstreamHydrosequence": 2926819,
+      "upstreamHydrosequence": 2989178,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            2880.19,
+            7.93
+          ],
+          [
+            2813.09,
+            -40.39
+          ],
+          [
+            2766.49,
+            -68.98
+          ],
+          [
+            2749.0,
+            -84.44
+          ],
+          [
+            2735.98,
+            -98.5
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "7N1HK",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/8366822",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 2,
+      "lengthKm": 0.45817597,
+      "hydrosequence": 2862471,
+      "downstreamHydrosequence": 2829508,
+      "upstreamHydrosequence": 2894949,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            2422.97,
+            -2341.14
+          ],
+          [
+            2409.71,
+            -2444.85
+          ],
+          [
+            2391.57,
+            -2544.4
+          ],
+          [
+            2389.06,
+            -2603.6
+          ],
+          [
+            2421.75,
+            -2639.13
+          ],
+          [
+            2463.99,
+            -2663.98
+          ],
+          [
+            2515.75,
+            -2676.03
+          ],
+          [
+            2549.89,
+            -2698.86
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "8L2D5",
+      "name": "Eel River",
+      "featureType": "Waterbody Connector",
+      "featureTypeCode": 5,
+      "mainstemId": "https://geoconnex.us/ref/mainstems/1767344",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 8,
+      "lengthKm": 0.93500037,
+      "hydrosequence": 2583347,
+      "downstreamHydrosequence": 2545869,
+      "upstreamHydrosequence": 2620061,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            706.36,
+            -1435.63
+          ],
+          [
+            595.09,
+            -1498.48
+          ],
+          [
+            362.83,
+            -1687.53
+          ],
+          [
+            257.19,
+            -1786.58
+          ],
+          [
+            251.9,
+            -1847.41
+          ],
+          [
+            219.9,
+            -1868.94
+          ],
+          [
+            161.73,
+            -1893.44
+          ],
+          [
+            85.36,
+            -1912.88
+          ],
+          [
+            15.03,
+            -1932.25
+          ],
+          [
+            -31.37,
+            -1953.09
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "8PXVB",
+      "name": "Nanning Creek",
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/6905808",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 3,
+      "lengthKm": 0.19462298000000003,
+      "hydrosequence": 2894929,
+      "downstreamHydrosequence": 2862453,
+      "upstreamHydrosequence": 2926819,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            2525.54,
+            -312.29
+          ],
+          [
+            2503.38,
+            -344.65
+          ],
+          [
+            2466.12,
+            -389.6
+          ],
+          [
+            2416.75,
+            -440.8
+          ],
+          [
+            2394.96,
+            -454.46
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "94JNG",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/2941687",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 2,
+      "lengthKm": 0.97044361,
+      "hydrosequence": 2862468,
+      "downstreamHydrosequence": 2829507,
+      "upstreamHydrosequence": 2894945,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            2911.32,
+            -2464.15
+          ],
+          [
+            2898.14,
+            -2483.2
+          ],
+          [
+            2886.2,
+            -2504.07
+          ],
+          [
+            2869.4,
+            -2526.83
+          ],
+          [
+            2848.51,
+            -2563.66
+          ],
+          [
+            2835.31,
+            -2581.5
+          ],
+          [
+            2822.08,
+            -2596.3
+          ],
+          [
+            2804.51,
+            -2605.66
+          ],
+          [
+            2783.33,
+            -2618.1
+          ],
+          [
+            2752.19,
+            -2664.18
+          ],
+          [
+            2728.71,
+            -2689.46
+          ],
+          [
+            2714.86,
+            -2703.65
+          ],
+          [
+            2701.64,
+            -2720.28
+          ],
+          [
+            2695.14,
+            -2737.43
+          ],
+          [
+            2686.3,
+            -2762.52
+          ],
+          [
+            2680.56,
+            -2791.85
+          ],
+          [
+            2679.24,
+            -2833.33
+          ],
+          [
+            2670.9,
+            -2849.9
+          ],
+          [
+            2668.55,
+            -2857.23
+          ],
+          [
+            2665.09,
+            -2873.73
+          ],
+          [
+            2662.3,
+            -2895.72
+          ],
+          [
+            2653.05,
+            -2937.29
+          ],
+          [
+            2644.23,
+            -2964.82
+          ],
+          [
+            2631.12,
+            -2990.58
+          ],
+          [
+            2624.82,
+            -3023.58
+          ],
+          [
+            2623.84,
+            -3044.33
+          ],
+          [
+            2625.33,
+            -3065.65
+          ],
+          [
+            2620.69,
+            -3086.42
+          ],
+          [
+            2609.33,
+            -3104.86
+          ],
+          [
+            2555.71,
+            -3157.93
+          ],
+          [
+            2547.34,
+            -3171.44
+          ],
+          [
+            2540.89,
+            -3192.86
+          ],
+          [
+            2544.17,
+            -3211.72
+          ],
+          [
+            2547.48,
+            -3233.62
+          ],
+          [
+            2547.76,
+            -3256.79
+          ],
+          [
+            2547.34,
+            -3272.03
+          ],
+          [
+            2541.67,
+            -3307.47
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "99EN5",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/9090115",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.39219619,
+      "hydrosequence": 2989177,
+      "downstreamHydrosequence": 2958149,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            3166.82,
+            -258.27
+          ],
+          [
+            3115.73,
+            -202.75
+          ],
+          [
+            3095.33,
+            -183.19
+          ],
+          [
+            3072.41,
+            -163.65
+          ],
+          [
+            3036.76,
+            -134.36
+          ],
+          [
+            3003.59,
+            -101.74
+          ],
+          [
+            2970.39,
+            -65.82
+          ],
+          [
+            2932.26,
+            -39.86
+          ],
+          [
+            2880.19,
+            7.93
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "AM1UU",
+      "name": "Eel River",
+      "featureType": "Waterbody Connector",
+      "featureTypeCode": 5,
+      "mainstemId": "https://geoconnex.us/ref/mainstems/1767344",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 8,
+      "lengthKm": 1.46412009,
+      "hydrosequence": 2727224,
+      "downstreamHydrosequence": 2692199,
+      "upstreamHydrosequence": 2761846,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            -873.28,
+            1123.04
+          ],
+          [
+            -782.34,
+            768.3
+          ],
+          [
+            -728.02,
+            660.93
+          ],
+          [
+            -668.95,
+            538.82
+          ],
+          [
+            -528.96,
+            394.74
+          ],
+          [
+            -316.26,
+            201.74
+          ],
+          [
+            -122.9,
+            8.55
+          ],
+          [
+            -62.33,
+            -37.25
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "BF7WP",
+      "name": "Eel River",
+      "featureType": "Waterbody Connector",
+      "featureTypeCode": 5,
+      "mainstemId": "https://geoconnex.us/ref/mainstems/1767344",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 8,
+      "lengthKm": 0.27139104,
+      "hydrosequence": 2761846,
+      "downstreamHydrosequence": 2727224,
+      "upstreamHydrosequence": 2795720,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            -925.38,
+            1386.61
+          ],
+          [
+            -893.61,
+            1190.67
+          ],
+          [
+            -873.28,
+            1123.04
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "CMYMK",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/11522531",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 1.01657465,
+      "hydrosequence": 2761861,
+      "downstreamHydrosequence": 2727237,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            1772.79,
+            -2080.97
+          ],
+          [
+            1798.9,
+            -2123.32
+          ],
+          [
+            1811.3,
+            -2140.85
+          ],
+          [
+            1820.65,
+            -2157.21
+          ],
+          [
+            1831.81,
+            -2173.52
+          ],
+          [
+            1839.35,
+            -2191.11
+          ],
+          [
+            1859.87,
+            -2225.0
+          ],
+          [
+            1871.81,
+            -2254.12
+          ],
+          [
+            1878.14,
+            -2274.78
+          ],
+          [
+            1881.48,
+            -2297.9
+          ],
+          [
+            1887.18,
+            -2316.73
+          ],
+          [
+            1892.92,
+            -2336.78
+          ],
+          [
+            1897.45,
+            -2359.28
+          ],
+          [
+            1899.66,
+            -2390.36
+          ],
+          [
+            1893.4,
+            -2428.83
+          ],
+          [
+            1902.21,
+            -2450.68
+          ],
+          [
+            1913.39,
+            -2468.84
+          ],
+          [
+            1920.32,
+            -2486.43
+          ],
+          [
+            1924.2,
+            -2505.9
+          ],
+          [
+            1922.64,
+            -2527.85
+          ],
+          [
+            1927.66,
+            -2589.99
+          ],
+          [
+            1942.04,
+            -2619.06
+          ],
+          [
+            1942.93,
+            -2643.44
+          ],
+          [
+            1932.14,
+            -2657.59
+          ],
+          [
+            1921.95,
+            -2672.35
+          ],
+          [
+            1903.25,
+            -2689.65
+          ],
+          [
+            1868.32,
+            -2724.81
+          ],
+          [
+            1862.35,
+            -2735.86
+          ],
+          [
+            1851.66,
+            -2759.76
+          ],
+          [
+            1850.12,
+            -2782.34
+          ],
+          [
+            1843.63,
+            -2800.11
+          ],
+          [
+            1835.9,
+            -2817.26
+          ],
+          [
+            1825.8,
+            -2839.34
+          ],
+          [
+            1817.41,
+            -2851.02
+          ],
+          [
+            1766.93,
+            -2911.98
+          ],
+          [
+            1754.95,
+            -2929.8
+          ],
+          [
+            1739.47,
+            -2961.69
+          ],
+          [
+            1736.71,
+            -2984.29
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "CWP0M",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/1771375",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.43218089000000004,
+      "hydrosequence": 2958150,
+      "downstreamHydrosequence": 2926819,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            2432.77,
+            195.14
+          ],
+          [
+            2475.94,
+            169.25
+          ],
+          [
+            2537.0,
+            123.76
+          ],
+          [
+            2605.7,
+            71.76
+          ],
+          [
+            2669.32,
+            23.0
+          ],
+          [
+            2707.8,
+            -32.67
+          ],
+          [
+            2735.98,
+            -98.5
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "DBZ3",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/9025658",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.50639642,
+      "hydrosequence": 2926820,
+      "downstreamHydrosequence": 2894929,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            2294.98,
+            124.12
+          ],
+          [
+            2315.62,
+            84.75
+          ],
+          [
+            2328.91,
+            28.78
+          ],
+          [
+            2344.95,
+            -46.98
+          ],
+          [
+            2365.72,
+            -96.26
+          ],
+          [
+            2406.77,
+            -155.19
+          ],
+          [
+            2457.79,
+            -204.11
+          ],
+          [
+            2488.47,
+            -240.06
+          ],
+          [
+            2525.54,
+            -312.29
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "DC9T",
+      "name": "Nanning Creek",
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/6905808",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 3,
+      "lengthKm": 0.38637005,
+      "hydrosequence": 2829494,
+      "downstreamHydrosequence": 2795724,
+      "upstreamHydrosequence": 2862453,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            2189.71,
+            -520.94
+          ],
+          [
+            2131.33,
+            -533.85
+          ],
+          [
+            2095.52,
+            -546.46
+          ],
+          [
+            2076.18,
+            -560.71
+          ],
+          [
+            2034.55,
+            -596.57
+          ],
+          [
+            1986.22,
+            -633.11
+          ],
+          [
+            1937.83,
+            -666.01
+          ],
+          [
+            1896.61,
+            -685.4
+          ],
+          [
+            1852.91,
+            -701.79
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "DG5O7",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/1689033",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.40330664,
+      "hydrosequence": 2862454,
+      "downstreamHydrosequence": 2829494,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            2161.36,
+            -124.73
+          ],
+          [
+            2168.47,
+            -211.82
+          ],
+          [
+            2188.11,
+            -334.42
+          ],
+          [
+            2201.56,
+            -445.2
+          ],
+          [
+            2189.71,
+            -520.94
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "DG5XT",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/8957758",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.68486418,
+      "hydrosequence": 2862452,
+      "downstreamHydrosequence": 2829493,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            2365.31,
+            -1572.69
+          ],
+          [
+            2324.02,
+            -1381.79
+          ],
+          [
+            2324.27,
+            -1351.91
+          ],
+          [
+            2326.56,
+            -1338.47
+          ],
+          [
+            2321.42,
+            -1317.81
+          ],
+          [
+            2318.72,
+            -1294.67
+          ],
+          [
+            2307.55,
+            -1278.34
+          ],
+          [
+            2300.02,
+            -1260.76
+          ],
+          [
+            2275.43,
+            -1243.98
+          ],
+          [
+            2263.76,
+            -1236.81
+          ],
+          [
+            2256.43,
+            -1234.45
+          ],
+          [
+            2199.1,
+            -1183.32
+          ],
+          [
+            2184.89,
+            -1166.42
+          ],
+          [
+            2176.13,
+            -1148.85
+          ],
+          [
+            2172.83,
+            -1128.15
+          ],
+          [
+            2159.2,
+            -1109.42
+          ],
+          [
+            2149.76,
+            -1085.14
+          ],
+          [
+            2152.14,
+            -1029.64
+          ],
+          [
+            2149.67,
+            -1027.24
+          ],
+          [
+            2148.26,
+            -1010.18
+          ],
+          [
+            2147.97,
+            -986.42
+          ],
+          [
+            2143.47,
+            -968.18
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "DIP5C",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/10025177",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 1.101,
+      "hydrosequence": 2727236,
+      "downstreamHydrosequence": 2692212,
+      "upstreamHydrosequence": 2761859,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            1421.63,
+            -2283.94
+          ],
+          [
+            1461.52,
+            -2355.39
+          ],
+          [
+            1469.08,
+            -2376.65
+          ],
+          [
+            1475.42,
+            -2397.29
+          ],
+          [
+            1478.07,
+            -2413.73
+          ],
+          [
+            1480.78,
+            -2438.08
+          ],
+          [
+            1483.43,
+            -2506.32
+          ],
+          [
+            1482.53,
+            -2531.32
+          ],
+          [
+            1480.31,
+            -2550.26
+          ],
+          [
+            1479.97,
+            -2572.82
+          ],
+          [
+            1480.13,
+            -2585.61
+          ],
+          [
+            1482.28,
+            -2612.4
+          ],
+          [
+            1486.89,
+            -2641.61
+          ],
+          [
+            1487.44,
+            -2686.71
+          ],
+          [
+            1499.17,
+            -2698.78
+          ],
+          [
+            1511.54,
+            -2713.86
+          ],
+          [
+            1525.14,
+            -2729.54
+          ],
+          [
+            1532.67,
+            -2747.14
+          ],
+          [
+            1539.06,
+            -2772.05
+          ],
+          [
+            1540.34,
+            -2776.3
+          ],
+          [
+            1540.47,
+            -2837.27
+          ],
+          [
+            1536.97,
+            -2851.34
+          ],
+          [
+            1532.24,
+            -2862.36
+          ],
+          [
+            1514.98,
+            -2897.93
+          ],
+          [
+            1507.88,
+            -2915.69
+          ],
+          [
+            1498.39,
+            -2937.76
+          ],
+          [
+            1472.92,
+            -2999.65
+          ],
+          [
+            1465.3,
+            -3025.95
+          ],
+          [
+            1456.37,
+            -3044.35
+          ],
+          [
+            1452.96,
+            -3064.5
+          ],
+          [
+            1444.03,
+            -3082.3
+          ],
+          [
+            1440.06,
+            -3106.72
+          ],
+          [
+            1422.22,
+            -3195.33
+          ],
+          [
+            1419.41,
+            -3214.88
+          ],
+          [
+            1419.04,
+            -3235.0
+          ],
+          [
+            1413.81,
+            -3255.79
+          ],
+          [
+            1412.28,
+            -3280.19
+          ],
+          [
+            1408.4,
+            -3312.56
+          ],
+          [
+            1406.09,
+            -3323.56
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "DIPCG",
+      "name": "Nanning Creek",
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/6905808",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 2,
+      "lengthKm": 0.561,
+      "hydrosequence": 3019957,
+      "downstreamHydrosequence": 2989178,
+      "upstreamHydrosequence": 3050172,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            3455.49,
+            126.45
+          ],
+          [
+            3430.5,
+            125.54
+          ],
+          [
+            3370.76,
+            125.44
+          ],
+          [
+            3332.27,
+            131.68
+          ],
+          [
+            3282.26,
+            133.52
+          ],
+          [
+            3213.03,
+            111.96
+          ],
+          [
+            3169.21,
+            104.72
+          ],
+          [
+            3060.05,
+            107.67
+          ],
+          [
+            3034.54,
+            99.45
+          ],
+          [
+            2949.84,
+            46.61
+          ],
+          [
+            2915.89,
+            29.74
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "DL0F4",
+      "name": null,
+      "featureType": "Waterbody Connector",
+      "featureTypeCode": 5,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/4602637",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.26883959,
+      "hydrosequence": 2388122,
+      "downstreamHydrosequence": 2346745,
+      "upstreamHydrosequence": 2428681,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            -2171.94,
+            -1944.26
+          ],
+          [
+            -2290.82,
+            -1945.0
+          ],
+          [
+            -2356.6,
+            -1958.71
+          ],
+          [
+            -2416.18,
+            -2018.31
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "DPVDO",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/8100582",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 1.50624252,
+      "hydrosequence": 2545871,
+      "downstreamHydrosequence": 2507600,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            -829.26,
+            -3139.51
+          ],
+          [
+            -839.84,
+            -3121.36
+          ],
+          [
+            -846.9,
+            -3090.95
+          ],
+          [
+            -851.87,
+            -3083.71
+          ],
+          [
+            -858.11,
+            -3072.8
+          ],
+          [
+            -871.13,
+            -3054.67
+          ],
+          [
+            -879.89,
+            -3035.88
+          ],
+          [
+            -886.2,
+            -3017.66
+          ],
+          [
+            -885.82,
+            -2998.75
+          ],
+          [
+            -893.49,
+            -2968.37
+          ],
+          [
+            -905.49,
+            -2933.76
+          ],
+          [
+            -914.84,
+            -2917.42
+          ],
+          [
+            -923.44,
+            -2910.82
+          ],
+          [
+            -933.45,
+            -2890.81
+          ],
+          [
+            -943.43,
+            -2871.42
+          ],
+          [
+            -952.17,
+            -2853.86
+          ],
+          [
+            -958.49,
+            -2835.03
+          ],
+          [
+            -968.09,
+            -2797.34
+          ],
+          [
+            -967.35,
+            -2758.33
+          ],
+          [
+            -976.65,
+            -2745.63
+          ],
+          [
+            -998.81,
+            -2726.99
+          ],
+          [
+            -1017.81,
+            -2719.92
+          ],
+          [
+            -1033.13,
+            -2712.79
+          ],
+          [
+            -1049.22,
+            -2693.47
+          ],
+          [
+            -1072.26,
+            -2652.89
+          ],
+          [
+            -1082.3,
+            -2629.24
+          ],
+          [
+            -1082.38,
+            -2623.15
+          ],
+          [
+            -1079.49,
+            -2609.71
+          ],
+          [
+            -1074.91,
+            -2585.26
+          ],
+          [
+            -1070.27,
+            -2564.47
+          ],
+          [
+            -1076.63,
+            -2542.61
+          ],
+          [
+            -1078.67,
+            -2526.16
+          ],
+          [
+            -1074.01,
+            -2507.21
+          ],
+          [
+            -1072.27,
+            -2500.48
+          ],
+          [
+            -1082.2,
+            -2434.76
+          ],
+          [
+            -1074.59,
+            -2407.85
+          ],
+          [
+            -1072.38,
+            -2388.92
+          ],
+          [
+            -1079.3,
+            -2371.32
+          ],
+          [
+            -1081.36,
+            -2351.84
+          ],
+          [
+            -1077.18,
+            -2345.08
+          ],
+          [
+            -1077.74,
+            -2298.15
+          ],
+          [
+            -1071.47,
+            -2262.71
+          ],
+          [
+            -1072.38,
+            -2237.12
+          ],
+          [
+            -1079.91,
+            -2219.53
+          ],
+          [
+            -1098.85,
+            -2215.49
+          ],
+          [
+            -1121.99,
+            -2218.22
+          ],
+          [
+            -1187.84,
+            -2217.79
+          ],
+          [
+            -1216.44,
+            -2221.79
+          ],
+          [
+            -1259.77,
+            -2218.65
+          ],
+          [
+            -1303.65,
+            -2219.16
+          ],
+          [
+            -1395.73,
+            -2217.84
+          ],
+          [
+            -1421.34,
+            -2216.92
+          ],
+          [
+            -1437.21,
+            -2215.3
+          ],
+          [
+            -1452.48,
+            -2213.04
+          ],
+          [
+            -1476.91,
+            -2209.67
+          ],
+          [
+            -1500.24,
+            -2195.94
+          ],
+          [
+            -1539.41,
+            -2160.49
+          ],
+          [
+            -1548.28,
+            -2152.46
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "DPVRX",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/7126502",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 2,
+      "lengthKm": 0.23876702000000002,
+      "hydrosequence": 2926817,
+      "downstreamHydrosequence": 2894928,
+      "upstreamHydrosequence": 2958147,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            2799.71,
+            -782.07
+          ],
+          [
+            2783.31,
+            -758.29
+          ],
+          [
+            2769.0,
+            -734.08
+          ],
+          [
+            2731.94,
+            -694.88
+          ],
+          [
+            2698.08,
+            -667.25
+          ],
+          [
+            2652.03,
+            -639.15
+          ],
+          [
+            2624.44,
+            -626.72
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "DSEU3",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/5458750",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 1.97711199,
+      "hydrosequence": 2795723,
+      "downstreamHydrosequence": 2761850,
+      "upstreamHydrosequence": 2829492,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            1763.02,
+            1158.69
+          ],
+          [
+            1763.8,
+            1135.23
+          ],
+          [
+            1771.88,
+            1070.7
+          ],
+          [
+            1769.26,
+            1035.32
+          ],
+          [
+            1788.21,
+            929.47
+          ],
+          [
+            1789.48,
+            874.6
+          ],
+          [
+            1806.15,
+            755.92
+          ],
+          [
+            1808.36,
+            723.64
+          ],
+          [
+            1801.98,
+            646.76
+          ],
+          [
+            1805.48,
+            608.39
+          ],
+          [
+            1823.06,
+            515.33
+          ],
+          [
+            1835.15,
+            422.2
+          ],
+          [
+            1831.42,
+            378.26
+          ],
+          [
+            1815.64,
+            271.37
+          ],
+          [
+            1813.47,
+            247.58
+          ],
+          [
+            1797.41,
+            165.08
+          ],
+          [
+            1793.3,
+            99.8
+          ],
+          [
+            1781.06,
+            2.11
+          ],
+          [
+            1756.42,
+            -78.05
+          ],
+          [
+            1745.74,
+            -102.56
+          ],
+          [
+            1691.72,
+            -172.72
+          ],
+          [
+            1661.28,
+            -226.73
+          ],
+          [
+            1642.28,
+            -268.41
+          ],
+          [
+            1637.7,
+            -294.68
+          ],
+          [
+            1630.75,
+            -375.24
+          ],
+          [
+            1644.41,
+            -447.62
+          ],
+          [
+            1640.12,
+            -496.44
+          ],
+          [
+            1631.94,
+            -525.2
+          ],
+          [
+            1611.26,
+            -579.7
+          ],
+          [
+            1608.42,
+            -598.03
+          ],
+          [
+            1614.29,
+            -629.06
+          ],
+          [
+            1612.2,
+            -658.95
+          ],
+          [
+            1632.02,
+            -735.52
+          ],
+          [
+            1630.31,
+            -745.3
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "DUQPT",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/5241999",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.3679772,
+      "hydrosequence": 2926818,
+      "downstreamHydrosequence": 2894928,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            2901.16,
+            -386.96
+          ],
+          [
+            2873.63,
+            -403.8
+          ],
+          [
+            2846.27,
+            -433.85
+          ],
+          [
+            2826.42,
+            -460.5
+          ],
+          [
+            2781.45,
+            -494.07
+          ],
+          [
+            2751.53,
+            -520.85
+          ],
+          [
+            2704.16,
+            -564.35
+          ],
+          [
+            2666.63,
+            -587.92
+          ],
+          [
+            2624.44,
+            -626.72
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "DXAO3",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/5329925",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.7042477,
+      "hydrosequence": 2583349,
+      "downstreamHydrosequence": 2545870,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            -284.21,
+            -2684.27
+          ],
+          [
+            -299.0,
+            -2672.24
+          ],
+          [
+            -330.25,
+            -2659.21
+          ],
+          [
+            -349.3,
+            -2646.64
+          ],
+          [
+            -360.45,
+            -2631.53
+          ],
+          [
+            -374.63,
+            -2618.3
+          ],
+          [
+            -387.62,
+            -2601.98
+          ],
+          [
+            -408.15,
+            -2569.31
+          ],
+          [
+            -411.49,
+            -2543.75
+          ],
+          [
+            -432.49,
+            -2522.06
+          ],
+          [
+            -446.75,
+            -2502.11
+          ],
+          [
+            -472.09,
+            -2473.75
+          ],
+          [
+            -488.11,
+            -2459.32
+          ],
+          [
+            -546.22,
+            -2392.34
+          ],
+          [
+            -554.46,
+            -2366.24
+          ],
+          [
+            -560.79,
+            -2346.8
+          ],
+          [
+            -565.26,
+            -2329.17
+          ],
+          [
+            -564.31,
+            -2307.82
+          ],
+          [
+            -556.74,
+            -2277.25
+          ],
+          [
+            -553.17,
+            -2271.11
+          ],
+          [
+            -552.31,
+            -2240.63
+          ],
+          [
+            -561.71,
+            -2220.01
+          ],
+          [
+            -569.9,
+            -2197.55
+          ],
+          [
+            -578.08,
+            -2175.69
+          ],
+          [
+            -584.98,
+            -2159.32
+          ],
+          [
+            -591.92,
+            -2139.89
+          ],
+          [
+            -599.14,
+            -2106.12
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "E35SE",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/6031367",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.9925252400000001,
+      "hydrosequence": 2507603,
+      "downstreamHydrosequence": 2468530,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            -1791.96,
+            146.38
+          ],
+          [
+            -1799.01,
+            173.74
+          ],
+          [
+            -1869.24,
+            235.68
+          ],
+          [
+            -1893.79,
+            248.19
+          ],
+          [
+            -1923.11,
+            254.56
+          ],
+          [
+            -1957.12,
+            242.56
+          ],
+          [
+            -1986.79,
+            226.36
+          ],
+          [
+            -2016.05,
+            225.4
+          ],
+          [
+            -2039.94,
+            234.87
+          ],
+          [
+            -2071.75,
+            244.24
+          ],
+          [
+            -2116.82,
+            240.05
+          ],
+          [
+            -2170.83,
+            220.5
+          ],
+          [
+            -2242.98,
+            186.09
+          ],
+          [
+            -2277.94,
+            159.25
+          ],
+          [
+            -2316.07,
+            138.63
+          ],
+          [
+            -2361.82,
+            95.94
+          ],
+          [
+            -2410.53,
+            45.31
+          ],
+          [
+            -2592.87,
+            -132.73
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "E4GNL",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/11522531",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 2,
+      "lengthKm": 0.5809725800000001,
+      "hydrosequence": 2727237,
+      "downstreamHydrosequence": 2692212,
+      "upstreamHydrosequence": 2761861,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            1736.71,
+            -2984.29
+          ],
+          [
+            1717.09,
+            -3025.97
+          ],
+          [
+            1712.56,
+            -3055.29
+          ],
+          [
+            1718.23,
+            -3071.07
+          ],
+          [
+            1719.72,
+            -3093.01
+          ],
+          [
+            1718.72,
+            -3111.3
+          ],
+          [
+            1718.96,
+            -3131.43
+          ],
+          [
+            1717.45,
+            -3157.05
+          ],
+          [
+            1718.53,
+            -3197.27
+          ],
+          [
+            1706.17,
+            -3233.38
+          ],
+          [
+            1695.34,
+            -3245.69
+          ],
+          [
+            1675.32,
+            -3253.25
+          ],
+          [
+            1660.77,
+            -3260.75
+          ],
+          [
+            1644.45,
+            -3271.92
+          ],
+          [
+            1621.98,
+            -3279.5
+          ],
+          [
+            1583.24,
+            -3301.31
+          ],
+          [
+            1556.48,
+            -3306.5
+          ],
+          [
+            1535.69,
+            -3302.48
+          ],
+          [
+            1513.18,
+            -3305.81
+          ],
+          [
+            1477.18,
+            -3303.81
+          ],
+          [
+            1453.42,
+            -3305.3
+          ],
+          [
+            1406.09,
+            -3323.56
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "E9BCZ",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/1000637",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.5438791300000001,
+      "hydrosequence": 2829487,
+      "downstreamHydrosequence": 2795719,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            -1526.93,
+            1344.85
+          ],
+          [
+            -1413.44,
+            1342.99
+          ],
+          [
+            -1312.51,
+            1337.66
+          ],
+          [
+            -1216.88,
+            1352.07
+          ],
+          [
+            -1123.64,
+            1356.55
+          ],
+          [
+            -1058.26,
+            1370.59
+          ],
+          [
+            -1017.92,
+            1371.09
+          ],
+          [
+            -981.9,
+            1377.14
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "E9BN9",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/4241158",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.63804867,
+      "hydrosequence": 2894944,
+      "downstreamHydrosequence": 2862468,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            3378.79,
+            -2047.01
+          ],
+          [
+            3340.03,
+            -2068.82
+          ],
+          [
+            3321.22,
+            -2076.37
+          ],
+          [
+            3304.86,
+            -2084.48
+          ],
+          [
+            3285.46,
+            -2093.25
+          ],
+          [
+            3261.2,
+            -2103.3
+          ],
+          [
+            3227.24,
+            -2118.33
+          ],
+          [
+            3193.54,
+            -2155.31
+          ],
+          [
+            3191.72,
+            -2156.55
+          ],
+          [
+            3160.97,
+            -2184.36
+          ],
+          [
+            3148.39,
+            -2202.19
+          ],
+          [
+            3132.12,
+            -2218.85
+          ],
+          [
+            3087.05,
+            -2273.05
+          ],
+          [
+            3071.42,
+            -2290.3
+          ],
+          [
+            3058.19,
+            -2306.91
+          ],
+          [
+            3049.26,
+            -2324.71
+          ],
+          [
+            3038.46,
+            -2338.86
+          ],
+          [
+            3022.84,
+            -2357.33
+          ],
+          [
+            3015.66,
+            -2369.01
+          ],
+          [
+            2957.8,
+            -2425.18
+          ],
+          [
+            2942.14,
+            -2440.0
+          ],
+          [
+            2927.64,
+            -2452.36
+          ],
+          [
+            2911.32,
+            -2464.15
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "EGQLD",
+      "name": "French Lake",
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/6038539",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.76716848,
+      "hydrosequence": 2692202,
+      "downstreamHydrosequence": 2656422,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            1384.03,
+            -1996.64
+          ],
+          [
+            1344.95,
+            -1940.41
+          ],
+          [
+            1339.26,
+            -1922.79
+          ],
+          [
+            1336.52,
+            -1898.45
+          ],
+          [
+            1326.58,
+            -1883.32
+          ],
+          [
+            1314.81,
+            -1867.01
+          ],
+          [
+            1297.03,
+            -1859.3
+          ],
+          [
+            1269.95,
+            -1837.67
+          ],
+          [
+            1266.29,
+            -1837.72
+          ],
+          [
+            1236.14,
+            -1814.31
+          ],
+          [
+            1232.48,
+            -1814.34
+          ],
+          [
+            1211.54,
+            -1796.32
+          ],
+          [
+            1199.77,
+            -1780.61
+          ],
+          [
+            1187.4,
+            -1766.73
+          ],
+          [
+            1173.18,
+            -1750.45
+          ],
+          [
+            1127.46,
+            -1699.79
+          ],
+          [
+            1111.41,
+            -1683.51
+          ],
+          [
+            1099.07,
+            -1670.86
+          ],
+          [
+            1084.89,
+            -1658.21
+          ],
+          [
+            1065.31,
+            -1651.75
+          ],
+          [
+            1040.21,
+            -1643.52
+          ],
+          [
+            1005.26,
+            -1626.87
+          ],
+          [
+            973.33,
+            -1607.74
+          ],
+          [
+            959.27,
+            -1604.25
+          ],
+          [
+            942.65,
+            -1590.43
+          ],
+          [
+            924.9,
+            -1585.16
+          ],
+          [
+            908.34,
+            -1576.82
+          ],
+          [
+            887.59,
+            -1575.25
+          ],
+          [
+            861.31,
+            -1570.08
+          ],
+          [
+            831.92,
+            -1558.84
+          ],
+          [
+            816.39,
+            -1535.25
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "ESTCL",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/2941687",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.77402848,
+      "hydrosequence": 2894945,
+      "downstreamHydrosequence": 2862468,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            3089.62,
+            -1742.23
+          ],
+          [
+            3055.3,
+            -1821.89
+          ],
+          [
+            3018.38,
+            -1894.98
+          ],
+          [
+            2983.73,
+            -1948.23
+          ],
+          [
+            2959.21,
+            -2004.67
+          ],
+          [
+            2942.77,
+            -2103.93
+          ],
+          [
+            2913.61,
+            -2193.44
+          ],
+          [
+            2886.73,
+            -2263.1
+          ],
+          [
+            2880.0,
+            -2332.53
+          ],
+          [
+            2893.6,
+            -2414.92
+          ],
+          [
+            2911.32,
+            -2464.15
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "F7FR8",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/7250589",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.6086230100000001,
+      "hydrosequence": 2761851,
+      "downstreamHydrosequence": 2727227,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            1321.23,
+            -178.76
+          ],
+          [
+            1301.76,
+            -235.13
+          ],
+          [
+            1282.0,
+            -268.4
+          ],
+          [
+            1259.84,
+            -311.6
+          ],
+          [
+            1247.81,
+            -357.97
+          ],
+          [
+            1243.46,
+            -414.16
+          ],
+          [
+            1246.71,
+            -473.56
+          ],
+          [
+            1254.96,
+            -529.59
+          ],
+          [
+            1273.37,
+            -592.11
+          ],
+          [
+            1307.11,
+            -670.94
+          ],
+          [
+            1342.61,
+            -749.35
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "G0NQP",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/9390115",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.18861737,
+      "hydrosequence": 2761849,
+      "downstreamHydrosequence": 2727226,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            1068.75,
+            1037.27
+          ],
+          [
+            1071.05,
+            948.29
+          ],
+          [
+            1069.03,
+            912.91
+          ],
+          [
+            1053.3,
+            852.37
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "G37VP",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/5641320",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.90233129,
+      "hydrosequence": 2795722,
+      "downstreamHydrosequence": 2761847,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            -2239.01,
+            1835.83
+          ],
+          [
+            -2212.62,
+            1820.91
+          ],
+          [
+            -2196.59,
+            1806.47
+          ],
+          [
+            -2170.65,
+            1778.12
+          ],
+          [
+            -2119.43,
+            1726.93
+          ],
+          [
+            -2100.36,
+            1713.75
+          ],
+          [
+            -2063.0,
+            1698.34
+          ],
+          [
+            -2031.09,
+            1681.05
+          ],
+          [
+            -2002.8,
+            1660.66
+          ],
+          [
+            -1962.94,
+            1641.02
+          ],
+          [
+            -1920.53,
+            1612.27
+          ],
+          [
+            -1904.43,
+            1591.72
+          ],
+          [
+            -1892.45,
+            1558.34
+          ],
+          [
+            -1889.46,
+            1512.66
+          ],
+          [
+            -1898.73,
+            1472.91
+          ],
+          [
+            -1914.15,
+            1436.76
+          ],
+          [
+            -1941.79,
+            1402.9
+          ],
+          [
+            -1963.97,
+            1371.53
+          ],
+          [
+            -2020.54,
+            1310.51
+          ],
+          [
+            -2029.49,
+            1293.33
+          ],
+          [
+            -2068.52,
+            1243.48
+          ],
+          [
+            -2088.25,
+            1212.15
+          ],
+          [
+            -2097.13,
+            1190.1
+          ],
+          [
+            -2093.34,
+            1179.16
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "G37Y8",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/7528911",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 3,
+      "lengthKm": 0.372,
+      "hydrosequence": 3019958,
+      "downstreamHydrosequence": 2989178,
+      "upstreamHydrosequence": 3050174,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            2952.67,
+            368.54
+          ],
+          [
+            2980.97,
+            346.93
+          ],
+          [
+            2986.64,
+            331.76
+          ],
+          [
+            2994.45,
+            291.01
+          ],
+          [
+            2987.25,
+            230.57
+          ],
+          [
+            2982.97,
+            181.13
+          ],
+          [
+            2970.49,
+            154.77
+          ],
+          [
+            2951.01,
+            100.27
+          ],
+          [
+            2936.78,
+            67.19
+          ],
+          [
+            2915.89,
+            29.74
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "GACFV",
+      "name": "Nanning Creek",
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/6905808",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 3,
+      "lengthKm": 0.04198009,
+      "hydrosequence": 2989178,
+      "downstreamHydrosequence": 2958149,
+      "upstreamHydrosequence": 3019957,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            2915.89,
+            29.74
+          ],
+          [
+            2904.36,
+            25.34
+          ],
+          [
+            2880.19,
+            7.93
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "GK2LP",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/4760818",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.81752752,
+      "hydrosequence": 2583363,
+      "downstreamHydrosequence": 2545880,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            -142.6,
+            -3103.32
+          ],
+          [
+            -150.19,
+            -3222.29
+          ],
+          [
+            -157.67,
+            -3349.18
+          ],
+          [
+            -132.35,
+            -3440.01
+          ],
+          [
+            -86.11,
+            -3510.75
+          ],
+          [
+            2.46,
+            -3580.97
+          ],
+          [
+            90.93,
+            -3643.27
+          ],
+          [
+            124.58,
+            -3674.55
+          ],
+          [
+            176.81,
+            -3741.26
+          ],
+          [
+            187.4,
+            -3776.83
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "H3LPY",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/8366822",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.8946204200000001,
+      "hydrosequence": 2894949,
+      "downstreamHydrosequence": 2862471,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            2722.71,
+            -1519.64
+          ],
+          [
+            2686.02,
+            -1553.9
+          ],
+          [
+            2640.02,
+            -1617.86
+          ],
+          [
+            2621.56,
+            -1692.05
+          ],
+          [
+            2601.62,
+            -1776.82
+          ],
+          [
+            2584.72,
+            -1846.77
+          ],
+          [
+            2566.08,
+            -1906.17
+          ],
+          [
+            2547.37,
+            -1959.23
+          ],
+          [
+            2536.85,
+            -2022.75
+          ],
+          [
+            2526.38,
+            -2090.51
+          ],
+          [
+            2512.69,
+            -2158.3
+          ],
+          [
+            2496.97,
+            -2192.3
+          ],
+          [
+            2470.14,
+            -2241.24
+          ],
+          [
+            2422.97,
+            -2341.14
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "H65NP",
+      "name": "Nanning Creek",
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/6905808",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 3,
+      "lengthKm": 0.228,
+      "hydrosequence": 2795724,
+      "downstreamHydrosequence": 2761850,
+      "upstreamHydrosequence": 2829494,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            1852.91,
+            -701.79
+          ],
+          [
+            1818.26,
+            -710.12
+          ],
+          [
+            1780.65,
+            -725.82
+          ],
+          [
+            1708.33,
+            -744.37
+          ],
+          [
+            1664.5,
+            -748.54
+          ],
+          [
+            1630.31,
+            -745.3
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "HWEEK",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/5458750",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.37657354,
+      "hydrosequence": 2829492,
+      "downstreamHydrosequence": 2795723,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            1781.63,
+            1528.05
+          ],
+          [
+            1764.71,
+            1465.05
+          ],
+          [
+            1764.46,
+            1434.58
+          ],
+          [
+            1772.88,
+            1342.61
+          ],
+          [
+            1771.48,
+            1308.46
+          ],
+          [
+            1764.45,
+            1283.38
+          ],
+          [
+            1759.96,
+            1251.63
+          ],
+          [
+            1763.02,
+            1158.69
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "HWEFD",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/1500183",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.64000153,
+      "hydrosequence": 2692203,
+      "downstreamHydrosequence": 2656422,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            877.2,
+            -2157.31
+          ],
+          [
+            873.19,
+            -2093.96
+          ],
+          [
+            867.75,
+            -2045.42
+          ],
+          [
+            863.8,
+            -1986.29
+          ],
+          [
+            849.64,
+            -1885.03
+          ],
+          [
+            848.81,
+            -1817.41
+          ],
+          [
+            827.13,
+            -1760.62
+          ],
+          [
+            805.54,
+            -1710.16
+          ],
+          [
+            796.82,
+            -1657.44
+          ],
+          [
+            798.04,
+            -1625.72
+          ],
+          [
+            808.79,
+            -1581.21
+          ],
+          [
+            816.39,
+            -1535.25
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "HWEFE",
+      "name": "French Lake",
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/6038539",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 2,
+      "lengthKm": 0.11715083000000001,
+      "hydrosequence": 2656422,
+      "downstreamHydrosequence": 2620062,
+      "upstreamHydrosequence": 2692202,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            816.39,
+            -1535.25
+          ],
+          [
+            805.82,
+            -1518.32
+          ],
+          [
+            791.6,
+            -1500.81
+          ],
+          [
+            773.7,
+            -1483.34
+          ],
+          [
+            758.32,
+            -1471.94
+          ],
+          [
+            749.12,
+            -1466.56
+          ],
+          [
+            733.09,
+            -1454.97
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "HWEG3",
+      "name": null,
+      "featureType": "Channel Line",
+      "featureTypeCode": 1,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/10025177",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.19056621,
+      "hydrosequence": 2761859,
+      "downstreamHydrosequence": 2727236,
+      "upstreamHydrosequence": 0,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            1308.55,
+            -2134.07
+          ],
+          [
+            1329.06,
+            -2149.79
+          ],
+          [
+            1384.69,
+            -2213.0
+          ],
+          [
+            1421.63,
+            -2283.94
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "HYROK",
+      "name": null,
+      "featureType": "Waterbody Connector",
+      "featureTypeCode": 5,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/8100582",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.18415195,
+      "hydrosequence": 2507600,
+      "downstreamHydrosequence": 2468525,
+      "upstreamHydrosequence": 2545871,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            -1548.28,
+            -2152.46
+          ],
+          [
+            -1550.78,
+            -2150.2
+          ],
+          [
+            -1625.42,
+            -2134.93
+          ],
+          [
+            -1641.14,
+            -2109.91
+          ],
+          [
+            -1661.19,
+            -2094.73
+          ],
+          [
+            -1704.14,
+            -2068.06
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "HYRPF",
+      "name": null,
+      "featureType": "Surface Connector",
+      "featureTypeCode": 4,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/1049883",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.01613224,
+      "hydrosequence": 2795718,
+      "downstreamHydrosequence": 2761845,
+      "upstreamHydrosequence": 2829486,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            -933.63,
+            1116.36
+          ],
+          [
+            -926.0,
+            1117.2
+          ],
+          [
+            -917.46,
+            1118.15
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "HYRPG",
+      "name": null,
+      "featureType": "Waterbody Connector",
+      "featureTypeCode": 5,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/1049883",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.0219023,
+      "hydrosequence": 2829486,
+      "downstreamHydrosequence": 2795718,
+      "upstreamHydrosequence": 2862446,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            -955.58,
+            1113.93
+          ],
+          [
+            -933.63,
+            1116.36
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "HYRTE",
+      "name": "Dean Creek",
+      "featureType": "Waterbody Connector",
+      "featureTypeCode": 5,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/6058084",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 2,
+      "lengthKm": 0.012437040000000002,
+      "hydrosequence": 2727225,
+      "downstreamHydrosequence": 2692199,
+      "upstreamHydrosequence": 2761847,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            -68.44,
+            -48.01
+          ],
+          [
+            -62.33,
+            -37.25
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "HYRUW",
+      "name": null,
+      "featureType": "Waterbody Connector",
+      "featureTypeCode": 5,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/7857024",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.01695133,
+      "hydrosequence": 2583348,
+      "downstreamHydrosequence": 2545869,
+      "upstreamHydrosequence": 2620063,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            -26.2,
+            -1969.1
+          ],
+          [
+            -31.37,
+            -1953.09
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "HYRUX",
+      "name": null,
+      "featureType": "Waterbody Connector",
+      "featureTypeCode": 5,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/5329925",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.028239870000000004,
+      "hydrosequence": 2545870,
+      "downstreamHydrosequence": 2507599,
+      "upstreamHydrosequence": 2583349,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            -599.14,
+            -2106.12
+          ],
+          [
+            -607.65,
+            -2079.42
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "HYRUY",
+      "name": "French Lake",
+      "featureType": "Waterbody Connector",
+      "featureTypeCode": 5,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/6038539",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 2,
+      "lengthKm": 0.03292117,
+      "hydrosequence": 2620062,
+      "downstreamHydrosequence": 2583347,
+      "upstreamHydrosequence": 2656422,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            733.09,
+            -1454.97
+          ],
+          [
+            706.36,
+            -1435.63
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "HYRVQ",
+      "name": null,
+      "featureType": "Waterbody Connector",
+      "featureTypeCode": 5,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/11114168",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 2,
+      "lengthKm": 0.03543094,
+      "hydrosequence": 2692200,
+      "downstreamHydrosequence": 2656420,
+      "upstreamHydrosequence": 2727226,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            794.88,
+            -605.07
+          ],
+          [
+            766.92,
+            -626.94
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "HYRVR",
+      "name": "Nanning Creek",
+      "featureType": "Waterbody Connector",
+      "featureTypeCode": 5,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/6905808",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 3,
+      "lengthKm": 0.04269688,
+      "hydrosequence": 2656421,
+      "downstreamHydrosequence": 2620061,
+      "upstreamHydrosequence": 2692201,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            971.23,
+            -1003.46
+          ],
+          [
+            930.23,
+            -1016.42
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "HYRX0",
+      "name": null,
+      "featureType": "Waterbody Connector",
+      "featureTypeCode": 5,
+      "mainstemId": "https://geoconnex.us/usgs/mainstems/4602637",
+      "flowDirection": "Flow direction is in digitized direction, and z-values on vertices flow downslope",
+      "streamOrder": 1,
+      "lengthKm": 0.01569637,
+      "hydrosequence": 2428681,
+      "downstreamHydrosequence": 2388122,
+      "upstreamHydrosequence": 2468526,
+      "workunitId": "NHD",
+      "lines": [
+        [
+          [
+            -2169.11,
+            -1928.96
+          ],
+          [
+            -2171.94,
+            -1944.26
+          ]
+        ]
+      ]
+    }
+  ]
+}

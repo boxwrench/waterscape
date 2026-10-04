@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "river-pulse-terrain-0.1",
+  "id": "scotia_bluffs",
+  "name": "Eel River at Scotia Bluffs",
+  "source": "USGS National Map 3D Elevation Program (3DEP), public domain",
+  "sourceService": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer",
+  "sourceConfig": "source.json",
+  "bboxLonLat": [
+    -124.128,
+    40.479,
+    -124.065,
+    40.521
+  ],
+  "anchor": [
+    40.49149394275497,
+    -124.09974068101218
+  ],
+  "crs": "EPSG:32610",
+  "utmZone": 10,
+  "verticalDatum": "NAVD88 metres (3DEP)",
+  "verticalOrigin": {
+    "type": "absolute",
+    "datum": "NAVD88",
+    "units": "metres"
+  },
+  "encoding": "gzip; 1 planar uint16 elevation channel; rows delta-coded from the row above",
+  "width": 384,
+  "height": 384,
+  "cell": [
+    14.052967852474922,
+    14.052967852473861
+  ],
+  "originUTM": [
+    406802.0529470353,
+    4482891.382122604
+  ],
+  "gridOrigin": [
+    -2405.598175531719,
+    -3632.4073297539726
+  ],
+  "channels": {
+    "elevation": {
+      "offset": -250.0,
+      "scale": 0.05
+    }
+  }
+}
