@@ -43,5 +43,10 @@
     "lattice_headers_and_portal_sway_frames": "https://historicbridges.org/california/freeportbridge/day3_freeportbridge02984.jpg",
     "upper_links_and_maintenance_platform": "https://historicbridges.org/california/freeportbridge/day3_freeportbridge03008.jpg"
   },
+  "user_supplied_aerial_reference": {
+    "provided_date": "2026-10-04",
+    "filename": "7e483bf7d3f7bffde17b3e16c8235d626dc8a742ce7a779dad30989446177056.jpg",
+    "use": "Reference only. Crest-to-forward-leaf and crest-to-counterweight links meet shared joints; the long moving arm joins rear and forward joints. First leaf panels and narrow crest walkway fitted visually. Photographer, capture date and source URL not supplied; image not redistributed."
+  },
   "photo_fitted_geometry": "Fixed-span splits, elevation above illustrative water, steel sections, link pivots, counterweight sizes, pier/fender geometry and setting location are authored estimates fitted to photos. East pony length uses the documented 101-foot span. Model represents a closed bridge, not its current operating condition."
 }

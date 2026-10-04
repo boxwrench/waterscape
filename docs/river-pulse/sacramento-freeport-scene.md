@@ -1,4 +1,4 @@
-# Sacramento at Freeport — RP13 / RP14
+# Sacramento at Freeport — RP13 / RP14 / RP15
 
 The user's next step after the accepted California overview is the first detailed
 Sacramento place. Freeport already supplies a pinned USGS discharge series and separate
@@ -32,6 +32,14 @@ and [upper links/platform](https://historicbridges.org/california/freeportbridge
 The roof X members have cross ties, center plates and transverse struts; header lacing
 faces vertically, while the portal sway diagonals use angle members. The tower platform
 has a floor and two-tier rails. These component dimensions remain photo-fitted.
+
+RP15 uses the user's supplied aerial photo to correct upper-link connections.
+The tower crest links both forward to the raised leaf-head joint and back to the
+counterweight joint. A long moving arm connects the latter two joints; the lifting
+truss rises from its heel to the forward head before tapering toward the center.
+Shared endpoints keep members, pivot plates, pins and catwalk aligned on both
+assemblies. Roof bracing follows both upper-link slopes and the crest walkway is
+narrow. The photo is not bundled; component positions remain visual estimates.
 
 The [archived 2012 NBI sheet](https://historicbridges.org/california/freeportbridge/nbisheet.pdf)
 provides total length 198.9 m, main span 68.9 m, roadway 6.4 m and deck 6.8 m.

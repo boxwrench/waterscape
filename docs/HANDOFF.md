@@ -1,5 +1,20 @@
 # Handoff — 2026-10-04
 
+## Freeport upper-link connections — RP15
+
+The user's aerial reference exposed a missing forward tower link. `task/RP15`
+defines shared heel, forward leaf-head, tower-crest and rear counterweight endpoints.
+Both upper links and the long moving counterweight arm now meet those common joints;
+the first leaf panels and catwalk follow them. Upper roof bracing covers both slopes,
+and the crest walkway is narrow. The desktop overhead angle faces the bridge broadly
+from the tender-house side for comparison with the supplied image.
+These are photo-fitted component positions, not a surveyed mechanism or simulation.
+The user photograph is referenced by filename only and is not bundled. River data,
+water interpretation and geographic terrain are unchanged. No push or merge.
+Verification: 11 focused tests, river package validation and full build pass. Bank,
+both road approaches, underside and overhead were inspected, plus portrait overhead
+and bank framing. No console errors or phone horizontal overflow; previews updated.
+
 ## Freeport bridge reconstruction — RP14
 
 `task/RP14` replaces RP13's generic bridge with detailed laced/built-up green steel,

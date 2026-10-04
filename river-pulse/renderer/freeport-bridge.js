@@ -1,6 +1,6 @@
 import * as THREE from "../../vendor/three/three.webgpu.js";
 import { color, mix, positionLocal, smoothstep, texture, vec2 } from "../../vendor/three/three.tsl.js";
-import { FREEPORT_BRIDGE as B } from "./freeport-bridge-layout.js";
+import { FREEPORT_BRIDGE as B, freeportBasculeJoints } from "./freeport-bridge-layout.js";
 
 // One shared, fully three-dimensional closed bridge for every viewpoint.
 // Horizontal envelope follows archived NBI; unsourced sections/heights are photo fits.
@@ -93,7 +93,7 @@ export function createFreeportBridge() {
     for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++)
       pin(x + i * size * 0.31, y + j * size * 0.31, z + 0.034, 0.023, 0.025);
   }
-  function crossBracing(x0, x1, y0, y1) {
+  function crossBracing(x0, x1, y0, y1, header = true) {
     const normal = new THREE.Vector3(y0 - y1, x1 - x0, 0).normalize(),
       along = new THREE.Vector3(x1 - x0, y1 - y0, 0).normalize(),
       middle = [(x0 + x1) / 2, (y0 + y1) / 2, 0];
@@ -117,7 +117,7 @@ export function createFreeportBridge() {
       shape(cylinderGeometry, new THREE.Vector3(...middle).addScaledVector(along, x)
         .addScaledVector(normal, 0.05).add(new THREE.Vector3(0, 0, z)).toArray(), [0.027, 0.035, 0.027],
         new THREE.Quaternion().setFromUnitVectors(up, normal), darkSteel);
-    laced([x0, y0, -B.trussZ], [x0, y0, B.trussZ], 0.34, 0.18, 0.55, Math.PI / 2);
+    if (header) laced([x0, y0, -B.trussZ], [x0, y0, B.trussZ], 0.34, 0.18, 0.55, Math.PI / 2);
   }
   function rail(x0, x1, z, material = steel) {
     for (const y of [B.deckY + 0.32, B.deckY + 1.23]) beam([x0, y, z], [x1, y, z], 0.065, 0.065, material);
@@ -153,6 +153,7 @@ export function createFreeportBridge() {
 
   for (const side of [-1, 1]) {
     const h = side * hinge, outer = side * fixedEnd, n = 6,
+      joints = freeportBasculeJoints(side),
       xAt = i => h + side * B.fixedSpan * i / n,
       // Sloping portal posts at each end; the counterweight frame rises above this.
       topAt = i => i === 0 || i === n ? B.deckY : B.fixedTop;
@@ -169,10 +170,16 @@ export function createFreeportBridge() {
         gusset(x0, B.deckY, z + Math.sign(z) * 0.15);
         if (i > 0) gusset(x0, B.fixedTop, z + Math.sign(z) * 0.15);
       }
-      // Each leaf is a separate tapered Pratt cantilever, low at the center joint.
-      const leafPanels = 6, leafTop = i => B.deckY + 4.5 - 2.7 * i / leafPanels;
+      // The leaf rises from its heel to a forward head joint, then tapers to
+      // the center. Both the tower link and counterweight arm meet that head.
+      const leafPanels = 5, head = joints.forward, rear = joints.rear,
+        leafTop = i => head.y + (B.deckY + 1.8 - head.y) * i / leafPanels,
+        leafX = i => head.x * (1 - i / leafPanels);
+      laced([h, B.deckY, z], [head.x, head.y, z], 0.55, 0.32);
+      laced([h, B.deckY, z], [rear.x, rear.y, z], 0.5, 0.3);
+      laced([rear.x, rear.y, z], [head.x, head.y, z], 0.55, 0.33);
       for (let i = 0; i < leafPanels; i++) {
-        const a = h * (1 - i / leafPanels), b = h * (1 - (i + 1) / leafPanels);
+        const a = leafX(i), b = leafX(i + 1);
         girder([a, leafTop(i), z], [b, leafTop(i + 1), z], 0.35, 0.22);
         laced([a, B.deckY, z], [a, leafTop(i), z], 0.25, 0.18);
         laced([a, leafTop(i), z], [b, B.deckY, z], 0.3, 0.18);
@@ -180,13 +187,14 @@ export function createFreeportBridge() {
       }
       laced([side * 0.045, B.deckY, z], [side * 0.045, leafTop(leafPanels), z], 0.22, 0.2);
       // Triangular fixed tower and articulated heel-trunnion upper links.
-      const toe = h + side * 1.1, peak = h + side * 8.6, tail = h + side * 22.4,
-        weightPin = h + side * 20.5;
+      const toe = joints.towerToe.x, peak = joints.crest.x, tail = joints.towerTail.x,
+        weightPin = rear.x;
       laced([toe, B.deckY, z], [peak, B.towerTop, z], 0.68, 0.36, 0.65);
       laced([tail, B.deckY, z], [peak, B.towerTop, z], 0.54, 0.32, 0.65);
-      laced([toe, B.deckY + 4.5, z], [weightPin, 15.2, z], 0.55, 0.33);
-      laced([peak, B.towerTop, z], [weightPin, 15.2, z], 0.58, 0.34);
-      for (const [x, y, r] of [[h, B.deckY + 0.2, 0.53], [toe, B.deckY + 4.5, 0.42], [peak, B.towerTop, 0.4], [weightPin, 15.2, 0.5]]) {
+      laced([peak, joints.crest.y, z], [weightPin, rear.y, z], 0.58, 0.34);
+      laced([peak, joints.crest.y, z], [head.x, head.y, z], 0.58, 0.34);
+      for (const [x, y, r] of [[h, B.deckY + 0.2, 0.53], [head.x, head.y, 0.42], [peak, joints.crest.y, 0.4], [weightPin, rear.y, 0.5]]) {
+        gusset(x, y, z + Math.sign(z) * 0.18, r * 1.8);
         pin(x, y, z, r, 0.65); pin(x, y, z + Math.sign(z) * 0.4, r * 0.68, 0.08, steel);
       }
       // The rack strut rises from machinery beside the main hinge.
@@ -195,13 +203,13 @@ export function createFreeportBridge() {
       box(h + side * 3, B.deckY + 0.9, z, 2.3, 1.5, 0.72, darkSteel);
       // Catwalk steps, handrails and maintenance ladder follow the upper link.
       for (let i = 0; i <= 24; i++) {
-        const t = i / 24, x = toe + side * 19.4 * t, y = B.deckY + 4.5 + 4.5 * t;
+        const t = i / 24, x = head.x + (rear.x - head.x) * t, y = head.y + (rear.y - head.y) * t;
         box(x, y, z + Math.sign(z) * 0.5, 0.45, 0.06, 0.65, darkSteel);
       }
-      beam([toe, B.deckY + 5.5, z + Math.sign(z) * 0.72], [weightPin, 16.2, z + Math.sign(z) * 0.72], 0.055);
+      beam([head.x, head.y + 1, z + Math.sign(z) * 0.72], [weightPin, rear.y + 1, z + Math.sign(z) * 0.72], 0.055);
       for (let i = 0; i < 9; i++) {
-        const t = i / 8; beam([toe + side * 19.4 * t, B.deckY + 4.5 + 4.5 * t, z + Math.sign(z) * 0.72],
-          [toe + side * 19.4 * t, B.deckY + 5.5 + 4.5 * t, z + Math.sign(z) * 0.72], 0.045);
+        const t = i / 8, x = head.x + (rear.x - head.x) * t, y = head.y + (rear.y - head.y) * t;
+        beam([x, y, z + Math.sign(z) * 0.72], [x, y + 1, z + Math.sign(z) * 0.72], 0.045);
       }
     }
     for (let i = 1; i < n - 1; i++) {
@@ -220,19 +228,22 @@ export function createFreeportBridge() {
         box(x, (lower + B.fixedTop) / 2, z + B.trussZ / 2, 0.07, 0.46, 0.46);
       }
     }
-    const peak = h + side * 8.6, weightX = h + side * 20.5;
-    crossBracing(peak, weightX, B.towerTop, 15.2);
+    const peak = joints.crest.x, weightX = joints.rear.x;
+    crossBracing(peak, weightX, joints.crest.y, joints.rear.y, false);
+    crossBracing(peak, joints.forward.x, joints.crest.y, joints.forward.y, false);
+    laced([joints.forward.x, joints.forward.y, -B.trussZ],
+      [joints.forward.x, joints.forward.y, B.trussZ], 0.3, 0.22, 0.55, Math.PI / 2);
     laced([peak, B.towerTop, -B.trussZ], [peak, B.towerTop, B.trussZ], 0.38, 0.3, 0.55, Math.PI / 2);
     // Massive exposed concrete weight suspended above the narrow road.
     box(weightX, 12.9, 0, 5.7, 4.6, 6.5, concrete);
     for (const z of [-3.32, 3.32]) box(weightX, 14.95, z, 6.0, 0.4, 0.17);
-    box(peak, B.towerTop + 0.12, 0, 3.6, 0.09, 7.8, darkSteel);
-    for (const x of [peak - side * 1.8, peak + side * 1.8]) {
+    box(peak, B.towerTop + 0.12, 0, 0.8, 0.09, 7.8, darkSteel);
+    for (const x of [peak - 0.4, peak + 0.4]) {
       for (const y of [B.towerTop + 0.55, B.towerTop + 1]) beam([x, y, -3.9], [x, y, 3.9], 0.05);
       for (const z of [-3.9, 0, 3.9]) beam([x, B.towerTop + 0.1, z], [x, B.towerTop + 1, z], 0.045);
     }
     for (const z of [-3.9, 3.9]) for (const y of [B.towerTop + 0.55, B.towerTop + 1])
-      beam([peak - side * 1.8, y, z], [peak + side * 1.8, y, z], 0.05);
+      beam([peak - 0.4, y, z], [peak + 0.4, y, z], 0.05);
     addPier(h, true); addPier(outer, false);
   }
 

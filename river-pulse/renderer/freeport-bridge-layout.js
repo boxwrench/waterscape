@@ -17,6 +17,20 @@ export const FREEPORT_BRIDGE = Object.freeze({
   source: "https://historicbridges.org/california/freeportbridge/nbisheet.pdf",
 });
 
+// Shared endpoints fitted to the user's aerial reference, not surveyed pivots.
+// Positive side is the east assembly; inward points toward the center joint.
+export function freeportBasculeJoints(side) {
+  const h = side * FREEPORT_BRIDGE.mainSpan / 2, y = FREEPORT_BRIDGE.deckY;
+  return {
+    heel: { x: h, y },
+    forward: { x: h - side * 10.4, y: y + 6.2 },
+    crest: { x: h + side * 8.6, y: FREEPORT_BRIDGE.towerTop },
+    rear: { x: h + side * 20.5, y: 15.2 },
+    towerToe: { x: h + side * 1.1, y },
+    towerTail: { x: h + side * 22.4, y },
+  };
+}
+
 export function bridgeToWorld(x, y, z) {
   const b = FREEPORT_BRIDGE, c = Math.cos(b.yaw), s = Math.sin(b.yaw);
   return { x: b.x + c * x + s * z, y, z: b.z - s * x + c * z };
@@ -41,7 +55,7 @@ export const FREEPORT_BRIDGE_ANGLES = {
   east: { ...bridgeCamera(91, 7.9, 0, 0, 8.4), label: "East approach" },
   west: { ...bridgeCamera(-83, 7.9, 0, 0, 8.4), label: "West approach" },
   underside: { ...bridgeCamera(59, 1.6, 31, 61, 6.2, 0), label: "Piers and underside" },
-  above: { ...bridgeCamera(65, 70, 75, 0, 7, 0), label: "Above the bridge" },
+  above: { ...bridgeCamera(0, 110, -150, 0, 7, 0), label: "Above the bridge" },
 };
 
 export function freeportBridgeCamera(angle, portrait = false) {
@@ -50,9 +64,9 @@ export function freeportBridgeCamera(angle, portrait = false) {
   if (angle === "above") return { ...view, ...bridgeCamera(155, 125, 60, 0, 7, 0) };
   if (angle === "underside") return { ...view, ...bridgeCamera(64, 1.6, 31, 66, 4.5, 0) };
   if (angle !== "east" && angle !== "west") {
-    // Portrait frames the near counterweight assembly instead of clipping it offscreen.
+    // Include both the forward leaf-head joint and rear counterweight in portrait.
     const side = angle.includes("west") ? -1 : 1;
-    return { ...view, target: bridgeToWorld(side * 57, 10.5, 0) };
+    return { ...view, target: bridgeToWorld(side * 40, 12, 0) };
   }
   return { ...view };
 }
