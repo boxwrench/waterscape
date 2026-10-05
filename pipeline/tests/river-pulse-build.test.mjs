@@ -15,5 +15,5 @@ test("production ships every module and stylesheet referenced by the River Pulse
   assert.ok(assets.includes("./hacienda-time.js"));
   assert.ok(assets.includes("./hacienda-seasonal.js"));
   for (const asset of assets) await access(new URL(asset, page));
-  await access(new URL("dist/river-pulse/adapters/usgs-statistics.js", root));
+  await access(new URL("dist/river-pulse/core/adapters/usgs-statistics.js", root));
 });

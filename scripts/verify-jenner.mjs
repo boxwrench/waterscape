@@ -7,7 +7,7 @@ import { createStaticServer } from "./serve.mjs";
 const out = "previews/jenner-ui", errors = [], server = createStaticServer(new URL("../dist/", import.meta.url).pathname);
 await mkdir(out, { recursive: true });
 await new Promise(resolve => server.listen(0, "127.0.0.1", resolve));
-const url = `http://127.0.0.1:${server.address().port}/river-pulse/renderer/jenner.html`,
+const url = `http://127.0.0.1:${server.address().port}/river-pulse/rivers/russian_river/scenes/end/jenner/index.html`,
   browser = await chromium.launch({ headless: true,
     ...(process.env.RIVER_PULSE_BROWSER ? { executablePath: process.env.RIVER_PULSE_BROWSER } : {}),
     args: ["--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"] });

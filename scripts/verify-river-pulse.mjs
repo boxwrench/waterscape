@@ -11,7 +11,7 @@ const server = createStaticServer(
   new URL("../dist/", import.meta.url).pathname,
 );
 await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
-const url = `http://127.0.0.1:${server.address().port}/river-pulse/renderer/hacienda.html`;
+const url = `http://127.0.0.1:${server.address().port}/river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/index.html`;
 const browser = await chromium.launch({
   headless: true,
   ...(process.env.RIVER_PULSE_BROWSER
