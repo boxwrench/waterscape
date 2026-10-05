@@ -1,5 +1,6 @@
-:root { color-scheme: dark; font-family: "Segoe UI", system-ui, sans-serif; color: #e2ece7; background: #102f3c; font-synthesis: none;
-  --gold: #f0d69b; --cyan: #8ce9ee; --muted: #a9c0bd; --faint: #88a5a4; --panel: #14333fcc; --line: #ffffff1f; }
+@import "../ui/tokens.css";
+:root { font-family: var(--rp-font-sans); color: var(--rp-text); background: var(--rp-bg); font-synthesis: none;
+  --gold: var(--rp-gold); --cyan: var(--rp-cyan); --muted: var(--rp-muted); --faint: var(--rp-faint); --panel: var(--rp-panel); --line: var(--rp-line); }
 * { box-sizing: border-box; }
 body { margin: 0; min-width: 320px; background: radial-gradient(ellipse at 68% 20%, #294b55 0, #102f3c 47%, #081d29 100%) fixed; }
 a { color: inherit; text-underline-offset: .2em; }

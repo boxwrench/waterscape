@@ -57,6 +57,18 @@ for (const entry of htmlFiles) {
     else if (/rel=["']stylesheet["']/.test(match[0])) htmlAssets.add(asset);
   }
 }
+// Stylesheets may @import others (shared tokens, scene chrome); ship those too.
+for (const sheet of [...htmlAssets]) {
+  const pending = [sheet];
+  while (pending.length) {
+    const current = pending.pop(), css = await readFile(current, "utf8");
+    for (const match of css.matchAll(/@import\s+(?:url\()?["']([^"']+)["']/g)) {
+      if (!match[1].startsWith(".")) continue;
+      const imported = path.resolve(path.dirname(current), match[1]);
+      if (!htmlAssets.has(imported)) { htmlAssets.add(imported); pending.push(imported); }
+    }
+  }
+}
 for (const file of [
   ...modules,
   ...htmlAssets,

@@ -1,0 +1,32 @@
+/* River Pulse design tokens: the shared visual language. Import this first in any page or scene
+   stylesheet, then add only what that page needs. See docs/river-pulse/style-guide.md. */
+:root {
+  color-scheme: dark;
+  --rp-font-sans: "Segoe UI", system-ui, sans-serif;
+  --rp-font-display: Georgia, "Times New Roman", serif;
+
+  /* Surfaces: deep water teal, then translucent glass over a bright scene. */
+  --rp-bg: #102f3c;
+  --rp-bg-deep: #081d29;
+  --rp-panel: #14333fcc;
+  --rp-glass: #1d3630d9;
+  --rp-line: #ffffff1f;
+
+  /* Text. */
+  --rp-text: #e2ece7;
+  --rp-muted: #a9c0bd;
+  --rp-faint: #88a5a4;
+
+  /* Accents: cyan = live/observed, gold = attention, stale and in-development. */
+  --rp-cyan: #8ce9ee;
+  --rp-gold: #f0d69b;
+  --rp-gold-muted: #e8cf9b;
+  --rp-planned: #c4d2d0;
+
+  /* Radii and spacing. */
+  --rp-radius-card: 14px;
+  --rp-radius-control: 8px;
+  --rp-gutter: 40px;
+  --rp-gutter-phone: 20px;
+  --rp-tap: 44px;
+}
