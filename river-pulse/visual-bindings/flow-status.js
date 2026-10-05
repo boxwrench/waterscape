@@ -61,3 +61,16 @@ export function observedFlowStatus(state, featureId) {
     representation: "missing",
   };
 }
+
+// Presentation-only wording for cards: a stale reading keeps its last value prominent and is
+// marked muted, instead of replacing the number with "No current reading".
+export function flowDisplay(status) {
+  const q = status.quantity;
+  if (status.kind === "stale" && q)
+    return {
+      value: `${number(q.value)} ${unit(q.unit)}`,
+      note: `No current reading · last value ${time(q.time.valid_start)}`,
+      muted: true,
+    };
+  return { value: status.headline, note: status.detail, muted: false };
+}

@@ -1,5 +1,15 @@
 # Handoff — 2026-10-04
 
+## Scene data cards — RP29
+
+Implemented locally on `task/RP27` after RP28; pending human visual acceptance. Freeport and
+Hacienda show a stale gauge reading's last value prominently (muted, with the time) instead of
+"No current reading". Freeport's card adds a 30-day tidally filtered discharge sparkline.
+Placeholder favicon added. 179 unit tests and the build pass; Edge captures of all five scenes
+show no errors ([task](roadmap/tasks/RP29-scene-data-cards.md), `previews/river-pulse/rp29/`).
+`scripts/verify-river-pulse.mjs` cannot run on Windows (static server 404s for `dist/`).
+Open: Jenner history, hiding Eel/Tuolumne review tools from visitors, unified camera-button style.
+
 ## River home layout and navigation — RP28
 
 Implemented locally on `task/RP27` after the RP27 checkpoint commit; pending human visual

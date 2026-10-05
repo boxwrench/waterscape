@@ -1,7 +1,10 @@
 import * as THREE from "../../vendor/three/three.webgpu.js";
-import { fetchLatestContinuous } from "../adapters/usgs.js";
+import { fetchLatestContinuous, fetchDailyValues } from "../adapters/usgs.js";
 import { loadPlaceFromRegistry } from "../data-model/place-registry.js";
 import { freeportDischarge } from "../visual-bindings/freeport-discharge.js";
+import { flowDisplay } from "../visual-bindings/flow-status.js";
+import { dailyHydrograph } from "../visual-bindings/hydrograph.js";
+import { matchingSeries } from "../data-model/binding-series.js";
 import { FREEPORT_VIEWS, constrainFreeportCamera } from "./freeport-layout.js";
 import { createFreeportSetting } from "./freeport-setting.js";
 import { createFreeportWater, createFreeportSky } from "./freeport-water.js";
@@ -59,7 +62,9 @@ async function refreshDischarge() {
       result = await fetchLatestContinuous(binding.feature_id, binding.parameter_code,
         (url, options) => fetch(url, { ...options, signal: AbortSignal.timeout(15000) })),
       observed = freeportDischarge(result.quantities, binding, new Date().toISOString()), view = observed.presentation;
-    $("#flow-value").textContent = view.headline; $("#flow-quality").textContent = view.badge; $("#flow-time").textContent = view.detail;
+    const shown = flowDisplay(view);
+    $("#flow-value").textContent = shown.value; $("#flow-value").classList.toggle("stale", shown.muted);
+    $("#flow-quality").textContent = view.badge; $("#flow-time").textContent = shown.note;
     $("#evidence-summary").textContent = `${view.badge}. ${view.detail}. Latest at or before now; 45-minute freshness policy. Station, parameter, series, statistic, unit and evidence type must all match.`;
     $("#record").textContent = JSON.stringify({ binding, source_url: result.url, retrieval_time: result.retrieval_time, ...observed }, null, 2);
     window.freeportData = { ...observed, error: null };
@@ -70,6 +75,24 @@ async function refreshDischarge() {
     $("#record").textContent = JSON.stringify({ error: error.message }, null, 2);
     window.freeportData = { error: error.message };
   }
+}
+// Thirty days of tidally filtered daily discharge: a separate product from the instantaneous card value.
+async function loadHistory() {
+  try {
+    if (!manifest) manifest = (await loadPlaceFromRegistry({ registryUrl: "../data/registry.json", riverPack: "sacramento_river", placeId: "freeport" })).manifest;
+    const binding = manifest.data_bindings.find(b => b.phenomenon === "tidally_filtered_discharge"),
+      end = new Date(), start = new Date();
+    end.setUTCDate(end.getUTCDate() - 1); start.setTime(end.getTime()); start.setUTCDate(start.getUTCDate() - 29);
+    const result = await fetchDailyValues(binding.feature_id, start.toISOString().slice(0, 10), end.toISOString().slice(0, 10),
+        binding.parameter_code, binding.statistic_id, (url, options) => fetch(url, { ...options, signal: AbortSignal.timeout(15000) })),
+      chart = dailyHydrograph(matchingSeries(result.quantities, binding), { width: 300, height: 56, padding: 4, phenomenon: binding.phenomenon });
+    if (chart.kind === "empty") return;
+    const ns = "http://www.w3.org/2000/svg", svg = $("#flow-chart"), path = document.createElementNS(ns, "path");
+    path.setAttribute("d", chart.path); svg.replaceChildren(path);
+    svg.setAttribute("aria-label", `${chart.points.length} daily means, from ${chart.min.toLocaleString()} to ${chart.max.toLocaleString()} ft³/s`);
+    $("#flow-chart-note").textContent = `30-day daily mean, tidally filtered · ${chart.min.toLocaleString()}–${chart.max.toLocaleString()} ft³/s`;
+    $("#flow-history").hidden = false;
+  } catch { /* the instantaneous card and source record remain available */ }
 }
 // Scientific data starts independently; graphics failure cannot suppress it.
 refreshDischarge(); setInterval(() => { if (!document.hidden) refreshDischarge(); }, 60000);
@@ -162,3 +185,4 @@ function fail(error) {
   $("#error").hidden = false; $("#error").textContent = "The river scene could not start in this browser. Discharge, history and source evidence remain available.";
 }
 main().catch(fail);
+loadHistory();

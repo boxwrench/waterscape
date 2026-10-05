@@ -2,7 +2,7 @@ import {
   GAUGE_TIME_MODES,
   resolveGaugeDischargeState,
 } from "../data-model/gauge-time-state.js";
-import { observedFlowStatus } from "../visual-bindings/flow-status.js";
+import { observedFlowStatus, flowDisplay } from "../visual-bindings/flow-status.js";
 
 const slider = document.querySelector("#time-range"),
   label = document.querySelector("#time-selection-label"),
@@ -54,10 +54,12 @@ function apply(index) {
     slider.setAttribute("aria-valuetext", "Now");
     if (!currentState) return;
     const presentation = observedFlowStatus(currentState, featureId);
-    value.textContent = presentation.headline;
+    const shown = flowDisplay(presentation);
+    value.textContent = shown.value;
+    value.classList.toggle("stale", shown.muted);
     time.textContent = offline
       ? "USGS is unavailable. Saved history can still be explored."
-      : presentation.detail;
+      : shown.note;
     quality.className = `flow-quality ${presentation.kind}`;
     quality.textContent = offline ? "Offline" : presentation.badge;
     publish(currentState, GAUGE_TIME_MODES.CURRENT_CONTINUOUS);

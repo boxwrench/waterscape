@@ -332,3 +332,4 @@
     font-size: 8px;
   }
 }
+#flow-value.stale { color: #e8cf9b; }
