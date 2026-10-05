@@ -1,6 +1,7 @@
 import * as THREE from "../../vendor/three/three.webgpu.js";
-import { attribute, bumpMap, color, dot, float, mix, normalWorld, normalize, positionWorld, smoothstep, texture, triplanarTexture, uv, vec2, vec3 } from "../../vendor/three/three.tsl.js";
+import { attribute, bumpMap, color, dot, float, mix, normalWorldGeometry, normalize, positionWorld, smoothstep, texture, transformNormalToView, triplanarTexture, uv, vec2, vec3 } from "../../vendor/three/three.tsl.js";
 import { forestSites, forestDetailSites } from "./eel-setting-layout.js";
+import { loadTerrainSurfaceDetail } from "./terrain-surface-detail.js";
 
 const biomeBase = new URL("../../data/biomes/peninsula-oak-fir/", import.meta.url);
 
@@ -24,12 +25,12 @@ function groundNoise() {
   map.generateMipmaps = true; map.needsUpdate = true; return map;
 }
 
-function landMaterial(aerial, noise) {
+function landMaterial(aerial, noise, surface = null) {
   const material = new THREE.MeshStandardNodeMaterial({ roughness: 1 }), p = positionWorld,
     image = texture(aerial, uv()), r = image.r, g = image.g, b = image.b,
     woody = smoothstep(0.005, 0.035, g.sub(r)).mul(float(1).sub(smoothstep(0.28, 0.42, r.add(g).add(b).div(3)))),
-    steep = float(1).sub(smoothstep(0.45, 0.87, normalWorld.y.abs())),
-    grain = triplanarTexture(texture(noise), null, null, float(1 / 18), p, normalWorld).r,
+    steep = float(1).sub(smoothstep(0.45, 0.87, normalWorldGeometry.y.abs())),
+    grain = triplanarTexture(texture(noise), null, null, float(1 / 18), p, normalWorldGeometry).r,
     broad = texture(noise, p.xz.div(145)).r,
     // Uneven vertical weathering and restrained bedding are authored surface cues.
     streak = texture(noise, p.xz.div(70).add(p.y.mul(0.0008))).r,
@@ -39,6 +40,15 @@ function landMaterial(aerial, noise) {
     cover = mix(color(0x263e32), color(0x46533d), broad).mul(mix(0.92, 1.06, grain));
   material.colorNode = mix(mix(soil, rock, steep), cover, woody.mul(float(1).sub(steep.mul(0.6))));
   material.normalNode = bumpMap(grain.mul(steep).add(broad.mul(0.12)), float(0.38));
+  if (surface) {
+    const detail = surface.modulate(p, normalWorldGeometry, material.colorNode, steep,
+      float(1).sub(woody.mul(0.35))),
+      baseNormal = transformNormalToView(normalWorldGeometry),
+      detailedNormal = transformNormalToView(detail.normalNode);
+    material.colorNode = detail.colorNode;
+    // Keep the previous bump and add the photo normal offset in view space.
+    material.normalNode = normalize(material.normalNode.add(detailedNormal.sub(baseNormal)));
+  }
   return material;
 }
 
@@ -55,7 +65,10 @@ export async function createEelSetting(terrain, classification, aerial) {
   if (!response.ok) throw new Error(`Eel vegetation asset metadata: ${response.status}`);
   const biome = await response.json(), loader = new THREE.TextureLoader(),
     textures = biome.trees.textures.species["douglas-fir"],
-    [barkMap, leafMap, atlas, atlasNormal] = await Promise.all([textures.bark, textures.leaf, biome.trees.textures.impostorAlbedo, biome.trees.textures.impostorNormal].map(file => loader.loadAsync(new URL(file, biomeBase).href)));
+    [treeMaps, surface] = await Promise.all([
+      Promise.all([textures.bark, textures.leaf, biome.trees.textures.impostorAlbedo, biome.trees.textures.impostorNormal].map(file => loader.loadAsync(new URL(file, biomeBase).href))),
+      loadTerrainSurfaceDetail(),
+    ]), [barkMap, leafMap, atlas, atlasNormal] = treeMaps;
   barkMap.colorSpace = leafMap.colorSpace = atlas.colorSpace = THREE.SRGBColorSpace;
   const group = new THREE.Group(), sites = forestSites(terrain, classification.pixels, classification.mapped),
     dummy = new THREE.Object3D(), tint = new THREE.Color(), noise = groundNoise(),
@@ -128,6 +141,7 @@ export async function createEelSetting(terrain, classification, aerial) {
   }
   group.name = "Eel photo-informed forest Setting";
   group.userData = { bindingClass: "setting", surveyed: false, seed: 17041 };
-  return { group, material: landMaterial(aerial, noise), setCamera, treeCount: sites.length,
-    detailCount: () => detailCount, textures: [noise, barkMap, leafMap, atlas, atlasNormal] };
+  return { group, material: landMaterial(aerial, noise, surface), previousMaterial: landMaterial(aerial, noise),
+    setCamera, treeCount: sites.length, detailCount: () => detailCount,
+    textures: [noise, barkMap, leafMap, atlas, atlasNormal, ...surface.textures] };
 }

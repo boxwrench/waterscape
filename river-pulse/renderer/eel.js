@@ -7,7 +7,7 @@ import { createEelSetting } from "./eel-setting.js";
 
 const $ = id => document.getElementById(id), base = "../data/eel_river/places/scotia_bluffs/",
   started = performance.now(), reduced = matchMedia("(prefers-reduced-motion: reduce)");
-let active = "overview", paused = reduced.matches, mode = "study", pass = "refined", measure = null, settingPass = "detail";
+let active = "overview", paused = reduced.matches, mode = "study", pass = "refined", measure = null, settingPass = "detail", surfacePass = "photo";
 $("evidence").onclick = () => {
   $("sources").hidden = !$("sources").hidden;
   $("evidence").setAttribute("aria-expanded", String(!$("sources").hidden));
@@ -147,7 +147,9 @@ async function main() {
   function presentation() {
     mode = $("mode").value; pass = $("pass").value;
     settingPass = $("setting-pass").value;
-    land.material = mode === "form" ? formMaterial : mode === "aerial" ? aerialMaterial : settingPass === "detail" ? setting.material : studyMaterial;
+    surfacePass = $("surface-pass").value;
+    land.material = mode === "form" ? formMaterial : mode === "aerial" ? aerialMaterial : settingPass === "detail" ?
+      (surfacePass === "photo" ? setting.material : setting.previousMaterial) : studyMaterial;
     setting.group.visible = mode === "study" && settingPass === "detail";
     water.visible = mode !== "aerial"; water.material = mode === "form" ? waterForm : waterStudy;
     water.geometry = pass === "baseline" ? baseline : refined; cancelMeasurement();
@@ -157,7 +159,8 @@ async function main() {
     $("environment").textContent = `${renderer.backend.isWebGPUBackend ? "WebGPU" : "WebGL2"} · ${innerWidth}×${innerHeight} · DPR ${renderer.getPixelRatio()} · camera presets v1`;
   }
   for (const button of document.querySelectorAll("[data-camera]")) button.onclick = () => setCamera(button.dataset.camera);
-  $("mode").onchange = presentation; $("pass").onchange = presentation; $("setting-pass").onchange = presentation; window.addEventListener("resize", resize);
+  $("mode").onchange = presentation; $("pass").onchange = presentation; $("setting-pass").onchange = presentation;
+  $("surface-pass").onchange = presentation; window.addEventListener("resize", resize);
   let loadMs = 0, frame = 0, last = performance.now(), seconds = 0;
   const meshes = setting.group.children, geometries = [landGeometry, baseline, refined, ...meshes.map(mesh => mesh.geometry)],
     geometryBytes = geometries.reduce((sum, g) => sum + Object.values(g.attributes).reduce((n, a) => n + a.array.byteLength, 0) + (g.index?.array.byteLength ?? 0), 0)
@@ -168,7 +171,7 @@ async function main() {
     $("metrics").textContent = "Select a fixed view, then measure 120 frames. Switching view or presentation resets the sample.";
   }
   $("measure").onclick = () => {
-    measure = { intervals: [], cpu: [], warmup: 12, camera: active, mode, pass, settingPass };
+    measure = { intervals: [], cpu: [], warmup: 12, camera: active, mode, pass, settingPass, surfacePass };
     $("measure").disabled = true; $("metrics").textContent = "Warming up, then sampling 120 rendered frames…";
   };
   resize(); presentation();
@@ -185,11 +188,11 @@ async function main() {
       if (measure.cpu.length === 120) {
         const percentile = (values, p) => [...values].sort((a, b) => a - b)[Math.floor((values.length - 1) * p)],
           triangles = renderer.info.render.triangles, calls = renderer.info.render.drawCalls;
-        $("metrics").textContent = `${measure.camera} / ${measure.mode} / ${measure.pass} / ${measure.settingPass} · ${innerWidth}×${innerHeight} · DPR ${renderer.getPixelRatio()} · ${renderer.backend.isWebGPUBackend ? "WebGPU" : "WebGL2"}\n` +
+        $("metrics").textContent = `${measure.camera} / ${measure.mode} / ${measure.pass} / ${measure.settingPass} / ${measure.surfacePass} · ${innerWidth}×${innerHeight} · DPR ${renderer.getPixelRatio()} · ${renderer.backend.isWebGPUBackend ? "WebGPU" : "WebGL2"}\n` +
           `${triangles.toLocaleString()} rendered triangles · ${calls} draw calls · ${(geometryBytes / 1048576).toFixed(2)} MiB geometry buffers (both passes resident)\n` +
           `Frame interval p50 ${percentile(measure.intervals, 0.5).toFixed(2)} ms / p95 ${percentile(measure.intervals, 0.95).toFixed(2)} ms\n` +
           `CPU render submission p50 ${percentile(measure.cpu, 0.5).toFixed(2)} ms / p95 ${percentile(measure.cpu, 0.95).toFixed(2)} ms\n` +
-          `First frame ${loadMs.toFixed(0)} ms · 6 textures, RGBA+mips estimate ${(textureBytes / 1048576).toFixed(1)} MiB\n` +
+          `First frame ${loadMs.toFixed(0)} ms · ${1 + setting.textures.length} textures, RGBA+mips estimate ${(textureBytes / 1048576).toFixed(1)} MiB (both surface passes loaded)\n` +
           `${setting.treeCount} authored tree sites; ${setting.detailCount()} detailed near this camera. GPU time and total browser memory are not measured.`;
         measure = null; $("measure").disabled = false;
       }

@@ -19,6 +19,15 @@
     "use": "Nearby conifers use baked branch/needle meshes. More distant crowns use existing eight-angle color/normal tree atlas rows, fitted to the same deterministic sites. Shared assets describe generic shape, not Scotia species."
   },
   "rock": "Original procedural multiscale grain, modest bump, weathering and bedding cues; no measured lithology, erosion history or finer elevation claim.",
+  "surface_detail": {
+    "binding_class": "setting",
+    "source": "data/biomes/diablo-oak/biome.json / ground.rock",
+    "license": "CC0 1.0 / ambientCG Rock030",
+    "files": ["ground/rock_color.jpg", "ground/rock_normal.jpg"],
+    "authored_parameters": "9 m and 12.33 m triplanar projections; rotated second frame; deterministic low-frequency blend; luminance gain 0.82–1.18 centered on existing reservoir mean 0.0766; normal offset strength 0.42; distance fade 400–1400 m; dry steep-slope mask with soft woody attenuation.",
+    "interpretation": "Shared photo surface shading only, not Scotia geology or finer terrain geometry. Previous RP20 material remains selectable with identical forest, camera, lighting and water.",
+    "review": "../../../../../docs/river-pulse/eel-reservoir-surface-review.md"
+  },
   "visual_reference": "https://commons.wikimedia.org/wiki/File:Scotia_Bluffs_Railroad_Bridge_2016.jpg",
   "reference_credit": "Ellin Beltz, 2016-03-16, CC BY-SA 4.0; photograph studied, not redistributed",
   "geographic_sources": ["terrain.json", "aerial.json", "waterbodies.json", "calwater-unit.geojson", "calwater-area.geojson"],

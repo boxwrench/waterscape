@@ -21,6 +21,21 @@ comparable detailed passes, not from a coarse Eel study versus a developed bridg
 
 ## Before implementation
 
+Start each river pass by inspecting Waterscape's existing reservoir terrain,
+water, lighting, vegetation and structure solutions. Choose reuse by geographic
+fit and rendered evidence. Dry-slope surface shading can often be adapted while
+retaining the native river elevations; reservoir water-level, shoreline and
+bathymetry assumptions require their own river binding. Preserve a selectable
+previous material so a narrow surface pass can be compared with identical
+geometry, forest, camera and lighting. RP24's [source audit](river-pulse/rp24-source-audit.md)
+records candidates across rivers. Tuolumne's full original Hetch Hetchy context
+and reuse matrix are currently in the isolated `waterscape-tuolumne-rp19` checkout.
+
+Use available cheaper agents for bounded asset/projection audits, isolated material
+modules and review galleries. Give each agent explicit file ownership; root
+integrates the work, inspects actual runtime renders and records acceptance.
+Redeploy completed agents on the next independent task within the current pass.
+
 1. Pick a specific reach or structure and a bounded visual pass. State its acceptance
    question: silhouette, scale, channel layout, shoreline contact, vegetation or motion.
 2. Fetch authoritative layout/physical sources and inspect clearly licensed visual

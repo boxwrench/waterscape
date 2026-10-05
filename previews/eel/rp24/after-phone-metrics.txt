@@ -1,0 +1,6 @@
+primary / study / refined / detail / photo · 390×844 · DPR 1.0000000298023224 · WebGPU
+1,261,548 rendered triangles · 8 draw calls · 17.94 MiB geometry buffers (both passes resident)
+Frame interval p50 8.27 ms / p95 12.42 ms
+CPU render submission p50 0.23 ms / p95 0.35 ms
+First frame 343 ms · 8 textures, RGBA+mips estimate 55.0 MiB (both surface passes loaded)
+77328 authored tree sites; 96 detailed near this camera. GPU time and total browser memory are not measured.

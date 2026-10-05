@@ -1,5 +1,50 @@
 # Handoff — 2026-10-04
 
+## Eel reservoir surface reuse — RP24
+
+Complete locally on `task/RP24`; awaiting human visual acceptance. The
+[actual comparison gallery](../previews/eel/rp24/review.html) and
+[review record](river-pulse/eel-reservoir-surface-review.md) preserve five fixed
+desktop/phone before-after pairs, form/source views, California context, material
+iterations, motion/pause frames and runtime measurements. Eel's dry bluff material
+reuses existing CC0 Rock030 maps and reservoir triplanar technique through
+`terrain-surface-detail.js`. The previous material remains selectable. Fine texture
+improves eye-level/near bend faces, with a modest main-view change. Coarse cliff form,
+tree character and close water/shore contact remain below the reservoir benchmark.
+
+Three cheaper agents were reused and redeployed for the module/gallery, source and
+projection audit, and Tuolumne performance audit. Root corrected an identified UV /
+normal-axis mismatch, integrated the module and inspected actual runtime renders.
+Reuse-first guidance now appears in `docs/visual-development.md`; cross-river
+recommendations are in [the source audit](river-pulse/rp24-source-audit.md).
+
+Seven focused tests, package validation and the 120-module build pass. Browser
+errors are empty; phone has no horizontal overflow; settled pause images match.
+Primary geometry/draw calls remain 1,261,548 triangles / eight calls with 17.94 MiB
+resident CPU geometry. Two maps add about 10.67 MiB to the RGBA/mipmap texture
+estimate, from 44.3 to 55.0 MiB. GPU cost and total memory remain unmeasured.
+After review, prioritize larger bluff/contact form and water over more fine grain.
+No push or merge.
+
+## Isolated Tuolumne reservoir integration — RP23
+
+The latest parallel work supersedes the RP21 historical entry below.
+`C:/Github/waterscape-tuolumne-rp19` is clean on `task/RP23`, implementation
+`655fd19`, Result `d8a18ef`. Full original Hetch Hetchy reservoir terrain, water,
+lighting and vegetation are selectable at the dam, lake and below-dam views;
+native 14.66 m Poopenaut source/form/valley remains separate. Live scene:
+http://localhost:5174/river-pulse/renderer/tuolumne.html?view=below ; actual review:
+http://localhost:5174/previews/tuolumne/rp23/review.html . Native 1 m LiDAR remains
+unacquired; a 1 m-spaced service-resampled shading image does not supply 1 m geometry.
+
+The [performance audit](river-pulse/rp24-tuolumne-performance-audit.md) records
+62.3 ms desktop / 35.5 ms phone submission-plus-completion waits at low quality,
+121.78 / 117.86 MiB tracked engine buffers and unmeasured follow-up hypotheses.
+Hidden/paused gating stops submissions but retains allocated buffers. The desktop
+remains slow at its lowest tier. Wrapper-level resolution and optional glare trials
+are candidates; no savings have been measured. A native dry-slope shading trial is
+the next material reuse candidate. This isolated work is not merged into this checkout.
+
 ## Eel bluff and forest pass — RP20
 
 Complete locally on `task/RP20`; this visual pass awaits human acceptance.

@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Eel River · RP24 surface detail review</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #203632;
+      --muted: #61736b;
+      --paper: #f0eee5;
+      --card: #fbfaf5;
+      --line: #d1d8ce;
+      --moss: #436450;
+      --deep: #1e3834;
+      --sand: #d9c8a7;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font: 15px/1.55 "Segoe UI", system-ui, sans-serif;
+    }
+    main { width: min(1480px, calc(100% - 48px)); margin: 0 auto; padding: 34px 0 72px; }
+    .topline { display: flex; align-items: center; gap: 10px; color: var(--moss); font-size: 11px; font-weight: 750; letter-spacing: .14em; text-transform: uppercase; }
+    .mark { width: 27px; height: 27px; display: grid; place-items: center; border-radius: 50%; background: var(--deep); color: #e5eadf; font-size: 15px; letter-spacing: 0; }
+    .hero { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(260px, .65fr); gap: 38px; align-items: end; padding: 45px 0 30px; border-bottom: 1px solid var(--line); }
+    h1 { max-width: 850px; margin: 0; font: 500 clamp(42px, 6vw, 78px)/.98 Georgia, "Times New Roman", serif; letter-spacing: -.045em; }
+    h1 span { color: var(--moss); font-style: italic; }
+    .dek { max-width: 620px; margin: 20px 0 0; color: #465b52; font-size: 17px; }
+    .status { padding: 17px 18px; border-left: 3px solid #8b7047; background: #e5dfd0; color: #4b483d; }
+    .status strong { display: block; margin-bottom: 5px; color: #604f31; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+    .links { display: flex; flex-wrap: wrap; gap: 18px; padding: 18px 0 25px; }
+    a { color: #285344; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+    a:hover { color: #132d29; }
+    .controls { position: sticky; top: 0; z-index: 2; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 13px 0; background: color-mix(in srgb, var(--paper) 94%, transparent); backdrop-filter: blur(10px); }
+    .controls-label { margin-right: 5px; color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .toggle { min-height: 42px; padding: 9px 16px; border: 1px solid #9caea1; border-radius: 999px; background: transparent; color: var(--ink); font: inherit; cursor: pointer; }
+    .toggle[aria-pressed="true"] { border-color: var(--deep); background: var(--deep); color: #f3f1e8; }
+    .view-note { margin-left: auto; color: var(--muted); font-size: 12px; }
+    .gallery { display: grid; gap: 24px; margin-top: 9px; }
+    .camera { overflow: hidden; border: 1px solid var(--line); border-radius: 15px; background: var(--card); box-shadow: 0 7px 24px #18372b0b; }
+    .camera-head { display: flex; align-items: baseline; gap: 12px; padding: 16px 18px 13px; }
+    .camera-head h2 { margin: 0; font: 500 25px/1.15 Georgia, "Times New Roman", serif; }
+    .camera-head span { color: var(--muted); font-size: 12px; }
+    .pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border-top: 1px solid var(--line); }
+    figure { position: relative; min-width: 0; margin: 0; padding: 10px; background: var(--card); }
+    figure img { display: block; width: 100%; height: auto; aspect-ratio: 980 / 876; object-fit: contain; background: #dce3da; }
+    figure figcaption { display: flex; justify-content: space-between; gap: 10px; padding: 8px 1px 1px; color: #4b6056; font-size: 12px; }
+    figure figcaption strong { color: var(--ink); }
+    .missing { display: none; min-height: 150px; padding: 28px 18px; align-content: center; background: #e9e7dc; color: var(--muted); font-size: 13px; text-align: center; }
+    .missing.visible { display: grid; }
+    .closing { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 32px; }
+    .note { padding: 20px 22px; border-radius: 12px; background: #e2e7dd; }
+    .note h2 { margin: 0 0 8px; font: 500 23px Georgia, "Times New Roman", serif; }
+    .note p { margin: 0; color: #465b52; }
+    footer { margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+    @media (max-width: 760px) {
+      main { width: min(100% - 28px, 600px); padding-top: 20px; }
+      .hero { grid-template-columns: 1fr; gap: 20px; padding: 35px 0 23px; }
+      .dek { font-size: 15px; }
+      .view-note { width: 100%; margin: 3px 0 0; }
+      .pair { grid-template-columns: 1fr; }
+      figure img { aspect-ratio: 390 / 844; object-fit: contain; }
+      .closing { grid-template-columns: 1fr; gap: 12px; }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .camera { transition: box-shadow .18s ease, transform .18s ease; }
+      .camera:hover { transform: translateY(-2px); box-shadow: 0 12px 30px #18372b15; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="topline"><span class="mark" aria-hidden="true">≈</span> River Pulse · Visual development · RP24</div>
+    <header class="hero">
+      <div>
+        <h1>Scotia Bluffs<br><span>A closer surface.</span></h1>
+        <p class="dek">A restrained authored rock-photo layer adds close surface variation to the exposed bluff slopes. Compare the RP20 scene with the RP24 material pass from the same fixed cameras.</p>
+      </div>
+      <aside class="status"><strong>Review in progress</strong>This material pass has not been accepted. RP20 remains the comparison state; review these captures before treating RP24 as a visual baseline.</aside>
+    </header>
+    <nav class="links" aria-label="Project references">
+      <a href="../../../river-pulse/renderer/eel.html">Open the Eel scene</a>
+      <a href="../rp20/review.html">View the RP20 bluff and forest pass</a>
+    </nav>
+
+    <section aria-label="Fixed camera comparisons">
+      <div class="controls" role="group" aria-label="Capture viewport">
+        <span class="controls-label">Viewport</span>
+        <button class="toggle" type="button" data-viewport="desktop" aria-pressed="true">Desktop · 980 × 820</button>
+        <button class="toggle" type="button" data-viewport="phone" aria-pressed="false">Phone · 390 × 844</button>
+        <span class="view-note" id="viewport-note">Five fixed v1 cameras · same presentation</span>
+      </div>
+      <div class="gallery" id="gallery">
+        <article class="camera" data-camera="overview">
+          <div class="camera-head"><h2>Overview</h2><span>Reach and bluff silhouette</span></div>
+          <div class="pair">
+            <figure><img data-phase="before" data-camera="overview" src="before-overview.jpg" alt="RP20 Eel overview before the surface detail pass"><figcaption><strong>Before</strong><span>RP20 scene</span></figcaption><div class="missing" aria-live="polite">Capture not present yet: RP20 overview before image.</div></figure>
+            <figure><img data-phase="after" data-camera="overview" src="after-overview.jpg" alt="RP24 Eel overview after the authored surface detail pass"><figcaption><strong>After</strong><span>RP24 surface detail</span></figcaption><div class="missing" aria-live="polite">RP24 overview capture is pending.</div></figure>
+          </div>
+        </article>
+        <article class="camera" data-camera="primary">
+          <div class="camera-head"><h2>Primary</h2><span>Scotia Bluffs composition</span></div>
+          <div class="pair">
+            <figure><img data-phase="before" data-camera="primary" src="before-primary.jpg" alt="RP20 Eel primary view before the surface detail pass"><figcaption><strong>Before</strong><span>RP20 scene</span></figcaption><div class="missing" aria-live="polite">RP20 primary capture not present yet.</div></figure>
+            <figure><img data-phase="after" data-camera="primary" src="after-primary.jpg" alt="RP24 Eel primary view after the authored surface detail pass"><figcaption><strong>After</strong><span>RP24 surface detail</span></figcaption><div class="missing" aria-live="polite">RP24 primary capture is pending.</div></figure>
+          </div>
+        </article>
+        <article class="camera" data-camera="eye">
+          <div class="camera-head"><h2>Eye level</h2><span>Across the river toward the bluff</span></div>
+          <div class="pair">
+            <figure><img data-phase="before" data-camera="eye" src="before-eye.jpg" alt="RP20 Eel eye-level view before the surface detail pass"><figcaption><strong>Before</strong><span>RP20 scene</span></figcaption><div class="missing" aria-live="polite">RP20 eye-level capture not present yet.</div></figure>
+            <figure><img data-phase="after" data-camera="eye" src="after-eye.jpg" alt="RP24 Eel eye-level view after the authored surface detail pass"><figcaption><strong>After</strong><span>RP24 surface detail</span></figcaption><div class="missing" aria-live="polite">RP24 eye-level capture is pending.</div></figure>
+          </div>
+        </article>
+        <article class="camera" data-camera="shore">
+          <div class="camera-head"><h2>Shoreline</h2><span>Water and gravel contact</span></div>
+          <div class="pair">
+            <figure><img data-phase="before" data-camera="shore" src="before-shore.jpg" alt="RP20 Eel shoreline view before the surface detail pass"><figcaption><strong>Before</strong><span>RP20 scene</span></figcaption><div class="missing" aria-live="polite">RP20 shoreline capture not present yet.</div></figure>
+            <figure><img data-phase="after" data-camera="shore" src="after-shore.jpg" alt="RP24 Eel shoreline view after the authored surface detail pass"><figcaption><strong>After</strong><span>RP24 surface detail</span></figcaption><div class="missing" aria-live="polite">RP24 shoreline capture is pending.</div></figure>
+          </div>
+        </article>
+        <article class="camera" data-camera="bend">
+          <div class="camera-head"><h2>Bend</h2><span>Downstream reach</span></div>
+          <div class="pair">
+            <figure><img data-phase="before" data-camera="bend" src="before-bend.jpg" alt="RP20 Eel bend view before the surface detail pass"><figcaption><strong>Before</strong><span>RP20 scene</span></figcaption><div class="missing" aria-live="polite">RP20 bend capture not present yet.</div></figure>
+            <figure><img data-phase="after" data-camera="bend" src="after-bend.jpg" alt="RP24 Eel bend view after the authored surface detail pass"><figcaption><strong>After</strong><span>RP24 surface detail</span></figcaption><div class="missing" aria-live="polite">RP24 bend capture is pending.</div></figure>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="closing" aria-label="Scope and limits">
+      <article class="note"><h2>What changed</h2><p>Only the authored dry-land surface material changed. Terrain elevations, fixed cameras, forest placement, water geometry and water appearance remain those of the RP20 scene. The surface texture is a display asset, not mapped geology.</p></article>
+      <article class="note"><h2>What still needs work</h2><p>Coarse bluff form remains limited by the existing terrain grid; some trees still read as procedural; the close water and shoreline contact remain weak. This comparison records a pass for review, not acceptance.</p></article>
+    </section>
+    <footer>Five fixed v1 views · RP20 before / RP24 after · No new elevation, water-level, species or geological claim.</footer>
+  </main>
+  <script>
+    const buttons = [...document.querySelectorAll("[data-viewport]")],
+      images = [...document.querySelectorAll("img[data-phase]")],
+      note = document.querySelector("#viewport-note");
+    function showViewport(viewport) {
+      for (const button of buttons) button.setAttribute("aria-pressed", String(button.dataset.viewport === viewport));
+      for (const image of images) {
+        const phone = viewport === "phone",
+          phase = image.dataset.phase,
+          camera = image.dataset.camera,
+          missing = image.parentElement.querySelector(".missing");
+        missing.classList.remove("visible");
+        image.hidden = false;
+        image.src = `${phase}${phone ? "-phone" : ""}-${camera}.jpg`;
+        image.alt = `${phase === "before" ? "RP20 before" : "RP24 after"} · ${camera} camera · ${phone ? "phone" : "desktop"} capture`;
+        image.onerror = () => { image.hidden = true; missing.classList.add("visible"); };
+      }
+      note.textContent = `${viewport === "phone" ? "390 × 844 phone" : "980 × 820 desktop"} · five fixed v1 cameras · same presentation`;
+      document.documentElement.dataset.viewport = viewport;
+    }
+    for (const button of buttons) button.addEventListener("click", () => showViewport(button.dataset.viewport));
+    showViewport("desktop");
+  </script>
+</body>
+</html>
