@@ -1,0 +1,7 @@
+primary / study / refined / detail / photo / water optics · 980×820 · DPR 1.0000000298023224 · WebGPU
+2,514,254 rendered triangles · 14 draw calls · 18.03 MiB geometry buffers (both passes resident)
+Frame interval p50 1002.40 ms / p95 1004.23 ms
+CPU render submission p50 0.74 ms / p95 1.01 ms
+First frame 548 ms · 8 source textures, RGBA+mips estimate 55.0 MiB; reflection targets excluded
+Optical-depth attribute 0.091 MiB; original surface/index buffers shared. Reflection plane 15.70 m; surface 12.08–21.20 m (DEM proxy, not stage).
+77328 authored tree sites; 96 detailed near this camera. GPU time, reflection allocation and total browser memory are not measured.

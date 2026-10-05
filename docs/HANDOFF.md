@@ -1,5 +1,39 @@
 # Handoff — 2026-10-04
 
+## Eel water optics spike — RP25
+
+Implemented locally on `task/RP25`, pending human visual acceptance. Three cheaper
+agents handled the deterministic depth adapter/tests, compatibility audit and
+comparison gallery; root integrated and inspected actual desktop/phone renders.
+[Comparison gallery](../previews/eel/rp25/review.html) and
+[review record](river-pulse/eel-water-optics-review.md) preserve paired evidence.
+The previous water remains the default. Optional Hacienda optics improve forest
+reflection and shallows, but close bright edges and nonplanar reflection mismatch
+remain. Added reflection nearly doubles rendered triangles; GPU time is unmeasured.
+Shared-water extraction, flow advection and cross-river adoption remain pending.
+
+## Visual parity review and plan — first spike implemented; later steps proposed
+
+Read-only review on `task/RP24`; no code changed. Eel, Freeport and Tuolumne's valley
+trail the reservoir and Hacienda because they use a simpler Three.js path on ~14 m data
+with proxy water, while the reservoir runs the full engine and Hacienda is hand-authored.
+Full diagnosis, reuse inventory and steps are in
+[visual-parity-plan.md](river-pulse/visual-parity-plan.md). Summary of the order:
+
+1. Reconcile `task/RP23` (Tuolumne worktree) before cross-river adoption; the Eel
+   spike is independent. Branch merge is a separate human action under AGENTS.md.
+2. Spike, then extract one shared river water from Hacienda's `authored-water.js`
+   (refraction onto a gravel bed), fed by Eel's clipped footprint, plus new flow advection.
+   The stock `water.cu` cannot take river terrain.
+3. Make Tuolumne's valley the flagship: shared water, existing Sierra granite maps and
+   Hetch Hetchy `detail-*.webp` shading on one dry slope.
+4. Eel and Freeport: hero-camera work and large-form/contact/sky, not more fine grain on
+   14 m data. Lidar coverage at the cameras is unverified for both.
+
+Verified: `createAuthoredWater` accepts a custom fourth-argument grid; its default
+builder selects Russian River geometry. Native 1 m lidar coverage at the Eel and
+Freeport review cameras remains unverified; Eel still renders the 14.05 m 3DEP grid.
+
 ## Eel reservoir surface reuse — RP24
 
 Complete locally on `task/RP24`; awaiting human visual acceptance. The

@@ -4,10 +4,14 @@ import { loadRiverTerrain } from "./terrain.js";
 import { buildRiverTerrainGrid } from "./terrain-mesh.js";
 import { EEL_CAMERAS, reviewCamera, clippedWaterTriangle } from "./eel-layout.js";
 import { createEelSetting } from "./eel-setting.js";
+import { createEelWaterSpike } from "./eel-water-spike.js";
 
 const $ = id => document.getElementById(id), base = "../data/eel_river/places/scotia_bluffs/",
-  started = performance.now(), reduced = matchMedia("(prefers-reduced-motion: reduce)");
-let active = "overview", paused = reduced.matches, mode = "study", pass = "refined", measure = null, settingPass = "detail", surfacePass = "photo";
+  started = performance.now(), reduced = matchMedia("(prefers-reduced-motion: reduce)"), query = new URLSearchParams(location.search);
+let active = EEL_CAMERAS[query.get("view")] ? query.get("view") : "overview", paused = reduced.matches,
+  mode = "study", pass = "refined", measure = null, settingPass = "detail", surfacePass = "photo",
+  waterPass = query.get("water") === "optics" ? "optics" : "previous";
+$("water-pass").value = waterPass;
 $("evidence").onclick = () => {
   $("sources").hidden = !$("sources").hidden;
   $("evidence").setAttribute("aria-expanded", String(!$("sources").hidden));
@@ -93,7 +97,9 @@ function waterGeometry(terrain, wet, refined) {
     if (refined) { add(clippedWaterTriangle([a, b, c])); add(clippedWaterTriangle([c, b, d])); }
     else if ((a.w + b.w + c.w + d.w) / 4 >= 0.5) add([a, b, d, c]);
   }
-  return geometry(positions, indices);
+  const out = geometry(positions, indices);
+  out.userData.wetField = field;
+  return out;
 }
 
 function authoredWater(clock) {
@@ -132,6 +138,9 @@ async function main() {
     waterForm = new THREE.MeshBasicNodeMaterial({ color: 0x427b80, side: THREE.DoubleSide,
       polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }), waterStudy = water.material;
   scene.add(land, water);
+  const opticalWater = createEelWaterSpike(terrain, refined, refined.userData.wetField);
+  delete refined.userData.wetField; delete baseline.userData.wetField;
+  scene.add(opticalWater.mesh);
   const setting = await createEelSetting(terrain, classified, aerial); scene.add(setting.group);
   const camera = new THREE.PerspectiveCamera(48, 1, 1, 15000);
   function setCamera(id) {
@@ -148,10 +157,14 @@ async function main() {
     mode = $("mode").value; pass = $("pass").value;
     settingPass = $("setting-pass").value;
     surfacePass = $("surface-pass").value;
+    waterPass = $("water-pass").value;
     land.material = mode === "form" ? formMaterial : mode === "aerial" ? aerialMaterial : settingPass === "detail" ?
       (surfacePass === "photo" ? setting.material : setting.previousMaterial) : studyMaterial;
     setting.group.visible = mode === "study" && settingPass === "detail";
-    water.visible = mode !== "aerial"; water.material = mode === "form" ? waterForm : waterStudy;
+    const showOptics = mode === "study" && pass === "refined" && waterPass === "optics";
+    $("water-pass").disabled = mode !== "study" || pass !== "refined";
+    opticalWater.mesh.visible = showOptics;
+    water.visible = mode !== "aerial" && !showOptics; water.material = mode === "form" ? waterForm : waterStudy;
     water.geometry = pass === "baseline" ? baseline : refined; cancelMeasurement();
   }
   function resize() {
@@ -160,18 +173,20 @@ async function main() {
   }
   for (const button of document.querySelectorAll("[data-camera]")) button.onclick = () => setCamera(button.dataset.camera);
   $("mode").onchange = presentation; $("pass").onchange = presentation; $("setting-pass").onchange = presentation;
-  $("surface-pass").onchange = presentation; window.addEventListener("resize", resize);
+  $("surface-pass").onchange = presentation; $("water-pass").onchange = presentation;
+  window.addEventListener("resize", resize);
   let loadMs = 0, frame = 0, last = performance.now(), seconds = 0;
   const meshes = setting.group.children, geometries = [landGeometry, baseline, refined, ...meshes.map(mesh => mesh.geometry)],
     geometryBytes = geometries.reduce((sum, g) => sum + Object.values(g.attributes).reduce((n, a) => n + a.array.byteLength, 0) + (g.index?.array.byteLength ?? 0), 0)
-      + meshes.reduce((sum, mesh) => sum + mesh.instanceMatrix.array.byteLength + (mesh.instanceColor?.array.byteLength ?? mesh.instanceMatrix.count * 12), 0),
+      + meshes.reduce((sum, mesh) => sum + mesh.instanceMatrix.array.byteLength + (mesh.instanceColor?.array.byteLength ?? mesh.instanceMatrix.count * 12), 0)
+      + opticalWater.depthBytes,
     textureBytes = [aerial, ...setting.textures].reduce((sum, map) => sum + map.image.width * map.image.height * 4 * 4 / 3, 0);
   function cancelMeasurement() {
     measure = null; $("measure").disabled = false; $("measure").textContent = "Measure 120 frames";
     $("metrics").textContent = "Select a fixed view, then measure 120 frames. Switching view or presentation resets the sample.";
   }
   $("measure").onclick = () => {
-    measure = { intervals: [], cpu: [], warmup: 12, camera: active, mode, pass, settingPass, surfacePass };
+    measure = { intervals: [], cpu: [], warmup: 12, camera: active, mode, pass, settingPass, surfacePass, waterPass };
     $("measure").disabled = true; $("metrics").textContent = "Warming up, then sampling 120 rendered frames…";
   };
   resize(); presentation();
@@ -179,7 +194,8 @@ async function main() {
     const now = performance.now(), interval = now - last; last = now;
     if (document.hidden) { if (measure) cancelMeasurement(); return; }
     if (!paused && mode === "study") seconds += Math.min(interval, 50) / 1000;
-    clock.value = seconds; const begin = performance.now(); renderer.render(scene, camera); const cpu = performance.now() - begin;
+    clock.value = seconds; opticalWater.update(seconds, false);
+    const begin = performance.now(); renderer.render(scene, camera); const cpu = performance.now() - begin;
     if (++frame === 1) { loadMs = performance.now() - started; $("loading").hidden = true; }
     if (measure) {
       if (measure.warmup-- > 0) return;
@@ -187,13 +203,17 @@ async function main() {
       $("metrics").textContent = `Sampling ${measure.cpu.length}/120 rendered frames…`;
       if (measure.cpu.length === 120) {
         const percentile = (values, p) => [...values].sort((a, b) => a - b)[Math.floor((values.length - 1) * p)],
-          triangles = renderer.info.render.triangles, calls = renderer.info.render.drawCalls;
-        $("metrics").textContent = `${measure.camera} / ${measure.mode} / ${measure.pass} / ${measure.settingPass} / ${measure.surfacePass} · ${innerWidth}×${innerHeight} · DPR ${renderer.getPixelRatio()} · ${renderer.backend.isWebGPUBackend ? "WebGPU" : "WebGL2"}\n` +
+          triangles = renderer.info.render.triangles, calls = renderer.info.render.drawCalls,
+          drawingSize = renderer.getDrawingBufferSize(new THREE.Vector2()),
+          reflectWidth = Math.round(drawingSize.x * 0.65), reflectHeight = Math.round(drawingSize.y * 0.65);
+        $("metrics").textContent = `${measure.camera} / ${measure.mode} / ${measure.pass} / ${measure.settingPass} / ${measure.surfacePass} / water ${measure.waterPass} · ${innerWidth}×${innerHeight} · DPR ${renderer.getPixelRatio()} · ${renderer.backend.isWebGPUBackend ? "WebGPU" : "WebGL2"}\n` +
           `${triangles.toLocaleString()} rendered triangles · ${calls} draw calls · ${(geometryBytes / 1048576).toFixed(2)} MiB geometry buffers (both passes resident)\n` +
           `Frame interval p50 ${percentile(measure.intervals, 0.5).toFixed(2)} ms / p95 ${percentile(measure.intervals, 0.95).toFixed(2)} ms\n` +
           `CPU render submission p50 ${percentile(measure.cpu, 0.5).toFixed(2)} ms / p95 ${percentile(measure.cpu, 0.95).toFixed(2)} ms\n` +
-          `First frame ${loadMs.toFixed(0)} ms · ${1 + setting.textures.length} textures, RGBA+mips estimate ${(textureBytes / 1048576).toFixed(1)} MiB (both surface passes loaded)\n` +
-          `${setting.treeCount} authored tree sites; ${setting.detailCount()} detailed near this camera. GPU time and total browser memory are not measured.`;
+          `First frame ${loadMs.toFixed(0)} ms · ${1 + setting.textures.length} source textures, RGBA+mips estimate ${(textureBytes / 1048576).toFixed(1)} MiB; reflection targets excluded\n` +
+          `Optical-depth attribute ${(opticalWater.depthBytes / 1048576).toFixed(3)} MiB; original surface/index buffers shared. Reflection plane ${opticalWater.focus.y.toFixed(2)} m; surface ${opticalWater.heightRange.map(v => v.toFixed(2)).join("–")} m (DEM proxy, not stage).\n` +
+          `Reflection target estimate ${reflectWidth}×${reflectHeight}, ${(reflectWidth * reflectHeight * 8 / 1048576).toFixed(2)} MiB color only (depth/driver excluded); retained after first use.\n` +
+          `${setting.treeCount} authored tree sites; ${setting.detailCount()} detailed near this camera. GPU time, reflection allocation and total browser memory are not measured.`;
         measure = null; $("measure").disabled = false;
       }
     }

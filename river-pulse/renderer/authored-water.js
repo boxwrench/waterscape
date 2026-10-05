@@ -6,7 +6,7 @@ import {
 import { buildAuthoredWaterGeometry } from "./authored-water-geometry.js";
 import { grayStone } from "./beach-materials.js";
 
-export function createAuthoredWater(document, terrain, maps = null, authoredGrid = null) {
+export function createAuthoredWater(document, terrain, maps = null, authoredGrid = null, options = {}) {
   const grid = authoredGrid ?? buildAuthoredWaterGeometry(document, terrain);
   if (!grid) return null;
   const geometry = new THREE.BufferGeometry();
@@ -37,7 +37,11 @@ export function createAuthoredWater(document, terrain, maps = null, authoredGrid
     refracted = refract(eye.negate(), normal, 1 / 1.333),
     bedUV = p.add(refracted.xz.div(refracted.y.abs().max(0.1)).mul(depth)),
     pebbleCell = floor(bedUV.mul(7)),
-    gravel = fract(sin(dot(pebbleCell, vec2(127.1, 311.7))).mul(43758.5453)),
+    rawGravel = fract(sin(dot(pebbleCell, vec2(127.1, 311.7))).mul(43758.5453)),
+    // Filter Eel's grazing bed views without changing Hacienda's default.
+    gravel = options.filterProceduralBed
+      ? mix(float(0.5), rawGravel, exp(fwidth(bedUV.mul(7)).length().mul(-1.5)))
+      : rawGravel,
     bed = maps?.pebbles
       ? grayStone(maps.pebbles.color, bedUV.div(maps.pebbles.tileMetres))
       : mix(color(0x605b42), color(0xb7aa7a), gravel),
@@ -53,7 +57,7 @@ export function createAuthoredWater(document, terrain, maps = null, authoredGrid
     transmission = exp(depth.mul(-1.35).div(facing.add(0.6))),
     underwater = mix(color(0x2c5137), bed.mul(bedLight).mul(caustic.add(0.88))
       .mul(vec3(0.85, 1, 0.8)), transmission),
-    sun = normalize(vec3(0.68, 0.73, 0.18)),
+    sun = normalize(vec3(...(options.sunDirection ?? [0.68, 0.73, 0.18]))),
     glint = pow(dot(normal, normalize(sun.add(eye))).max(0), 260).mul(1.8),
     mirror = reflector({ resolutionScale: 0.65, bounces: false });
   mirror.target.rotation.x = -Math.PI / 2;
