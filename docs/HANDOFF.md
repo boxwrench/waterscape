@@ -1,5 +1,11 @@
 # Handoff — 2026-10-04
 
+## Scene chrome consistency — RP30
+
+Eel and Tuolumne headers, camera controls and review-tools control now match the other scenes
+(CSS/markup only; [task](roadmap/tasks/RP30-scene-chrome-consistency.md),
+`previews/river-pulse/rp30/`). Tests and build pass; pending human visual acceptance.
+
 ## Scene data cards — RP29
 
 Implemented locally on `task/RP27` after RP28; pending human visual acceptance. Freeport and
