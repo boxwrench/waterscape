@@ -72,6 +72,12 @@ export async function validateRiverPackages(root) {
       const entry = path.resolve(data, river.name, scene.entry);
       assert.ok(entry.startsWith(path.join(root, "river-pulse") + path.sep));
       await readFile(entry);
+      if (scene.image) {
+        const image = path.resolve(data, river.name, scene.image);
+        assert.ok(image.startsWith(path.join(data, river.name) + path.sep), "Scene image must stay in its river package");
+        assert.ok((await readFile(image)).length > 0);
+      }
+      for (const view of scene.views ?? []) assert.ok(typeof view === "string" && view.trim());
     }
     rivers.push({ id: manifest.id, name: manifest.name, status: manifest.status,
       manifest: `${river.name}/river.json` });

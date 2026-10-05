@@ -7,7 +7,9 @@ import { dailyHydrograph } from "./visual-bindings/hydrograph.js";
 import { matchingSeries } from "./data-model/binding-series.js";
 
 const list = document.querySelector("#river-list"), detail = document.querySelector("#river-detail"),
-  statuses = { available: "Explore places", in_development: "In development", planned: "Planned river" };
+  crumb = document.querySelector("#crumb-river"),
+  statuses = { available: "Explore places", in_development: "In development", planned: "Planned river" },
+  svgNS = "http://www.w3.org/2000/svg";
 let generation = 0, registry;
 
 function element(tag, text, className) {
@@ -32,83 +34,133 @@ function evidence(parent, title, payload, sourceUrl) {
   if (sourceUrl) drawer.append(link("Open USGS source response", sourceUrl, true));
   drawer.append(element("pre", JSON.stringify(payload, null, 2))); parent.append(drawer);
 }
+function reading(status) {
+  const node = element("p", null, "reading"), q = status.quantity;
+  if (q && (status.kind === "current" || status.kind === "stale")) {
+    node.append(Number(q.value).toLocaleString("en-US", { maximumFractionDigits: 2 }),
+      element("small", String(q.unit ?? "").replace("ft^3/s", "ft³/s")));
+    if (status.kind === "stale") node.classList.add("stale");
+  } else node.textContent = status.headline;
+  return node;
+}
+function hydrograph(chart, labelText) {
+  const svg = document.createElementNS(svgNS, "svg");
+  svg.setAttribute("viewBox", "0 0 600 180"); svg.setAttribute("class", "chart"); svg.setAttribute("role", "img");
+  svg.setAttribute("aria-label", labelText);
+  for (const y of [12, 90, 168]) {
+    const grid = document.createElementNS(svgNS, "line");
+    for (const [key, value] of Object.entries({ x1: 12, x2: 588, y1: y, y2: y })) grid.setAttribute(key, value);
+    svg.append(grid);
+  }
+  const path = document.createElementNS(svgNS, "path"); path.setAttribute("d", chart.path); svg.append(path);
+  for (const segment of chart.segments) if (segment.length === 1) {
+    const dot = document.createElementNS(svgNS, "circle");
+    dot.setAttribute("cx", segment[0].x); dot.setAttribute("cy", segment[0].y); dot.setAttribute("r", "3"); svg.append(dot);
+  }
+  return svg;
+}
 
-async function loadGaugePlace(river, token) {
-  const observations = element("section", null, "observation"), current = element("div"), daily = element("div");
-  observations.setAttribute("aria-label", "Freeport observations");
-  observations.append(element("h3", "First place: Freeport"),
-    element("p", "This observation belongs to Freeport, south of Sacramento. Explore the bridge and riverbank from the Freeport scene link above.", "note"));
-  for (const node of [current, daily]) { node.setAttribute("aria-live", "polite"); node.append(element("p", "Loading USGS observations…")); }
-  observations.append(current, daily); detail.append(observations);
-  const loaded = await loadPlaceFromRegistry({ registryUrl: "./data/registry.json", riverPack: river.id,
-    placeId: river.first_place, fetchImpl: networkFetch });
-  if (token !== generation) return;
-  const manifest = loaded.manifest, currentBinding = manifest.data_bindings.find(b => b.phenomenon === "discharge"),
-    dailyBinding = manifest.data_bindings.find(b => b.phenomenon === "tidally_filtered_discharge");
-  observations.insertBefore(link("USGS 11447650 station", manifest.references[0].url, true), current);
-  await Promise.all([
-    (async () => {
-      try {
-        const result = await fetchLatestContinuous(currentBinding.feature_id, currentBinding.parameter_code, networkFetch),
-          validTime = new Date().toISOString(),
-          selection = latestAtOrBefore(matchingSeries(result.quantities, currentBinding), validTime,
-            { maximumAgeMs: currentBinding.maximum_age_minutes * 60000 }),
-          state = riverState({ validTime, features: { gauges: [{ id: currentBinding.feature_id }], authored_places: [manifest] },
-            selections: [{ feature_id: currentBinding.feature_id, phenomenon: "discharge",
-              policy_id: "freeport_latest_at_or_before_45_minutes", result: selection }] }),
-          status = observedFlowStatus(state, currentBinding.feature_id);
-        if (token !== generation) return;
-        current.replaceChildren(element("h3", "Instantaneous discharge"), element("p", status.headline, "reading"),
-          element("p", `${status.badge}. ${status.detail}`, "note"));
-        evidence(current, "Inspect observation and selection", { binding_class: "exact", binding: currentBinding,
-          request: state.request, selection, quantity: status.quantity, retrieval_time: result.retrieval_time }, result.url);
-      } catch (error) {
-        if (token !== generation) return;
-        current.replaceChildren(element("h3", "Instantaneous discharge"), element("p", "Observation unavailable", "reading"),
-          element("p", "USGS could not be reached. Use the station link or reload to try again.", "note"));
-        evidence(current, "Inspect source error", { error: error.message, binding: currentBinding });
-      }
-    })(),
-    (async () => {
-      const end = new Date(); end.setUTCDate(end.getUTCDate() - 1);
-      const start = new Date(end); start.setUTCDate(start.getUTCDate() - 29);
-      const startDate = start.toISOString().slice(0, 10), endDate = end.toISOString().slice(0, 10);
-      try {
-        const result = await fetchDailyValues(dailyBinding.feature_id, startDate, endDate,
-          dailyBinding.parameter_code, dailyBinding.statistic_id, networkFetch),
-          quantities = matchingSeries(result.quantities, dailyBinding),
-          chart = dailyHydrograph(quantities, { width: 600, height: 180, padding: 12, phenomenon: dailyBinding.phenomenon });
-        if (token !== generation) return;
-        daily.replaceChildren(element("h3", "Tidally filtered daily discharge"),
-          element("p", `${startDate} to ${endDate}. A separate daily mean product, not the instantaneous reading above.`, "note"));
-        if (chart.kind === "empty") daily.append(element("p", "No daily records are available in this window."));
-        else {
-          const ns = "http://www.w3.org/2000/svg", svg = document.createElementNS(ns, "svg");
-          svg.setAttribute("viewBox", "0 0 600 180"); svg.setAttribute("class", "chart"); svg.setAttribute("role", "img");
-          svg.setAttribute("aria-label", `${chart.points.length} daily means, from ${chart.min} to ${chart.max} ft³/s. Gaps are not connected.`);
-          for (const y of [12, 90, 168]) {
-            const grid = document.createElementNS(ns, "line");
-            for (const [key, value] of Object.entries({ x1: 12, x2: 588, y1: y, y2: y })) grid.setAttribute(key, value);
-            svg.append(grid);
-          }
-          const path = document.createElementNS(ns, "path"); path.setAttribute("d", chart.path); svg.append(path);
-          for (const segment of chart.segments) if (segment.length === 1) {
-            const dot = document.createElementNS(ns, "circle");
-            dot.setAttribute("cx", segment[0].x); dot.setAttribute("cy", segment[0].y); dot.setAttribute("r", "3"); svg.append(dot);
-          }
-          const labels = element("div", null, "chart-labels");
-          labels.append(element("span", chart.first_time.slice(0, 10)), element("span", chart.last_time.slice(0, 10)));
-          daily.append(element("p", `Range: ${chart.min.toLocaleString()}–${chart.max.toLocaleString()} ft³/s`, "note"), svg, labels);
+// "Right now": one observed reading and its recent history. Nothing here is modelled or invented.
+function nowPanel(river, token) {
+  const panel = element("section", null, "now");
+  panel.setAttribute("aria-label", `${river.name} observations`);
+  if (!river.first_place) {
+    panel.classList.add("empty-now");
+    const cell = element("div");
+    cell.append(element("p", river.status === "planned" ? "Not yet in the atlas" : "No live gauge yet", "eyebrow"),
+      element("p", river.status === "planned"
+        ? "This river has a reserved place in the atlas. Its gauges, terrain and scenes are still to come."
+        : "No USGS gauge is bound to this river yet, so nothing on this page is a measured river condition. The scenes below show terrain and illustrative water only."));
+    panel.append(cell); return { panel, ready: Promise.resolve() };
+  }
+  const current = element("div"), daily = element("div");
+  for (const node of [current, daily]) { node.setAttribute("aria-live", "polite"); node.append(element("p", "Loading USGS observations…", "note")); }
+  panel.append(current, daily);
+  const ready = (async () => {
+    const loaded = await loadPlaceFromRegistry({ registryUrl: "./data/registry.json", riverPack: river.id,
+      placeId: river.first_place, fetchImpl: networkFetch });
+    if (token !== generation) return;
+    const manifest = loaded.manifest, name = manifest.name.replace(/ visual study$/, ""),
+      binding = manifest.data_bindings.find(b => b.phenomenon === "discharge"),
+      filteredBinding = manifest.data_bindings.find(b => b.phenomenon === "tidally_filtered_discharge"),
+      // A binding with a time series is matched exactly; one without is matched on station and quantity only.
+      exact = Boolean(binding.time_series_id), maximumAgeMinutes = binding.maximum_age_minutes ?? 120,
+      keep = (quantities, b) => exact ? matchingSeries(quantities, b)
+        : quantities.filter(q => q.feature_id === b.feature_id && q.phenomenon === b.phenomenon);
+    const station = manifest.references?.find(r => /usgs/i.test(r.label ?? "") || /waterdata\.usgs\.gov/.test(r.url));
+    await Promise.all([
+      (async () => {
+        try {
+          const result = await fetchLatestContinuous(binding.feature_id, binding.parameter_code, networkFetch),
+            validTime = new Date().toISOString(),
+            selection = latestAtOrBefore(keep(result.quantities, binding), validTime, { maximumAgeMs: maximumAgeMinutes * 60000 }),
+            state = riverState({ validTime, features: { gauges: [{ id: binding.feature_id }], authored_places: [manifest] },
+              selections: [{ feature_id: binding.feature_id, phenomenon: "discharge",
+                policy_id: `${binding.id}_latest_at_or_before_${maximumAgeMinutes}_minutes`, result: selection }] }),
+            status = observedFlowStatus(state, binding.feature_id);
+          if (token !== generation) return;
+          const badge = element("span", status.badge, `badge ${status.kind}`);
+          current.replaceChildren(element("p", `Right now · ${name}`, "eyebrow"), reading(status),
+            element("p", null, "note"));
+          current.lastChild.append(badge, status.kind === "stale"
+            ? `No current reading. Last value ${status.detail.replace(/^Latest [^·]*· /, "")}` : status.detail);
+          if (station) current.append(link("USGS station page", station.url, true));
+          evidence(current, "Inspect observation and selection", { binding_class: exact ? "exact" : "station_and_quantity",
+            binding, request: state.request, selection, quantity: status.quantity, retrieval_time: result.retrieval_time }, result.url);
+        } catch (error) {
+          if (token !== generation) return;
+          current.replaceChildren(element("p", `Right now · ${name}`, "eyebrow"), element("p", "Unavailable", "reading"),
+            element("p", "USGS could not be reached. Reload to try again.", "note"));
+          evidence(current, "Inspect source error", { error: error.message, binding });
         }
-        evidence(daily, "Inspect daily records and source", { binding_class: "exact", binding: dailyBinding,
-          retrieval_time: result.retrieval_time, quantities }, result.url);
-      } catch (error) {
-        if (token !== generation) return;
-        daily.replaceChildren(element("h3", "Tidally filtered daily discharge"), element("p", "Daily history unavailable. Use the station link or reload to try again."));
-        evidence(daily, "Inspect source error", { error: error.message, binding: dailyBinding });
-      }
-    })(),
-  ]);
+      })(),
+      (async () => {
+        const end = new Date(); end.setUTCDate(end.getUTCDate() - 1);
+        const start = new Date(end); start.setUTCDate(start.getUTCDate() - 29);
+        const startDate = start.toISOString().slice(0, 10), endDate = end.toISOString().slice(0, 10),
+          dailyBinding = filteredBinding ?? { ...binding, phenomenon: "discharge", parameter_code: binding.parameter_code, statistic_id: "00003" },
+          title = filteredBinding ? "Tidally filtered daily discharge" : "Daily mean discharge";
+        try {
+          const result = await fetchDailyValues(dailyBinding.feature_id, startDate, endDate,
+            dailyBinding.parameter_code, dailyBinding.statistic_id ?? "00003", networkFetch),
+            quantities = keep(result.quantities, dailyBinding),
+            chart = dailyHydrograph(quantities, { width: 600, height: 180, padding: 12, phenomenon: dailyBinding.phenomenon });
+          if (token !== generation) return;
+          daily.replaceChildren(element("p", `${title} · last 30 days`, "eyebrow"));
+          if (chart.kind === "empty") daily.append(element("p", "No daily records are available in this window.", "note"));
+          else {
+            const labels = element("div", null, "chart-labels");
+            labels.append(element("span", chart.first_time.slice(0, 10)),
+              element("span", `${chart.min.toLocaleString()}–${chart.max.toLocaleString()} ft³/s`), element("span", chart.last_time.slice(0, 10)));
+            daily.append(hydrograph(chart, `${chart.points.length} daily means, from ${chart.min} to ${chart.max} ft³/s. Gaps are not connected.`), labels,
+              element("p", filteredBinding ? "A separate daily mean product, not the instantaneous reading." : "Daily mean from the same station.", "note"));
+          }
+          evidence(daily, "Inspect daily records and source", { binding_class: exact ? "exact" : "station_and_quantity",
+            binding: dailyBinding, retrieval_time: result.retrieval_time, quantities }, result.url);
+        } catch (error) {
+          if (token !== generation) return;
+          daily.replaceChildren(element("p", title, "eyebrow"), element("p", "Daily history unavailable. Reload to try again.", "note"));
+          evidence(daily, "Inspect source error", { error: error.message, binding: dailyBinding });
+        }
+      })(),
+    ]);
+  })();
+  return { panel, ready };
+}
+
+function sceneCard(scene, manifestUrl) {
+  const card = link("", new URL(scene.entry, manifestUrl)); card.className = "scene";
+  if (scene.image) { const img = element("img"); img.src = new URL(scene.image, manifestUrl); img.alt = ""; img.loading = "lazy"; card.append(img); }
+  const body = element("div", null, "scene-body");
+  body.append(element("h4", scene.name));
+  if (scene.fidelity) body.append(element("p", scene.fidelity, "fidelity"));
+  if (scene.views?.length) {
+    const views = element("ul", null, "views"); views.setAttribute("aria-label", "Viewpoints");
+    for (const view of scene.views) views.append(element("li", view));
+    body.append(views);
+  }
+  body.append(element("span", "Explore →", "open")); card.append(body); card.setAttribute("aria-label", `Explore ${scene.name}`);
+  return card;
 }
 
 async function selectRiver(id) {
@@ -116,30 +168,46 @@ async function selectRiver(id) {
   for (const choice of list.querySelectorAll("a")) {
     if (choice.dataset.river === id) choice.setAttribute("aria-current", "page"); else choice.removeAttribute("aria-current");
   }
-  detail.replaceChildren(element("p", "Loading river…"));
+  detail.replaceChildren(element("p", "Loading river…", "note"));
   try {
-    const river = await json(new URL(entry.manifest, new URL("./data/registry.json", location.href)));
+    const manifestUrl = new URL(`./data/${entry.manifest}`, location.href), river = await json(manifestUrl);
     if (token !== generation) return;
-    const title = element("h2", river.name); title.id = "river-name";
-    detail.replaceChildren(element("span", statuses[river.status], "status"), title, element("p", river.summary, "summary"));
-    document.title = `${river.name} · River Pulse · Waterscape`;
-    if (river.scenes?.length) {
-      detail.append(element("h3", "Scenes on this river"),
-        element("p", "Open a scene and choose its viewpoints: an overview, the riverbank, or a closer look at the place.", "note"));
-      const scenes = element("div", null, "scene-links");
-      for (const scene of river.scenes) scenes.append(link(`Explore ${scene.name}`,
-        new URL(scene.entry, new URL(`./data/${entry.manifest}`, location.href))));
-      detail.append(scenes);
+    document.title = `${river.name} · River Pulse · Waterscape`; crumb.textContent = river.name;
+    const sceneCount = river.scenes?.length ?? 0, hero = element("section", null, "hero"), copy = element("div", null, "hero-copy"),
+      title = element("h2", river.name), status = element("span", statuses[river.status], "status"), facts = element("ul", null, "facts");
+    title.id = "river-name"; status.dataset.status = river.status;
+    if (river.scenes?.[0]?.image) { const img = element("img"); img.src = new URL(river.scenes[0].image, manifestUrl); img.alt = ""; hero.append(img); }
+    facts.append(element("li", sceneCount ? `${sceneCount} ${sceneCount === 1 ? "scene" : "scenes"}` : "No scenes yet"),
+      element("li", river.first_place ? "Live USGS discharge" : "No live gauge yet"));
+    copy.append(status, title, element("p", river.summary, "summary"), facts); hero.append(copy);
+    detail.replaceChildren(hero);
+
+    const nowHead = element("div", null, "section-head"), now = nowPanel(river, token);
+    nowHead.append(element("h3", "What the river is doing"),
+      element("p", river.first_place ? "Observed by USGS, with the time and approval status shown." : "Only observed or sourced values appear here."));
+    detail.append(nowHead, now.panel);
+
+    if (sceneCount) {
+      const head = element("div", null, "section-head"), scenes = element("div", null, sceneCount === 1 ? "scenes single" : "scenes");
+      head.append(element("h3", "Places to explore"),
+        element("p", "Open a scene, then choose a viewpoint: an overview, the riverbank, or a closer look."));
+      for (const scene of river.scenes) scenes.append(sceneCard(scene, manifestUrl));
+      detail.append(head, scenes);
     }
-    if (river.status === "planned") detail.append(element("p", "This river has a reserved place in the atlas. Its gauges, terrain and scenes are still to come.", "note"));
+    if (river.next_steps?.length && river.status !== "available") {
+      const head = element("div", null, "section-head"), steps = element("ul", null, "next");
+      head.append(element("h3", "What comes next"));
+      for (const step of river.next_steps) steps.append(element("li", step));
+      detail.append(head, steps);
+    }
     const references = element("details"), sources = element("ul", null, "references");
     references.append(element("summary", "River sources"));
     for (const ref of river.references) { const item = element("li"); item.append(link(ref.label, ref.url, true)); sources.append(item); }
     references.append(sources); detail.append(references);
-    if (river.first_place) await loadGaugePlace(river, token);
+    await now.ready;
   } catch (error) {
     if (token !== generation) return;
-    detail.append(element("p", "River details could not load. Reload to try again."));
+    detail.append(element("p", "River details could not load. Reload to try again.", "note"));
   }
 }
 function selectedId() {
@@ -155,8 +223,9 @@ try {
     return rank(a.id) - rank(b.id) || a.name.localeCompare(b.name);
   });
   for (const river of rivers) {
-    const choice = link("", `?river=${river.id}`); choice.className = "river-choice"; choice.dataset.river = river.id;
-    choice.append(element("strong", river.name), element("small", statuses[river.status]));
+    const choice = link("", `?river=${river.id}`); choice.className = "river-choice"; choice.dataset.river = river.id; choice.dataset.status = river.status;
+    const dot = element("span", null, "dot"); dot.setAttribute("aria-hidden", "true");
+    choice.append(dot, element("span", river.name), element("small", ` · ${statuses[river.status]}`));
     choice.addEventListener("click", event => {
       if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0) return;
       event.preventDefault(); history.pushState(null, "", choice.href); selectRiver(river.id);
@@ -166,6 +235,6 @@ try {
   window.addEventListener("popstate", () => selectRiver(selectedId()));
   await selectRiver(selectedId());
 } catch (error) {
-  list.replaceChildren(element("p", "River list unavailable."));
-  detail.replaceChildren(element("p", "The river atlas could not load. Reload to try again, or open Hacienda or Jenner above."));
+  list.replaceChildren(element("p", "River list unavailable.", "note"));
+  detail.replaceChildren(element("p", "The river atlas could not load. Reload to try again, or return to the California overview.", "note"));
 }

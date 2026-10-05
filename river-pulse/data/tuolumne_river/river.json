@@ -4,16 +4,45 @@
   "name": "Tuolumne River",
   "status": "in_development",
   "summary": "Yosemite's high Sierra meadows, granite canyons and Hetch Hetchy, connected by the river.",
-  "scenes": [{"name": "Poopenaut Valley form study", "entry": "../../renderer/tuolumne.html"}],
+  "scenes": [
+    {
+      "name": "Poopenaut Valley form study",
+      "entry": "../../renderer/tuolumne.html",
+      "image": "scenes/poopenaut_valley.jpg",
+      "fidelity": "Native elevations, authored water",
+      "views": [
+        "Overview",
+        "Valley",
+        "Eye level",
+        "River contact",
+        "Dam transition",
+        "Dam close-up",
+        "Below dam",
+        "Reservoir"
+      ]
+    }
+  ],
   "next_steps": [
     "Poopenaut Valley is selected: source terrain, aerial imagery, river layout and California CalWater watershed context are acquired in foundation/poopenaut/.",
     "Review the Poopenaut Valley plain-form runtime from five calibrated cameras before detailed water, granite, vegetation or structures.",
     "Check native 1 m NCALM lidar footprint coverage and horizontal/vertical datums before a finer terrain pass; no live gauge binding is established."
   ],
   "references": [
-    { "label": "National Wild and Scenic Rivers System", "url": "https://www.fws.gov/rivers/river/tuolumne" },
-    { "label": "NPS Tuolumne River Plan / Poopenaut Valley", "url": "https://www.nps.gov/yose/getinvolved/trp.htm" },
-    { "label": "California Water Boards / state CalWater watershed mapping", "url": "https://gispublic.waterboards.ca.gov/portalserver/rest/services/Hydrology/CalWater_Boundaries/MapServer" },
-    { "label": "OpenTopography / NCALM Poopenaut 1 m lidar availability", "url": "https://portal.opentopography.org/datasetMetadata?otCollectionID=OT.022013.26911.1" }
+    {
+      "label": "National Wild and Scenic Rivers System",
+      "url": "https://www.fws.gov/rivers/river/tuolumne"
+    },
+    {
+      "label": "NPS Tuolumne River Plan / Poopenaut Valley",
+      "url": "https://www.nps.gov/yose/getinvolved/trp.htm"
+    },
+    {
+      "label": "California Water Boards / state CalWater watershed mapping",
+      "url": "https://gispublic.waterboards.ca.gov/portalserver/rest/services/Hydrology/CalWater_Boundaries/MapServer"
+    },
+    {
+      "label": "OpenTopography / NCALM Poopenaut 1 m lidar availability",
+      "url": "https://portal.opentopography.org/datasetMetadata?otCollectionID=OT.022013.26911.1"
+    }
   ]
 }

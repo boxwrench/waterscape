@@ -5,13 +5,32 @@
   "status": "available",
   "summary": "Explore the Sacramento River at Freeport: green steel, tree-lined levees and a broad reflective channel, alongside sourced USGS discharge.",
   "first_place": "freeport",
-  "scenes": [{ "name": "Freeport", "place_id": "freeport", "entry": "../../renderer/freeport.html" }],
+  "scenes": [
+    {
+      "name": "Freeport",
+      "place_id": "freeport",
+      "entry": "../../renderer/freeport.html",
+      "image": "scenes/freeport.jpg",
+      "fidelity": "Photo-informed setting with live USGS discharge",
+      "views": [
+        "Bridge",
+        "Riverbank",
+        "Terrain"
+      ]
+    }
+  ],
   "next_steps": [
     "Review and refine Freeport's approximate bridge and bank setting.",
     "Select and source the next Sacramento River place."
   ],
   "references": [
-    { "label": "California DWR Sacramento River region", "url": "https://water.ca.gov/-/media/DWR-Website/Web-Pages/Work-With-Us/Grants-And-Loans/Sustainable-Groundwater/Technical-Assistance/Educational-Material-Dec-2022/Sacramento_River_Lesson_Plan_11_11_22.pdf" },
-    { "label": "USGS Sacramento River at Freeport", "url": "https://waterdata.usgs.gov/monitoring-location/USGS-11447650/" }
+    {
+      "label": "California DWR Sacramento River region",
+      "url": "https://water.ca.gov/-/media/DWR-Website/Web-Pages/Work-With-Us/Grants-And-Loans/Sustainable-Groundwater/Technical-Assistance/Educational-Material-Dec-2022/Sacramento_River_Lesson_Plan_11_11_22.pdf"
+    },
+    {
+      "label": "USGS Sacramento River at Freeport",
+      "url": "https://waterdata.usgs.gov/monitoring-location/USGS-11447650/"
+    }
   ]
 }
