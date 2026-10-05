@@ -26,8 +26,14 @@ California DWR geometry is a fallback if the local centerline cannot load.
 - **Hacienda Bridge:** real USGS 3DEP terrain, USGS 3DHP cartographic centerlines,
   USGS discharge/history, time selection and seasonal context; Map, Bridge and Hacienda
   Beach viewpoints.
-- **Jenner:** authored place manifest, common package-loader tests and a USGS NAVD88
-  water-level adapter. No Jenner 3D scene yet.
+- **East Fork:** Lake Mendocino outflow, with two bounded bank views, photo-informed earthfill
+  dam/outlet, riprap and oak groups. USGS 11462000 is a historical record; this scene has no
+  live discharge or stage binding.
+- **Jenner:** photo-informed estuary lookout, river shore and Pacific beach, with sourced
+  USGS NAVD88 water-level evidence independent of its illustrative ocean water.
+- **Geographic map:** bundled USGS centerlines and clickable place pins join all three places.
+  The inset opens on Hacienda Map, or through Map on East Fork/Jenner. It does not expand
+  Hacienda's local 3D terrain into a surveyed whole-river scene.
 - **Not implemented:** local hydrodynamic simulation, forecasts, a complete river
   corridor. Package capabilities describe intent, not
   guaranteed data availability. Offline replay has a tested data contract, not a finished UI.
@@ -57,6 +63,35 @@ accessible if graphics initialization fails. Source outages show unavailable dat
 The [authored-water notes](../docs/river-pulse/authored-water.md) record visual mappings,
 photographic references, CC0 ground materials, MIT tree assets and rendering limitations.
 
+See [River structure](../docs/river-pulse/river-structure.md) for how rivers, places and views
+are organised, and how to choose places for a new river.
+
+## Map flow bindings
+
+- **Reach dynamics (Derived, then Illustrative):** `visual-bindings/map-flow-dynamics.js`
+  derives, along the 3DHP centerline and 3DEP terrain, how steeply the ground falls
+  downstream and how sharply the line bends. The ribbon maps these to streak speed (steeper
+  runs faster) and speeds up and froths the outside bank of a bend. This is an Illustrative
+  binding: it is not velocity, shear stress or erosion, and the ordering within the reach is
+  all it claims. Two half-period-offset copies of the pattern are blended so changing speed
+  does not stretch it.
+- **Baseline drift:** with no discharge available the water drifts slowly (Setting). A recorded
+  zero stops it; reduced motion freezes it.
+- **Haze (Setting):** a light exponential haze on the Map gives the valley depth.
+
+## Historical high and low (Hacienda close-ups)
+
+Bridge and Hacienda Beach offer **Selected time / Record low / Record high**. The record
+extremes come from USGS (`visual-bindings/hacienda-extremes.js`, each with its source URL; see
+[RP11](../docs/roadmap/tasks/RP11-hacienda-high-low.md)): record low flow 0.75 ft³/s
+(1977-05-06, no stage published) and record high stage 49.7 ft (90,100 ft³/s, 1955-12-23).
+Water height is an **Illustrative** mapping of discharge: below the authored 100 ft³/s baseline
+it falls 1.1 m per tenfold drop (the record low empties the channel); above it the level rises
+with the log of discharge so the record high reaches the underside of the authored bridge steel
+(11.7 m), as the great floods do. The real rise is about 15 m, and the bridge dimensions are
+photo-informed estimates. Selected time follows the timeline. The water surface spreads past the
+banks and the terrain cuts the waterline. The readout always shows the real values.
+
 ## Layout
 
 | Directory | Responsibility |
@@ -64,7 +99,7 @@ photographic references, CC0 ground materials, MIT tree assets and rendering lim
 | `adapters/` | Normalize USGS and DWR source records, preserving provenance |
 | `data-model/` | Quantities, deterministic selection, RiverState, packages and replay |
 | `visual-bindings/` | Convert scientific state into labels, charts and scene styling |
-| `renderer/` | Hacienda terrain scene and its interface |
+| `renderer/` | Hacienda terrain, authored place scenes, map navigation and interfaces |
 | `data/` | River/place manifests, generated registry and committed terrain/centerlines |
 
 Root `vendor/`, camera/projection utilities, `pipeline/`, `scripts/` and dependency installation

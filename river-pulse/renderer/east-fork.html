@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#25382e">
+    <title>River Pulse · East Fork · Waterscape</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='8' fill='%2325382e'/%3E%3Cpath d='M7 13c10-8 16 8 26 0M7 21c10-8 16 8 26 0M7 29c10-8 16 8 26 0' fill='none' stroke='%23e0e8c8' stroke-width='2'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="./jenner.css">
+    <link rel="stylesheet" href="./river-map.css">
+  </head>
+  <body data-river-place="east_fork">
+    <a class="skip-link" href="#level-card">Skip to place context</a>
+    <canvas id="scene" tabindex="0" aria-label="East Fork below Coyote Valley Dam. Drag to look, scroll or use WASD to walk along the bank."></canvas>
+    <div class="shade" aria-hidden="true"></div>
+    <header class="topbar">
+      <a class="brand" href="../../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M7 12c10-9 16 9 26 0M7 20c10-9 16 9 26 0M7 28c10-9 16 9 26 0"/></svg><span>RIVER PULSE<small>A living river atlas</small></span></a>
+      <span class="trail">Russian River <i>/</i> Lake Mendocino outflow</span>
+      <nav class="actions" aria-label="Places and scene controls">
+        <button data-river-map-toggle aria-expanded="false" aria-controls="river-place-map">Map</button>
+        <button id="explore" aria-pressed="false">Explore</button>
+        <button id="inspect" aria-expanded="false" aria-controls="inspector">Inspect data ↗</button>
+      </nav>
+    </header>
+    <main>
+      <section class="place-card" aria-labelledby="place-title">
+        <p class="eyebrow">RUSSIAN RIVER / START <span>FIELD PREVIEW</span></p>
+        <h1 id="place-title">East Fork.</h1>
+        <p class="subtitle">The lake hands water to the river.</p>
+        <section id="level-card" class="level-card glass" aria-label="East Fork source context" tabindex="-1">
+          <div class="level-heading"><span>BELOW COYOTE VALLEY DAM</span><span id="level-quality">Historical gauge</span></div>
+          <strong id="level-value">Lake Mendocino</strong>
+          <p id="level-time">The local USGS continuous record ends in 2011. This view does not show a live release or water level.</p>
+          <a id="gauge-source" href="https://waterdata.usgs.gov/monitoring-location/USGS-11462000/" target="_blank" rel="noopener">USGS 11462000 <span>Source record ↗</span></a>
+        </section>
+      </section>
+      <aside id="inspector" class="glass inspector" aria-label="East Fork source evidence and interpretation" hidden>
+        <div class="panel-heading"><div><span class="eyebrow">THE EVIDENCE</span><h2>Below the dam</h2></div><button id="inspect-close" aria-label="Close inspector">×</button></div>
+        <p>The East Fork Russian River leaves Lake Mendocino through Coyote Valley Dam's outlet works. This is the upstream place in our Russian River journey.</p>
+        <dl><dt>Station</dt><dd><a href="https://waterdata.usgs.gov/monitoring-location/USGS-11462000/" target="_blank" rel="noopener">USGS 11462000 · East Fork near Ukiah</a></dd><dt>Record</dt><dd>Historical; no current discharge or stage is bound to this scene.</dd><dt>Operations</dt><dd><a href="https://www.spk-wc.usace.army.mil/fcgi-bin/monthly.py?report=coy" target="_blank" rel="noopener">USACE Coyote Valley Dam report ↗</a></dd></dl>
+        <h3>Read the representation</h3>
+        <p>The broad earthfill face, gravel crest, outlet portals, concrete wing walls, grey riprap and oak groups are photo-informed authored Setting. Dimensions, banks and camera routes are display choices, not surveyed infrastructure or bathymetry.</p>
+        <p>Reflections and refraction are computed from a modeled water surface and gravel bed. Green water, ripples and outlet foam are illustrative. They do not establish today's flow, turbidity, dam operations or flood extent. The water level stays fixed.</p>
+        <h3>Photo references</h3>
+        <p><a href="https://today.ucsd.edu/story/new-forecast-informed-decision-making-tool-implemented-at-lake-mendocino" target="_blank" rel="noopener">Coyote Valley Dam outlet photograph · UC San Diego ↗</a></p>
+        <p><a href="https://rs.locationshub.com/Home/LocationDetail?rsLocationId=050-10120170" target="_blank" rel="noopener">Coyote Valley Dam gallery · Locations Hub ↗</a></p>
+        <p class="resource-note">Local CC0 rock and pebble materials, MIT oak meshes and grass cutouts are shared with the other Waterscape scenes. Reference photos are not redistributed.</p>
+      </aside>
+    </main>
+    <footer class="coast-controls">
+      <div class="views glass" role="group" aria-label="East Fork viewpoints">
+        <button data-view="shore" class="active" aria-pressed="true"><span>01</span> Riverbank</button>
+        <button data-view="outlet" aria-pressed="false"><span>02</span> Below the outlet</button>
+      </div>
+      <div class="scene-note"><span id="scene-state">Preparing the river</span><span>Authored setting</span><button id="pause" aria-pressed="false">Pause water</button></div>
+      <p class="controls-copy">Drag to look <i>·</i> Scroll or WASD to walk <i>·</i> Stay beside the water</p>
+    </footer>
+    <div id="loading" role="status"><span class="loading-ring"></span><strong>Entering the East Fork</strong><p id="status">Shaping the riverbank…</p></div>
+    <div id="error" class="glass error" role="status" hidden></div>
+    <script type="module" src="./east-fork.js"></script>
+    <script type="module" src="./river-map.js"></script>
+  </body>
+</html>

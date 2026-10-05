@@ -1,8 +1,61 @@
-# Handoff — 2026-09-30
+# Handoff — 2026-10-05
 
 Where things stand, for whoever picks this up next (person or agent). The plan lives in
 `ROADMAP.md` and `docs/roadmap/README.md`; this file is the snapshot of "what just happened
 and what's next".
+
+## River Pulse branch integration — 2026-10-05
+
+The user requested pushing the separately developed Lake Mendocino/Russian River work
+as a branch. `task/RP13-publish` merges `task/rp-visuals-v2` (including LM2's East Fork
+scene and river map) with remote main at `06f44d0`. The merge had no conflicts and
+retains the published Hetch Hetchy work and newer resource references. See
+[RP13](roadmap/tasks/RP13-publish-branch.md) for verification.
+
+This is a branch publication, not a main-branch merge or Pages deployment.
+The incomplete LM1 Lake Mendocino reservoir foundations remain separate; the East Fork
+scene represents the downstream outflow, not a completed reservoir bundle. The local
+milestone notes below describe the work before this integration.
+
+## River Pulse visual pass — 2026-10-02 (branch `task/rp-visuals-v2`)
+
+Built on LM2 (East Fork and the geographic river map). Full list in
+[RP12](roadmap/tasks/RP12-river-pulse-visuals.md). Highlights: Hacienda map water stays blue,
+drifts when no discharge is known, and speeds up on steep reaches and outer bends; Jenner
+rebuilt to match the two reference photos (barrier beach, one break line, moving river water,
+conifer stands and scrub); Hacienda Bridge and Beach now have Selected time / Record low /
+Record high water from USGS records ([RP11](roadmap/tasks/RP11-hacienda-high-low.md)), the
+record high reaching the bridge steel. Place structure rules for new rivers are in
+[River structure](river-pulse/river-structure.md).
+
+Branch notes for whoever merges: this branch replaces `task/rp-visuals` (which had its own
+hub page, dropped in favour of LM2's river map) and `archive/rp-water-ribbon-superseded`
+(superseded, and it also holds seven H1 commits; those are preserved cleanly on
+`task/H1-recovered`). `task/LM1` (earthfill dam profile, intake tower, NID facts) is still
+unmerged and based on `task/H1`. I also fixed `river-package-validation.test.mjs`, which
+LM2 left expecting two places.
+
+## East Fork local preview — LM2
+
+`task/LM2` in `/tmp/waterscape-mendocino` continues the Russian River start below Coyote
+Valley Dam. The branch starts at current origin/main (`3c01b23`), preserving the independent
+LM1 reservoir foundations and active H1/Jenner worktrees. East Fork has two bounded bank
+views, broad dry earthfill face, crest road, concrete outlet portals and wing walls, grey
+riprap, grouped oaks and reflective illustrative water. Photographs were inspected; sources
+and display limitations are in [scene notes](river-pulse/east-fork-scene.md).
+
+Hacienda Map now has a geographic inset with selectable East Fork, Hacienda and Jenner pins.
+East Fork/Jenner open the same inset through Map. It uses committed USGS 3DHP centerlines,
+with manifest anchors; Hacienda's existing 3D terrain still covers Hacienda only. DWR's
+centerline service was offline, so USGS 3DHP was used for this new inset.
+
+The local East Fork station's continuous record ends in 2011; no current flow/stage is
+invented or substituted from a mainstem gauge. Lake Mendocino's separate reservoir bundle
+remains LM1 work: its NHD outline request timed out again on October 1. The lake-side intake
+model remains on task/LM1 and is not pictured from this downstream scene.
+
+Preview server port 5175 serves this branch's build. No push or merge for LM2. See
+[task](roadmap/tasks/LM2-east-fork.md) for checks and final result.
 
 ## Jenner publication — RP10
 

@@ -37,10 +37,11 @@ export function createJennerWater(noise, maps) {
     sx = sx.add(cos(phase).mul(amp).mul(kx));
     sz = sz.add(cos(phase).mul(amp).mul(kz));
   }
-  const breakerPhase = shore.mul(0.21).sub(clock.mul(0.95))
+  const breakerPhase = shore.mul(0.075).sub(clock.mul(0.5))
       .add(slow.sub(0.5).mul(2.6)).add(sin(p.y.mul(0.027)).mul(0.35)),
     breaker = sin(breakerPhase),
-    breakZone = sea.mul(smoothstep(-0.5, 1, depth)).mul(float(1).sub(smoothstep(3, 7.5, depth))),
+    swashWave = sin(shore.mul(0.21).sub(clock.mul(0.95)).add(slow.sub(0.5).mul(2.6))),
+    breakZone = sea.mul(smoothstep(-0.5, 0.8, depth)).mul(float(1).sub(smoothstep(2.2, 4.6, depth))),
     breakerHeight = breaker.max(0).pow(3).mul(0.7).mul(breakZone),
     surface = height.add(breakerHeight),
     material = new THREE.MeshBasicNodeMaterial({ side: THREE.DoubleSide, alphaTest: 0.02 });
@@ -52,9 +53,16 @@ export function createJennerWater(noise, maps) {
     detail = texture(noise, wp.div(37).add(vec2(clock.mul(-0.015), clock.mul(0.008)))).rg.sub(0.5)
       .add(texture(noise, vec2(wp.y.negate(), wp.x).div(9.3)
         .add(vec2(clock.mul(0.022), 0.31))).ba.sub(0.5).mul(0.4)),
-    normal = normalize(vec3(sx.negate().add(detail.x.mul(mix(0.10, 0.4, sea)))
+    // River and lagoon: a current that carries streaky ripples toward the mouth (north, -z) plus a
+    // breeze ripple on top. Illustrative motion, not measured velocity or wind.
+    inland = float(1).sub(sea),
+    current = texture(noise, vec2(wp.x.div(29), wp.y.div(61).add(clock.mul(0.1)))).rg.sub(0.5)
+      .add(texture(noise, vec2(wp.x.div(13).add(0.37), wp.y.div(37).add(clock.mul(0.17)))).ba.sub(0.5).mul(0.5)),
+    breeze = texture(noise, wp.div(17).add(vec2(clock.mul(0.03), clock.mul(0.02)))).rg.sub(0.5),
+    riverRipple = current.mul(0.42).add(breeze.mul(0.3)).mul(inland),
+    normal = normalize(vec3(sx.negate().add(detail.x.mul(mix(0.10, 0.4, sea))).add(riverRipple.x)
       .sub(cos(breakerPhase).mul(breaker.max(0).pow(2)).mul(breakZone).mul(0.38)),
-      1, sz.negate().add(detail.y.mul(mix(0.10, 0.4, sea))))),
+      1, sz.negate().add(detail.y.mul(mix(0.10, 0.4, sea))).add(riverRipple.y))),
     eye = normalize(cameraPosition.sub(positionWorld)), facing = dot(normal, eye).clamp(0.02, 1),
     fresnel = pow(float(1).sub(facing), 5).mul(0.98).add(0.02),
     reflected = reflect(eye.negate(), normal),
@@ -71,8 +79,12 @@ export function createJennerWater(noise, maps) {
     sun = normalize(vec3(-0.58, 0.69, 0.32)),
     glint = pow(dot(normal, normalize(sun.add(eye))).max(0), 180).mul(1.1),
     swash = sea.mul(float(1).sub(smoothstep(0.12, 1.8, depth)))
-      .mul(smoothstep(0.15, 0.7, breaker.mul(0.5).add(0.5))),
-    crest = smoothstep(0.42, 0.86, breaker).mul(breakZone),
+      .mul(smoothstep(0.15, 0.7, swashWave.mul(0.5).add(0.5))),
+    // One persistent, ragged break line where the swell trips over the shoaling bed, as in
+    // photographs of the beach; the moving crests above ride on top of it. Illustrative.
+    plunge = exp(depth.sub(1.5).div(0.38).pow(2).negate()).mul(sea)
+      .mul(smoothstep(0.55, 0.9, slow.add(short.g.mul(0.5)).mul(0.9))),
+    crest = smoothstep(0.42, 0.86, breaker).mul(breakZone).max(plunge.mul(0.8)),
     foamDensity = short.r.mul(0.68).add(short.b.mul(0.42)),
     foamCoverage = crest.mul(0.74).add(swash.mul(0.62)).clamp(0, 1),
     lace = smoothstep(float(1).sub(foamCoverage), float(1.12).sub(foamCoverage), foamDensity),

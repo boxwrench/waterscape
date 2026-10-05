@@ -1,7 +1,7 @@
 // Continuous strip, subdivided along the centerline to follow map terrain. Width
 // is cartographic exaggeration. Every location stays tied to its source centerline.
 export function buildMapRibbonSkeleton(document, step = 12) {
-  const sites = [], distances = [], across = [], tangents = [], indices = [];
+  const sites = [], lines = [], distances = [], across = [], tangents = [], indices = [];
   for (const feature of document.features ?? []) {
     if (feature.name !== "Russian River") continue;
     for (const line of feature.lines ?? []) {
@@ -16,6 +16,7 @@ export function buildMapRibbonSkeleton(document, step = 12) {
       if (points.length < 2) continue;
       let along = 0;
       const first = sites.length;
+      lines.push({ first, count: points.length });
       for (let i = 0; i < points.length; i++) {
         const [x, z] = points[i], prev = points[Math.max(0, i - 1)], next = points[Math.min(points.length - 1, i + 1)],
           length = Math.hypot(next[0] - prev[0], next[1] - prev[1]),
@@ -33,7 +34,7 @@ export function buildMapRibbonSkeleton(document, step = 12) {
       }
     }
   }
-  return { sites, distances: new Float32Array(distances), across: new Float32Array(across),
+  return { sites, lines, distances: new Float32Array(distances), across: new Float32Array(across),
     tangents: new Float32Array(tangents), indices: new Uint32Array(indices) };
 }
 

@@ -7,8 +7,9 @@
     <title>River Pulse · Jenner Estuary · Waterscape</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='8' fill='%23183c40'/%3E%3Cpath d='M7 13c10-8 16 8 26 0M7 21c10-8 16 8 26 0M7 29c10-8 16 8 26 0' fill='none' stroke='%23e0e8c8' stroke-width='2'/%3E%3C/svg%3E">
     <link rel="stylesheet" href="./jenner.css">
+    <link rel="stylesheet" href="./river-map.css">
   </head>
-  <body>
+  <body data-river-place="jenner">
     <a class="skip-link" href="#level-card">Skip to water observation</a>
     <canvas id="scene" tabindex="0" aria-label="Jenner coastal scene. Drag to look, scroll to walk, or select a shoreline view."></canvas>
     <div class="shade" aria-hidden="true"></div>
@@ -16,6 +17,7 @@
       <a class="brand" href="../../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M7 12c10-9 16 9 26 0M7 20c10-9 16 9 26 0M7 28c10-9 16 9 26 0"/></svg><span>RIVER PULSE<small>A living river atlas</small></span></a>
       <span class="trail">Russian River <i>/</i> Pacific coast</span>
       <nav class="actions" aria-label="Places and scene controls">
+        <button data-river-map-toggle aria-expanded="false" aria-controls="river-place-map">Map</button>
         <a href="./hacienda.html">Hacienda ↗</a>
         <button id="explore" aria-pressed="false">Explore</button>
         <button id="inspect" aria-expanded="false" aria-controls="inspector">Inspect data ↗</button>
@@ -60,5 +62,6 @@
     <div id="loading" role="status"><span class="loading-ring"></span><strong>Entering the Pacific coast</strong><p id="status">Shaping the estuary…</p></div>
     <div id="error" class="glass error" role="status" hidden></div>
     <script type="module" src="./jenner.js"></script>
+    <script type="module" src="./river-map.js"></script>
   </body>
 </html>
