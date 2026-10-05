@@ -2,9 +2,12 @@ import * as THREE from "../../vendor/three/three.webgpu.js";
 import { loadRiverTerrain } from "./terrain.js";
 import { buildRiverTerrainGrid } from "./terrain-mesh.js";
 import { createTuolumneDam, damContactPositions } from "./tuolumne-dam.js";
+import { createTuolumneWater, buildTuolumneContactPositions } from "./tuolumne-water.js";
 
 const $ = id => document.getElementById(id), base = "../data/tuolumne_river/foundation/poopenaut/", started = performance.now();
-const requestedView = new URLSearchParams(location.search).get("view");
+const query = new URLSearchParams(location.search), requestedView = query.get("view"),
+  reduced = matchMedia("(prefers-reduced-motion: reduce)");
+let nativePaused = reduced.matches || query.get("freeze") === "1";
 let active = ["overview", "primary", "eye", "shore", "dam", "dam-close", "below", "lake"].includes(requestedView) ? requestedView : "overview";
 if (new URLSearchParams(location.search).get("mode") === "plain") $("mode").value = "plain";
 $("evidence").onclick = () => {
@@ -84,18 +87,34 @@ async function main() {
   const form = new THREE.MeshStandardNodeMaterial({ color: 0x958e82, roughness: 1 }),
     photo = new THREE.MeshBasicNodeMaterial({ map: aerial }), land = new THREE.Mesh(geometry, form), guide = riverGuide(layout, terrain);
   scene.add(land, guide);
+  const water = createTuolumneWater(terrain, layout.lines);
+  scene.add(water.mesh);
+  $("water-pass").value = query.get("water") === "previous" ? "previous" : "optics";
   const dam = await createTuolumneDam(terrain, structures, sun), damMeshes = [],
     plainDam = new THREE.MeshStandardNodeMaterial({ color: 0xaaa193, roughness: 1, side: THREE.DoubleSide });
   dam.group.traverse(mesh => { if (mesh.isMesh) { damMeshes.push(mesh); mesh.userData.studyMaterial = mesh.material; } });
   scene.add(dam.group);
   const nativePosition = geometry.getAttribute("position"),
-    contactPosition = new THREE.BufferAttribute(damContactPositions(grid.positions, terrain, structures), 3);
+    contactPosition = new THREE.BufferAttribute(damContactPositions(grid.positions, terrain, structures), 3),
+    riverContact = buildTuolumneContactPositions(terrain, nativePosition.array, water),
+    channelPosition = new THREE.BufferAttribute(riverContact.positions, 3), channelCuts = [];
+  for (let i = 1; i < riverContact.positions.length; i += 3)
+    if (riverContact.positions[i] !== nativePosition.array[i]) channelCuts.push([i, riverContact.positions[i]]);
   geometry.setAttribute("position", contactPosition); geometry.computeVertexNormals(); geometry.computeBoundingSphere();
   const camera = new THREE.PerspectiveCamera(48, 1, 1, 20000),
-    geometryBytes = nativePosition.array.byteLength + [geometry, guide.geometry, ...damMeshes.map(mesh => mesh.geometry)].reduce((sum, g) => sum + Object.values(g.attributes).reduce((n, a) => n + a.array.byteLength, 0) + (g.index?.array.byteLength ?? 0), 0),
+    geometryBytes = nativePosition.array.byteLength + channelPosition.array.byteLength + [geometry, guide.geometry, water.mesh.geometry, ...damMeshes.map(mesh => mesh.geometry)].reduce((sum, g) => sum + Object.values(g.attributes).reduce((n, a) => n + a.array.byteLength, 0) + (g.index?.array.byteLength ?? 0), 0),
     concrete = dam.textures[0], concreteMiB = concrete.image.width * concrete.image.height * 4 * 4 / 3 / 1048576;
   const nativeReadyMs = performance.now() - started;
-  let context = null, contextLoading = null, full = false, fullFailed = false;
+  let context = null, contextLoading = null, full = false, fullFailed = false,
+    nativeSeconds = 0, lastFrame = performance.now(), measure = null;
+  function nativePauseLabel() {
+    $("native-motion").textContent = nativePaused ? "Resume river" : "Pause river";
+    $("native-motion").setAttribute("aria-pressed", String(nativePaused));
+  }
+  nativePauseLabel();
+  function cancelMeasurement() {
+    measure = null; $("measure-native").disabled = false;
+  }
   function reservoirFailed(error) {
     fullFailed = true; full = false; context?.hide(); $("reservoir-scene").hidden = true;
     document.body.classList.remove("reservoir-context");
@@ -121,13 +140,25 @@ async function main() {
       if (full) await loaded.show(pose);
     } catch (error) { reservoirFailed(error); }
   }
-  function render() {
-    if (full) return;
+  function render(report = true) {
+    if (full || document.hidden) return;
+    water.update(nativeSeconds, false);
     renderer.render(scene, camera);
     $("loading").hidden = true;
-    $("metrics").textContent = `${renderer.info.render.triangles.toLocaleString()} triangles · ${renderer.info.render.drawCalls} draw calls · ${(geometryBytes / 1048576).toFixed(2)} MiB CPU geometry buffers\nResident texture RGBA+mips estimate ${(8 + concreteMiB).toFixed(2)} MiB (aerial 8.0 + concrete ${concreteMiB.toFixed(2)}) · Native initialization ${nativeReadyMs.toFixed(0)} ms (cache-dependent)\nStatic scene rendered on view/control changes. GPU timing, full browser/GPU memory and foreground FPS are unmeasured. A lazily loaded reservoir engine stays resident after visiting its views.`;
+    if (report) $("metrics").textContent = nativeCost();
+  }
+  function nativeCost() {
+    const size = renderer.getDrawingBufferSize(new THREE.Vector2()), rw = Math.round(size.x * 0.65), rh = Math.round(size.y * 0.65);
+    return `${active} / ${$("mode").value} / water ${$("water-pass").value} · ${innerWidth}×${innerHeight} · ${renderer.backend.isWebGPUBackend ? "WebGPU" : "WebGL2"}\n` +
+      `${renderer.info.render.triangles.toLocaleString()} rendered triangles · ${renderer.info.render.drawCalls} draw calls · ${(geometryBytes / 1048576).toFixed(2)} MiB CPU geometry buffers (comparison surface resident)\n` +
+      `Source texture RGBA+mips estimate ${(8 + concreteMiB).toFixed(2)} MiB · Native initialization ${nativeReadyMs.toFixed(0)} ms (cache-dependent)\n` +
+      `Authored water geometry ${(water.geometryBytes / 1048576).toFixed(3)} MiB; surface ${water.heightRange.map(n => n.toFixed(2)).join("–")} m, DEM proxy rather than stage.\n` +
+      `Study bank contact ${riverContact.changedCount} terrain vertices, at most ${riverContact.maxCut.toFixed(2)} m authored lowering; source/form terrain unchanged.\n` +
+      (water.reflectionEnabled ? `Reflection target ${rw}×${rh}: ${(rw * rh * 8 / 1048576).toFixed(2)} MiB color + ${(rw * rh * 4 / 1048576).toFixed(2)} MiB nominal depth, backend allocation unmeasured; retained after first use.\n` : "Sloping reach uses authored sky reflection; no planar-reflection target or reflected-scene pass.\n") +
+      `Native water renders while playing; paused/source/form/hidden views submit only on visible control changes. GPU timing, full browser/GPU memory and foreground FPS are unmeasured. A lazily loaded reservoir engine stays resident after visiting its views.`;
   }
   function view(id) {
+    cancelMeasurement();
     active = id;
     const nativeId = ["below", "lake"].includes(id) ? "dam-close" : id,
       preset = [...presets.cameras, ...damPresets.cameras].find(c => c.id === nativeId);
@@ -142,11 +173,13 @@ async function main() {
     for (const button of document.querySelectorAll("[data-camera]")) button.setAttribute("aria-pressed", String(button.dataset.camera === id));
     $("environment").textContent = `${renderer.backend.isWebGPUBackend ? "WebGPU" : "WebGL2"} · ${innerWidth}×${innerHeight} · DPR ${renderer.getPixelRatio()} · ${id === "dam-close" ? damPresets.version : presets.version}`;
     full = !fullFailed && ["dam", "dam-close", "below", "lake"].includes(id) && $("mode").value === "study";
+    water.mesh.visible = !full && $("mode").value === "study" && $("water-pass").value === "optics";
+    guide.visible = $("guide").checked && !water.mesh.visible;
     if (!full && ["below", "lake"].includes(id)) $("view-label").textContent = `${preset.label} · Reservoir context unavailable`;
     document.body.classList.toggle("reservoir-context", full);
     $("reservoir-scene").hidden = !full;
     $("reservoir-controls").hidden = !full; $("native-controls").hidden = full;
-    $("disclosure").textContent = full ? "Hetch Hetchy reservoir context · Illustrative water and release · Development scene" : "Reused dam · Symbolic river guide · Development scene";
+    $("disclosure").textContent = full ? "Hetch Hetchy reservoir context · Illustrative water and release · Development scene" : water.mesh.visible ? "Mapped river · Authored width, bed and water · Development scene" : "Reused dam · Symbolic river guide · Development scene";
     if (full) {
       $("environment").textContent = "Hetch Hetchy reservoir context · Original renderer · Fixed 64° field of view · RP23";
       $("loading").textContent = "Preparing the original Hetch Hetchy reservoir…"; $("loading").hidden = false;
@@ -166,8 +199,15 @@ async function main() {
     const mode = $("mode").value;
     land.material = mode === "aerial" ? photo : form;
     dam.group.visible = $("dam").checked && mode !== "aerial";
-    const position = dam.group.visible ? contactPosition : nativePosition;
-    if (geometry.getAttribute("position") !== position) {
+    const basePosition = dam.group.visible ? contactPosition : nativePosition,
+      showChannel = mode === "study" && $("water-pass").value === "optics" && $("river-contact").checked;
+    if (showChannel) {
+      channelPosition.array.set(basePosition.array);
+      for (const [index, y] of channelCuts) channelPosition.array[index] = Math.min(channelPosition.array[index], y);
+      channelPosition.needsUpdate = true;
+    }
+    const position = showChannel ? channelPosition : basePosition;
+    if (geometry.getAttribute("position") !== position || showChannel) {
       geometry.setAttribute("position", position); geometry.computeVertexNormals(); geometry.computeBoundingSphere();
     }
     for (const mesh of damMeshes) mesh.material = mode === "form" ? plainDam : mesh.userData.studyMaterial;
@@ -176,14 +216,39 @@ async function main() {
   }
   $("mode").onchange = presentation;
   $("dam").onchange = presentation;
-  $("guide").onchange = () => { guide.visible = $("guide").checked; render(); };
+  $("guide").onchange = () => view(active);
+  $("water-pass").onchange = presentation;
+  $("river-contact").onchange = presentation;
+  $("native-motion").onclick = () => { nativePaused = !nativePaused; nativePauseLabel(); render(); };
+  reduced.addEventListener("change", () => { nativePaused = reduced.matches; nativePauseLabel(); });
+  $("measure-native").onclick = () => {
+    measure = { warmup: 12, cpu: [], intervals: [] };
+    $("measure-native").disabled = true;
+    $("metrics").textContent = "Warming up, then sampling 120 native frames…";
+  };
   $("motion").onclick = () => {
     if (!context) return;
     context.setPlaying(!context.playing); $("motion").textContent = context.playing ? "Pause water" : "Resume water";
     $("motion").setAttribute("aria-pressed", String(!context.playing));
   };
   $("light").onchange = () => context?.setPreset($("light").value);
-  document.addEventListener("visibilitychange", () => context?.visibility());
-  window.addEventListener("resize", resize); resize();
+  document.addEventListener("visibilitychange", () => { context?.visibility(); cancelMeasurement(); if (!document.hidden) render(); });
+  window.addEventListener("resize", resize); presentation(); resize();
+  renderer.setAnimationLoop(() => {
+    const now = performance.now(), interval = now - lastFrame; lastFrame = now;
+    if (document.hidden || full) return;
+    if (!measure && (nativePaused || !water.mesh.visible)) return;
+    if (!nativePaused && water.mesh.visible) nativeSeconds += Math.min(interval, 50) / 1000;
+    const start = performance.now(); render(false); const cpu = performance.now() - start;
+    if (!measure) return;
+    if (measure.warmup-- > 0) return;
+    measure.cpu.push(cpu); measure.intervals.push(interval);
+    $("metrics").textContent = `Sampling ${measure.cpu.length}/120 native frames…`;
+    if (measure.cpu.length === 120) {
+      const percentile = (values, p) => [...values].sort((a, b) => a - b)[Math.floor((values.length - 1) * p)];
+      $("metrics").textContent = nativeCost() + `\nFrame interval p50/p95 ${percentile(measure.intervals, 0.5).toFixed(2)}/${percentile(measure.intervals, 0.95).toFixed(2)} ms; CPU submission p50/p95 ${percentile(measure.cpu, 0.5).toFixed(2)}/${percentile(measure.cpu, 0.95).toFixed(2)} ms. 12 warmup + 120 frames, not GPU-only time or foreground FPS.`;
+      cancelMeasurement();
+    }
+  });
 }
 main().catch(error => { $("loading").textContent = `This form study could not start: ${error.message}. Evidence remains available.`; console.error(error); });

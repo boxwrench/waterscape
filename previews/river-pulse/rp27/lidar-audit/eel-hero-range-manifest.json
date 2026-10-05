@@ -1,0 +1,179 @@
+{
+  "sourceUrl": "https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/1m/Projects/CA_NoCAL_Wildfires_B4_2018/TIFF/USGS_1m_x40y449_CA_NoCAL_Wildfires_B4_2018.tif",
+  "sourceFileSizeBytes": 394497744,
+  "headerRange": {
+    "start": 0,
+    "end": 65535,
+    "file": "tnm-b4-header-range.bin",
+    "bytes": 65536
+  },
+  "tileRanges": [
+    {
+      "tileIndex": 828,
+      "start": 257421112,
+      "end": 257624488,
+      "bytes": 203377,
+      "file": "b4-block-828.bin"
+    },
+    {
+      "tileIndex": 829,
+      "start": 257624489,
+      "end": 257828018,
+      "bytes": 203530,
+      "file": "b4-block-829.bin"
+    },
+    {
+      "tileIndex": 830,
+      "start": 257828019,
+      "end": 258031475,
+      "bytes": 203457,
+      "file": "b4-block-830.bin"
+    },
+    {
+      "tileIndex": 831,
+      "start": 258031476,
+      "end": 258235517,
+      "bytes": 204042,
+      "file": "b4-block-831.bin"
+    },
+    {
+      "tileIndex": 832,
+      "start": 258235518,
+      "end": 258435126,
+      "bytes": 199609,
+      "file": "b4-block-832.bin"
+    },
+    {
+      "tileIndex": 868,
+      "start": 265064849,
+      "end": 265178563,
+      "bytes": 113715,
+      "file": "b4-block-868.bin"
+    },
+    {
+      "tileIndex": 869,
+      "start": 265178564,
+      "end": 265383685,
+      "bytes": 205122,
+      "file": "b4-block-869.bin"
+    },
+    {
+      "tileIndex": 870,
+      "start": 265383686,
+      "end": 265589768,
+      "bytes": 206083,
+      "file": "b4-block-870.bin"
+    },
+    {
+      "tileIndex": 871,
+      "start": 265589769,
+      "end": 265790888,
+      "bytes": 201120,
+      "file": "b4-block-871.bin"
+    },
+    {
+      "tileIndex": 872,
+      "start": 265790889,
+      "end": 265983752,
+      "bytes": 192864,
+      "file": "b4-block-872.bin"
+    },
+    {
+      "tileIndex": 908,
+      "start": 272648801,
+      "end": 272849345,
+      "bytes": 200545,
+      "file": "b4-block-908.bin"
+    },
+    {
+      "tileIndex": 909,
+      "start": 272849346,
+      "end": 272991710,
+      "bytes": 142365,
+      "file": "b4-block-909.bin"
+    },
+    {
+      "tileIndex": 910,
+      "start": 272991711,
+      "end": 273200446,
+      "bytes": 208736,
+      "file": "b4-block-910.bin"
+    },
+    {
+      "tileIndex": 911,
+      "start": 273200447,
+      "end": 273400009,
+      "bytes": 199563,
+      "file": "b4-block-911.bin"
+    },
+    {
+      "tileIndex": 912,
+      "start": 273400010,
+      "end": 273604324,
+      "bytes": 204315,
+      "file": "b4-block-912.bin"
+    },
+    {
+      "tileIndex": 948,
+      "start": 280252579,
+      "end": 280448450,
+      "bytes": 195872,
+      "file": "b4-block-948.bin"
+    },
+    {
+      "tileIndex": 949,
+      "start": 280448451,
+      "end": 280642184,
+      "bytes": 193734,
+      "file": "b4-block-949.bin"
+    },
+    {
+      "tileIndex": 950,
+      "start": 280642185,
+      "end": 280787367,
+      "bytes": 145183,
+      "file": "b4-block-950.bin"
+    },
+    {
+      "tileIndex": 951,
+      "start": 280787368,
+      "end": 280993690,
+      "bytes": 206323,
+      "file": "b4-block-951.bin"
+    },
+    {
+      "tileIndex": 952,
+      "start": 280993691,
+      "end": 281191598,
+      "bytes": 197908,
+      "file": "b4-block-952.bin"
+    }
+  ],
+  "cropPixelWindow": {
+    "columnStart": 7408,
+    "rowStart": 5365,
+    "width": 800,
+    "height": 750
+  },
+  "cropDimensions": [
+    800,
+    750
+  ],
+  "validCells": 600000,
+  "nodataCells": 0,
+  "sourceMinMaxMeanMetres": {
+    "min": 14.194372177124023,
+    "max": 286.643310546875,
+    "mean": 96.10093688964844,
+    "validCells": 600000,
+    "nodataCells": 0,
+    "encodingMaximumAbsoluteQuantizationErrorMetres": 0.025
+  },
+  "sourceTargetSamples": {
+    "primary": 155.94212341308594,
+    "eye": 174.19447326660156,
+    "shore": 19.77635383605957
+  },
+  "retrievedAtUtc": "2026-10-04",
+  "note": "Only TIFF header plus intersecting compressed source blocks were transferred; full 394 MB raster was not downloaded."
+}

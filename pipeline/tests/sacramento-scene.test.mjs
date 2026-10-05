@@ -118,9 +118,9 @@ test("Freeport observation excludes future/wrong-series/daily readings and prese
   assert.equal(current.state.features.model_fields.length, 0, "Discharge must not create local hydraulics");
 });
 
-test("Sacramento navigation resolves to its first immersive scene and retains separate history", async () => {
+test("Sacramento opens its own river home, which lists its first immersive scene, and retains separate history", async () => {
   const river = JSON.parse(await readFile(new URL("../../river.json", base), "utf8"));
-  assert.equal(riverDestination(river), "./renderer/freeport.html");
+  assert.equal(riverDestination(river), "./river.html?river=sacramento_river");
   await access(new URL(river.scenes[0].entry, new URL("../../river.json", base)));
   const html = await readFile(new URL("../../../../renderer/freeport.html", base), "utf8");
   assert.ok(html.includes("../river.html?river=sacramento_river"));

@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Name>prd-tnm</Name><Prefix>StagedProducts/Elevation/OPR/Projects/CA_NorthernCA_B22/CA_NorthernCA_7_B22/TIFF/USGS_OPR_CA_NorthernCA_B22_10TDK0784.tif</Prefix><KeyCount>0</KeyCount><MaxKeys>1000</MaxKeys><IsTruncated>false</IsTruncated></ListBucketResult>

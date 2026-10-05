@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "river-pulse-terrain-0.1",
+  "id": "scotia_bluffs_hero_1m",
+  "name": "Eel Scotia Bluffs hero terrain crop",
+  "source": "USGS 3D Elevation Program (3DEP), public domain; native 1 m bare-earth DEM",
+  "sourceUrl": "https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/1m/Projects/CA_NoCAL_Wildfires_B4_2018/TIFF/USGS_1m_x40y449_CA_NoCAL_Wildfires_B4_2018.tif",
+  "sourceTile": "USGS_1m_x40y449_CA_NoCAL_Wildfires_B4_2018.tif",
+  "sourceProduct": "USGS 1m x40y449 CA NoCAL Wildfires B4 2018",
+  "sourceProductCreated": "2020-01-28",
+  "sourceProductPublished": "2020-01-24",
+  "sourceProductUpdated": "2020-11-16",
+  "sourceLicense": "Public domain (3DEP metadata)",
+  "sourceCrs": "EPSG:26910",
+  "sourceVerticalDatum": "NAVD88 metres",
+  "sourceNoData": -3.4028230607370965e+38,
+  "sourceResolutionMetres": [
+    1,
+    1
+  ],
+  "sourcePixelInterpretation": "area; GeoTIFF ModelTiepoint is upper-left cell corner",
+  "sourceRangeRetrieval": "HTTP 206 byte ranges only; see previews/river-pulse/rp27/lidar-audit/eel-hero-range-manifest.json",
+  "sourceCropPixelWindow": {
+    "columnStart": 7408,
+    "rowStart": 5365,
+    "width": 800,
+    "height": 750
+  },
+  "sourceCropBoundsEPSG26910": [
+    407401.999999998,
+    4483891.0,
+    408201.999999998,
+    4484641.0
+  ],
+  "crs": "EPSG:32610",
+  "utmZone": 10,
+  "verticalDatum": "NAVD88 metres (3DEP)",
+  "verticalOrigin": {
+    "type": "absolute",
+    "datum": "NAVD88",
+    "units": "metres"
+  },
+  "encoding": "gzip; 1 planar uint16 elevation channel; rows delta-coded from the row above; quantized to 0.05 m",
+  "width": 800,
+  "height": 750,
+  "cell": [
+    1.0,
+    1.0
+  ],
+  "originUTM": [
+    406802.0529470353,
+    4482891.382122604
+  ],
+  "gridOrigin": [
+    600.4470536040608,
+    -1749.1179919699207
+  ],
+  "channels": {
+    "elevation": {
+      "offset": -250.0,
+      "scale": 0.05
+    }
+  },
+  "nativeValues": {
+    "min": 14.194372177124023,
+    "max": 286.643310546875,
+    "mean": 96.10093688964844,
+    "validCells": 600000,
+    "nodataCells": 0,
+    "encodingMaximumAbsoluteQuantizationErrorMetres": 0.025
+  }
+}

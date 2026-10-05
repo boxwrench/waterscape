@@ -6,8 +6,6 @@ export function overviewRiverOrder(entries) {
 }
 
 export function riverDestination(river) {
-  // Available rivers open their first immersive scene; reserved rivers open their own details.
-  if (river.id === "russian_river" && river.status === "available") return "./renderer/hacienda.html";
-  if (river.id === "sacramento_river" && river.status === "available") return "./renderer/freeport.html";
+  // Every river has a home; its home lists the scenes and their viewpoints.
   return `./river.html?river=${encodeURIComponent(river.id)}`;
 }

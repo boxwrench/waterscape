@@ -124,6 +124,8 @@ async function selectRiver(id) {
     detail.replaceChildren(element("span", statuses[river.status], "status"), title, element("p", river.summary, "summary"));
     document.title = `${river.name} · River Pulse · Waterscape`;
     if (river.scenes?.length) {
+      detail.append(element("h3", "Scenes on this river"),
+        element("p", "Open a scene and choose its viewpoints: an overview, the riverbank, or a closer look at the place.", "note"));
       const scenes = element("div", null, "scene-links");
       for (const scene of river.scenes) scenes.append(link(`Explore ${scene.name}`,
         new URL(scene.entry, new URL(`./data/${entry.manifest}`, location.href))));

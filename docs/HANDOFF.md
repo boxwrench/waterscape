@@ -1,5 +1,31 @@
 # Handoff — 2026-10-04
 
+## River water adoption and hero land — RP27
+
+Implemented locally on `task/RP27`, with three cheaper agents reused for geometry,
+source verification, gallery/performance and checks. The user explicitly authorized
+the RP23 merge; no push or merge into main. [Actual gallery](../previews/river-pulse/rp27/review.html)
+and [review](river-pulse/rp27-water-land-review.md) preserve matched desktop/phone
+comparisons. Eel now defaults to the bounded RP26 water improvement. Tuolumne's
+valley now has shared river water, with analytic sky instead of a horizontal mirror
+over its sloping reach; original reservoir contexts remain available.
+
+Verified native 1 m USGS coverage at all three Eel hero targets, extracted an
+800×750-cell crop and integrated source-derived land at 2 m desktop eye/shore and
+4 m primary/phone mesh spacing. California CalWater remains featured and used;
+the checked state coastal DEM is NoData at these targets. Native plain forms show
+clearer cliffs/gullies; Study shading mutes them. Olive/smeared shoreline reflection,
+bright rim, smooth foreground and coarse surrounding slopes remain. Primary land
+adds approximately 5.3% submitted triangles (2.65M / 16 calls with reflection).
+CPU/frame samples are browser-throttled; GPU timing and phone performance are not
+established. Paused/source/form views now gate rendering to visible changes.
+
+Navigation follows the latest clarification: state overview → own river home →
+existing scenes → camera views. No headwaters or scenic-middle scenes are invented.
+[Scene inventory](river-pulse/river-scene-journey.md). Bounded agent sign-off;
+overall human visual acceptance and reservoir parity remain open. Older sections
+below describe their original checkpoints, including the earlier opt-in defaults.
+
 ## Eel reflection contact — RP26
 
 Implemented locally on `task/RP26`, pending human visual acceptance. Three cheaper

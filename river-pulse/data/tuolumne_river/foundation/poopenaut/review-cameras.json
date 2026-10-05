@@ -1,13 +1,13 @@
 {
-  "version": "poopenaut-runtime-v3",
+  "version": "poopenaut-runtime-v4",
   "coordinateFrame": "Local x east, z south relative to terrain origin; metres. Resolve camera y from terrain plus the recorded clearance before implementation.",
-  "status": "Calibrated against actual runtime, mapped river and aerial context; awaiting human acceptance.",
+  "status": "Calibrated against actual runtime, mapped river and aerial context; eye camera is an authored dry-bank river composition, not a surveyed access point; awaiting human acceptance.",
   "seed": 19041,
   "seedInterpretation": "Reserved for reproducible future vegetation/rock scatter; no scatter has been generated.",
   "cameras": [
     {"id": "overview", "label": "Valley and dam transition", "positionXZ": [-600, 3300], "groundClearance": 900, "targetXZ": [1200, 600], "targetGroundClearance": 30, "fov": 48},
     {"id": "primary", "label": "Poopenaut valley silhouette", "positionXZ": [-300, 1700], "groundClearance": 350, "targetXZ": [700, 1100], "targetGroundClearance": 10, "fov": 52},
-    {"id": "eye", "label": "Valley floor", "positionXZ": [540, 1010], "groundClearance": 1.8, "targetXZ": [680, 1100], "targetGroundClearance": 1.8, "fov": 58},
+    {"id": "eye", "label": "River from the north bank", "positionXZ": [693.04, 1045.08], "groundClearance": 1.8, "targetXZ": [671.73, 1079.33], "targetGroundClearance": 0.32, "fov": 58},
     {"id": "shore", "label": "Mapped river contact", "positionXZ": [600, 1050], "groundClearance": 2.0, "targetXZ": [680, 1080], "targetGroundClearance": 0.3, "fov": 60},
     {"id": "dam", "label": "Upstream transition to Hetch Hetchy", "positionXZ": [2500, -1300], "groundClearance": 250, "targetXZ": [3800, -1900], "targetGroundClearance": 35, "fov": 52}
   ],

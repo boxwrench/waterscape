@@ -1,0 +1,9 @@
+primary / study / refined / detail / photo / water optics · 390×844 · DPR 1.0000000298023224 · WebGPU
+2,646,810 rendered triangles · 16 draw calls · 23.71 MiB geometry buffers (cached comparison passes resident)
+Hero land hero; 1 m source crop rendered at 4 m spacing; 2.29 MiB decoded source crop excluded from geometry buffers.
+Frame interval p50 1003.90 ms / p95 1004.06 ms
+CPU render submission p50 0.65 ms / p95 0.88 ms
+First frame 694 ms · 8 source textures, RGBA+mips estimate 55.0 MiB; reflection targets excluded
+Optical-depth attribute 0.091 MiB; original surface/index buffers shared. Reflection plane 15.70 m; surface 12.08–21.20 m (DEM proxy, not stage).
+Reflection target estimate 254×549, 1.06 MiB color + 0.53 MiB nominal 32-bit sampled depth (backend/driver allocation unmeasured); retained after first use.
+77328 authored tree sites; 96 detailed near this camera. GPU time, reflection allocation and total browser memory are not measured.

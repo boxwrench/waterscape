@@ -15,7 +15,7 @@ async function fixture(t) {
 }
 test("river packages include a scene and a manifest-only estuary", async () => {
   const places = await validateRiverPackages(root);
-  assert.deepEqual(places.map((p) => p.id), ["hacienda_bridge", "jenner", "freeport"]);
+  assert.deepEqual(places.map((p) => p.id), ["scotia_bluffs", "hacienda_bridge", "jenner", "freeport"]);
 });
 test("deployment rejects missing terrain instead of shipping a broken scene", async (t) => {
   const dir = await fixture(t);

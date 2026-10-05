@@ -1,12 +1,13 @@
 # River Pulse visual parity plan
 
-Status: proposal from a read-only review on 2026-10-04 (branch `task/RP24`). RP25 now
-implements the first isolated Eel optics experiment; later adoption/extraction remains
-pending human acceptance. Its [rendered review and cost record](eel-water-optics-review.md)
-identify close-view reflection issues. [RP26](eel-reflection-contact-review.md)
-strongly reduces the broad white band with an authored background guard, but
-contact remnants persist; shared extraction is deferred. No later step
-is implemented by this trial.
+Status: original proposal from the read-only RP24 review on 2026-10-04; current
+implementation is RP27. RP25/RP26 established and corrected Eel optics. RP27 makes
+that bounded improvement the default, merges RP23 with explicit user authorization,
+adds the same water material to Tuolumne's valley, and installs verified native
+1 m source elevations in a bounded Eel hero crop rendered at 2/4 m spacing.
+The [actual RP27 review](rp27-water-land-review.md) records remaining weaknesses
+and measured costs. Flow advection, valley granite/vegetation and Freeport land
+work remain pending. Reservoir visual parity is not achieved.
 Human visual acceptance decides every pass, as in [visual-development.md](../visual-development.md).
 
 ## Problem
@@ -26,7 +27,7 @@ standard" and that more fine grain exposes the missing large-scale form.
 | Tuolumne (RP21-23, **separate worktree**) | Native 14.66 m mesh with a line for the river, plus the full Hetch Hetchy engine at the dam via `reservoir-context.js` | The valley has no water surface. The dam looks good only because it is the reservoir engine. |
 
 Hard constraint, already documented in
-`docs/river-pulse/reservoir-renderer-reuse.md` (only in the RP23 worktree, not in this checkout): `water.cu` expects
+`docs/river-pulse/reservoir-renderer-reuse.md` (merged from RP23): `water.cu` expects
 reservoir-relative height and a signed shoreline, plus a single water level. Do not feed
 RiverTerrain into it. Plans below respect that.
 

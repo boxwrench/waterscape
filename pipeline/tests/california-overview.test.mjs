@@ -6,19 +6,18 @@ import { riverDestination, overviewRiverOrder } from "../../river-pulse/data-mod
 const root = new URL("../../", import.meta.url);
 const load = async file => JSON.parse(await readFile(new URL(file, root), "utf8"));
 
-test("every mapped river resolves to its existing scene or individual river page", async () => {
+test("every mapped river resolves to its own home with available scenes", async () => {
   const registry = await load("river-pulse/data/registry.json"),
     geography = await load("river-pulse/data/california-overview.json");
   assert.deepEqual(geography.rivers.map(r => r.id).sort(), registry.rivers.map(r => r.id).sort());
   for (const entry of registry.rivers) {
     const manifest = await load(`river-pulse/data/${entry.manifest}`), destination = riverDestination(manifest);
     await access(new URL(destination, new URL("river-pulse/index.html", root)));
-    if (entry.status !== "available") {
-      assert.ok(destination.startsWith("./river.html?"));
-      assert.equal(new URL(destination, "https://example.test/river-pulse/").searchParams.get("river"), entry.id);
-    }
+    assert.ok(destination.startsWith("./river.html?"));
+    assert.equal(new URL(destination, "https://example.test/river-pulse/").searchParams.get("river"), entry.id);
+    for (const scene of manifest.scenes ?? [])
+      await access(new URL(scene.entry, new URL(`river-pulse/data/${entry.manifest}`, root)));
   }
-  assert.equal(riverDestination({id: "russian_river", status: "available"}), "./renderer/hacienda.html");
 });
 
 test("state and river paths retain finite geographic coordinates and source evidence", async () => {

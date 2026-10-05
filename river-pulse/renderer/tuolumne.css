@@ -1,6 +1,7 @@
 @import "./eel.css";
 #reservoir-scene{position:fixed;inset:0;width:100%;height:100%}
 #native-controls,#reservoir-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+footer nav button{min-height:44px}
 footer nav{flex-wrap:wrap}#review{max-height:calc(100vh - 260px);overflow:auto}
 .reservoir-context .title{opacity:0;pointer-events:none}
 .reservoir-context #state-context svg{height:60px}

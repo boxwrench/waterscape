@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>River Pulse | RP27 water review</title>
+  <style>
+    :root{color-scheme:light;--ink:#203632;--muted:#61736b;--paper:#f0eee5;--card:#fbfaf5;--line:#d1d8ce;--moss:#436450;--deep:#1e3834}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 "Segoe UI",system-ui,sans-serif}
+    main{width:min(1320px,calc(100% - 40px));margin:auto;padding:30px 0 56px}h1,h2{font-family:Georgia,"Times New Roman",serif;font-weight:500;line-height:1.1}
+    h1{font-size:clamp(36px,6vw,64px);margin:10px 0}h2{font-size:25px;margin:0}.eyebrow{color:var(--moss);font-size:11px;font-weight:750;letter-spacing:.14em;text-transform:uppercase}
+    .hero{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:24px;align-items:end;padding:24px 0;border-bottom:1px solid var(--line)}p{max-width:900px;color:#465b52}.dek{font-size:17px;margin-bottom:0}
+    .status{padding:15px;border-left:3px solid #8b7047;background:#e5dfd0;color:#4b483d}.status strong{display:block;color:#604f31;font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+    a{color:#285344;text-underline-offset:3px}.links{display:flex;gap:18px;flex-wrap:wrap;padding:16px 0}.controls{position:sticky;top:0;z-index:2;display:flex;gap:8px;align-items:center;padding:10px 0;background:#f0eee5ed;backdrop-filter:blur(8px)}
+    .controls span{margin-right:4px;color:var(--muted);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}button{padding:8px 15px;border:1px solid #9caea1;border-radius:999px;background:transparent;color:var(--ink);font:inherit;cursor:pointer}button[aria-pressed="true"]{background:var(--deep);border-color:var(--deep);color:#f3f1e8}
+    .gallery{display:grid;gap:16px;margin-top:12px}.camera,.proof{overflow:hidden;border:1px solid var(--line);border-radius:13px;background:var(--card)}.camera header,.proof header{padding:13px 16px}.camera small{color:var(--muted)}
+    .pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;border-top:1px solid var(--line);background:var(--line)}figure{position:relative;min-width:0;margin:0;padding:9px;background:var(--card)}img{display:block;width:100%;height:auto;aspect-ratio:980/820;object-fit:contain;background:#dce3da}figcaption{padding:6px 1px 0;color:#4b6056;font-size:13px}figcaption strong{color:var(--ink)}
+    .phone-view{display:none}.phone-view.active,.desktop-view.active{display:grid}.desktop-view{display:none}.phone-view img{aspect-ratio:390/844}.missing::before{content:attr(data-placeholder);display:grid;place-items:center;min-height:220px;aspect-ratio:390/844;background:#e5e8e1;color:var(--muted);text-align:center;padding:20px}.desktop-view .missing::before{aspect-ratio:980/820}
+    .proof-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.8fr);align-items:center;gap:18px;padding:12px 16px}.proof img{aspect-ratio:980/820;border-radius:7px}.note{margin-top:18px;padding:15px 18px;border-radius:10px;background:#e2e7dd}.note p{margin:5px 0 0}.foot{margin-top:20px;padding-top:12px;border-top:1px solid var(--line);color:var(--muted);font-size:12px}
+    @media(max-width:720px){main{width:calc(100% - 26px);padding-top:18px}.hero{grid-template-columns:1fr;gap:12px}.pair{grid-template-columns:1fr}.proof-row{grid-template-columns:1fr}.controls{flex-wrap:wrap;top:0}}
+  </style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">River Pulse | Visual development | RP27</div>
+  <section class="hero">
+    <div><h1>Poopenaut Valley<br><em>Water on the mapped reach.</em></h1>
+      <p class="dek">Compare the previous symbolic line guide with the authored water surface across the same three fixed Tuolumne cameras.</p></div>
+    <aside class="status"><strong>Captures assembled | review pending</strong>All matched Tuolumne and Eel Study desktop and phone pairs are present. Human acceptance and performance review remain open.</aside>
+  </section>
+  <nav class="links" aria-label="River homes and scenes">
+    <a href="../../../river-pulse/river.html?river=tuolumne_river">Tuolumne river home</a>
+    <a href="../../../river-pulse/renderer/tuolumne.html?view=primary&amp;freeze=1">Tuolumne scene | frozen Valley view</a>
+    <a href="../../../river-pulse/river.html?river=eel_river">Eel river home</a>
+    <a href="../../../river-pulse/renderer/eel.html?view=primary&amp;freeze=1">Eel scene | default water optics, frozen Bluffs view</a>
+  </nav>
+  <div class="controls" aria-label="Capture size"><span>Capture</span><button type="button" data-size="desktop" aria-pressed="true">Desktop | 980 x 820</button><button type="button" data-size="phone" aria-pressed="false">Phone | 390 x 844</button></div>
+
+  <section class="gallery desktop-view active" data-size-view="desktop" aria-label="Desktop Tuolumne comparisons">
+    <article class="camera"><header><h2>Valley</h2><small>Fixed Poopenaut valley camera | desktop 980 x 820</small></header><div class="pair">
+      <figure><img src="tuolumne-before-primary.jpg" alt="Tuolumne mapped line guide in the valley view"><figcaption><strong>Before</strong> | Mapped centerline guide.</figcaption></figure>
+      <figure><img src="tuolumne-after-primary.jpg" alt="Authored Tuolumne water in the valley view"><figcaption><strong>After</strong> | Authored water over the mapped reach.</figcaption></figure>
+    </div></article>
+    <article class="camera"><header><h2>Eye level</h2><small>Fixed valley-floor camera | desktop 980 x 820 | final v4</small></header><div class="pair">
+      <figure><img src="tuolumne-before-eye.jpg" alt="Tuolumne mapped line guide from eye level"><figcaption><strong>Before</strong> | Mapped centerline guide.</figcaption></figure>
+      <figure><img src="tuolumne-after-eye.jpg" alt="Authored Tuolumne water from eye level"><figcaption><strong>After</strong> | Authored water over the mapped reach.</figcaption></figure>
+    </div></article>
+    <article class="camera"><header><h2>River contact</h2><small>Fixed mapped-river contact camera | desktop 980 x 820</small></header><div class="pair">
+      <figure><img src="tuolumne-before-shore.jpg" alt="Tuolumne mapped line guide at river contact"><figcaption><strong>Before</strong> | Mapped centerline guide.</figcaption></figure>
+      <figure><img src="tuolumne-after-shore.jpg" alt="Authored Tuolumne water at river contact"><figcaption><strong>After</strong> | Authored water over the mapped reach.</figcaption></figure>
+    </div></article>
+  </section>
+
+  <section class="gallery phone-view" data-size-view="phone" aria-label="Phone Tuolumne comparisons">
+    <article class="camera"><header><h2>Valley | Phone</h2><small>Fixed Poopenaut valley camera | 390 x 844</small></header><div class="pair">
+      <figure><img src="tuolumne-before-phone-primary.jpg" alt="Tuolumne mapped line guide in the phone valley view"><figcaption><strong>Before</strong> | Mapped centerline guide.</figcaption></figure>
+      <figure><img src="tuolumne-after-phone-primary.jpg" alt="Authored Tuolumne water in the phone valley view"><figcaption><strong>After</strong> | Authored water over the mapped reach.</figcaption></figure>
+    </div></article>
+    <article class="camera"><header><h2>Eye level | Phone</h2><small>Fixed valley-floor camera | 390 x 844 | final v4</small></header><div class="pair">
+      <figure><img src="tuolumne-before-phone-eye.jpg" alt="Tuolumne mapped line guide at phone eye level"><figcaption><strong>Before</strong> | Mapped centerline guide.</figcaption></figure>
+      <figure><img src="tuolumne-after-phone-eye.jpg" alt="Authored Tuolumne water at phone eye level"><figcaption><strong>After</strong> | Authored water over the mapped reach.</figcaption></figure>
+    </div></article>
+    <article class="camera"><header><h2>River contact | Phone</h2><small>Fixed mapped-river contact camera | 390 x 844</small></header><div class="pair">
+      <figure><img src="tuolumne-before-phone-shore.jpg" alt="Tuolumne mapped line guide at phone river contact"><figcaption><strong>Before</strong> | Mapped centerline guide.</figcaption></figure>
+      <figure><img src="tuolumne-after-phone-shore.jpg" alt="Authored Tuolumne water at phone river contact"><figcaption><strong>After</strong> | Authored water over the mapped reach.</figcaption></figure>
+    </div></article>
+  </section>
+
+  <section class="proof"><header><h2>Eel default optics</h2><small>Actual runtime primary view | 980 x 820</small></header><div class="proof-row">
+    <figure><img src="eel-default-primary.jpg" alt="Eel Scotia Bluffs with improved water optics shown by default"></figure>
+    <p>The Eel scene opens with the improved illustrative water optics in its default Landscape study. <a href="../../../river-pulse/renderer/eel.html?view=primary&amp;freeze=1">Open the frozen primary camera</a>. This separate scene is not part of the Tuolumne river measurement or evidence pairs.</p>
+  </div></section>
+
+  <section class="gallery" aria-label="Eel source-derived terrain form comparisons">
+    <article class="camera"><header><h2>Eel | Bluffs</h2><small>Matched Scotia Bluffs primary view | desktop 980 x 820</small></header><div class="pair">
+      <figure><img src="eel-land-before-primary.jpg" alt="Eel mapped terrain before bounded native source form at the Bluffs view"><figcaption><strong>Before</strong> | Existing exported terrain form.</figcaption></figure>
+      <figure><img src="eel-land-after-primary.jpg" alt="Eel terrain with bounded native source-derived form at the Bluffs view"><figcaption><strong>After</strong> | Bounded source-derived form over the mapped terrain.</figcaption></figure>
+    </div></article>
+    <article class="camera"><header><h2>Eel | Eye level</h2><small>Matched across-river view | desktop 980 x 820</small></header><div class="pair">
+      <figure><img src="eel-land-before-eye.jpg" alt="Eel mapped terrain before bounded native source form at eye level"><figcaption><strong>Before</strong> | Existing exported terrain form.</figcaption></figure>
+      <figure><img src="eel-land-after-eye.jpg" alt="Eel terrain with bounded native source-derived form at eye level"><figcaption><strong>After</strong> | Source-derived cliff face, bench and gullies.</figcaption></figure>
+    </div></article>
+    <article class="camera"><header><h2>Eel | Shoreline</h2><small>Matched water and gravel view | desktop 980 x 820</small></header><div class="pair">
+      <figure><img src="eel-land-before-shore.jpg" alt="Eel mapped terrain before bounded native source form at the shoreline"><figcaption><strong>Before</strong> | Existing exported terrain form.</figcaption></figure>
+      <figure><img src="eel-land-after-shore.jpg" alt="Eel terrain with bounded native source-derived form at the shoreline"><figcaption><strong>After</strong> | Source relief fades into the retained valley terrain.</figcaption></figure>
+    </div></article>
+  </section>
+  <section class="note"><strong>Eel terrain form.</strong> This bounded improvement uses a 1 m source crop; mesh vertices are sampled at 4 m in the primary and phone views, and 2 m in desktop eye-level and shoreline views. The surrounding exported 14 m terrain remains in place. Source elevation fades to the existing triangulated ground over a two-cell seam and is suppressed near refined wet cells to preserve the existing water edge. These are render choices, with no vertical exaggeration. The plain form comparison shows sharper cliffs, benches and gullies, while vertical streaking and soft surrounding slopes remain visible. The Study material softens that gain; olive-toned, smeared near-water surfaces and a bright contact rim remain. This is bounded terrain detail, not reservoir-level scene parity or human acceptance.</section>
+
+  <section class="gallery desktop-view active" data-size-view="desktop" aria-label="Eel Study desktop water and land comparisons">
+    <article class="camera"><header><h2>Eel Study | Bluffs</h2><small>Matched primary camera | desktop 980 x 820</small></header><div class="pair">
+      <figure><img src="eel-study-before-primary.jpg" alt="Eel Study before terrain and water at the Bluffs view"><figcaption><strong>Before</strong> | Existing terrain and authored water.</figcaption></figure>
+      <figure><img src="eel-study-after-primary.jpg" alt="Eel Study after terrain and water at the Bluffs view"><figcaption><strong>After</strong> | Current Eel Study candidate.</figcaption></figure>
+    </div></article>
+    <article class="camera"><header><h2>Eel Study | Eye level</h2><small>Matched across-river camera | desktop 980 x 820</small></header><div class="pair">
+      <figure><img src="eel-study-before-eye.jpg" alt="Eel Study before terrain and water from eye level"><figcaption><strong>Before</strong> | Existing terrain and authored water.</figcaption></figure>
+      <figure><img src="eel-study-after-eye.jpg" alt="Eel Study after terrain and water from eye level"><figcaption><strong>After</strong> | Current Eel Study candidate.</figcaption></figure>
+    </div></article>
+    <article class="camera"><header><h2>Eel Study | Shoreline</h2><small>Matched shoreline camera | desktop 980 x 820</small></header><div class="pair">
+      <figure><img src="eel-study-before-shore.jpg" alt="Eel Study before terrain and water at the shoreline"><figcaption><strong>Before</strong> | Existing terrain and authored water.</figcaption></figure>
+      <figure><img src="eel-study-after-shore.jpg" alt="Eel Study after terrain and water at the shoreline"><figcaption><strong>After</strong> | Current Eel Study candidate.</figcaption></figure>
+    </div></article>
+  </section>
+  <section class="gallery phone-view" data-size-view="phone" aria-label="Eel Study phone water and land comparisons">
+    <article class="camera"><header><h2>Eel Study | Bluffs | Phone</h2><small>Matched primary camera | phone 390 x 844</small></header><div class="pair">
+      <figure><img src="eel-study-before-phone-primary.jpg" alt="Eel Study before terrain and water at the phone Bluffs view"><figcaption><strong>Before</strong> | Existing terrain and authored water.</figcaption></figure>
+      <figure><img src="eel-study-after-phone-primary.jpg" alt="Eel Study after terrain and water at the phone Bluffs view"><figcaption><strong>After</strong> | Current Eel Study candidate.</figcaption></figure>
+    </div></article>
+    <article class="camera"><header><h2>Eel Study | Eye level | Phone</h2><small>Matched across-river camera | phone 390 x 844</small></header><div class="pair">
+      <figure><img src="eel-study-before-phone-eye.jpg" alt="Eel Study before terrain and water at phone eye level"><figcaption><strong>Before</strong> | Existing terrain and authored water.</figcaption></figure>
+      <figure><img src="eel-study-after-phone-eye.jpg" alt="Eel Study after terrain and water at phone eye level"><figcaption><strong>After</strong> | Current Eel Study candidate.</figcaption></figure>
+    </div></article>
+    <article class="camera"><header><h2>Eel Study | Shoreline | Phone</h2><small>Matched shoreline camera | phone 390 x 844</small></header><div class="pair">
+      <figure><img src="eel-study-before-phone-shore.jpg" alt="Eel Study before terrain and water at the phone shoreline view"><figcaption><strong>Before</strong> | Existing terrain and authored water.</figcaption></figure>
+      <figure><img src="eel-study-after-phone-shore.jpg" alt="Eel Study after terrain and water at the phone shoreline view"><figcaption><strong>After</strong> | Current Eel Study candidate.</figcaption></figure>
+    </div></article>
+  </section>
+
+  <section class="note"><strong>Geography and interpretation.</strong> Poopenaut terrain remains the USGS 3DEP source grid (14.66 m exported cells, 1x vertical scale); this Tuolumne water pass adds no fine terrain or native-LiDAR claim. The USGS 3DHP centerline supplies the mapped route. The water strip's width, DEM clearance, optical depth, gravel bed and clarity are authored visual controls, not measured width, stage, flow, water depth or bathymetry. The terrain-following reach spans roughly 79 m in elevation, so it uses an analytic sky reflection instead of a single horizontal reflected-scene mirror. Bed refraction, wave normal, and authored shallows remain part of the same water material. Root's visual review finds a clear surface improvement over the prior line guide in all three views; banks and surrounding land remain coarse, with scalloped water contact visible.</section>
+  <section class="note"><strong>Eel runtime cost.</strong> In matched Eel phone captures (390 x 844, DPR 1, WebGPU, 12 warmup + 120 samples), previous/native-form passes submitted 2,514,254/2,646,810 triangles and 14/16 calls. Both reported 23.71 MiB resident geometry because comparison buffers remained cached; the decoded 2.29 MiB source crop is excluded. Phone CPU submission was 0.64/0.87 ms previous and 0.65/0.88 ms native (p50/p95); roughly 1004 ms frame intervals indicate browser throttling, not FPS or a speed comparison. The desktop 4 m primary capture reported 2,646,810 triangles, 16 calls, and 0.68/0.81 ms CPU submission, with no matched previous desktop metric. Eight texture maps remain an estimated 55 MiB. Reflection-target estimates are 1.06 MiB color + 0.53 MiB nominal depth on phone and 2.59 + 1.30 MiB on desktop; actual allocation and GPU time are unknown.</section>
+  <section class="note"><strong>Fine Eel tier and Tuolumne phone cost.</strong> Desktop Eel eye at 2 m sampling reports 3,079,422 triangles, 16 calls, and 36.42 MiB resident geometry including both cached 2 m and 4 m tiers. Against the different-view 4 m primary capture, that is 432,612 more submitted triangles and 12.71 MiB more resident geometry; it is not an isolated allocation or controlled timing comparison. Tuolumne phone water reports 826,068 triangles and four calls versus 790,251/four in the matched previous counters: +35,817 triangles, no extra calls, and 30.93 MiB geometry in both passes with comparison data resident. Water attributes are 0.708 MiB; textures are estimated at 13.33 MiB, with no reflection target/pass. Current CPU submission is 0.87/1.32 ms p50/p95, but previous sampled CPU timing is unavailable. Both current frame intervals are about 1004 ms from browser throttling, not foreground FPS or phone performance acceptance. GPU time and total browser memory remain unmeasured.</section>
+  <footer class="foot">Three fixed Tuolumne water views | Eel terrain-form and Study comparisons | Human review pending</footer>
+</main>
+<script>
+  const buttons=[...document.querySelectorAll("[data-size]")],views=[...document.querySelectorAll("[data-size-view]")];
+  for(const button of buttons)button.addEventListener("click",()=>{const size=button.dataset.size;for(const b of buttons)b.setAttribute("aria-pressed",String(b===button));for(const view of views)view.classList.toggle("active",view.dataset.sizeView===size)});
+  for(const img of document.querySelectorAll("img")){const missing=()=>{if(!img.naturalWidth){img.hidden=true;img.closest("figure")?.classList.add("missing")}};img.addEventListener("error",missing);if(img.complete)missing()}
+</script>
+</body>
+</html>

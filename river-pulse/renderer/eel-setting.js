@@ -117,6 +117,7 @@ export async function createEelSetting(terrain, classification, aerial) {
     if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
     mesh.computeBoundingSphere();
   }
+  const originalGrounds = Float64Array.from(sites, site => site.y);
   let detailCount = 0;
   function setCamera(position, target) {
     const { detailed, distant } = forestDetailSites(sites, position, 96, target); detailCount = detailed.length;
@@ -142,6 +143,9 @@ export async function createEelSetting(terrain, classification, aerial) {
   group.name = "Eel photo-informed forest Setting";
   group.userData = { bindingClass: "setting", surveyed: false, seed: 17041 };
   return { group, material: landMaterial(aerial, noise, surface), previousMaterial: landMaterial(aerial, noise),
-    setCamera, treeCount: sites.length, detailCount: () => detailCount,
+    setCamera, setGroundSampler(sample) {
+      for (let i = 0; i < sites.length; i++)
+        sites[i].y = sample ? sample(sites[i].x, sites[i].z) : originalGrounds[i];
+    }, treeCount: sites.length, detailCount: () => detailCount,
     textures: [noise, barkMap, leafMap, atlas, atlasNormal, ...surface.textures] };
 }

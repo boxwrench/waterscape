@@ -59,15 +59,21 @@ export function createAuthoredWater(document, terrain, maps = null, authoredGrid
       .mul(vec3(0.85, 1, 0.8)), transmission),
     sun = normalize(vec3(...(options.sunDirection ?? [0.68, 0.73, 0.18]))),
     glint = pow(dot(normal, normalize(sun.add(eye))).max(0), 260).mul(1.8),
-    mirror = reflector({ resolutionScale: 0.65, bounces: false, depth: Boolean(options.shoreReflectionRange) });
-  mirror.target.rotation.x = -Math.PI / 2;
-  mirror.target.position.y = grid.focus.y;
-  mirror.uvNode = mirror.uvNode.add(vec2(normal.x, normal.z).mul(0.035));
+    mirror = options.reflection === false ? null
+      : reflector({ resolutionScale: 0.65, bounces: false, depth: Boolean(options.shoreReflectionRange) });
+  if (mirror) {
+    mirror.target.rotation.x = -Math.PI / 2;
+    mirror.target.position.y = grid.focus.y;
+    mirror.uvNode = mirror.uvNode.add(vec2(normal.x, normal.z).mul(0.035));
+  }
   const material = new THREE.MeshBasicNodeMaterial({ side: THREE.FrontSide });
-  let reflected = mix(mirror.rgb, color(0x294c38), 0.12);
+  // Sloping reaches can share bed optics without an invalid horizontal mirror.
+  // The fallback is authored sky color, with no offscreen geometry reflection.
+  let reflected = mirror ? mix(mirror.rgb, color(0x294c38), 0.12)
+    : mix(color(0x547e82), color(0x365e68), facing);
   // Preserve reflected geometry; mute background gaps over the modeled shallows.
   // This authored proxy guard is not a physical Fresnel law or a geometry repair.
-  if (options.shoreReflectionRange) {
+  if (mirror && options.shoreReflectionRange) {
     const reflectionDepth = mirror.getDepthNode(); reflectionDepth.uvNode = mirror.uvNode;
     const geometryConfidence = float(1).sub(smoothstep(0.95, 0.9999, reflectionDepth)),
       agreement = mix(smoothstep(...options.shoreReflectionRange, depth).pow(2), float(1), geometryConfidence);
@@ -76,11 +82,12 @@ export function createAuthoredWater(document, terrain, maps = null, authoredGrid
   material.colorNode = mix(underwater, reflected, fresnel).add(color(0xfff2d8).mul(glint));
   const mesh = new THREE.Mesh(geometry, material);
   mesh.name = "Hacienda authored water";
-  mesh.add(mirror.target);
+  if (mirror) mesh.add(mirror.target);
   mesh.visible = false;
   mesh.userData = { representation: grid.representation, bindingClass: "illustrative",
     optics: "derived from illustrative surface, bed and lighting", focus: grid.focus };
-  return { mesh, focus: grid.focus, reflectionDepthEnabled: Boolean(options.shoreReflectionRange), update(seconds, reducedMotion) {
+  return { mesh, focus: grid.focus, reflectionEnabled: Boolean(mirror),
+    reflectionDepthEnabled: Boolean(mirror && options.shoreReflectionRange), update(seconds, reducedMotion) {
     clock.value = reducedMotion ? 0 : seconds;
   } };
 }

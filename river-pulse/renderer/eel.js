@@ -5,12 +5,13 @@ import { buildRiverTerrainGrid } from "./terrain-mesh.js";
 import { EEL_CAMERAS, reviewCamera, clippedWaterTriangle } from "./eel-layout.js";
 import { createEelSetting } from "./eel-setting.js";
 import { createEelWaterSpike } from "./eel-water-spike.js";
+import { buildEelHeroLand, createHeroGroundSampler } from "./eel-hero-terrain.js";
 
 const $ = id => document.getElementById(id), base = "../data/eel_river/places/scotia_bluffs/",
   started = performance.now(), reduced = matchMedia("(prefers-reduced-motion: reduce)"), query = new URLSearchParams(location.search);
 let active = EEL_CAMERAS[query.get("view")] ? query.get("view") : "overview", paused = reduced.matches || query.get("freeze") === "1",
   mode = "study", pass = "refined", measure = null, settingPass = "detail", surfacePass = "photo",
-  waterPass = query.get("water") === "optics" ? "optics" : "previous";
+  waterPass = query.get("water") === "previous" ? "previous" : "optics", needsRender = true;
 $("water-pass").value = waterPass;
 $("evidence").onclick = () => {
   $("sources").hidden = !$("sources").hidden;
@@ -117,7 +118,7 @@ async function main() {
   const renderer = new THREE.WebGPURenderer({ canvas: $("scene"), antialias: true, forceWebGL: !navigator.gpu });
   await renderer.init(); renderer.setPixelRatio(Math.min(devicePixelRatio, 1.25));
   renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.1;
-  const [terrain, waterbodies, aerial] = await Promise.all([loadRiverTerrain(base + "terrain"), json("waterbodies.json"), new THREE.TextureLoader().loadAsync(base + "aerial.jpg")]);
+  const [terrain, heroTerrain, waterbodies, aerial] = await Promise.all([loadRiverTerrain(base + "terrain"), loadRiverTerrain(base + "hero-terrain"), json("waterbodies.json"), new THREE.TextureLoader().loadAsync(base + "aerial.jpg")]);
   aerial.colorSpace = THREE.SRGBColorSpace;
   const scene = new THREE.Scene(); scene.background = new THREE.Color(0xc2d6dc);
   scene.add(new THREE.HemisphereLight(0xe5eef0, 0x69624e, 2.4));
@@ -139,12 +140,40 @@ async function main() {
       polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }), waterStudy = water.material;
   scene.add(land, water);
   const opticalWater = createEelWaterSpike(terrain, refined, refined.userData.wetField);
+  const heroField = { wet: refined.userData.wetField, colors: classified.colors },
+    heroSampler = createHeroGroundSampler(terrain, heroTerrain, heroField).sample,
+    heroGeometries = new Map(), originalLandIndex = landGeometry.index;
+  function heroGeometry(step) {
+    if (!heroGeometries.has(step)) {
+      const patch = buildEelHeroLand(terrain, heroTerrain, heroField, grid, { step });
+      heroGeometries.set(step, { geometry: geometry(patch.positions, patch.indices, patch.colors, patch.uv),
+        baseIndex: new THREE.BufferAttribute(patch.baseIndices, 1), meta: patch.meta });
+    }
+    return heroGeometries.get(step);
+  }
+  const heroLand = new THREE.Mesh(heroGeometry(4).geometry, studyMaterial);
+  heroLand.name = "Eel source-derived hero land"; scene.add(heroLand);
+  $("terrain-pass").value = query.get("terrain") === "previous" ? "previous" : "hero";
   delete refined.userData.wetField; delete baseline.userData.wetField;
   scene.add(opticalWater.mesh);
   const setting = await createEelSetting(terrain, classified, aerial); scene.add(setting.group);
   const camera = new THREE.PerspectiveCamera(48, 1, 1, 15000);
+  let groundedOnHero = null;
+  function terrainPresentation() {
+    const enabled = $("terrain-pass").value === "hero", step = innerWidth < 600 || !["eye", "shore"].includes(active) ? 4 : 2;
+    heroLand.visible = enabled;
+    if (enabled) {
+      const patch = heroGeometry(step); heroLand.geometry = patch.geometry;
+      landGeometry.setIndex(patch.baseIndex);
+    } else landGeometry.setIndex(originalLandIndex);
+    heroLand.material = land.material;
+    if (groundedOnHero !== enabled) {
+      setting.setGroundSampler(enabled ? heroSampler : null); groundedOnHero = enabled;
+    }
+  }
   function setCamera(id) {
     active = id;
+    terrainPresentation();
     const view = reviewCamera(id, terrain); camera.position.fromArray(view.position); camera.lookAt(...view.target);
     setting.setCamera(view.position, view.target);
     camera.near = ["overview", "bend"].includes(id) ? 10 : 0.5;
@@ -160,6 +189,7 @@ async function main() {
     waterPass = $("water-pass").value;
     land.material = mode === "form" ? formMaterial : mode === "aerial" ? aerialMaterial : settingPass === "detail" ?
       (surfacePass === "photo" ? setting.material : setting.previousMaterial) : studyMaterial;
+    terrainPresentation();
     setting.group.visible = mode === "study" && settingPass === "detail";
     const showOptics = mode === "study" && pass === "refined" && waterPass === "optics";
     $("water-pass").disabled = mode !== "study" || pass !== "refined";
@@ -174,14 +204,16 @@ async function main() {
   for (const button of document.querySelectorAll("[data-camera]")) button.onclick = () => setCamera(button.dataset.camera);
   $("mode").onchange = presentation; $("pass").onchange = presentation; $("setting-pass").onchange = presentation;
   $("surface-pass").onchange = presentation; $("water-pass").onchange = presentation;
+  $("terrain-pass").onchange = () => { presentation(); setCamera(active); };
   window.addEventListener("resize", resize);
   let loadMs = 0, frame = 0, last = performance.now(), seconds = 0;
   const meshes = setting.group.children, geometries = [landGeometry, baseline, refined, ...meshes.map(mesh => mesh.geometry)],
-    geometryBytes = geometries.reduce((sum, g) => sum + Object.values(g.attributes).reduce((n, a) => n + a.array.byteLength, 0) + (g.index?.array.byteLength ?? 0), 0)
+    baseGeometryBytes = geometries.reduce((sum, g) => sum + Object.values(g.attributes).reduce((n, a) => n + a.array.byteLength, 0) + (g === landGeometry ? originalLandIndex.array.byteLength : g.index?.array.byteLength ?? 0), 0)
       + meshes.reduce((sum, mesh) => sum + mesh.instanceMatrix.array.byteLength + (mesh.instanceColor?.array.byteLength ?? mesh.instanceMatrix.count * 12), 0)
       + opticalWater.depthBytes,
     textureBytes = [aerial, ...setting.textures].reduce((sum, map) => sum + map.image.width * map.image.height * 4 * 4 / 3, 0);
   function cancelMeasurement() {
+    needsRender = true;
     measure = null; $("measure").disabled = false; $("measure").textContent = "Measure 120 frames";
     $("metrics").textContent = "Select a fixed view, then measure 120 frames. Switching view or presentation resets the sample.";
   }
@@ -193,9 +225,11 @@ async function main() {
   renderer.setAnimationLoop(() => {
     const now = performance.now(), interval = now - last; last = now;
     if (document.hidden) { if (measure) cancelMeasurement(); return; }
+    if (!measure && !needsRender && (paused || mode !== "study")) return;
     if (!paused && mode === "study") seconds += Math.min(interval, 50) / 1000;
     clock.value = seconds; opticalWater.update(seconds, false);
     const begin = performance.now(); renderer.render(scene, camera); const cpu = performance.now() - begin;
+    needsRender = false;
     if (++frame === 1) { loadMs = performance.now() - started; $("loading").hidden = true; }
     if (measure) {
       if (measure.warmup-- > 0) return;
@@ -204,10 +238,12 @@ async function main() {
       if (measure.cpu.length === 120) {
         const percentile = (values, p) => [...values].sort((a, b) => a - b)[Math.floor((values.length - 1) * p)],
           triangles = renderer.info.render.triangles, calls = renderer.info.render.drawCalls,
+          patchBytes = [...heroGeometries.values()].reduce((sum, patch) => sum + Object.values(patch.geometry.attributes).reduce((n, a) => n + a.array.byteLength, 0) + patch.geometry.index.array.byteLength + patch.baseIndex.array.byteLength, 0),
           drawingSize = renderer.getDrawingBufferSize(new THREE.Vector2()),
           reflectWidth = Math.round(drawingSize.x * 0.65), reflectHeight = Math.round(drawingSize.y * 0.65);
         $("metrics").textContent = `${measure.camera} / ${measure.mode} / ${measure.pass} / ${measure.settingPass} / ${measure.surfacePass} / water ${measure.waterPass} · ${innerWidth}×${innerHeight} · DPR ${renderer.getPixelRatio()} · ${renderer.backend.isWebGPUBackend ? "WebGPU" : "WebGL2"}\n` +
-          `${triangles.toLocaleString()} rendered triangles · ${calls} draw calls · ${(geometryBytes / 1048576).toFixed(2)} MiB geometry buffers (both passes resident)\n` +
+          `${triangles.toLocaleString()} rendered triangles · ${calls} draw calls · ${((baseGeometryBytes + patchBytes) / 1048576).toFixed(2)} MiB geometry buffers (cached comparison passes resident)\n` +
+          `Hero land ${$("terrain-pass").value}; 1 m source crop rendered at ${heroLand.visible ? (innerWidth < 600 || !["eye", "shore"].includes(active) ? 4 : 2) : "previous 14.05"} m spacing; ${(heroTerrain.elevationCells.byteLength / 1048576).toFixed(2)} MiB decoded source crop excluded from geometry buffers.\n` +
           `Frame interval p50 ${percentile(measure.intervals, 0.5).toFixed(2)} ms / p95 ${percentile(measure.intervals, 0.95).toFixed(2)} ms\n` +
           `CPU render submission p50 ${percentile(measure.cpu, 0.5).toFixed(2)} ms / p95 ${percentile(measure.cpu, 0.95).toFixed(2)} ms\n` +
           `First frame ${loadMs.toFixed(0)} ms · ${1 + setting.textures.length} source textures, RGBA+mips estimate ${(textureBytes / 1048576).toFixed(1)} MiB; reflection targets excluded\n` +

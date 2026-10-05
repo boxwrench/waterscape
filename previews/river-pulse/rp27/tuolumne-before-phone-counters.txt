@@ -1,0 +1,7 @@
+primary / study / water previous · 390×844 · WebGPU
+790,251 rendered triangles · 4 draw calls · 30.93 MiB CPU geometry buffers (comparison surface resident)
+Source texture RGBA+mips estimate 13.33 MiB · Native initialization 278 ms (cache-dependent)
+Authored water geometry 0.708 MiB; surface 959.62–1038.46 m, DEM proxy rather than stage.
+Study bank contact 457 terrain vertices, at most 1.00 m authored lowering; source/form terrain unchanged.
+Sloping reach uses authored sky reflection; no planar-reflection target or reflected-scene pass.
+Native water renders while playing; paused/source/form/hidden views submit only on visible control changes. GPU timing, full browser/GPU memory and foreground FPS are unmeasured. A lazily loaded reservoir engine stays resident after visiting its views.
