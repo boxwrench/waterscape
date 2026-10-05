@@ -41,8 +41,8 @@ GPU timing and phone performance are unmeasured.
 
 - **Human acceptance** of the new layout, the river-home cards and the docs.
 - **River map view** is defined in the template (`map` in `river.json`) but not built; every river says `planned`.
-- **Fill the planned slots**, starting with Russian River's East Fork start. Follow [Make a river](./river-pulse/make-a-river.md). If earlier East Fork work exists
-  outside this repository, link it in rather than rebuilding.
+- **Fill the planned slots**, starting with Russian River's East Fork start. Follow [Make a river](./river-pulse/make-a-river.md). Earlier East Fork work is believed to exist,
+  unpushed, on another machine (not in this repo); bring it in rather than rebuilding (see that scene's README).
 - **Shared chrome in code**: scene stylesheets still duplicate topbar, data card and view bar styling. Move one component into `ui/` whenever a scene's chrome is touched.
 - **Hacienda's data language** (live card, history chart, condition band) should reach Jenner (no daily series exists for its tidal gauge) and the
   terrain-only scenes only where their data supports it.
