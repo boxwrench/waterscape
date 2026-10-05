@@ -11,8 +11,8 @@ RP23 keeps Poopenaut's native scene in its own Three.js renderer. Its current re
 13.33 MiB estimated texture storage. With the dam hidden, the same page reports 788,995
 triangles and three calls, while geometry and texture totals stay resident. Its scene renders
 on view or control changes. These are native renderer counters and estimates, not GPU timing or
-whole-page memory ([Tuolumne review](../../previews/tuolumne/rp23/review.html),
-[integration](../../river-pulse/renderer/tuolumne.js)).
+whole-page memory ([Tuolumne review](../../../previews/tuolumne/rp23/review.html),
+[integration](../../../river-pulse/rivers/tuolumne_river/scenes/start/poopenaut_valley/tuolumne.js)).
 
 The lazily loaded Hetch Hetchy renderer is a second rendering path and retains one engine after
 first use. At 768x648 desktop low quality, its rolling submission-plus-GPU-completion wait
@@ -23,8 +23,8 @@ observations, not controlled comparisons, GPU-only timings, FPS, cold loads, tot
 or device-independent targets. Tracked buffers exclude textures, driver allocations, uniforms,
 and the native renderer. The reservoir `hide()` path cancels its frame request; pause, hidden-tab,
 and inactive checks prevent further frame work, but the context has no disposal path, so its
-buffers remain resident ([context](../../river-pulse/renderer/reservoir-context.js),
-[runtime notes](../../previews/tuolumne/rp23/review.html)).
+buffers remain resident ([context](../../../river-pulse/scene-kit/reservoir-context.js),
+[runtime notes](../../../previews/tuolumne/rp23/review.html)).
 
 RP26's Eel-only candidate reports 2,514,254 rendered triangles and 14 draw calls in both the
 previous-optics and guarded-optics captures. CPU geometry is 18.03 MiB in both. The 0.091 MiB
@@ -35,8 +35,8 @@ target already had implicit depth storage; incremental allocation is unknown. Ei
 textures are estimated at 55 MiB RGBA with mipmaps. The paired desktop frame interval p50/p95
 was 52.25/95.14 ms before and 47.59/93.50 ms after; CPU submission was 0.69/1.52 ms and
 0.76/1.44 ms. These captures do not establish a speedup, GPU-only time, or phone performance
-acceptance ([metrics](../../previews/eel/rp26/before-desktop-metrics.txt),
-[candidate](../../previews/eel/rp26/after-desktop-metrics.txt)).
+acceptance ([metrics](../../../previews/eel/rp26/before-desktop-metrics.txt),
+[candidate](../../../previews/eel/rp26/after-desktop-metrics.txt)).
 
 RP27's current Eel primary-view measurements compare the previous exported land surface with
 the bounded native-source form at the same water, material, detail, and photo settings. Both
@@ -57,9 +57,9 @@ frame intervals and 0.68/0.81 ms CPU submission. There is no matched previous-fo
 metric here, so it is not a desktop comparison. The phone reflector estimate is 254x549,
 1.06 MiB color plus 0.53 MiB nominal sampled depth; desktop is 637x533, 2.59 MiB plus 1.30 MiB.
 These targets remain resident after first use; actual backend allocation and GPU time are
-unknown. Full browser and driver memory are also unknown ([phone previous](../../previews/river-pulse/rp27/eel-before-phone-metrics.txt),
-[phone native](../../previews/river-pulse/rp27/eel-after-phone-metrics.txt),
-[desktop native](../../previews/river-pulse/rp27/eel-after-desktop-metrics.txt)).
+unknown. Full browser and driver memory are also unknown ([phone previous](../../../previews/river-pulse/rp27/eel-before-phone-metrics.txt),
+[phone native](../../../previews/river-pulse/rp27/eel-after-phone-metrics.txt),
+[desktop native](../../../previews/river-pulse/rp27/eel-after-desktop-metrics.txt)).
 
 A separate desktop eye-view sample uses the finer 2 m source mesh: 3,079,422 triangles,
 16 calls, and 36.42 MiB geometry buffers, with CPU submission p50/p95 of 0.93/1.57 ms and
@@ -68,7 +68,7 @@ geometry total includes both cached 2 m and 4 m tiers. Against the earlier deskt
 capture (2,646,810 triangles, 16 calls, 23.71 MiB), this is 432,612 more submitted triangles
 and 12.71 MiB more resident geometry; the views differ, and the byte delta includes cache
 residency, so it is not an isolated allocation or controlled performance comparison. It makes
-the finer tier's current resident cost explicit ([2 m eye metrics](../../previews/river-pulse/rp27/eel-after-desktop-eye-metrics.txt)).
+the finer tier's current resident cost explicit ([2 m eye metrics](../../../previews/river-pulse/rp27/eel-after-desktop-eye-metrics.txt)).
 
 The current Tuolumne phone water capture reports 826,068 triangles and four calls, compared
 with 790,251 and four calls in the matched previous line-guide counters: +35,817 triangles and
@@ -77,8 +77,8 @@ resident. The authored water attributes are 0.708 MiB; source texture estimate i
 There is no reflection target or reflected-scene pass. Current CPU submission p50/p95 is
 0.87/1.32 ms and frame interval is 1003.43/1005.93 ms; the before file contains counters only,
 so there is no sampled CPU baseline. The roughly one-second interval is browser throttling, not
-phone FPS or performance acceptance ([current](../../previews/river-pulse/rp27/tuolumne-after-phone-metrics.txt),
-[previous counters](../../previews/river-pulse/rp27/tuolumne-before-phone-counters.txt)).
+phone FPS or performance acceptance ([current](../../../previews/river-pulse/rp27/tuolumne-after-phone-metrics.txt),
+[previous counters](../../../previews/river-pulse/rp27/tuolumne-before-phone-counters.txt)).
 
 Triangle and draw-call counts describe submitted rendering work as reported by a renderer;
 geometry bytes describe allocated geometry buffers. They are not interchangeable. RP23's

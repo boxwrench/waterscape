@@ -49,13 +49,13 @@ These mappings are illustrative, not inferred stage, banks or local velocity.
 green water, planar reflections, refraction and approximate caustics. Local setting assets
 live under Hacienda's `setting/` package, with source/license metadata. Three/TSL is shared
 with the umbrella; reservoir water kernels are not used as river hydraulics. See
-[authored-water notes](river-pulse/authored-water.md) for sources and optical limits.
+[authored-water notes](../river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/README.md) for sources and optical limits.
 
 `jenner.js` composes an authored coastal height field, sand spit, rocks, woodland and shore
 views. `jenner-water.js` contrasts calm estuary optics with Pacific swell/foam using a small
 MIT Tidewater noise adaptation. `jenner-level.js` selects eligible USGS NAVD88 observations
 for the separate Highway 1 card; it does not drive coastline, tide, currents or mouth status.
-Both pages load through `data-model/place-registry.js`. See [Jenner notes](river-pulse/jenner-scene.md).
+Both pages load through `data-model/place-registry.js`. See [Jenner notes](../river-pulse/rivers/russian_river/scenes/end/jenner/README.md).
 
 ## Data flow
 

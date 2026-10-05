@@ -1,6 +1,6 @@
 # RP26 Eel reflection contact review
 
-Continues the [RP25 optics experiment](eel-water-optics-review.md) on `task/RP26`
+Continues the [RP25 optics experiment](./eel-water-optics-review.md) on `task/RP26`
 after the user's instruction to go on. Ready for human visual review; the original
 water remains the default. This pass strongly reduces the broad white patches
 without repairing the coarse surface or establishing production acceptance.
@@ -21,7 +21,7 @@ forest, source modes and v1 cameras were preserved. Hacienda omits the new optio
 its reflector depth sampling stays disabled and its original color path remains.
 No engine, kernel, vendor or other river runtime was modified.
 
-The [actual comparison gallery](../../previews/eel/rp26/review.html) contains six
+The [actual comparison gallery](../../../../../../../previews/eel/rp26/review.html) contains six
 matched pairs: Bluffs, eye level and shoreline at 980×820 desktop and 390×844 phone.
 All final pairs were recaptured with `?freeze=1`, starting the wave clock paused at
 zero in both source versions. Before is RP25 optics with the guard absent; after
@@ -54,7 +54,7 @@ Saved runtime evidence in `previews/eel/rp26/`:
 
 These probes localize the problem and reject plausible fixes. They do not prove
 one exact clipping/projection mechanism for every residual. The [reflection
-audit](rp26-reflection-audit.md) and [contact audit](rp26-contact-audit.md) explain
+audit](./rp26-reflection-audit.md) and [contact audit](./rp26-contact-audit.md) explain
 the plane, clipping, shared triangulation and remaining limits. No diagnostic
 branch remains in the runtime.
 

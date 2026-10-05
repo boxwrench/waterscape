@@ -53,6 +53,6 @@ acceptance checkpoint and identify whether shared-water extraction is justified.
   and no-glint diagnostics. Reflections on the DEM-following surface and nearly
   doubled rendered triangles prevent shared extraction/adoption at this checkpoint.
   Native 1 m LiDAR was not added. See
-  [review](../../river-pulse/eel-water-optics-review.md) and
+  [review](../../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/notes/eel-water-optics-review.md) and
   [gallery](../../../previews/eel/rp25/review.html). No merge or push; the separate
   Tuolumne worktree remains clean.

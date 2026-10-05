@@ -1,11 +1,11 @@
 # Tuolumne / Poopenaut Valley: first runtime form review
 
 This is the archived RP21 first-form record. The later
-[RP22 dam reuse review](tuolumne-dam-reuse.md) adds the existing Waterscape
+[RP22 dam reuse review](../../../../../../../docs/river-pulse/reference/tuolumne-dam-reuse.md) adds the existing Waterscape
 O’Shaughnessy Dam, a disclosed local render-contact cut and a separate close camera.
 The source bundle and five v3 review cameras are retained.
 
-RP21 turns [RP19's geographic foundation](tuolumne-foundation.md) into an actual
+RP21 turns [RP19's geographic foundation](../README.md) into an actual
 local browser form study. [Live scene](http://localhost:5174/river-pulse/renderer/tuolumne.html)
 and [render comparison](http://localhost:5174/previews/tuolumne/review.html) use the
 isolated Tuolumne worktree, not the Eel development server. Source geography has

@@ -6,7 +6,7 @@ tint is a cartographic elevation mapping. Its blue water ribbon widens/narrows w
 discharge within loaded history, with seasonal-color margins and exaggerated moving detail.
 Bridge and Hacienda Beach show a separate photo-informed local setting with optical green
 water. Neither scene simulates local hydraulics. See
-[authored-water notes](authored-water.md) for the binding, geometry and source distinctions.
+[authored-water notes](../../../river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/README.md) for the binding, geometry and source distinctions.
 
 ## Interactions
 
@@ -41,6 +41,6 @@ This remains a prototype with real source terrain/data and an approximate author
 setting: gray steel bridge, left-pier rock outcrop, gray pebbles, grouped woodland, reflective
 green water and modeled bed. Surveyed bathymetry, locally resolved currents, water-level-driven
 shorelines remain future work. Jenner now adds a separate photo-informed coastal setting;
-see [Jenner scene notes](jenner-scene.md). Time selection changes scientific state
+see [Jenner scene notes](../../../river-pulse/rivers/russian_river/scenes/end/jenner/README.md). Time selection changes scientific state
 and the Map width/category, not the authored beach shoreline. Native target GPU performance
 remains unmeasured; software WebGL2 checks do not establish a hardware frame-rate budget.

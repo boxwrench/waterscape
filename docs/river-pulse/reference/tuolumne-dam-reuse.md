@@ -41,7 +41,7 @@ verified. The review panel clears the footer label. Browser errors are empty.
 No animation or moving water is introduced. This pass is ready for human review,
 not final acceptance.
 
-[Actual before/after gallery](../../previews/tuolumne/rp22/review.html) preserves
+[Actual before/after gallery](../../../previews/tuolumne/rp22/review.html) preserves
 native and reused-dam close/transition comparisons, original five views, plain
 form/source presentations and phone evidence. The shared renderer defaults retain
 reservoir jets and shaded packing tags; only the river adapter opts out. Five

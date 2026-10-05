@@ -21,8 +21,8 @@ flow-scaled Map ribbon and photo-informed Bridge/Hacienda Beach views. The gray 
 rock outcrop, pebble beach, grouped woodland and green optical water form an accepted authored
 baseline. Width/motion are illustrative; local hydrodynamics and wider corridor coverage
 remain future work. Jenner is a data package. See
-[rendering and source notes](docs/river-pulse/authored-water.md).
-The detailed river contract is in [docs/river-pulse/](docs/river-pulse/implementation-contract.md).
+[rendering and source notes](./river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/README.md).
+The detailed river contract is in [docs/river-pulse/](./docs/river-pulse/reference/implementation-contract.md).
 
 The roadmap below describes the **reservoir experience**, rather than limiting the umbrella.
 

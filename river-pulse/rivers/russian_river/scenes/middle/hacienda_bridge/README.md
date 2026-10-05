@@ -115,7 +115,7 @@ and synthetic intercepted hydrology only in tests, never in production.
 
 ## Resource evaluation
 
-The [resource library](../../resources/README.md) guided the implementation. Existing Three
+The [resource library](../../../../../../resources/README.md) guided the implementation. Existing Three
 r186/TSL and [ReflectorNode](https://threejs.org/docs/pages/ReflectorNode.html) were reused
 without vendor changes. [CAUSTIC//VOLUME](https://github.com/ScottieFox/caustic-volume) informed
 varied wave directions and refracted bed optics; no code was copied and its ray-focused

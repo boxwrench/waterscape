@@ -5,10 +5,10 @@ implementation is RP27. RP25/RP26 established and corrected Eel optics. RP27 mak
 that bounded improvement the default, merges RP23 with explicit user authorization,
 adds the same water material to Tuolumne's valley, and installs verified native
 1 m source elevations in a bounded Eel hero crop rendered at 2/4 m spacing.
-The [actual RP27 review](rp27-water-land-review.md) records remaining weaknesses
+The [actual RP27 review](./rp27-water-land-review.md) records remaining weaknesses
 and measured costs. Flow advection, valley granite/vegetation and Freeport land
 work remain pending. Reservoir visual parity is not achieved.
-Human visual acceptance decides every pass, as in [visual-development.md](../visual-development.md).
+Human visual acceptance decides every pass, as in [visual-development.md](../../visual-development.md).
 
 ## Problem
 

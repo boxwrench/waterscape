@@ -3,7 +3,7 @@
 A Waterscape experience for understanding rivers through terrain, authoritative observations,
 time selection and declared visual bindings. Read the umbrella principle,
 [Making Water Visible](../docs/making-water-visible.md), and the
-[implementation contract](../docs/river-pulse/implementation-contract.md).
+[implementation contract](../docs/river-pulse/reference/implementation-contract.md).
 
 ## Run
 
@@ -25,11 +25,11 @@ California DWR geometry is a fallback if the local centerline cannot load.
 
 - **River atlas:** `/river-pulse/` opens a California relief map with selectable rivers.
   The Russian River opens Hacienda; Sacramento opens Freeport; planned rivers open their individual
-  `river.html?river=<id>` pages. See the [overview notes](../docs/river-pulse/california-overview.md).
+  `river.html?river=<id>` pages. See the [overview notes](./app/README.md).
   Sacramento is the second river with an immersive local scene, a Freeport observation and tidally filtered daily history
   panel. Eel has an in-development Scotia Bluffs visual study. San Joaquin, Tuolumne
   and American have source-linked planned entries.
-  See the [Sacramento foundation](../docs/river-pulse/sacramento-foundation.md).
+  See the [Sacramento foundation](./rivers/sacramento_river/README.md).
 
 - **Eel / Scotia Bluffs (local RP17):** first form pass with native 3DEP terrain,
   mapped river footprints, aligned NAIP source view and explicitly illustrative
@@ -45,7 +45,7 @@ California DWR geometry is a fallback if the local centerline cannot load.
   shore and Above includes the riverfront. Terrain shows bundled
   3DEP/3DHP geography and aligned NAIP imagery.
   Discharge is independent of the fixed shoreline and authored optical ripples.
-  [Scene notes](../docs/river-pulse/sacramento-freeport-scene.md).
+  [Scene notes](./rivers/sacramento_river/scenes/end/freeport/README.md).
 
 - **Hacienda Bridge:** real USGS 3DEP terrain, USGS 3DHP cartographic centerlines,
   USGS discharge/history, time selection and seasonal context; Map, Bridge and Hacienda
@@ -77,7 +77,7 @@ Use the history slider or Play history to compare daily discharge, Return to now
 latest eligible observation, and Inspect data for source/time/quality evidence. Data remains
 accessible if graphics initialization fails. Source outages show unavailable data explicitly.
 
-The [authored-water notes](../docs/river-pulse/authored-water.md) record visual mappings,
+The [authored-water notes](./rivers/russian_river/scenes/middle/hacienda_bridge/README.md) record visual mappings,
 photographic references, CC0 ground materials, MIT tree assets and rendering limitations.
 
 ## Layout

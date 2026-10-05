@@ -71,9 +71,9 @@ The actual overview and state inset were inspected at 980 × 876 and 390 × 844.
 State entry/Evidence controls, source links and terrain-resolution disclosure work;
 phone document width is 390 px with no browser errors. Five focused tests, river
 package validation and the 117-module build pass. Actual screenshots:
-[desktop state inset](../../previews/eel/rp18-desktop-state.png),
-[phone state inset](../../previews/eel/rp18-phone-state.png),
-[phone entry](../../previews/eel/rp18-phone.png).
+[desktop state inset](../../../../../../../previews/eel/rp18-desktop-state.png),
+[phone state inset](../../../../../../../previews/eel/rp18-phone-state.png),
+[phone entry](../../../../../../../previews/eel/rp18-phone.png).
 The two full watershed files add approximately 1.23 MiB uncompressed source data
 to the page. The map adds DOM/SVG work; it does not add Three.js geometry or textures.
 Frame cost and total browser memory have not been remeasured for this UI pass.

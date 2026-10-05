@@ -3,7 +3,7 @@
 ## Scene chrome consistency — RP30
 
 Eel and Tuolumne headers, camera controls and review-tools control now match the other scenes
-(CSS/markup only; [task](roadmap/tasks/RP30-scene-chrome-consistency.md),
+(CSS/markup only; [task](../roadmap/tasks/RP30-scene-chrome-consistency.md),
 `previews/river-pulse/rp30/`). Tests and build pass; pending human visual acceptance.
 
 ## Scene data cards — RP29
@@ -12,7 +12,7 @@ Implemented locally on `task/RP27` after RP28; pending human visual acceptance. 
 Hacienda show a stale gauge reading's last value prominently (muted, with the time) instead of
 "No current reading". Freeport's card adds a 30-day tidally filtered discharge sparkline.
 Placeholder favicon added. 179 unit tests and the build pass; Edge captures of all five scenes
-show no errors ([task](roadmap/tasks/RP29-scene-data-cards.md), `previews/river-pulse/rp29/`).
+show no errors ([task](../roadmap/tasks/RP29-scene-data-cards.md), `previews/river-pulse/rp29/`).
 `scripts/verify-river-pulse.mjs` cannot run on Windows (static server 404s for `dist/`).
 Open: Jenner history, hiding Eel/Tuolumne review tools from visitors, unified camera-button style.
 
@@ -24,7 +24,7 @@ river tabs, a hero from the river's own scene, a data panel, scene cards with vi
 what comes next. Live USGS discharge and a 30-day history show for Sacramento and now Russian
 River (Hacienda Bridge); a stale reading keeps its value with a Stale badge. Eel, Tuolumne and
 planned rivers state that no gauge is bound. Atlas, Eel, Tuolumne and Freeport navigation now
-link consistently to California and river home. See [task](roadmap/tasks/RP28-river-home-layout.md)
+link consistently to California and river home. See [task](../roadmap/tasks/RP28-river-home-layout.md)
 and `previews/river-pulse/rp28/`. 177 unit tests, package validation and the build pass.
 Scene pages are unchanged. Next: bring Hacienda's discharge, history and condition-band
 pattern into the other scenes; no push or merge.
@@ -33,8 +33,8 @@ pattern into the other scenes; no push or merge.
 
 Implemented locally on `task/RP27`, with three cheaper agents reused for geometry,
 source verification, gallery/performance and checks. The user explicitly authorized
-the RP23 merge; no push or merge into main. [Actual gallery](../previews/river-pulse/rp27/review.html)
-and [review](river-pulse/rp27-water-land-review.md) preserve matched desktop/phone
+the RP23 merge; no push or merge into main. [Actual gallery](../../previews/river-pulse/rp27/review.html)
+and [review](./river-pulse-history/rp27-water-land-review.md) preserve matched desktop/phone
 comparisons. Eel now defaults to the bounded RP26 water improvement. Tuolumne's
 valley now has shared river water, with analytic sky instead of a horizontal mirror
 over its sloping reach; original reservoir contexts remain available.
@@ -51,7 +51,7 @@ established. Paused/source/form views now gate rendering to visible changes.
 
 Navigation follows the latest clarification: state overview → own river home →
 existing scenes → camera views. No headwaters or scenic-middle scenes are invented.
-[Scene inventory](river-pulse/river-scene-journey.md). Bounded agent sign-off;
+[Scene inventory](./river-pulse-history/river-scene-journey.md). Bounded agent sign-off;
 overall human visual acceptance and reservoir parity remain open. Older sections
 below describe their original checkpoints, including the earlier opt-in defaults.
 
@@ -59,8 +59,8 @@ below describe their original checkpoints, including the earlier opt-in defaults
 
 Implemented locally on `task/RP26`, pending human visual acceptance. Three cheaper
 agents were reused for reflection/contact audits, peer review, gallery and checks.
-[Actual comparison gallery](../previews/eel/rp26/review.html) and
-[review record](river-pulse/eel-reflection-contact-review.md) preserve six matched
+[Actual comparison gallery](../../previews/eel/rp26/review.html) and
+[review record](../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/notes/eel-reflection-contact-review.md) preserve six matched
 desktop/phone pairs at zero wave phase. An Eel-only depth-sensitive reflection guard
 strongly reduces broad white bank patches while retaining main-view reflections.
 A thin bright rim, warped reflection and coarse contact remain; this is not a
@@ -73,8 +73,8 @@ time are unmeasured. Shared extraction/adoption remain deferred. No merge/push.
 Implemented locally on `task/RP25`, pending human visual acceptance. Three cheaper
 agents handled the deterministic depth adapter/tests, compatibility audit and
 comparison gallery; root integrated and inspected actual desktop/phone renders.
-[Comparison gallery](../previews/eel/rp25/review.html) and
-[review record](river-pulse/eel-water-optics-review.md) preserve paired evidence.
+[Comparison gallery](../../previews/eel/rp25/review.html) and
+[review record](../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/notes/eel-water-optics-review.md) preserve paired evidence.
 The previous water remains the default. Optional Hacienda optics improve forest
 reflection and shallows, but close bright edges and nonplanar reflection mismatch
 remain. Added reflection nearly doubles rendered triangles; GPU time is unmeasured.
@@ -86,7 +86,7 @@ Read-only review on `task/RP24`; no code changed. Eel, Freeport and Tuolumne's v
 trail the reservoir and Hacienda because they use a simpler Three.js path on ~14 m data
 with proxy water, while the reservoir runs the full engine and Hacienda is hand-authored.
 Full diagnosis, reuse inventory and steps are in
-[visual-parity-plan.md](river-pulse/visual-parity-plan.md). Summary of the order:
+[visual-parity-plan.md](./river-pulse-history/visual-parity-plan.md). Summary of the order:
 
 1. Reconcile `task/RP23` (Tuolumne worktree) before cross-river adoption; the Eel
    spike is independent. Branch merge is a separate human action under AGENTS.md.
@@ -105,8 +105,8 @@ Freeport review cameras remains unverified; Eel still renders the 14.05 m 3DEP g
 ## Eel reservoir surface reuse — RP24
 
 Complete locally on `task/RP24`; awaiting human visual acceptance. The
-[actual comparison gallery](../previews/eel/rp24/review.html) and
-[review record](river-pulse/eel-reservoir-surface-review.md) preserve five fixed
+[actual comparison gallery](../../previews/eel/rp24/review.html) and
+[review record](../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/notes/eel-reservoir-surface-review.md) preserve five fixed
 desktop/phone before-after pairs, form/source views, California context, material
 iterations, motion/pause frames and runtime measurements. Eel's dry bluff material
 reuses existing CC0 Rock030 maps and reservoir triplanar technique through
@@ -118,7 +118,7 @@ Three cheaper agents were reused and redeployed for the module/gallery, source a
 projection audit, and Tuolumne performance audit. Root corrected an identified UV /
 normal-axis mismatch, integrated the module and inspected actual runtime renders.
 Reuse-first guidance now appears in `docs/visual-development.md`; cross-river
-recommendations are in [the source audit](river-pulse/rp24-source-audit.md).
+recommendations are in [the source audit](../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/notes/rp24-source-audit.md).
 
 Seven focused tests, package validation and the 120-module build pass. Browser
 errors are empty; phone has no horizontal overflow; settled pause images match.
@@ -139,7 +139,7 @@ http://localhost:5174/river-pulse/renderer/tuolumne.html?view=below ; actual rev
 http://localhost:5174/previews/tuolumne/rp23/review.html . Native 1 m LiDAR remains
 unacquired; a 1 m-spaced service-resampled shading image does not supply 1 m geometry.
 
-The [performance audit](river-pulse/rp24-tuolumne-performance-audit.md) records
+The [performance audit](../../river-pulse/rivers/tuolumne_river/scenes/start/poopenaut_valley/notes/rp24-tuolumne-performance-audit.md) records
 62.3 ms desktop / 35.5 ms phone submission-plus-completion waits at low quality,
 121.78 / 117.86 MiB tracked engine buffers and unmeasured follow-up hypotheses.
 Hidden/paused gating stops submissions but retains allocated buffers. The desktop
@@ -150,8 +150,8 @@ the next material reuse candidate. This isolated work is not merged into this ch
 ## Eel bluff and forest pass — RP20
 
 Complete locally on `task/RP20`; this visual pass awaits human acceptance.
-The [actual comparison gallery](../previews/eel/rp20/review.html) and
-[review record](river-pulse/eel-bluff-forest-review.md) preserve five fixed desktop
+The [actual comparison gallery](../../previews/eel/rp20/review.html) and
+[review record](../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/notes/eel-bluff-forest-review.md) preserve five fixed desktop
 and phone views, the original primary baseline, source/form presentations, failed
 iterations and measured costs. Deterministic Setting trees reuse licensed reservoir
 mesh/atlas assets; authored rock grain and weathering improve the forest silhouette
@@ -209,11 +209,11 @@ catalog did not intersect this study extent. The actual CA09_Perkins survey
 footprint verifies partial 1 m availability at the station, but not the main bluff
 review targets; this NCALM/NSF/UC Santa Cruz project is not state agency data.
 Full-study 1 m availability remains unverified; a failed National Map catalog
-request is not evidence of absence. See the [source audit](river-pulse/eel-source-audit.md).
-The [workflow](visual-development.md) now requires a California source search and
+request is not evidence of absence. See the [source audit](../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/notes/eel-source-audit.md).
+The [workflow](../visual-development.md) now requires a California source search and
 coverage/date/CRS/vertical-datum/source-resolution/runtime-sampling audit, while
 retaining federal origins for state-hosted federal products. Source inputs and
-limitations are in the [Eel review](river-pulse/eel-visual-review.md).
+limitations are in the [Eel review](../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/README.md).
 
 Verification: five focused source/geometry tests, river package validation and
 the complete 117-module build pass. Actual state inset and entry button inspected
@@ -281,8 +281,8 @@ tested coordinates, audited lifecycle/fallback, drafted reuse guidance/gallery,
 and inventoried candidates. Root fixed fallback labels, integrated the renderer,
 checked their paths/arithmetic and inspected actual renders. Nine focused Node
 checks, source validation, river package checks and the 119-module build pass.
-[Actual evidence](../previews/tuolumne/rp23/review.html) and
-[reuse-first guidance](river-pulse/reservoir-renderer-reuse.md) record next small
+[Actual evidence](../../previews/tuolumne/rp23/review.html) and
+[reuse-first guidance](../river-pulse/reference/reservoir-renderer-reuse.md) record next small
 Eel bluff, Sacramento bank and Tuolumne dry-slope trials. Work stays isolated in
 `C:/Github/waterscape-tuolumne-rp19`; never pushed or merged.
 
@@ -309,8 +309,8 @@ checks and full 117-module build pass. Dam on adds 1,256 triangles and one draw 
 RGBA/mip estimate 13.33 MiB. Native baseline in the same loaded page retains those
 assets; original RP21 had 21.11 MiB / 8 MiB. GPU timing/full memory and foreground
 FPS are unmeasured. Coarse terrain contact, bare surroundings and river water still
-need later passes. [Actual gallery](../previews/tuolumne/rp22/review.html) and
-[reuse notes](river-pulse/tuolumne-dam-reuse.md) retain evidence and limitations.
+need later passes. [Actual gallery](../../previews/tuolumne/rp22/review.html) and
+[reuse notes](../river-pulse/reference/tuolumne-dam-reuse.md) retain evidence and limitations.
 Live close view: http://localhost:5174/river-pulse/renderer/tuolumne.html?view=dam-close .
 Work is isolated in `C:/Github/waterscape-tuolumne-rp19`; never pushed or merged.
 Cheaper agent audited the transform/reviewed integration and drafted reuse notes;
@@ -330,7 +330,7 @@ The first actual render exposed triangular water/terrain gaps; related plane/dep
 corrections are preserved in before/after evidence. Detailed vegetation/structures
 and convincing close water remain future passes. The user subsequently accepted
 this first form baseline on 2026-10-04; the detailed environment remains unfinished.
-The [reusable process](visual-development.md) and [review record](river-pulse/eel-visual-review.md)
+The [reusable process](../visual-development.md) and [review record](../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/README.md)
 explain provenance, weak points and measurement limits. Work is local; never pushed.
 Verification: 9 focused tests, river validation, registry regeneration check and
 complete build pass. Five desktop/phone cameras, form/source modes, Evidence,
@@ -388,8 +388,8 @@ Scientific observations, water bindings and geographic terrain remain independen
 Verification: 11 focused tests pass, river packages validate, and the complete build
 passes. Eight desktop/phone angles and evidence/pause/navigation controls were inspected;
 no console errors. Local previews include bridge, east approach, underside and overhead.
-See [scene notes](river-pulse/sacramento-freeport-scene.md) and
-[task](roadmap/tasks/RP14-freeport-bridge-fidelity.md). No push or merge.
+See [scene notes](../../river-pulse/rivers/sacramento_river/scenes/end/freeport/README.md) and
+[task](../roadmap/tasks/RP14-freeport-bridge-fidelity.md). No push or merge.
 
 ## Sacramento at Freeport — RP13
 
@@ -401,8 +401,8 @@ frame: 3DEP NAVD88 elevation, 3DHP Sacramento centerline and aligned NAIP imager
 Live matched Freeport discharge starts independently of graphics; stale/missing values
 stay explicit. The existing distinct tidally filtered daily history remains on the
 individual river page. No discharge-to-stage/current/flood conversion is made.
-See [scene notes](river-pulse/sacramento-freeport-scene.md) and
-[task](roadmap/tasks/RP13-sacramento-freeport.md). Work is local; no push or merge.
+See [scene notes](../../river-pulse/rivers/sacramento_river/scenes/end/freeport/README.md) and
+[task](../roadmap/tasks/RP13-sacramento-freeport.md). Work is local; no push or merge.
 
 ## California relief overview — RP12
 
@@ -415,7 +415,7 @@ Desktop fits the whole state; mobile enlarges map labels and retains full river 
 The user's reservoir/Russian River visuals and saved resource library informed terrain
 depth, sea palette and geographic storytelling. No upstream implementation was copied.
 Focused map checks, build checks and desktop/mobile navigation pass. No publication.
-See [overview notes](river-pulse/california-overview.md).
+See [overview notes](../../river-pulse/app/README.md).
 
 ## River atlas and Sacramento foundation — RP11
 
@@ -425,8 +425,8 @@ placeholders. Russian River scenes keep their URLs and gain a Rivers link. Freep
 the first registered Sacramento data place: instantaneous `00060` and tidally filtered
 daily `72137` are kept distinct, with pinned source series, quality/time evidence,
 45-minute display freshness and a separate daily chart. No Sacramento 3D scene or terrain
-is claimed. See [foundation](river-pulse/sacramento-foundation.md) and
-[task](roadmap/tasks/RP11-river-atlas-sacramento.md). Next work is to choose the first
+is claimed. See [foundation](../../river-pulse/rivers/sacramento_river/README.md) and
+[task](../roadmap/tasks/RP11-river-atlas-sacramento.md). Next work is to choose the first
 Sacramento viewpoint, gather photo references and build its terrain/centerline crop.
 Local tests/build pass and desktop/mobile atlas was inspected; no publication.
 
@@ -445,7 +445,7 @@ Merged/pushed as `4a404c4`. [Pages run 36724078133](https://github.com/boxwrench
 passed build and deployment. The public [Jenner scene](https://boxwrench.github.io/waterscape/river-pulse/renderer/jenner.html)
 is live; Jenner page/module/water, Hacienda page/Map water and the Tidewater license match
 the verified build by SHA-256. Focused Jenner tests (8), built assets and pinned-CI-browser
-shoreline capture pass. See [RP10](roadmap/tasks/RP10-publish-jenner.md). Separate reservoir
+shoreline capture pass. See [RP10](../roadmap/tasks/RP10-publish-jenner.md). Separate reservoir
 work remains untouched. The result-only docs commit skips CI after successful runtime deployment.
 
 ## Jenner estuary and Pacific shoreline — RP9
@@ -462,7 +462,7 @@ The independent gauge card selects source USGS 11467270 / 63160 NAVD88 observati
 Highway 1, with 45-minute freshness, future-value exclusion and explicit missing/stale
 records. The authored coast does not infer current mouth status, tide or local currents;
 Hacienda discharge is not converted to estuary state. Data survives graphics failure.
-See [scene notes](river-pulse/jenner-scene.md) and [task](roadmap/tasks/RP9-jenner-estuary.md).
+See [scene notes](../../river-pulse/rivers/russian_river/scenes/end/jenner/README.md) and [task](../roadmap/tasks/RP9-jenner-estuary.md).
 
 Verification is deliberately focused per the user: eight Jenner unit tests, built assets
 and the Jenner browser smoke; desktop/mobile screenshots were inspected against references.
@@ -484,7 +484,7 @@ at browser-check line 208 (`page.screenshot: Timeout 30000ms exceeded.`), with p
 Build/deploy run [36672469191](https://github.com/boxwrench/waterscape/actions/runs/36672469191)
 failed build and skipped deployment. The accepted visuals were not live at that point. Per AGENTS.md's
 two-failure rule and the user's request to avoid more checks, no further rerun or CI bypass
-was attempted. See [RP8](roadmap/tasks/RP8-publish-river-pulse.md) for the result. Its docs-only
+was attempted. See [RP8](../roadmap/tasks/RP8-publish-river-pulse.md) for the result. Its docs-only
 result commit skips CI to avoid another run; runtime code remains the locally verified build.
 The River Pulse sections below record historical local milestones.
 
@@ -495,7 +495,7 @@ normals replace the periodic bands, with a bluer body and softer highlights. Thr
 water example is recorded in the resource library as a technique reference; existing vendored
 TSL noise supplies the detail. No new asset downloads or vendor changes. RP6's width, border,
 state and reduced-motion behavior, and the accepted authored beach remain unchanged. See
-[surface refinement notes](river-pulse/authored-water.md#map-surface-refinement--rp7).
+[surface refinement notes](../../river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/README.md#map-surface-refinement--rp7).
 
 Unit tests (108), river validation, built assets and the complete River Pulse browser suite
 pass. Desktop high/low flow and mobile renders were inspected. Work remains isolated in
@@ -508,7 +508,7 @@ ripples and traveling highlights. Seasonal category colors its margins; selected
 widens/narrows it within the loaded history range. Zero/missing data stops motion; missing
 history uses a disclosed fixed fallback scale. River toggle and reduced motion are intact.
 The user's accepted Hacienda Beach/Bridge setting is unchanged. Read the
-[Map binding notes](river-pulse/authored-water.md#map-flow-and-scientific-state--rp6) for
+[Map binding notes](../../river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/README.md#map-flow-and-scientific-state--rp6) for
 normalization and limitations: width/motion are symbolic, not measured banks or hydraulics.
 
 Unit tests (108), river validation, built assets and the full browser suite pass. The earlier
@@ -528,7 +528,7 @@ camelback, concrete approaches, continuous left-pier rock outcrop, gray pebble b
 layered mixed woodland and greener, less transparent water. Shore walking stays bounded
 at eye height. Local geometry is authored, not surveyed: coordinate/elevation labels and
 the compass are Map-only. Timeline/scientific selection is independent of the static beach.
-See [authored-scene notes](river-pulse/authored-water.md) for evidence, licenses and limits.
+See [authored-scene notes](../../river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/README.md) for evidence, licenses and limits.
 The user accepted this visual baseline after reviewing Firefox: "not perfect but
 recognizable." Keep the current composition, gray steel/stone, left-pier outcrop and
 greener water. Further visual polish is optional; technical verification remains open.
@@ -547,7 +547,7 @@ modeled bed and near-bank setting. A new Shoreline composition puts the camera a
 terrain-constrained water edge, with a shallow depth mapping, foreground pebbles, bank
 rocks and grouped lightweight Douglas-fir meshes reused from the committed W2 biome.
 The river's sourced terrain and scientific data selection remain unchanged. See
-[authored-water notes](river-pulse/authored-water.md#rp4-bank-material-integration) for
+[authored-water notes](../../river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/README.md#rp4-bank-material-integration) for
 asset provenance and visual assumptions. The bridge remains the subsequent authored
 architecture task. This work is isolated from the active reservoir checkout and not published.
 
@@ -555,7 +555,7 @@ architecture task. This work is isolated from the active reservoir checkout and 
 
 The user selected Poly Haven **Ganges River Pebbles** for the beach/shallow bed and
 **Rock Boulder Dry** for large exposed bank rocks. Source and CC0 links are saved in the
-[resource library](../resources/README.md#terrain-rocks--ground-materials). River Small Rocks
+[resource library](../../resources/README.md#terrain-rocks--ground-materials). River Small Rocks
 is an optional gravel variation. These are selected candidates, not downloaded/integrated
 materials or a geological identification. Use a shared dry/wet pebble material and some
 foreground pebble geometry in the next authored scene pass. The bridge, large rocks,
@@ -568,7 +568,7 @@ pebble beach and water-edge Shoreline camera remain the requested next scene wor
 Gauge and new Shallows cameras. Valley remains cartographic. The preview uses the existing
 terrain/mainstem assets, with disclosed illustrative surface/bed geometry, fine ripples,
 Fresnel scene reflections, refracted procedural gravel and approximate caustic detail.
-Read [authored-water notes](river-pulse/authored-water.md) for resource evaluation and limits.
+Read [authored-water notes](../../river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/README.md) for resource evaluation and limits.
 No discharge-to-stage/velocity inference, corridor restoration or Jenner surface is included.
 The unfinished W2 checkout was preserved. This branch is for review; it is not published.
 
@@ -605,23 +605,23 @@ look: summer grass palette, tree cover, species weights and stands, fog (with ov
 the Morning preset) and water optics (`renderer/engine/look.js`, light buffer L[6]–L[11]).
 Crystal Springs defaults to spring green, has a foggy overcast Morning and greener water.
 W3 adds San Andreas Lake with the same look; W4 puts both on the Hetch Hetchy tour (four stops). Flyovers here were rendered with headless Chrome (no Edge on the
-build machine). See [W2](roadmap/tasks/W2-crystal-springs.md).
+build machine). See [W2](../roadmap/tasks/W2-crystal-springs.md).
 
 ## Shoreline contact — 2026-09-29
 
 B1 replaced the straight, grid-aligned waterline with an organic edge. Within ~8 m of the
 shoreline `water.cu` models the bank itself and shows water where the surface stands above
 it; a slow ebb (scaled by wave energy) moves the edge, and a damp band trails it. Illustrative
-binding, recorded in [Making Water Visible](making-water-visible.md). Flyovers were not
+binding, recorded in [Making Water Visible](../making-water-visible.md). Flyovers were not
 re-recorded (they fly too high for the change to show). See
-[B1](roadmap/tasks/B1-shoreline-contact.md).
+[B1](../roadmap/tasks/B1-shoreline-contact.md).
 
 ## README imagery — 2026-09-29
 
 R3 refreshed the README with actual Calaveras North ridge and Shoreline screenshots,
 in that order. Both are 1440x900, captured at high quality with golden-hour light and
 summer-gold season. Controls are hidden; the renderer and authored viewpoints are unchanged.
-See [R3](roadmap/tasks/R3-readme-images.md).
+See [R3](../roadmap/tasks/R3-readme-images.md).
 
 ## Repository cleanup — 2026-09-29
 
@@ -648,7 +648,7 @@ see the R1 Result for the local checks and limitations.
 ## R1 umbrella integration — 2026-09-29
 
 The user explicitly authorized merging and pushing the combined work, overriding the default
-agent rule for this task. Remote main's [Making Water Visible](making-water-visible.md)
+agent rule for this task. Remote main's [Making Water Visible](../making-water-visible.md)
 principles and the supplied `river-pulse/bootstrap` history are integrated with G2 and P2.
 
 - **One repo/build:** existing reservoir URLs remain; `/river-pulse/` opens Hacienda.
@@ -669,10 +669,10 @@ principles and the supplied `river-pulse/bootstrap` history are integrated with 
 - **P2:** defer sky/terrain shading that water overwrites. Three deterministic comparison
   views matched byte-for-byte; measured GPU pass work fell 14–16% on local Firefox. This is
   not a Windows FPS measurement. Windows Chrome/Edge remain the target; no Firefox workaround
-  was added. See [P2](roadmap/tasks/P2-render-cost.md).
+  was added. See [P2](../roadmap/tasks/P2-render-cost.md).
 
 The older sections below retain historical context. R1 supersedes their single-experience
-scope; G2 supersedes G1's blade counts. See [R1](roadmap/tasks/R1-waterscape-umbrella.md) for
+scope; G2 supersedes G1's blade counts. See [R1](../roadmap/tasks/R1-waterscape-umbrella.md) for
 the final publication result and checks.
 
 - **Front page** (`index.html`, `site/journey.js`): WebGPU browsers open straight into live 3D
@@ -714,7 +714,7 @@ D1 is deployed (shipped with G1 in `9489555`, at the user's request; D1 itself w
 separately reviewed): compact source-linked supply and capacity, expandable
 reservoir/scene details, acquisition-year labeling for the sampled USGS point, and a clear
 distinction between terrain data and modeled bed/waves. Sources were re-fetched; no
-current storage claim is added. See [task](roadmap/tasks/D1-reservoir-context.md).
+current storage claim is added. See [task](../roadmap/tasks/D1-reservoir-context.md).
 
 ## G1 deployed (grass)
 
@@ -722,7 +722,7 @@ current storage claim is added. See [task](roadmap/tasks/D1-reservoir-context.md
 (4 / 10 / 14 tufts per m² on low / medium / high), clumped into patches by a slow noise, with
 wider blades and a lighter root shadow. Only `renderer/land/grass.js` changed. Green and gold are
 the existing Season control (gold default). A "stylized" Breath-of-the-Wild-like option was
-tried and removed at the user's request. See [task](roadmap/tasks/G1-tufted-grass.md).
+tried and removed at the user's request. See [task](../roadmap/tasks/G1-tufted-grass.md).
 
 **Open, deferred as polish:** `node scripts/verify.mjs` fails its low-tier frame-time check
 (`low tier median … ms > 33 ms at 768 px`; 52–70 ms on an integrated Intel GPU). It also fails on

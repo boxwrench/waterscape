@@ -36,7 +36,7 @@ source's local aggregation boundary. The source date remains visible in each rec
 Observation and daily chart bindings are Exact to selected source quantities; daily
 means remain derived statistics. Freeport data does not describe the downtown waterfront
 or every reach. No discharge-to-depth, stage, velocity or flood conversion is made.
-RP13 adds the [first Freeport scene](sacramento-freeport-scene.md): an approximate
+RP13 adds the [first Freeport scene](./scenes/end/freeport/README.md): an approximate
 photo-informed bridge/bank setting and a separate 3DEP/3DHP/NAIP terrain view.
 
 Next: review/refine Freeport and choose the next local Sacramento viewpoint. Lengths are omitted from factual UI

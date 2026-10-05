@@ -56,7 +56,7 @@ bounded pass. Save locally; no push or merge.
   categories are not summed as total memory and are not controlled benchmarks.
 - Outcome: ready for human review, needs further visual/performance passes.
   [Actual captures](../../../previews/tuolumne/rp23/review.html) preserve evidence;
-  [reuse-first guidance](../../river-pulse/reservoir-renderer-reuse.md) records
+  [reuse-first guidance](../../river-pulse/reference/reservoir-renderer-reuse.md) records
   suitable candidates and next bounded terrain trials for other rivers.
   Two cheaper agents handled focused tests, audits, documentation/gallery and
   asset inventory. Root checked sources/paths, integrated and inspected runtime.

@@ -1,8 +1,8 @@
 # Eel River / Scotia Bluffs — visual review
 
 RP17 trials the user's research → form → fixed cameras → render → compare → refine
-workflow. [Open the study](../../river-pulse/renderer/eel.html) or
-[actual runtime comparison](../../previews/eel/review.html).
+workflow. [Open the study](./index.html) or
+[actual runtime comparison](../../../../../../previews/eel/review.html).
 
 **Acceptance: first form baseline accepted by the user on 2026-10-04 ("looks good").**
 This acceptance covers RP17's landform/contact pass. It is
@@ -53,7 +53,7 @@ failed National Map product-catalog request does not establish absence of 1 m da
 full-study 1 m coverage remains unverified. A separate actual survey footprint
 confirms partial 1 m availability from NCALM's 2009 CA09_Perkins research project
 at the station, but not the primary, eye-level, shoreline or bend camera targets.
-Nothing from that DEM is downloaded or rendered. The [source audit](eel-source-audit.md)
+Nothing from that DEM is downloaded or rendered. The [source audit](./notes/eel-source-audit.md)
 records coverage, datum, license and the distinction between state and research inputs.
 
 The water height is a DEM-following visual proxy with rendering clearance, not
@@ -158,4 +158,4 @@ separately from RP17's visual and performance measurements above.
 The next detailed visual pass should address the bluff/forest silhouette and
 close terrain scale, then shoreline/water presentation. Detailed vegetation and
 structures must be compared from these same cameras rather than concealing a weak
-form. The reusable process is [documented here](../visual-development.md).
+form. The reusable process is [documented here](../../../../../../docs/visual-development.md).

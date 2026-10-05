@@ -12,7 +12,7 @@ are projected onto the geometry tangent plane and converted to view space by the
 caller. Existing procedural bump is retained. Woody cover softly attenuates the
 effect. Detail fades between 400 and 1400 m from the camera.
 
-The [source/projection audit](rp24-source-audit.md) records license metadata and
+The [source/projection audit](./rp24-source-audit.md) records license metadata and
 cross-river candidate limits. Existing Rock030 maps are authored appearance assets,
 not photographs of Scotia rock. Ellin Beltz's March 2016 Scotia photograph remains
 the credited external visual reference. Source terrain, aerial and river footprint
@@ -27,7 +27,7 @@ Original form/source presentations remain available.
 
 ## Iteration and actual review
 
-The [runtime comparison gallery](../../previews/eel/rp24/review.html) preserves
+The [runtime comparison gallery](../../../../../../../previews/eel/rp24/review.html) preserves
 five desktop and five phone before/after pairs. Initial before captures were taken
 before integration, but final inspection caught several screenshots before the
 browser had painted the selected camera. The final comparison pairs were therefore
@@ -98,7 +98,7 @@ retry outside the sandbox passed. No test failure was hidden by a visual claim.
 ## Parallel work and next pass
 
 Three cheaper agents produced the isolated material module/comparison gallery,
-source/projection audit, and [Tuolumne performance audit](rp24-tuolumne-performance-audit.md).
+source/projection audit, and [Tuolumne performance audit](../../../../../tuolumne_river/scenes/start/poopenaut_valley/notes/rp24-tuolumne-performance-audit.md).
 Completed agents were redeployed within the pass; root integrated and reviewed.
 The Tuolumne audit identifies wrapper-level resolution/glare trials with no measured
 savings yet. Its full reservoir context remains in the isolated RP23 checkout.

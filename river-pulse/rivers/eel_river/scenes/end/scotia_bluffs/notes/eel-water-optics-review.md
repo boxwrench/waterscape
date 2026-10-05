@@ -1,6 +1,6 @@
 # RP25 Eel water optics review
 
-First bounded implementation of the [visual parity plan](visual-parity-plan.md),
+First bounded implementation of the [visual parity plan](../../../../../../../docs/archive/river-pulse-history/visual-parity-plan.md),
 on `task/RP25`. Implementation complete; human visual acceptance pending. This
 spike demonstrates material reuse, but does not justify shared-water extraction
 or adoption on other rivers yet. The previous surface remains the default.
@@ -33,7 +33,7 @@ The runtime still uses the existing 384×384 USGS 3DEP grid at approximately
 14.05 m spacing, aligned NAIP context and mapped 3DHP footprint. No native 1 m
 LiDAR data was added. Existing California Water Boards CalWater context remains
 featured in Evidence, with interagency origin, dates and geographic limits.
-The existing source manifest and [source audit](eel-source-audit.md)
+The existing source manifest and [source audit](./eel-source-audit.md)
 describe those inputs. No new scientific source or observed value was introduced.
 
 The optical-depth model is illustrative input, not bathymetry. The optics binding
@@ -46,7 +46,7 @@ from verified native 1 m LiDAR, and records the verified custom-grid API seam.
 
 ## Actual render evidence
 
-The [comparison gallery](../../previews/eel/rp25/review.html) presents six paired
+The [comparison gallery](../../../../../../../previews/eel/rp25/review.html) presents six paired
 comparisons: Bluffs, eye-level and shoreline at 980×820 and 390×844. All final
 before/after images were captured from the implemented runtime with the same
 paused clock per device, fixed v1 cameras, refined boundary and reservoir bluff

@@ -1,7 +1,7 @@
 # Tuolumne River: Poopenaut Valley foundation
 
 This records the RP19 source-data checkpoint. RP21 now adds an actual
-[plain-form runtime and visual review](tuolumne-visual-review.md); the river is
+[plain-form runtime and visual review](./notes/tuolumne-visual-review.md); the river is
 in development and visual acceptance remains pending.
 
 RP19 starts the next river in parallel with Eel's source audit. The first place is
@@ -12,7 +12,7 @@ this sequence, and its [management map](https://www.nps.gov/yose/learn/managemen
 provides geographic context. This is a data/research foundation, not a rendered
 scene, a finished river package or an accepted visual baseline.
 
-![Actual source imagery and California watershed context](../../river-pulse/data/tuolumne_river/foundation/poopenaut/reference-sheet.jpg)
+![Actual source imagery and California watershed context](./data/reference-sheet.jpg)
 
 The reference sheet uses downloaded USGS/USDA NAIP imagery and actual state
 CalWater polygon coordinates. It is a source-data diagram, not concept art or a

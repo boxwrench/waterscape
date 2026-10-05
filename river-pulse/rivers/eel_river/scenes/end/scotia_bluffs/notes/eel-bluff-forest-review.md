@@ -96,7 +96,7 @@ All five fixed cameras were rendered and visually inspected at 980×876 desktop
 and 390×844 phone after the final palette correction. Baseline/detail, plain Form,
 Source aerial, Evidence open/close, California inset and highlight pause/resume
 were exercised. Phone camera targets are 44 px high; document width stays 390 px.
-Final browser error log is empty. The [actual comparison gallery](../../previews/eel/rp20/review.html)
+Final browser error log is empty. The [actual comparison gallery](../../../../../../../previews/eel/rp20/review.html)
 loads all ten images. Phone Evidence was recaptured after its opening transition;
 its state outline and credits are visible in the preserved image.
 

@@ -3,7 +3,7 @@
 Open `river-pulse/renderer/jenner.html` from a built local server. The Hacienda header also
 links to Jenner. The user accepted this as a good starting point and authorized publication
 in RP10. The public entry is [Jenner estuary](https://boxwrench.github.io/waterscape/river-pulse/renderer/jenner.html);
-see [RP10](../roadmap/tasks/RP10-publish-jenner.md) for publication verification.
+see [RP10](../../../../../../docs/roadmap/tasks/RP10-publish-jenner.md) for publication verification.
 
 ## Photographic composition
 

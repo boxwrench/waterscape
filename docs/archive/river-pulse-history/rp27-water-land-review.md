@@ -24,7 +24,7 @@ and are grounded on the selected surface.
 
 - Eel bundles an 800×750-cell, all-valid crop from USGS 3DEP Northern California
   Wildfires B4, 2018 project. Bounded byte ranges verify the source and crop;
-  [source audit](eel-hero-lidar-audit.md) records alternatives, coordinates, CRS
+  [source audit](../../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/notes/eel-hero-lidar-audit.md) records alternatives, coordinates, CRS
   operation and provenance. Source spacing is 1 m; desktop eye/shore meshes use
   2 m spacing, primary/phone meshes 4 m, with the original 14.05 m terrain outside.
   A two-coarse-cell seam and wet-edge blend preserve the existing water contact.
@@ -42,14 +42,14 @@ and are grounded on the selected surface.
   retains the separate existing dam-contact treatment while the dam is visible.
 - The eye-level Tuolumne camera was corrected from v3 to v4 after the first
   render exposed off-channel dry-ground occlusion. Its new sightline crosses the
-  mapped river without excavating that dry foreground. [Camera record](tuolumne-eye-camera-review.md).
+  mapped river without excavating that dry foreground. [Camera record](../../../river-pulse/rivers/tuolumne_river/scenes/start/poopenaut_valley/notes/tuolumne-eye-camera-review.md).
 - The clarified journey uses existing content: California overview → each
   river's own home → manifest scenes → fixed views. Camera views are not new
-  geographic scenes. [Inventory](river-scene-journey.md).
+  geographic scenes. [Inventory](./river-scene-journey.md).
 
 ## Actual evidence reviewed
 
-[Comparison gallery](../../previews/river-pulse/rp27/review.html) preserves:
+[Comparison gallery](../../../previews/river-pulse/rp27/review.html) preserves:
 
 - Three Eel v1 hero cameras in matched Form before/after at 980×820, and six
   Study pairs across 980×820 desktop and 390×844 phone. Both Study sides use the
@@ -79,7 +79,7 @@ reservoir engine remain resident. This reduces idle work, not active-water cost.
 Recorded 12-warmup/120-frame samples are browser-throttled at roughly 1004 ms
 frame intervals. CPU submission, geometry and allocations are recorded separately;
 no GPU-only timing, foreground FPS, measured phone-device performance or speedup
-is claimed. [Detailed cost record](rp27-performance-review.md).
+is claimed. [Detailed cost record](./rp27-performance-review.md).
 
 Agent acceptance: bounded water/land/navigation baseline. Human acceptance of the
 overall look remains open. Next visual problems are Eel terrain normals/shading,

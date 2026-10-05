@@ -1,6 +1,6 @@
 # Waterscape
 
-Eel River now has a local [Scotia Bluffs visual study](river-pulse/renderer/eel.html)
+Eel River now has a local [Scotia Bluffs visual study](./river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/index.html)
 with fixed review cameras and a plain form mode. It is a first landform pass,
 awaiting visual acceptance. See the [reusable visual workflow](docs/visual-development.md)
 and [actual runtime comparison](previews/eel/review.html).
@@ -23,7 +23,7 @@ with USGS discharge, history and seasonal context alongside the scene.
 | [River Pulse](https://boxwrench.github.io/waterscape/river-pulse/) | Hacienda Map with a flow-scaled water ribbon; authored gray steel bridge, rock outcrop, pebble beach and green reflective water; USGS discharge/history | Live prototype; illustrative water and authored setting, no local hydrodynamic model |
 
 **[Explore Jenner estuary →](https://boxwrench.github.io/waterscape/river-pulse/renderer/jenner.html)**
-[Scene notes](docs/river-pulse/jenner-scene.md), with Estuary lookout,
+[Scene notes](./river-pulse/rivers/russian_river/scenes/end/jenner/README.md), with Estuary lookout,
 River shore and Pacific beach. Photo-informed sand spit, Goat Rock, green coastal bluffs,
 green estuary water and teal Pacific surf; the separate USGS card reports NAVD88 water level
 at Highway 1. Open [Jenner locally](http://localhost:5173/river-pulse/renderer/jenner.html) after
@@ -78,7 +78,7 @@ riverfront buildings and sourced Terrain views,
 plus USGS discharge and separate history.
 The other four are planned placeholders. Select Russian River to open Hacienda or a
 planned river to open its individual page. See the
-[Freeport scene notes](docs/river-pulse/sacramento-freeport-scene.md). These additions are local,
+[Freeport scene notes](./river-pulse/rivers/sacramento_river/scenes/end/freeport/README.md). These additions are local,
 pending review and publication.
 
 ![Sacramento River Freeport bridge and reflective water](previews/freeport-bridge.png)
@@ -95,7 +95,7 @@ left-pier rock, gray pebble shore and grouped woodland. Green water has reflecti
 refraction, modeled bed detail and approximate caustics. Shore movement stays near the water
 at eye height. Timeline changes preserve this static authored shoreline.
 See the [River Pulse guide](river-pulse/README.md) and
-[scene, sources and rendering notes](docs/river-pulse/authored-water.md).
+[scene, sources and rendering notes](./river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/README.md).
 
 ## Add a reservoir
 

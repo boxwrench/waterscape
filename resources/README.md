@@ -52,12 +52,12 @@ For redistribution details and pinned snapshots of code/assets actually included
 | [Three.js flowing water / Water2Mesh](https://github.com/mrdoob/three.js/blob/dev/examples/jsm/objects/Water2Mesh.js) | — | **Reference — Map RP7** | Advected surface normals with Fresnel reflection/refraction. Useful lightweight water-detail approach for a ribbon. RP7 uses existing vendored TSL noise for irregular surface detail, with no copied example code or normal-map assets. | **Medium-high / low-medium** (estimate; target GPU unmeasured) | **[MIT](https://github.com/mrdoob/three.js/blob/dev/LICENSE)** code; separately verify texture provenance before importing example assets |
 | [Codrops RainEffect](https://github.com/codrops/RainEffect) · [demo](https://tympanus.net/Development/RainEffect/) | — | **Candidate** | Screen-space/WebGL rain and water-drop effects. **Waterscape use:** inexpensive rain/wet-camera layer for weather scenes without adding fluid simulation. | **Medium-high / low-medium** | **Codrops custom licence**: integration/build-upon allowed for personal or commercial projects; do not redistribute or sell as-is. Verify current upstream terms before use. |
 
-Hacienda authored-water evaluation (RP2): [implementation and resource notes](../docs/river-pulse/authored-water.md).
+Hacienda authored-water evaluation (RP2): [implementation and resource notes](../river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/README.md).
 The first local pass reuses existing Three/TSL reflection machinery and uses multi-directional
 wave detail informed by the CAUSTIC//VOLUME explanation. Clearwater and Tidewater remain
 optical/full-system references; no new upstream code or assets were copied in RP2.
 
-Jenner coastal evaluation (RP9): [scene and resource notes](../docs/river-pulse/jenner-scene.md).
+Jenner coastal evaluation (RP9): [scene and resource notes](../river-pulse/rivers/russian_river/scenes/end/jenner/README.md).
 The periodic noise generator from Tidewater’s `SeaDetail.js` is adapted under MIT at pinned
 revision `4811ba48d795197de5621985f404e765c0b7c0ef`; the license ships in the Jenner package.
 Its surf/foam techniques informed independently authored TSL. The full FFT engine remains a
@@ -68,7 +68,7 @@ Freeport (RP13) continues this approach with the existing irregular noise, plana
 CC0 stone materials and detailed MIT ez-tree broadleaf bakes from the reservoir work.
 Its broad lowland river and green steel crossing are original approximate geometry;
 the separate terrain view uses aligned USGS 3DEP/3DHP/NAIP data.
-See [Freeport notes](../docs/river-pulse/sacramento-freeport-scene.md).
+See [Freeport notes](../river-pulse/rivers/sacramento_river/scenes/end/freeport/README.md).
 
 ## Rivers, currents & coastal flow
 
