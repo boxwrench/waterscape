@@ -1,5 +1,18 @@
 # Handoff — 2026-10-04
 
+## River home layout and navigation — RP28
+
+Implemented locally on `task/RP27` after the RP27 checkpoint commit; pending human visual
+acceptance. The river home (`river-pulse/river.html`) is rebuilt in the atlas's dark style:
+river tabs, a hero from the river's own scene, a data panel, scene cards with viewpoints, and
+what comes next. Live USGS discharge and a 30-day history show for Sacramento and now Russian
+River (Hacienda Bridge); a stale reading keeps its value with a Stale badge. Eel, Tuolumne and
+planned rivers state that no gauge is bound. Atlas, Eel, Tuolumne and Freeport navigation now
+link consistently to California and river home. See [task](roadmap/tasks/RP28-river-home-layout.md)
+and `previews/river-pulse/rp28/`. 177 unit tests, package validation and the build pass.
+Scene pages are unchanged. Next: bring Hacienda's discharge, history and condition-band
+pattern into the other scenes; no push or merge.
+
 ## River water adoption and hero land — RP27
 
 Implemented locally on `task/RP27`, with three cheaper agents reused for geometry,
