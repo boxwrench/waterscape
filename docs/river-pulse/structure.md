@@ -5,17 +5,19 @@ river template: **river → slot → place**.
 
 ## The template
 
-Every river has a **map view** (planned in every river so far) and these scene slots:
+Every river has a **map view** and these scene slots. The Russian River's map is built (`rivers/russian_river/map/overview.json`, drawn by
+`scene-kit/river-map.js` as a pinned inset in each of its scenes); the other rivers' maps are still `planned` in `river.json`. How to pick the three
+places is in [Choosing places](./reference/choosing-places.md).
 
 | Slot | Meaning | Russian River (reference) |
 |---|---|---|
-| `start` | Headwaters or upper river | East Fork near Lake Mendocino: **planned** |
+| `start` | Headwaters, or the river's spiritual start | East Fork below Coyote Valley Dam: Riverbank, Below the outlet |
 | `middle` | The scenic middle | Hacienda Bridge: Map, Bridge, Hacienda Beach |
 | `end` | Mouth or lower river | Jenner Estuary: Estuary lookout, River shore, Pacific beach |
 | `extra` | Optional fourth scene | none |
 
 Each scene has a few **views**, which are fixed cameras within the same place. A view is not another place.
-A slot with nothing built yet is a **planned** placeholder. It blocks out structure and shows an honest
+A slot with nothing built yet is a **planned** placeholder (the other rivers have several). It blocks out structure and shows an honest
 "planned" card. It never carries invented content or invented geography.
 
 Slot assignment is an editorial choice recorded in the river's folder. If a scene fits another slot
@@ -35,7 +37,7 @@ river-pulse/
   scene-kit/                     shared 3D: terrain, water, banks, materials, centerline, reservoir reuse
   ui/                            shared design tokens (tokens.css) and scene chrome
   rivers/<river>/
-    river.json  README.md
+    river.json  README.md  map/            the river map data (when built)
     scenes/<slot>/<place_id>/
       scene.json                 the scene's identity: slot, name, status, views, data flags
       README.md  notes/          what this place is, how it was built, review records
@@ -71,6 +73,7 @@ can be added without redefining a tier ladder:
 | `live_gauge` | A current observation is bound | the data card (current / stale / missing) |
 | `history` | A daily series is shown | a hydrograph or sparkline |
 | `condition` | Seasonal or historical context | the condition band |
+| `extremes` | Record high and low from fetched observations | the Selected time / Record low / Record high control (Hacienda) |
 | `fine_terrain` | Terrain finer than ~7-14 m, such as lidar | hero cameras that earn the detail |
 
 ## Rules the tools enforce

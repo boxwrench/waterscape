@@ -3,6 +3,16 @@
 The current state of the project and where to pick up. Add a short entry at the top for each pass; when this grows past a
 few screens, move older entries to `docs/archive/`. History through RP30 is in [`archive/HANDOFF-through-RP30.md`](./archive/HANDOFF-through-RP30.md).
 
+## East Fork, the river map and Jenner / Hacienda upgrades: RP32 (2026-10-05)
+
+Branch `task/RP32` (on `task/RP31`). The East Fork work had been built locally against the old layout and was pushed as
+`origin/task/RP13-publish`. It is now ported onto the template (details and the tool: [task](./roadmap/tasks/RP32-port-east-fork.md)).
+**Russian River is complete as the reference river**: East Fork (start), Hacienda Bridge (middle), Jenner Estuary (end), and a built river map
+with a pin for each. Also in: Jenner's barrier-beach and water upgrades, Hacienda record high/low water (a new `extremes` data flag), map flow dynamics.
+
+Verified with 186 unit tests and the build; all pages load clean in Edge and the new controls work. Nothing pushed or merged. `origin/main` is ahead
+(resource-library commits only); merge it when you choose.
+
 ## River template and modular structure: RP31 (2026-10-05)
 
 Branch `task/RP31` (built on `task/RP27`, which merged the Tuolumne work). Local only: nothing pushed or merged. Pending human
@@ -40,9 +50,8 @@ GPU timing and phone performance are unmeasured.
 ### Open items
 
 - **Human acceptance** of the new layout, the river-home cards and the docs.
-- **River map view** is defined in the template (`map` in `river.json`) but not built; every river says `planned`.
-- **Fill the planned slots**, starting with Russian River's East Fork start. Follow [Make a river](./river-pulse/make-a-river.md). Earlier East Fork work is believed to exist,
-  unpushed, on another machine (not in this repo); bring it in rather than rebuilding (see that scene's README).
+- **River map view**: built for the Russian River (inset in each scene, from `rivers/russian_river/map/overview.json`); `planned` for the other five, and not yet shown on the river home page.
+- **Fill the planned slots** on the other rivers, following the Russian River. Follow [Make a river](./river-pulse/make-a-river.md).
 - **Shared chrome in code**: scene stylesheets still duplicate topbar, data card and view bar styling. Move one component into `ui/` whenever a scene's chrome is touched.
 - **Hacienda's data language** (live card, history chart, condition band) should reach Jenner (no daily series exists for its tidal gauge) and the
   terrain-only scenes only where their data supports it.

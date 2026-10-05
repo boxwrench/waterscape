@@ -105,6 +105,7 @@ Let the data decide how much a scene earns. Mark it in `scene.json` `data` and t
 | A live gauge | Add a data card with current, stale and missing states |
 | A daily series | Add a sparkline or hydrograph, labelled as a daily mean |
 | Statistics | Add the condition band, as "compared with this time of year" |
+| Period-of-record extremes | Add a Low / Record high control, with the real gauge figures beside it. Hacienda shows its 49.7 ft record stage; where no stage record exists it says so and shows discharge instead of estimating a stage |
 | Fine terrain (lidar) | Spend it on a few hero cameras. Do not claim it for the whole extent |
 
 New presentation of data (a forecast chart, a rainfall layer) is a new component that a scene opts into. It is added in

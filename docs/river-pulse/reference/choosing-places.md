@@ -1,7 +1,11 @@
-# River structure — how every river is organised
+# Choosing places: how a river is divided
+
+> Written on the East Fork branch before the folder restructure. The ideas here are current: they say *which* three places to pick. The
+> folder layout and the "Adding a river" steps at the end are superseded by the [Structure guide](../structure.md) and
+> [Make a river](../make-a-river.md). In the Russian River the status line below is now done: East Fork is built.
 
 A reusable pattern, so each new river feels like the others. Read
-[Making Water Visible](../making-water-visible.md) first; this file only says how a river is
+[Making Water Visible](../../making-water-visible.md) first; this file only says how a river is
 divided into places and views.
 
 ## River → places → views
@@ -12,7 +16,7 @@ divided into places and views.
   beach).
 - **The river overview** ties places together. It is the terrain view where source terrain
   exists. A whole-river terrain in segments is undecided. A static aerial appears only as a
-  small pinned inset with place pins, like the reservoir minimap (`renderer/minimap.js`),
+  small pinned inset with place pins, like the reservoir minimap (`renderer/minimap.js`; for rivers, `scene-kit/river-map.js`),
   never as the main view.
 
 ## Choosing places
@@ -46,7 +50,7 @@ embankment, not a masonry or granite dam: wide gently sloped dry-grass face, roc
 waterline, crest road, intake tower on a walkway, and outlet works with a stilling basin at
 the downstream toe, ringed by oak woodland. Buildings are left out of the scene. Reference
 aerial photographs were supplied by the user (Coyote Valley Dam mosaic on rs.locationshub.com,
-location 050-10120170); they are not redistributed. Status: not yet authored.
+location 050-10120170); they are not redistributed. Status: authored (East Fork scene).
 
 ## History at every level
 
@@ -63,7 +67,7 @@ location 050-10120170); they are not redistributed. Status: not yet authored.
 ## Adding a river
 
 1. Pick the three places with the rules above, record photo evidence, and add each place
-   manifest to `river-pulse/data/<river>/places/<id>/`.
+   manifest to the scene's `data/` folder (see [Make a river](../make-a-river.md)).
 2. Build terrain and hydrography for each place (`pipeline/build_river_*.py`) and regenerate
    the registry.
 3. Give each place a gauge with a period of record for its high and low.

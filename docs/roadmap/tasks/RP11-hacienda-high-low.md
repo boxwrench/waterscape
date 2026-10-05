@@ -1,7 +1,7 @@
 # RP11: Hacienda historical high and low water
 
 Close-ups show a historical high and low so viewers can judge scale (see
-[River structure](../../river-pulse/river-structure.md)). Gauge: USGS-11467000, Russian River
+[River structure](../../river-pulse/reference/choosing-places.md)). Gauge: USGS-11467000, Russian River
 near Guerneville (Hacienda). Facts fetched 2026-10-02 from the USGS Water Data OGC API
 (`https://api.waterdata.usgs.gov/ogcapi/v1`).
 

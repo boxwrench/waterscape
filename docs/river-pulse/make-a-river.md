@@ -56,7 +56,8 @@ This takes minutes and is a complete, valid river. The atlas and river home show
    }
    ```
 
-   Give a slot you already know a real name (Russian's start is `east_fork`, "East Fork (Lake Mendocino area)").
+   Give a slot you already know a real name. Choose places by the rules in [Choosing places](./reference/choosing-places.md): the end is the mouth or
+   confluence, the start is where people feel the river begins, the middle is the best-known reach.
    Naming a place is fine; inventing its data or geography is not.
 
 4. **Put the river on the state map.** Add its USGS 3DHP flowline names to the `NAMES` table in
@@ -105,12 +106,14 @@ Pick one slot and one place. Do the steps in order; each ends with something you
    If the river's home should show live data from this scene, set `"live_data_scene": "<id>"` in `river.json`.
 
 7. **Write the scene's `README.md`**: what the place is, sources, what is exact, derived, illustrative and setting, known limits.
-   The scene card at the top is generated from `scene.json`; keep notes and review records in `notes/`.
+   The scene card at the top (and each river's slot table) is generated: run `node scripts/sync-river-readmes.mjs` after editing `scene.json` or
+   `river.json`. Keep notes and review records in `notes/`.
 
 8. **Verify** (all must pass):
 
    ```sh
    python pipeline/build_river_registry.py --check
+   node scripts/sync-river-readmes.mjs
    npm run validate
    node --test "pipeline/tests/*.test.mjs"
    python -m pytest pipeline/tests -q

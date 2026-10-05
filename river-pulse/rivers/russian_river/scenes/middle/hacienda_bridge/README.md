@@ -7,8 +7,8 @@
 > |---|---|
 > | River / slot | `russian_river` / `middle` |
 > | Place id | `hacienda_bridge` |
-> | Fidelity | Photo-informed setting with live USGS discharge |
-> | Data | live gauge, history, condition |
+> | Fidelity | Photo-informed setting with live USGS discharge, history and record high/low water |
+> | Data | live gauge, history, condition, extremes |
 > | Views | Map, Bridge, Hacienda Beach |
 > | Open locally | <http://localhost:5173/river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/index.html> |
 > | Layout | page `index.html`, scene code beside it, sourced data in `data/`, notes in `notes/` |

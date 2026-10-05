@@ -56,7 +56,7 @@ The existing local CC0 Poly Haven rock/pebble materials, MIT ez-tree oak meshes,
 cutouts and reservoir grass-color image are reused. See `THIRD_PARTY_NOTICES.md`. Periodic
 noise and sky reuse the Jenner modules; their Tidewater MIT attribution is unchanged.
 
-The compact map uses `river-pulse/data/russian_river/overview.json`, fetched from USGS 3DHP
+The compact map uses `rivers/russian_river/map/overview.json`, fetched from USGS 3DHP
 when DWR's service returned "Service ... not started". The exact request, date, CRS and
 simplification are recorded in that file. Pins load from the package registry and link to
 all three authored places. Hacienda's underlying 3D map retains its sourced local terrain;

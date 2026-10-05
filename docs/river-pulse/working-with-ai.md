@@ -14,7 +14,7 @@ that a model can add a river reliably and a human can review quickly. This guide
 
 Give the model these three things first. Most bad results come from skipping them.
 
-1. **The goal in one sentence**, in terms of the template: "Build the Russian River `start` scene at the East Fork."
+1. **The goal in one sentence**, in terms of the template: "Add a river map to the Eel River, following the Russian River's."
 2. **The reading list**: [`AGENTS.md`](../../AGENTS.md), this folder's [README](./README.md), [Structure](./structure.md), [Make a river](./make-a-river.md),
    and the sibling scene that is closest to what you want.
 3. **The rules that matter here**: never invent facts or numbers; sources must be fetched; mark illustrative parts; change one slot at a time; do not

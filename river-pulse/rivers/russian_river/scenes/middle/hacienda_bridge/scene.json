@@ -5,7 +5,7 @@
   "slot": "middle",
   "name": "Hacienda Bridge",
   "status": "built",
-  "fidelity": "Photo-informed setting with live USGS discharge",
+  "fidelity": "Photo-informed setting with live USGS discharge, history and record high/low water",
   "views": [
     "Map",
     "Bridge",
@@ -15,7 +15,8 @@
     "live_gauge": true,
     "history": true,
     "condition": true,
-    "fine_terrain": false
+    "fine_terrain": false,
+    "extremes": true
   },
   "entry": "index.html",
   "thumb": "thumb.jpg"

@@ -34,7 +34,7 @@ river-pulse/
 
 | Rivers today | Built scenes | Planned |
 |---|---|---|
-| [Russian](rivers/russian_river/README.md) (reference) | Hacienda Bridge (middle), Jenner Estuary (end) | East Fork (start) |
+| [Russian](rivers/russian_river/README.md) (reference) | East Fork (start), Hacienda Bridge (middle), Jenner Estuary (end), plus its river map | none |
 | [Sacramento](rivers/sacramento_river/README.md) | Freeport (end) | start, middle |
 | [Eel](rivers/eel_river/README.md) | Scotia Bluffs (end) | start, middle |
 | [Tuolumne](rivers/tuolumne_river/README.md) | Poopenaut Valley (start) | middle, end |
