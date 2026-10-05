@@ -28,3 +28,26 @@ a review record and local handoff; no push/merge. Stop at the review checkpoint.
 - Browser: five fixed desktop/phone views; material before/after, form/source,
   California context, animation/pause, errors/overflow and paired 120-frame cost.
 - `git diff --check`
+
+## Result
+
+- Status: done; visual baseline awaiting human review.
+- Commit: `c4939a0`.
+- Checks: focused Eel setting/scene/state tests — 7 passed, `ℹ fail 0`
+  (sandbox worker-spawn EPERM resolved by permitted retry outside sandbox);
+  `node pipeline/validate-river-packages.mjs` — `River packages valid.`;
+  `npm run test:build` — `Built experience pages and river assets valid.`
+  with 120 browser modules; `git diff --check` — exit 0.
+- Browser: all five settled desktop/phone material pairs inspected; 20 recorded
+  dimensions verified; form/source, CalWater, controls, motion/pause and paired
+  120-frame costs reviewed. Error logs empty, phone width 390 without horizontal
+  overflow, ten images loaded for each gallery viewport. Initial premature camera
+  captures were replaced before delivery. Settled visible paused frames match.
+- Notes: shared CC0 surface maps add approximately 10.67 MiB to the texture
+  RGBA/mipmap estimate (44.3 → 55.0 MiB). Geometry and draw calls unchanged;
+  GPU cost unmeasured. Fine eye-level texture improves; coarse form, trees and
+  water/shore remain weak. Three cheaper agents produced/reviewed the module,
+  gallery, cross-river sources and Tuolumne performance hypotheses, with completed
+  agents redeployed within this pass. Full Tuolumne RP23 remains isolated.
+  Review: `previews/eel/rp24/review.html`; record:
+  `docs/river-pulse/eel-reservoir-surface-review.md`. No push or merge.
