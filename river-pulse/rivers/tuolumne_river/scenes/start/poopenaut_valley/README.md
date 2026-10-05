@@ -1,6 +1,6 @@
 # Tuolumne River: Poopenaut Valley foundation
 
-<!-- scene-card: generated from scene.json; edit scene.json, not this block -->
+<!-- scene-card: generated from scene.json; edit scene.json, then run node scripts/sync-river-readmes.mjs -->
 > **Scene card**
 >
 > | | |

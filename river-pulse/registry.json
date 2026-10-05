@@ -52,6 +52,16 @@
     },
     {
       "river_pack": "russian_river",
+      "id": "east_fork",
+      "name": "East Fork \u00b7 Lake Mendocino outflow",
+      "hydrologic_context": "regulated_river_outflow",
+      "manifest": "rivers/russian_river/scenes/start/east_fork/data/place.json",
+      "supported_capabilities": [
+        "historical_discharge_context"
+      ]
+    },
+    {
+      "river_pack": "russian_river",
       "id": "hacienda_bridge",
       "name": "Hacienda Bridge",
       "hydrologic_context": "river_reach",

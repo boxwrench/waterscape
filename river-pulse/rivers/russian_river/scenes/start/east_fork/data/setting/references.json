@@ -1,0 +1,30 @@
+{
+  "retrieved": "2026-10-01",
+  "binding_class": "setting",
+  "references": [
+    {
+      "label": "USGS 11462000 historic East Fork station",
+      "url": "https://waterdata.usgs.gov/monitoring-location/USGS-11462000/"
+    },
+    {
+      "label": "UC San Diego outlet photograph",
+      "url": "https://today.ucsd.edu/story/new-forecast-informed-decision-making-tool-implemented-at-lake-mendocino"
+    },
+    {
+      "label": "User-selected Coyote Valley Dam gallery",
+      "url": "https://rs.locationshub.com/Home/LocationDetail?rsLocationId=050-10120170"
+    }
+  ],
+  "inspected_images": [
+    {
+      "url": "https://today.ucsd.edu/news_uploads/CoyoteValleyDam_05_705_1.jpg",
+      "use": "Broad earthfill face; paired concrete outlet portals, wing walls, service railings and grey riprap."
+    },
+    {
+      "url": "https://ca.reel-scout.com/up_images/9/md/3355839.jpg",
+      "use": "Oak-covered dry hills and concrete intake; the lake-side tower is not visible from this downstream setting."
+    }
+  ],
+  "redistributed": false,
+  "notes": "Photo-informed authored summer palette; seasonal greenness in the outlet photograph is not a current-season measurement. Display geometry is not an as-built survey. Lake-side intake pieces remain on LM1."
+}

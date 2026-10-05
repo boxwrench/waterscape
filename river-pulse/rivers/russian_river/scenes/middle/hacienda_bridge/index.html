@@ -13,8 +13,9 @@
     <link rel="stylesheet" href="./hacienda-label.css" />
     <link rel="stylesheet" href="./hacienda-flow.css" />
     <link rel="stylesheet" href="./hacienda-time.css" />
+    <link rel="stylesheet" href="../../../../../ui/river-map.css" />
   </head>
-  <body>
+  <body data-river-place="hacienda_bridge">
     <a class="skip-link" href="#time-range">Skip to river timeline</a>
     <canvas
       id="scene"
@@ -39,6 +40,7 @@
       </div>
       <div class="header-actions">
         <a class="place-link" href="../../../../../river.html?river=russian_river">River home</a>
+        <a class="place-link" href="../../start/east_fork/index.html">East Fork ↗</a>
         <a class="place-link" href="../../end/jenner/index.html">Jenner ↗</a>
         <button id="focus-view" type="button" aria-pressed="false">
           Explore</button
@@ -178,6 +180,12 @@
           disabled
         ><span>03</span> Hacienda Beach</button>
       </div>
+      <div id="stage-control" class="stage-buttons glass" role="group" aria-label="Water level" hidden>
+        <button id="stage-selected" type="button" class="active" aria-pressed="true">Selected time</button
+        ><button id="stage-low" type="button" aria-pressed="false">Record low</button
+        ><button id="stage-high" type="button" aria-pressed="false">Record high</button>
+        <p id="stage-readout" aria-live="polite"></p>
+      </div>
       <div class="layer-buttons glass" role="group" aria-label="Map layers">
         <button id="river-layer" type="button" aria-pressed="true">
           <i class="line-symbol" aria-hidden="true"></i> River</button
@@ -308,6 +316,7 @@
     </div>
     <div id="error" class="error glass" role="status" hidden></div>
     <script type="module" src="./hacienda.js"></script>
+    <script type="module" src="../../../../../scene-kit/river-map.js"></script>
     <script type="module" src="./hacienda-time.js"></script>
     <script type="module" src="./hacienda-seasonal.js"></script>
     <script type="module" src="./hacienda-interface.js"></script>

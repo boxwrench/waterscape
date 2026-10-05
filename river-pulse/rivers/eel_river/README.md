@@ -6,7 +6,7 @@ Status: **in development**. A first visual study of Scotia Bluffs: the Eel's riv
 
 ## Scenes
 
-<!-- slots: generated from river.json and scene.json files -->
+<!-- slots: generated from river.json and scene.json files; run node scripts/sync-river-readmes.mjs -->
 | Slot | Scene | Status | Data | Views |
 |---|---|---|---|---|
 | start | Start (to be chosen) | **planned** | n/a | n/a |

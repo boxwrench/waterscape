@@ -6,7 +6,7 @@ Status: **available**. Explore the Sacramento River at Freeport: green steel, tr
 
 ## Scenes
 
-<!-- slots: generated from river.json and scene.json files -->
+<!-- slots: generated from river.json and scene.json files; run node scripts/sync-river-readmes.mjs -->
 | Slot | Scene | Status | Data | Views |
 |---|---|---|---|---|
 | start | Start (to be chosen) | **planned** | n/a | n/a |

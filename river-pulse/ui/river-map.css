@@ -1,0 +1,19 @@
+.river-place-map { position: fixed; z-index: 2; top: 94px; right: 28px; width: 242px; padding: 16px; border: 1px solid #dbe7de30; border-radius: 8px; background: #132c29ed; color: #f4f0df; font: 11px system-ui, sans-serif; box-shadow: 0 8px 32px #0b211d33; }
+.river-place-map[hidden] { display: none; }
+.river-place-map header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.river-place-map header strong { font-size: 12px; font-weight: 550; }
+.river-place-map button { border: 0; background: none; color: inherit; cursor: pointer; font: 20px system-ui; }
+.river-place-map svg { width: 100%; height: 260px; overflow: visible; }
+.river-place-map .river-path { fill: none; stroke: #75b6c9; stroke-width: 1.5; stroke-linecap: round; }
+.river-place-map .river-pin circle { fill: #dce8c4; stroke: #132c29; stroke-width: 2; }
+.river-place-map .river-pin text { font: 10px system-ui; fill: #e5ebda; paint-order: stroke; stroke: #132c29; stroke-width: 4; stroke-linejoin: round; }
+.river-place-map .river-pin:hover circle, .river-place-map .river-pin:focus-visible circle { fill: #fff; stroke: #e6c279; stroke-width: 3; }
+.river-place-map .river-pin[aria-current="location"] circle { fill: #efc774; }
+.river-place-map a:focus-visible { outline: 2px solid #efc774; }
+.river-place-map .map-context { font-size: 9px; color: #b9c9bc; line-height: 1.5; margin: 8px 0 0; }
+.river-place-map .map-context a { color: #dce8c4; text-decoration: underline; }
+.river-place-map .map-fallback { display: grid; gap: 12px; padding: 12px 0; }
+.river-place-map .map-north { fill: #9fb3a7; font: 9px system-ui; }
+body[data-river-place="east_fork"] #level-value { font-size: 26px; }
+body:has(#inspector:not([hidden])) .river-place-map { visibility: hidden; }
+@media (max-width: 600px) { .river-place-map { top: 73px; right: 14px; width: 226px; } .river-place-map svg { height: 230px; } }

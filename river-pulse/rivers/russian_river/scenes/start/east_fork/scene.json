@@ -3,7 +3,20 @@
   "id": "east_fork",
   "river": "russian_river",
   "slot": "start",
-  "name": "East Fork (Lake Mendocino area)",
-  "status": "planned",
-  "note": "Placeholder that blocks out the river's structure. No scene, data or geography is implied."
+  "name": "East Fork below Coyote Valley Dam",
+  "status": "built",
+  "fidelity": "Photo-informed setting; no live gauge (the nearby USGS station's record ended in 2011)",
+  "views": [
+    "Riverbank",
+    "Below the outlet",
+    "Map"
+  ],
+  "data": {
+    "live_gauge": false,
+    "history": false,
+    "condition": false,
+    "fine_terrain": false
+  },
+  "entry": "index.html",
+  "thumb": "thumb.jpg"
 }

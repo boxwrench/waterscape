@@ -24,22 +24,25 @@ export const BEACH_CAMERA = Object.freeze({ x: -16.9, y: 1.86, z: 25,
 export const BRIDGE_CAMERA = Object.freeze({ x: -25, y: 1.95, z: -12,
   yaw: 0.3, pitch: 0.015, speed: 2.5 });
 
-export function constrainBeachCamera(state) {
+export function constrainBeachCamera(state, waterLevel = -Infinity) {
   state.z = Math.max(-35, Math.min(70, state.z));
   const edge = bankEdges(state.z);
   state.x = Math.max(edge.left - 9, Math.min(edge.left - 0.5, state.x));
-  state.y = beachGround(state.x, state.z) + 1.8;
+  state.y = Math.max(beachGround(state.x, state.z) + 1.8, waterLevel + 1.2);
   state.speed = 2.5;
   state.pitch = Math.max(-0.8, Math.min(0.55, state.pitch));
 }
 
-export function beachWaterGrid() {
-  const positions = [], depths = [], indices = [], across = 120, along = 250;
+// The surface is built wider than the banks so a high stage can spread over them. Each vertex
+// keeps the authored bed height; the shader derives depth from the surface height, so the
+// waterline follows the terrain as the level changes.
+export function beachWaterGrid({ flood = 64 } = {}) {
+  const positions = [], depths = [], beds = [], indices = [], across = 300, along = 250;
   for (let j = 0; j <= along; j++) {
-    const z = 105 - j * 1.6, e = bankEdges(z);
+    const z = 105 - j * 1.6, e = bankEdges(z), left = e.left - flood, width = e.right + flood - left;
     for (let i = 0; i <= across; i++) {
-      const x = e.left + (e.right - e.left) * i / across;
-      positions.push(x, 0, z); depths.push(Math.max(0.01, -beachGround(x, z)));
+      const x = left + width * i / across, bed = beachGround(x, z);
+      positions.push(x, 0, z); depths.push(Math.max(0.01, -bed)); beds.push(bed);
     }
   }
   for (let j = 0; j < along; j++) for (let i = 0; i < across; i++) {
@@ -47,6 +50,6 @@ export function beachWaterGrid() {
     indices.push(a, b, c, b, d, c);
   }
   return { positions: new Float32Array(positions), depths: new Float32Array(depths),
-    indices: new Uint32Array(indices), focus: { x: 0, y: 0, z: -85 },
+    beds: new Float32Array(beds), indices: new Uint32Array(indices), focus: { x: 0, y: 0, z: -85 },
     representation: "Illustrative photo-informed Hacienda reach; surface and bed are authored, not gauge stage or surveyed bathymetry" };
 }

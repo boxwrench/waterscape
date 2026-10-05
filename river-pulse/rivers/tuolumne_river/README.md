@@ -6,7 +6,7 @@ Status: **in development**. Yosemite's high Sierra meadows, granite canyons and 
 
 ## Scenes
 
-<!-- slots: generated from river.json and scene.json files -->
+<!-- slots: generated from river.json and scene.json files; run node scripts/sync-river-readmes.mjs -->
 | Slot | Scene | Status | Data | Views |
 |---|---|---|---|---|
 | start | [Poopenaut Valley form study](scenes/start/poopenaut_valley/README.md) | built | geography only | Overview, Valley, Eye level, River contact, Dam transition, Dam close-up, Below dam, Reservoir |

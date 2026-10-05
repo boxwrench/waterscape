@@ -40,6 +40,6 @@ export function mapRibbonBinding(state, history) {
     representation: "illustrative", moving: Boolean(q && q.value > 0),
     availability: q ? "present" : "missing", source_quantity_id: q?.quantity_id ?? null,
     width, relative, domain, history_min: low, history_max: high,
-    note: "Width compares selected gauge discharge within loaded history; exaggerated scale, not measured channel width, stage or inundation. Ripple speed is fixed display motion.",
+    note: "Width compares selected gauge discharge within loaded history; exaggerated scale, not measured channel width, stage or inundation. Ripple speed is fixed display motion; with no discharge available the water drifts slowly as a baseline that says nothing about flow.",
   });
 }

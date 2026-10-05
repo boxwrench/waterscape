@@ -4,6 +4,7 @@ import { jennerCoast, jennerGrid, jennerGround, jennerRiver, JENNER_VIEWS } from
 import { grayStone } from "../../../../../scene-kit/beach-materials.js";
 import { seededRandom } from "../../../../../scene-kit/bank-setting-layout.js";
 import { SETTING_BASE } from "../../../../../scene-kit/bank-materials.js";
+import { treeAssets } from "../../middle/hacienda_bridge/beach-woodland.js";
 
 function terrain(noise, maps, clock, grassMap) {
   const grid = jennerGrid(), geometry = new THREE.BufferGeometry();
@@ -12,11 +13,13 @@ function terrain(noise, maps, clock, grassMap) {
   geometry.setIndex(new THREE.BufferAttribute(grid.indices, 1)); geometry.computeVertexNormals();
   const material = new THREE.MeshStandardNodeMaterial({ roughness: 0.9 }), p = positionWorld,
     mottle = texture(noise, p.xz.div(160)), grain = texture(noise, p.xz.div(3)).r,
-    sand = mix(color(0x777263), color(0x979184), grain.mul(0.35).add(mottle.g.mul(0.30))),
+    sand = mix(color(0x625f56), color(0x85827a), grain.mul(0.35).add(mottle.g.mul(0.30))),
     gravel = maps ? grayStone(maps.pebbles.color, p.xz.div(1.8)).mul(vec3(0.88, 0.86, 0.77)) : sand,
     beach = mix(sand, gravel, 0.26),
     grassTint = mix(color(0x485938), color(0x8b9762), mottle.r.mul(0.75).add(mottle.b.mul(0.2))),
-    grass = grassMap ? grassTint.mul(texture(grassMap, p.xz.div(1.5)).rgb.mul(1.1).add(0.45)) : grassTint,
+    scrub = texture(noise, p.xz.div(38)).g.mul(0.6).add(texture(noise, p.xz.div(11)).b.mul(0.4)),
+    scrubTint = mix(grassTint, color(0x2d4430), smoothstep(0.55, 0.72, scrub).mul(0.5)),
+    grass = grassMap ? scrubTint.mul(texture(grassMap, p.xz.div(1.5)).rgb.mul(1.1).add(0.45)) : scrubTint,
     slope = floatSlope(normalWorld.y),
     n = normalWorld.abs(), weights = n.div(n.x.add(n.y).add(n.z)),
     rock = maps ? grayStone(maps.rock.color, p.zy.div(12), 0.55).mul(weights.x)
@@ -25,8 +28,8 @@ function terrain(noise, maps, clock, grassMap) {
     upland = mix(rock.mul(vec3(0.87, 0.9, 0.82)), grass, slope),
     bank = smoothstep(3, 8, p.y),
     wetFront = sin(clock.mul(0.95).add(mottle.b.mul(2))).mul(0.24).add(0.85),
-    dry = smoothstep(wetFront.sub(0.2), wetFront.add(0.6), p.y);
-  material.colorNode = mix(beach.mul(mix(0.46, 1, dry)), upland, bank);
+    dry = smoothstep(wetFront.sub(0.3), wetFront.add(1.1), p.y);
+  material.colorNode = mix(beach.mul(mix(0.62, 1, dry)), upland, bank);
   material.roughnessNode = mix(0.34, 0.96, dry);
   const mesh = new THREE.Mesh(geometry, material); mesh.name = "Jenner sand spit and coastal bluffs";
   mesh.receiveShadow = true; return mesh;
@@ -40,7 +43,7 @@ function rocks(maps) {
   for (let i = 0; i < position.count; i++) {
     const x = position.getX(i), y = position.getY(i), z = position.getZ(i),
       fracture = 0.89 + 0.11 * Math.sin(x * 17 + y * 7) * Math.sin(z * 11 - y * 9),
-      top = Math.min(y, 0.62) + Math.sin(x * 13) * Math.sin(z * 8) * 0.025;
+      top = 0.62 * Math.tanh(y / 0.62) + Math.sin(x * 13) * Math.sin(z * 8) * 0.025;
     position.setXYZ(i, x * fracture, top * fracture, z * fracture);
   }
   geometry.computeVertexNormals();
@@ -61,7 +64,9 @@ function rocks(maps) {
     material.colorNode = grayStone(maps.rock.color, p.zy.div(9), 0.55).mul(w.x)
       .add(grayStone(maps.rock.color, p.xz.div(9), 0.55).mul(w.y))
       .add(grayStone(maps.rock.color, p.xy.div(9), 0.55).mul(w.z))
-      .mul(mix(color(0x6d7462), color(0xc0bfb0), smoothstep(-0.2, 4, p.y)));
+      .mul(mix(color(0x4a4d47), color(0x8d8c80), smoothstep(-0.2, 12, p.y)));
+    // Sea stacks and Goat Rock carry a green turf cap on their upward faces, as in photographs.
+    material.colorNode = mix(material.colorNode, color(0x4f6234), smoothstep(0.55, 0.85, normalWorld.y).mul(smoothstep(8, 20, p.y)));
   }
   for (const [name, x, z, sx, sy, sz] of [
     ["Goat Rock silhouette", jennerCoast(1720) - 44, 1720, 78, 80, 125],
@@ -125,17 +130,20 @@ async function coastalGrass(clock) {
     side: THREE.DoubleSide, roughness: 0.94 }), random = seededRandom(981), sites = [];
   material.positionNode = positionLocal.add(vec3(sin(clock.mul(0.6).add(float(instanceIndex).mul(0.37)))
     .mul(positionGeometry.y.pow(2)).mul(0.12), 0, 0));
-  for (let i = 0; i < 18000; i++) {
-    const x = -160 + random() * 585, z = -800 + random() * 440, y = jennerGround(x, z);
-    if (y < 5 || y > 155) continue;
+  // Prairie on the bluffs the three views look at: behind the lookout, and the southern headland
+  // that the Pacific beach faces. Patchy, denser on lower slopes. Setting, not a plant survey.
+  for (const [x0, x1, z0, z1, count, size] of [[-420, 560, -860, -330, 36000, 1],
+    [-120, 700, 850, 1950, 30000, 1.7]]) for (let i = 0; i < count; i++) {
+    const x = x0 + random() * (x1 - x0), z = z0 + random() * (z1 - z0), y = jennerGround(x, z);
+    if (y < 5 || y > 175 || jennerRiver(x, z).bankDistance < 6) continue;
     const patch = Math.sin(x * 0.045) * Math.sin(z * 0.061);
-    if (random() > 0.6 + patch * 0.35) continue;
-    sites.push({ x, y, z });
+    if (random() > 0.62 + patch * 0.35 - y / 600) continue;
+    sites.push({ x, y, z, size });
   }
   const mesh = new THREE.InstancedMesh(geometry, material, sites.length), dummy = new THREE.Object3D(), tint = new THREE.Color();
   sites.forEach((s, i) => {
     dummy.position.set(s.x, s.y - 0.04, s.z); dummy.rotation.set(0, random() * 6.28, 0);
-    const h = 0.22 + random() * 0.54; dummy.scale.set(0.6 + random() * 0.5, h, 0.6 + random() * 0.5);
+    const h = (0.22 + random() * 0.54) * s.size; dummy.scale.set((0.6 + random() * 0.5) * s.size, h, (0.6 + random() * 0.5) * s.size);
     dummy.updateMatrix(); mesh.setMatrixAt(i, dummy.matrix);
     tint.setHSL(0.19 + random() * 0.06, 0.24 + random() * 0.18, 0.27 + random() * 0.14); mesh.setColorAt(i, tint);
   });
@@ -180,6 +188,50 @@ async function woodland() {
   group.name = "Coastal woodland groups"; return group;
 }
 
+// Douglas-fir stands on the inland ridges and low coastal scrub on the bluffs, as in the reference
+// photographs (dark conifer ridgelines, scattered shrubs on green slopes). Reuses the Hacienda
+// ez-tree bakes; stand centres are authored Setting, not a species census.
+async function conifersAndScrub() {
+  const [firs, oaks] = await Promise.all([
+    treeAssets("conifers.json", "douglas-fir-bark.jpg", "douglas-fir-leaf.png"),
+    treeAssets("broadleaf.json", "oak-bark.jpg", "oak-leaf.png"),
+  ]), random = seededRandom(443), sites = [], group = new THREE.Group();
+  // Distant foliage: mip-mapped alpha thins leaves out until only trunks remain, so keep more of it.
+  for (const v of [...firs, ...oaks]) for (const part of v.parts) if (part.leaf) part.material.alphaTest = 0.1;
+  const place = (centres, make) => {
+    for (const [cx, cz, count, spread] of centres) for (let i = 0; i < count; i++) {
+      const x = cx + (random() - 0.5) * spread, z = cz + (random() - 0.5) * spread, y = jennerGround(x, z);
+      if (y < 8 || jennerRiver(x, z).bankDistance < 40) continue;
+      // Clearings and thinner edges, so stands read as patches and not rows.
+      if (Math.sin(x * 0.021 + 1.3) * Math.sin(z * 0.017 + 0.4) + random() * 0.8 < -0.15) continue;
+      sites.push({ x, y, z, turn: random() * 6.28, lean: 0.8 + random() * 0.45, ...make(y) });
+    }
+  };
+  place([[640, -640, 110, 300], [930, -330, 90, 280], [260, -840, 60, 200], [1000, 1150, 120, 340],
+    [1300, 1750, 100, 340], [560, 1500, 50, 200], [420, -220, 90, 260], [520, 150, 120, 300],
+    [650, 520, 100, 300], [300, -520, 50, 160]], () => ({ fir: true, height: 9 + random() * random() * 26 + random() * 6 }));
+  place([[-150, -520, 70, 160], [60, -720, 70, 200], [150, 950, 80, 220], [100, 1400, 90, 260],
+    [-60, 1700, 60, 180], [230, -380, 90, 200], [260, 30, 90, 240], [300, 330, 80, 240]], () => ({ fir: false, shrub: true, height: 2.2 + random() * 3 }));
+  const dummy = new THREE.Object3D(), tint = new THREE.Color();
+  for (const [variants, isFir] of [[oaks, false], [firs, true]]) variants.forEach((v, vi) => {
+    const selected = sites.filter((s, i) => s.fir === isFir && i % variants.length === vi);
+    for (const part of v.parts) {
+      const mesh = new THREE.InstancedMesh(part.geometry, part.material, selected.length);
+      selected.forEach((s, i) => {
+        const scale = s.height / v.height;
+        dummy.position.set(s.x, s.y - (s.shrub ? s.height * 0.3 : 0.3), s.z); dummy.rotation.set(0, s.turn, 0);
+        dummy.scale.set(scale * (s.shrub ? 1.5 : 1.35) * s.lean, scale * (s.shrub ? 0.75 : 1), scale * (s.shrub ? 1.5 : 1.35) * (2 - s.lean));
+        dummy.updateMatrix(); mesh.setMatrixAt(i, dummy.matrix);
+        if (isFir) tint.setHSL(0.27, 0.2 + random() * 0.15, 0.2 + random() * 0.1);
+        else tint.setHSL(0.22 + random() * 0.04, 0.2 + random() * 0.15, 0.25 + random() * 0.1);
+        mesh.setColorAt(i, part.leaf ? tint : new THREE.Color(0xb4aea0));
+      });
+      mesh.computeBoundingSphere(); group.add(mesh);
+    }
+  });
+  group.name = "Douglas-fir stands and coastal scrub"; return group;
+}
+
 export async function createJennerSetting(noise, maps, clock) {
   const group = new THREE.Group(); group.name = "Jenner photo-informed setting";
   const grassMap = await new THREE.TextureLoader().loadAsync(new URL("../../../../../../data/biomes/diablo-oak/ground/grass_color.jpg", import.meta.url).href)
@@ -188,7 +240,7 @@ export async function createJennerSetting(noise, maps, clock) {
     grassMap.colorSpace = THREE.SRGBColorSpace; grassMap.wrapS = grassMap.wrapT = THREE.RepeatWrapping; grassMap.anisotropy = 4;
   }
   group.add(terrain(noise, maps, clock, grassMap), rocks(maps), driftwood());
-  const results = await Promise.allSettled([coastalGrass(clock), woodland()]);
+  const results = await Promise.allSettled([coastalGrass(clock), woodland(), conifersAndScrub()]);
   for (const result of results) {
     if (result.status === "fulfilled") group.add(result.value);
     else console.warn("Coastal vegetation unavailable", result.reason);

@@ -6,7 +6,7 @@ Status: **planned**. Sacramento's urban river greenway, meeting the Sacramento R
 
 ## Scenes
 
-<!-- slots: generated from river.json and scene.json files -->
+<!-- slots: generated from river.json and scene.json files; run node scripts/sync-river-readmes.mjs -->
 | Slot | Scene | Status | Data | Views |
 |---|---|---|---|---|
 | start | Start (to be chosen) | **planned** | n/a | n/a |

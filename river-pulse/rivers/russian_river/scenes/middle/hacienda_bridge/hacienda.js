@@ -20,6 +20,7 @@ import { loadHydrography, createHydrographyLayer } from "../../../../../scene-ki
 import { loadBankMaterials } from "../../../../../scene-kit/bank-materials.js";
 import { createHaciendaBeach } from "./hacienda-beach.js";
 import { beachGround, constrainBeachCamera } from "./beach-layout.js";
+import { HACIENDA_EXTREMES, sceneWaterLevel } from "./hacienda-extremes.js";
 import { createMapFlow } from "../../../../../scene-kit/map-flow.js";
 import { createAuthoredWater } from "../../../../../scene-kit/authored-water.js";
 import { centerlineConditionStyle } from "../../../../../core/visual-bindings/condition-centerline.js";
@@ -334,7 +335,47 @@ async function addRiverCenterline(scene, terrain) {
   }
 }
 
+// Water height in the authored scenes. "selected" follows the timeline's discharge; low and high
+// preview the records. Height is an Illustrative compression of discharge (see
+// visual-bindings/hacienda-extremes.js); the real feet and ft³/s stay in the readout.
+const stage = {
+  mode: "selected", cfs: null, level: 0, target: 0,
+  discharge() {
+    return this.mode === "low" ? HACIENDA_EXTREMES.low.dischargeCfs
+      : this.mode === "high" ? HACIENDA_EXTREMES.high.dischargeCfs : this.cfs;
+  },
+  apply(reducedMotion = false) {
+    this.target = sceneWaterLevel(this.discharge());
+    if (reducedMotion) this.level = this.target;
+    const buttons = { selected: "#stage-selected", low: "#stage-low", high: "#stage-high" };
+    for (const [mode, id] of Object.entries(buttons)) {
+      const b = document.querySelector(id);
+      b?.classList.toggle("active", mode === this.mode);
+      b?.setAttribute("aria-pressed", String(mode === this.mode));
+    }
+    const readout = document.querySelector("#stage-readout"), fmt = (n) => n.toLocaleString("en-US");
+    if (!readout) return;
+    const e = HACIENDA_EXTREMES;
+    readout.textContent = this.mode === "low"
+      ? `${e.low.label}: ${e.low.dischargeCfs} ft³/s daily mean, ${e.low.date}. USGS publishes no stage for it.`
+      : this.mode === "high"
+        ? `${e.high.label}: ${e.high.stageFt} ft (${fmt(e.high.dischargeCfs)} ft³/s), ${e.high.date}.`
+        : this.cfs == null ? "No discharge for the selected time; water stays at its baseline."
+          : `Selected time: ${fmt(Math.round(this.cfs))} ft³/s.`;
+    readout.title = "Water height is a compressed illustration: 1.1 m per tenfold change in discharge. The real change from low to record high is about 15 m.";
+    this.update?.();
+  },
+};
+addEventListener("river-pulse-state-change", (event) => {
+  const q = event.detail.state?.selected_quantities?.find((v) => v.phenomenon === "discharge" &&
+    v.availability === "present" && Number.isFinite(v.value));
+  stage.cfs = q ? q.value : null;
+  stage.apply();
+});
+
 function updateWaterVisibility() {
+  const stageControl = document.querySelector("#stage-control");
+  if (stageControl) stageControl.hidden = activeView === "overview" || !authoredWater?.stageAware;
   if (authoredWater) authoredWater.mesh.visible = activeView !== "overview";
   const authored = activeView !== "overview" && Boolean(bankSetting);
   if (bankSetting) bankSetting.group.visible = authored;
@@ -344,7 +385,7 @@ function updateWaterVisibility() {
     mapObjects.gaugeBeacon.visible = !authored;
     mapObjects.scene.background.setHex(authored ? 0x9ad8f2 : 0xc5d0c8);
     mapObjects.scene.fog.color.setHex(authored ? 0xb8dce7 : 0xc5d0c8);
-    mapObjects.scene.fog.density = authored ? 0.001 : 0.0001;
+    mapObjects.scene.fog.density = authored ? 0.001 : 0.00026;
     mapObjects.hemi.intensity = authored ? 1.1 : 1.8;
     mapObjects.sun.intensity = authored ? 2.5 : 2.3;
     mapObjects.sun.castShadow = authored;
@@ -439,7 +480,7 @@ async function main() {
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xc5d0c8);
-  scene.fog = new THREE.FogExp2(0xc5d0c8, 0.0001);
+  scene.fog = new THREE.FogExp2(0xc5d0c8, 0.00026);
 
   const grid = buildRiverTerrainGrid(terrain),
     geometry = new THREE.BufferGeometry();
@@ -539,6 +580,16 @@ async function main() {
     pose(state, terrain, "bridge");
   });
 
+  for (const [mode, id] of [["selected", "#stage-selected"], ["low", "#stage-low"], ["high", "#stage-high"]])
+    document.querySelector(id)?.addEventListener("click", () => {
+      stage.mode = mode;
+      stage.apply(matchMedia("(prefers-reduced-motion: reduce)").matches);
+    });
+  const initial = (window.riverPulseState ?? window.riverPulseCurrentState)?.selected_quantities?.find((v) =>
+    v.phenomenon === "discharge" && v.availability === "present" && Number.isFinite(v.value));
+  if (initial) stage.cfs = initial.value;
+  stage.apply(true);
+  window.riverPulseStage = stage;
   shallowsButton.addEventListener("click", () => {
     marker.visible = false;
     pose(state, terrain, "shallows");
@@ -608,7 +659,7 @@ async function main() {
       state.x += direction[0] * distance;
       state.z += direction[2] * distance;
       state.y = Math.max(
-        (activeView !== "overview" ? beachGround(state.x, state.z) + 1.8 : terrain.ground(state.x, state.z) + 8),
+        (activeView !== "overview" ? Math.max(beachGround(state.x, state.z) + 1.8, stage.level + 1.2) : terrain.ground(state.x, state.z) + 8),
         state.y + direction[1] * distance,
       );
       event.preventDefault();
@@ -630,12 +681,12 @@ async function main() {
         state[key] =
           cameraTransition.from[key] +
           (cameraTransition.target[key] - cameraTransition.from[key]) * blend;
-      state.y = Math.max(state.y, (activeView !== "overview" ? beachGround(state.x, state.z) + 1.8 : terrain.ground(state.x, state.z) + 8));
+      state.y = Math.max(state.y, (activeView !== "overview" ? Math.max(beachGround(state.x, state.z) + 1.8, stage.level + 1.2) : terrain.ground(state.x, state.z) + 8));
       if (t === 1) cameraTransition = null;
     }
     fly(state, { keys, cruise: false }, dt,
       activeView !== "overview" ? shorelineClearance : terrain);
-    if (activeView !== "overview") constrainBeachCamera(state);
+    if (activeView !== "overview") constrainBeachCamera(state, stage.level);
 
     camera.position.set(state.x, state.y, state.z);
     camera.rotation.set(state.pitch, -state.yaw, 0);
@@ -669,6 +720,10 @@ async function main() {
     }
 
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (authoredWater?.stageAware) {
+      stage.level += (stage.target - stage.level) * (reducedMotion ? 1 : 1 - Math.exp(-3.2 * dt));
+      authoredWater.setLevel(stage.level);
+    }
     authoredWater?.update(now / 1000, reducedMotion);
     mapFlow?.update(now / 1000, reducedMotion);
     renderer.render(scene, camera);

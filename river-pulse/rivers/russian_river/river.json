@@ -3,9 +3,11 @@
   "id": "russian_river",
   "name": "Russian River",
   "status": "available",
-  "summary": "Follow the Russian River from a planned start at the East Fork, to Hacienda Bridge in the middle, to the estuary at Jenner.",
+  "summary": "Follow the Russian River from the East Fork below Lake Mendocino, to Hacienda Bridge in the middle, to the estuary at Jenner.",
   "map": {
-    "status": "planned"
+    "status": "built",
+    "overview": "map/overview.json",
+    "note": "A compact geographic overview with place pins; see scene-kit/river-map.js."
   },
   "scenes": [
     {

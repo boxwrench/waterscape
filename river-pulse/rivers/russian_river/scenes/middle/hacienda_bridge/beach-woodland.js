@@ -3,7 +3,7 @@ import { SETTING_BASE } from "../../../../../scene-kit/bank-materials.js";
 import { seededRandom } from "../../../../../scene-kit/bank-setting-layout.js";
 import { bankEdges, beachGround } from "./beach-layout.js";
 
-async function treeAssets(manifestFile, barkFile, leafFile) {
+export async function treeAssets(manifestFile, barkFile, leafFile) {
   const r = await fetch(new URL(manifestFile, SETTING_BASE));
   if (!r.ok) throw new Error(`Woodland manifest: ${r.status}`);
   const manifest = await r.json(), loader = new THREE.TextureLoader(),

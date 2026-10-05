@@ -6,10 +6,10 @@ Status: **available**. Follow the Russian River from a planned start at the East
 
 ## Scenes
 
-<!-- slots: generated from river.json and scene.json files -->
+<!-- slots: generated from river.json and scene.json files; run node scripts/sync-river-readmes.mjs -->
 | Slot | Scene | Status | Data | Views |
 |---|---|---|---|---|
-| start | East Fork (Lake Mendocino area) | **planned** | n/a | n/a |
+| start | [East Fork below Coyote Valley Dam](scenes/start/east_fork/README.md) | built | geography only | Riverbank, Below the outlet, Map |
 | middle | [Hacienda Bridge](scenes/middle/hacienda_bridge/README.md) | built | live gauge, history, condition | Map, Bridge, Hacienda Beach |
 | end | [Jenner Estuary](scenes/end/jenner/README.md) | built | live gauge | Estuary lookout, River shore, Pacific beach |
 <!-- /slots -->

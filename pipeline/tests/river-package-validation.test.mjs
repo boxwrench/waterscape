@@ -13,9 +13,9 @@ async function fixture(t) {
   await cp(path.join(root, "river-pulse"), path.join(dir, "river-pulse"), { recursive: true });
   return dir;
 }
-test("river packages include a scene and a manifest-only estuary", async () => {
+test("river packages include the authored scenes and a manifest-only estuary", async () => {
   const places = await validateRiverPackages(root);
-  assert.deepEqual(places.map((p) => p.id), ["scotia_bluffs", "hacienda_bridge", "jenner", "freeport"]);
+  assert.deepEqual(places.map((p) => p.id), ["scotia_bluffs", "east_fork", "hacienda_bridge", "jenner", "freeport"]);
 });
 test("deployment rejects missing terrain instead of shipping a broken scene", async (t) => {
   const dir = await fixture(t);
