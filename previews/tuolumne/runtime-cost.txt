@@ -1,0 +1,4 @@
+WebGPU · 980×820 · DPR 1.0000000298023224 · poopenaut-runtime-v3
+788,995 triangles · 3 draw calls · 21.11 MiB CPU geometry buffers
+Source texture 1536×1024; RGBA+mips estimate 8.0 MiB · First frame 208 ms
+Static scene rendered on view/control changes. GPU timing, full browser/GPU memory and foreground FPS are unmeasured.

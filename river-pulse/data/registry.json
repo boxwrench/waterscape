@@ -34,7 +34,7 @@
     {
       "id": "tuolumne_river",
       "name": "Tuolumne River",
-      "status": "planned",
+      "status": "in_development",
       "manifest": "tuolumne_river/river.json"
     }
   ],

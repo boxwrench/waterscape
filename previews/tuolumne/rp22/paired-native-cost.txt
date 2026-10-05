@@ -1,0 +1,4 @@
+WebGPU · 980×820 · DPR 1.0000000298023224 · oshaughnessy-dam-reuse-v1
+788,995 triangles · 3 draw calls · 25.69 MiB CPU geometry buffers
+Resident texture RGBA+mips estimate 13.33 MiB (aerial 8.0 + concrete 5.33) · First frame 272 ms
+Static scene rendered on view/control changes. GPU timing, full browser/GPU memory and foreground FPS are unmeasured.

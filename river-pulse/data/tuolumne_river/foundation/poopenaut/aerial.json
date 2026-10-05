@@ -1,0 +1,15 @@
+{
+  "source": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer/exportImage?bbox=246087.99753453553%2C4198338.004999808%2C257348.91830422933%2C4205845.285512937&bboxSR=32611&imageSR=32611&size=1536%2C1024&format=jpg&bandIds=0%2C1%2C2&f=image",
+  "credit": "USGS, USDA, The National Map: Orthoimagery (NAIP Plus), public domain",
+  "crs": "EPSG:32611",
+  "extent": [
+    246087.99753453553,
+    4198338.004999808,
+    257348.91830422933,
+    4205845.285512937
+  ],
+  "width": 1536,
+  "height": 1024,
+  "retrievalTime": "2026-10-04T20:29:05.531303+00:00",
+  "interpretation": "Aligned archival service mosaic; acquisition year not resolved. No present-condition claim."
+}
