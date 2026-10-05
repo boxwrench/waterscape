@@ -60,3 +60,16 @@ bounded pass. Save locally; no push or merge.
   suitable candidates and next bounded terrain trials for other rivers.
   Two cheaper agents handled focused tests, audits, documentation/gallery and
   asset inventory. Root checked sources/paths, integrated and inspected runtime.
+
+## Result
+
+- Status: done (integration and review baseline; human visual acceptance pending).
+- Commit: `655fd19`.
+- Checks:
+  - `node --test pipeline/tests/reservoir-context.test.mjs pipeline/tests/tuolumne-dam.test.mjs pipeline/tests/structures.test.mjs`: 9 pass, 0 fail. Sandbox worker spawn initially returned EPERM; approved execution passed.
+  - `python pipeline/validate_tuolumne_foundation.py`: Tuolumne foundation valid, 768×512 at 14.66 m, 278 mapped flowlines, state CalWater unit/area, five review cameras.
+  - `node pipeline/validate-river-packages.mjs`: River packages valid.
+  - `npm run test:build`: Built experience pages and river assets valid; 119 browser modules.
+  - Browser: reference/integrated and desktop/phone native/full views, light/motion/pause, form/source, Evidence/state context reviewed; zero console errors, zero phone overflow, byte-identical pause frames. Lifecycle and failure paths audited; fallback labeling corrected.
+  - `git diff --check`: exit 0.
+- Notes: full Hetch context improves the dam setting; native valley materials, tree placement, harsh highlights and runtime cost need subsequent passes. Original engine/kernel/vendor and native source cells unchanged. Reuse guidance now applies to future suitable river environments. Local branch only; no push or merge.
