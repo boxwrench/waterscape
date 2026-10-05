@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import {
   majorRiverQueryUrl,
   parseMajorRiverGeometry,
-} from "../../river-pulse/adapters/dwr-hydrography.js";
+} from "../../river-pulse/core/adapters/dwr-hydrography.js";
 
 test("DWR major-river query requests Russian River geometry in Hacienda UTM zone", () => {
   const url = new URL(majorRiverQueryUrl("Russian River", { outWkid: 32610 }));

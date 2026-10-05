@@ -1,0 +1,22 @@
+{
+  "schema_version": "river-pulse-scene-0.1",
+  "id": "hacienda_bridge",
+  "river": "russian_river",
+  "slot": "middle",
+  "name": "Hacienda Bridge",
+  "status": "built",
+  "fidelity": "Photo-informed setting with live USGS discharge",
+  "views": [
+    "Map",
+    "Bridge",
+    "Hacienda Beach"
+  ],
+  "data": {
+    "live_gauge": true,
+    "history": true,
+    "condition": true,
+    "fine_terrain": false
+  },
+  "entry": "index.html",
+  "thumb": "thumb.jpg"
+}

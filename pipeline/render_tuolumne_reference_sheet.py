@@ -6,7 +6,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT = ROOT / "river-pulse/data/tuolumne_river/foundation/poopenaut"
+OUT = ROOT / "river-pulse/rivers/tuolumne_river/scenes/start/poopenaut_valley/data"
 
 
 def main():

@@ -5,7 +5,7 @@ import {
   STREAM_LEVEL_NAVD88_PARAMETER_CODE,
   latestContinuousUrl,
   parseLatestContinuousFeature,
-} from "../../river-pulse/adapters/usgs.js";
+} from "../../river-pulse/core/adapters/usgs.js";
 
 function feature(parameterCode, value = "4.04") {
   return {

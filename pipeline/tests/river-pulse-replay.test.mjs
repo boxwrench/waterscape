@@ -1,14 +1,14 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { quantity } from "../../river-pulse/data-model/quantity.js";
-import { riverState } from "../../river-pulse/data-model/river-state.js";
+import { quantity } from "../../river-pulse/core/data-model/quantity.js";
+import { riverState } from "../../river-pulse/core/data-model/river-state.js";
 import {
   createReplaySnapshot,
   quantitiesFromReplay,
   restoreReplaySnapshot,
   serializeReplaySnapshot,
-} from "../../river-pulse/data-model/replay-snapshot.js";
-import { observedFlowStatus } from "../../river-pulse/visual-bindings/flow-status.js";
+} from "../../river-pulse/core/data-model/replay-snapshot.js";
+import { observedFlowStatus } from "../../river-pulse/core/visual-bindings/flow-status.js";
 
 function currentQuantity() {
   return quantity({

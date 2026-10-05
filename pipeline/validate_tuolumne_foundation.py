@@ -8,7 +8,7 @@ import numpy as np
 import geo
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT = ROOT / "river-pulse/data/tuolumne_river/foundation/poopenaut"
+OUT = ROOT / "river-pulse/rivers/tuolumne_river/scenes/start/poopenaut_valley/data"
 
 
 def read(name):

@@ -1,0 +1,22 @@
+{
+  "schema_version": "river-pulse-scene-0.1",
+  "id": "jenner",
+  "river": "russian_river",
+  "slot": "end",
+  "name": "Jenner Estuary",
+  "status": "built",
+  "fidelity": "Authored setting",
+  "views": [
+    "Estuary lookout",
+    "River shore",
+    "Pacific beach"
+  ],
+  "data": {
+    "live_gauge": true,
+    "history": false,
+    "condition": false,
+    "fine_terrain": false
+  },
+  "entry": "index.html",
+  "thumb": "thumb.jpg"
+}

@@ -1,0 +1,22 @@
+{
+  "schema_version": "river-pulse-scene-0.1",
+  "id": "freeport",
+  "river": "sacramento_river",
+  "slot": "end",
+  "name": "Freeport",
+  "status": "built",
+  "fidelity": "Photo-informed setting with live USGS discharge",
+  "views": [
+    "Bridge",
+    "Riverbank",
+    "Terrain"
+  ],
+  "data": {
+    "live_gauge": true,
+    "history": true,
+    "condition": false,
+    "fine_terrain": false
+  },
+  "entry": "index.html",
+  "thumb": "thumb.jpg"
+}

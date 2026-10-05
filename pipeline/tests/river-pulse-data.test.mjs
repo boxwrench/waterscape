@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { quantity } from "../../river-pulse/data-model/quantity.js";
-import { latestAtOrBefore, latestAtOrBeforePolicy } from "../../river-pulse/data-model/selection.js";
+import { quantity } from "../../river-pulse/core/data-model/quantity.js";
+import { latestAtOrBefore, latestAtOrBeforePolicy } from "../../river-pulse/core/data-model/selection.js";
 import {
   DAILY_MEAN_STATISTIC_ID,
   DISCHARGE_PARAMETER_CODE,
@@ -11,7 +11,7 @@ import {
   parseDailyValues,
   parseLatestContinuous,
   parseLatestContinuousFeature,
-} from "../../river-pulse/adapters/usgs.js";
+} from "../../river-pulse/core/adapters/usgs.js";
 
 function observed(time, value = 100, id = `q:${time}:${value}`) {
   return quantity({

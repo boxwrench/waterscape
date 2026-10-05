@@ -1,4 +1,4 @@
-import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { cp, mkdir, readFile, readdir, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { validateRiverPackages } from "../pipeline/validate-river-packages.mjs";
 const root = path.resolve(import.meta.dirname, ".."),
@@ -21,6 +21,19 @@ async function moduleGraph(file) {
     await moduleGraph(path.resolve(path.dirname(file), match[1]));
   }
 }
+// Every built scene is rivers/<river>/scenes/<slot>/<place>/index.html; no per-river list to maintain.
+async function riverSceneEntries() {
+  const entries = [], base = path.join(root, "river-pulse", "rivers");
+  for (const river of await readdir(base, { withFileTypes: true })) {
+    if (!river.isDirectory()) continue;
+    for (const slot of await readdir(path.join(base, river.name, "scenes")))
+      for (const place of await readdir(path.join(base, river.name, "scenes", slot))) {
+        const page = path.join(base, river.name, "scenes", slot, place, "index.html");
+        try { await stat(page); entries.push(path.relative(root, page).split(path.sep).join("/")); } catch { /* planned slot */ }
+      }
+  }
+  return entries;
+}
 // HTML is the source of truth for browser entry points and stylesheets. Independent
 // timeline/seasonal modules must ship even when the scene does not import them.
 const htmlFiles = [
@@ -28,11 +41,7 @@ const htmlFiles = [
     "renderer/explore.html",
     "river-pulse/index.html",
     "river-pulse/river.html",
-    "river-pulse/renderer/hacienda.html",
-    "river-pulse/renderer/jenner.html",
-    "river-pulse/renderer/freeport.html",
-    "river-pulse/renderer/eel.html",
-    "river-pulse/renderer/tuolumne.html",
+    ...(await riverSceneEntries()),
   ],
   htmlAssets = new Set();
 for (const entry of htmlFiles) {
@@ -58,17 +67,17 @@ for (const file of [
     "renderer/explore.css",
     "renderer/water.cu",
     "renderer/assets/seabed.jpg",
-    "river-pulse/renderer/hacienda.html",
-    "river-pulse/renderer/jenner.html",
-    "river-pulse/renderer/freeport.html",
-    "river-pulse/renderer/eel.html",
-    "river-pulse/renderer/tuolumne.html",
+    "river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/index.html",
+    "river-pulse/rivers/russian_river/scenes/end/jenner/index.html",
+    "river-pulse/rivers/sacramento_river/scenes/end/freeport/index.html",
+    "river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/index.html",
+    "river-pulse/rivers/tuolumne_river/scenes/start/poopenaut_valley/index.html",
     "river-pulse/index.html",
     "river-pulse/river.html",
-    "river-pulse/renderer/hacienda.css",
-    "river-pulse/renderer/hacienda-label.css",
-    "river-pulse/renderer/hacienda-flow.css",
-    "river-pulse/renderer/hacienda-time.css",
+    "river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/hacienda.css",
+    "river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/hacienda-label.css",
+    "river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/hacienda-flow.css",
+    "river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/hacienda-time.css",
     "LICENSE",
     "THIRD_PARTY_NOTICES.md",
     "vendor/cuda-webshader/LICENSE",
@@ -87,11 +96,13 @@ await cp(path.join(root, "data"), path.join(out, "data"), {
   filter: (src) => !src.endsWith("terrain.bin"),
 });
 // River Pulse packages are additive and currently contain authored source plus generated terrain.
-await cp(
-  path.join(root, "river-pulse", "data"),
-  path.join(out, "river-pulse", "data"),
-  { recursive: true },
-);
+// Source files ship through the module and HTML graph above; everything else (data, textures, thumbnails) ships whole.
+const isSource = (src) => /\.(js|html|css|md)$/.test(src);
+await cp(path.join(root, "river-pulse", "rivers"), path.join(out, "river-pulse", "rivers"), {
+  recursive: true, filter: (src) => !isSource(src),
+});
+await cp(path.join(root, "river-pulse", "app", "data"), path.join(out, "river-pulse", "app", "data"), { recursive: true });
+await cp(path.join(root, "river-pulse", "registry.json"), path.join(out, "river-pulse", "registry.json"));
 await writeFile(path.join(out, ".nojekyll"), "");
 console.log(
   `Built Pages with ${modules.size} browser modules, shared CUDA source and licensed assets.`,

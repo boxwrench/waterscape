@@ -2,11 +2,11 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { gunzipSync } from "node:zlib";
-import { buildRiverTerrainGrid } from "../../river-pulse/renderer/terrain-mesh.js";
-import { decodeRiverTerrain } from "../../river-pulse/renderer/terrain.js";
-import { buildEelHeroLand, createHeroGroundSampler, heroGround } from "../../river-pulse/renderer/eel-hero-terrain.js";
+import { buildRiverTerrainGrid } from "../../river-pulse/scene-kit/terrain-mesh.js";
+import { decodeRiverTerrain } from "../../river-pulse/scene-kit/terrain.js";
+import { buildEelHeroLand, createHeroGroundSampler, heroGround } from "../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/eel-hero-terrain.js";
 
-const eelData = new URL("../../river-pulse/data/eel_river/places/scotia_bluffs/", import.meta.url);
+const eelData = new URL("../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/data/", import.meta.url);
 
 function loadTerrainBundle(name) {
   const meta = JSON.parse(readFileSync(new URL(`${name}.json`, eelData), "utf8")),

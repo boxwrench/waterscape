@@ -9,7 +9,9 @@ from pathlib import Path
 
 PLACE_SCHEMA = "river-pulse-place-0.1"
 REGISTRY_SCHEMA = "river-pulse-registry-0.1"
-RIVER_SCHEMA = "river-pulse-river-0.1"
+RIVER_SCHEMA = "river-pulse-river-0.2"
+SCENE_SCHEMA = "river-pulse-scene-0.1"
+SLOTS = ("start", "middle", "end", "extra")
 REQUIRED_FIELDS = (
     "schema_version",
     "minimum_engine_version",
@@ -40,8 +42,8 @@ def validate_place_manifest(manifest: dict, path: Path) -> None:
     if not isinstance(anchor, dict) or not all(key in anchor for key in ("latitude", "longitude")):
         raise ValueError(f"{path}: anchor requires latitude and longitude")
 
-    place_dir = path.parent.name
-    river_dir = path.parents[2].name
+    place_dir = path.parents[1].name
+    river_dir = path.parents[4].name
     if manifest["id"] != place_dir:
         raise ValueError(f"{path}: manifest id {manifest['id']!r} must match directory {place_dir!r}")
     if manifest["river_pack"] != river_dir:
@@ -50,12 +52,13 @@ def validate_place_manifest(manifest: dict, path: Path) -> None:
         )
 
 
-def discover_places(data_root: Path) -> list[dict]:
-    data_root = Path(data_root)
+def discover_places(root: Path) -> list[dict]:
+    """Find built places at rivers/<river>/scenes/<slot>/<place>/data/place.json."""
+    root = Path(root)
     entries: list[dict] = []
     identities: set[tuple[str, str]] = set()
 
-    for path in sorted(data_root.glob("*/places/*/place.json")):
+    for path in sorted(root.glob("rivers/*/scenes/*/*/data/place.json")):
         manifest = _load_json(path)
         validate_place_manifest(manifest, path)
         identity = (manifest["river_pack"], manifest["id"])
@@ -69,7 +72,7 @@ def discover_places(data_root: Path) -> list[dict]:
                 "id": manifest["id"],
                 "name": manifest["name"],
                 "hydrologic_context": manifest["hydrologic_context"],
-                "manifest": path.relative_to(data_root).as_posix(),
+                "manifest": path.relative_to(root).as_posix(),
                 "supported_capabilities": sorted(set(manifest["supported_capabilities"])),
             }
         )
@@ -78,6 +81,7 @@ def discover_places(data_root: Path) -> list[dict]:
 
 
 def build_registry(data_root: Path) -> dict:
+    """data_root is the river-pulse directory."""
     return {
         "schema_version": REGISTRY_SCHEMA,
         "rivers": discover_rivers(data_root),
@@ -85,9 +89,44 @@ def build_registry(data_root: Path) -> dict:
     }
 
 
-def discover_rivers(data_root: Path) -> list[dict]:
+def validate_scenes(river_path: Path, manifest: dict) -> None:
+    """Every river lists its slots in order; each slot folder holds a matching scene.json."""
+    river_dir = river_path.parent
+    seen = set()
+    if not manifest.get("scenes"):
+        raise ValueError(f"{river_path}: scenes[] is required (use planned placeholders for empty slots)")
+    for entry in manifest["scenes"]:
+        slot, scene_id = entry.get("slot"), entry.get("id")
+        if slot not in SLOTS or not scene_id:
+            raise ValueError(f"{river_path}: scene entries need a slot from {SLOTS} and an id")
+        if (slot, scene_id) in seen:
+            raise ValueError(f"{river_path}: duplicate scene {slot}/{scene_id}")
+        seen.add((slot, scene_id))
+        folder = river_dir / "scenes" / slot / scene_id
+        scene_path = folder / "scene.json"
+        if not scene_path.exists():
+            raise ValueError(f"{river_path}: missing {scene_path.relative_to(river_dir.parent)}")
+        scene = _load_json(scene_path)
+        if scene.get("schema_version") != SCENE_SCHEMA:
+            raise ValueError(f"{scene_path}: unsupported scene schema")
+        for key, expected in (("id", scene_id), ("river", river_dir.name), ("slot", slot)):
+            if scene.get(key) != expected:
+                raise ValueError(f"{scene_path}: {key} must be {expected!r}")
+        if scene.get("status") not in ("built", "planned"):
+            raise ValueError(f"{scene_path}: status must be built or planned")
+        if scene["status"] == "built":
+            for name in (scene.get("entry"), scene.get("thumb")):
+                if not name or not (folder / name).exists():
+                    raise ValueError(f"{scene_path}: built scenes need existing entry and thumb files")
+    extra = {p.parent.parent.name + "/" + p.parent.name for p in (river_dir / "scenes").glob("*/*/scene.json")}
+    unlisted = extra - {f"{slot}/{scene_id}" for slot, scene_id in seen}
+    if unlisted:
+        raise ValueError(f"{river_path}: scene folders not listed in river.json: {sorted(unlisted)}")
+
+
+def discover_rivers(root: Path) -> list[dict]:
     entries = []
-    for path in sorted(Path(data_root).glob("*/river.json")):
+    for path in sorted(Path(root).glob("rivers/*/river.json")):
         manifest = _load_json(path)
         if manifest.get("schema_version") != RIVER_SCHEMA:
             raise ValueError(f"{path}: unsupported river schema")
@@ -100,9 +139,10 @@ def discover_rivers(data_root: Path) -> list[dict]:
             raise ValueError(f"{path}: unsupported river status")
         if not manifest.get("references"):
             raise ValueError(f"{path}: references are required")
+        validate_scenes(path, manifest)
         entries.append({"id": manifest["id"], "name": manifest["name"],
                         "status": manifest["status"],
-                        "manifest": path.relative_to(data_root).as_posix()})
+                        "manifest": path.relative_to(root).as_posix()})
     return entries
 
 
@@ -116,13 +156,13 @@ def main() -> int:
     parser.add_argument(
         "--data-root",
         type=Path,
-        default=repo_root / "river-pulse" / "data",
-        help="River Pulse data directory",
+        default=repo_root / "river-pulse",
+        help="River Pulse directory (holds rivers/ and registry.json)",
     )
     parser.add_argument(
         "--output",
         type=Path,
-        default=repo_root / "river-pulse" / "data" / "registry.json",
+        default=repo_root / "river-pulse" / "registry.json",
         help="Generated registry path",
     )
     parser.add_argument(

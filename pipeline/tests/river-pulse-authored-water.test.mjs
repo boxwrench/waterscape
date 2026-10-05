@@ -2,8 +2,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { gunzipSync } from "node:zlib";
-import { buildAuthoredWaterGeometry } from "../../river-pulse/renderer/authored-water-geometry.js";
-import { decodeRiverTerrain } from "../../river-pulse/renderer/terrain.js";
+import { buildAuthoredWaterGeometry } from "../../river-pulse/scene-kit/authored-water-geometry.js";
+import { decodeRiverTerrain } from "../../river-pulse/scene-kit/terrain.js";
 
 const terrain = { x0: -100, z0: -100, width: 201, height: 201, cellX: 1, cellZ: 1,
   ground(x, z) { return Math.abs(x) < 12 ? 4 : 12; } },
@@ -26,7 +26,7 @@ test("absent mainstem has no invented water; invalid mesh settings fail", () => 
   assert.throws(() => buildAuthoredWaterGeometry(document, terrain, { step: 0 }), /positive/);
 });
 test("bundled Hacienda produces a bounded local water preview without altering terrain", () => {
-  const base = new URL("../../river-pulse/data/russian_river/places/hacienda_bridge/", import.meta.url),
+  const base = new URL("../../river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/data/", import.meta.url),
     meta = JSON.parse(readFileSync(new URL("terrain.json", base))),
     raw = gunzipSync(readFileSync(new URL("terrain.bin.gz", base))),
     actual = decodeRiverTerrain(meta, raw.buffer.slice(raw.byteOffset, raw.byteOffset + raw.byteLength)),

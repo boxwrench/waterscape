@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { quantity } from "../../river-pulse/data-model/quantity.js";
-import { streamflowCondition } from "../../river-pulse/visual-bindings/streamflow-condition.js";
+import { quantity } from "../../river-pulse/core/data-model/quantity.js";
+import { streamflowCondition } from "../../river-pulse/core/visual-bindings/streamflow-condition.js";
 
 function discharge(value) {
   return quantity({

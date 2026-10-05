@@ -1,0 +1,31 @@
+{
+  "schema_version": "river-pulse-river-0.2",
+  "id": "russian_river",
+  "name": "Russian River",
+  "status": "available",
+  "summary": "Explore Hacienda Bridge and the coastal setting at Jenner.",
+  "map": {
+    "status": "planned"
+  },
+  "scenes": [
+    {
+      "slot": "start",
+      "id": "east_fork"
+    },
+    {
+      "slot": "middle",
+      "id": "hacienda_bridge"
+    },
+    {
+      "slot": "end",
+      "id": "jenner"
+    }
+  ],
+  "live_data_scene": "hacienda_bridge",
+  "references": [
+    {
+      "label": "Sonoma Water estuary",
+      "url": "https://www.sonomawater.org/russian-river-estuary"
+    }
+  ]
+}

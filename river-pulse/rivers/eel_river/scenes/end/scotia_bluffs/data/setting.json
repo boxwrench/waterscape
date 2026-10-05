@@ -1,0 +1,35 @@
+{
+  "binding_class": "setting",
+  "surveyed": false,
+  "seed": 17041,
+  "terrain_effect": "Surface color and bump only. Geographic vertex elevations and the water geometry are unchanged. Form/source presentations exclude authored forest and rock shading.",
+  "vegetation": "Deterministic sites from an authored dark-green aerial heuristic, outside mapped river polygons and steep terrain, with camera clearance. Generic conifer and broad crowns are visual estimates, not mapped species or individual trees. Height, density and color are authored.",
+  "assets": {
+    "source": "data/biomes/peninsula-oak-fir/biome.json",
+    "generator": "ez-tree 1.1.0; MIT",
+    "license_file": "../../../../../russian_river/scenes/middle/hacienda_bridge/data/setting/LICENSE-ez-tree",
+    "unchanged_files": [
+      "trees/douglas-fir-a-far.bin",
+      "trees/douglas-fir-b-far.bin",
+      "trees/douglas-fir-bark.jpg",
+      "trees/douglas-fir-leaf.png",
+      "trees/impostor-albedo.webp",
+      "trees/impostor-normal.webp"
+    ],
+    "use": "Nearby conifers use baked branch/needle meshes. More distant crowns use existing eight-angle color/normal tree atlas rows, fitted to the same deterministic sites. Shared assets describe generic shape, not Scotia species."
+  },
+  "rock": "Original procedural multiscale grain, modest bump, weathering and bedding cues; no measured lithology, erosion history or finer elevation claim.",
+  "surface_detail": {
+    "binding_class": "setting",
+    "source": "data/biomes/diablo-oak/biome.json / ground.rock",
+    "license": "CC0 1.0 / ambientCG Rock030",
+    "files": ["ground/rock_color.jpg", "ground/rock_normal.jpg"],
+    "authored_parameters": "9 m and 12.33 m triplanar projections; rotated second frame; deterministic low-frequency blend; luminance gain 0.82–1.18 centered on existing reservoir mean 0.0766; normal offset strength 0.42; distance fade 400–1400 m; dry steep-slope mask with soft woody attenuation.",
+    "interpretation": "Shared photo surface shading only, not Scotia geology or finer terrain geometry. Previous RP20 material remains selectable with identical forest, camera, lighting and water.",
+    "review": "../../../../../../../docs/river-pulse/eel-reservoir-surface-review.md"
+  },
+  "visual_reference": "https://commons.wikimedia.org/wiki/File:Scotia_Bluffs_Railroad_Bridge_2016.jpg",
+  "reference_credit": "Ellin Beltz, 2016-03-16, CC BY-SA 4.0; photograph studied, not redistributed",
+  "geographic_sources": ["terrain.json", "aerial.json", "waterbodies.json", "calwater-unit.geojson", "calwater-area.geojson"],
+  "review": "../../../../../../../docs/river-pulse/eel-bluff-forest-review.md"
+}

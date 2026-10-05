@@ -10,7 +10,7 @@ const root = path.resolve(import.meta.dirname, "../..");
 async function fixture(t) {
   const dir = await mkdtemp(path.join(tmpdir(), "river-packages-"));
   t.after(() => rm(dir, { recursive: true, force: true }));
-  await cp(path.join(root, "river-pulse/data"), path.join(dir, "river-pulse/data"), { recursive: true });
+  await cp(path.join(root, "river-pulse"), path.join(dir, "river-pulse"), { recursive: true });
   return dir;
 }
 test("river packages include a scene and a manifest-only estuary", async () => {
@@ -19,16 +19,16 @@ test("river packages include a scene and a manifest-only estuary", async () => {
 });
 test("deployment rejects missing terrain instead of shipping a broken scene", async (t) => {
   const dir = await fixture(t);
-  await rm(path.join(dir, "river-pulse/data/russian_river/places/hacienda_bridge/terrain.bin.gz"));
+  await rm(path.join(dir, "river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/data/terrain.bin.gz"));
   await assert.rejects(validateRiverPackages(dir), /ENOENT/);
 });
 test("deployment rejects truncated elevation data", async (t) => {
   const dir = await fixture(t);
-  await writeFile(path.join(dir, "river-pulse/data/russian_river/places/hacienda_bridge/terrain.bin.gz"), gzipSync(Buffer.alloc(2)));
+  await writeFile(path.join(dir, "river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/data/terrain.bin.gz"), gzipSync(Buffer.alloc(2)));
   await assert.rejects(validateRiverPackages(dir), /River elevation payload size/);
 });
 test("deployment rejects missing river centerlines", async (t) => {
   const dir = await fixture(t);
-  await rm(path.join(dir, "river-pulse/data/russian_river/places/hacienda_bridge/hydrography.json"));
+  await rm(path.join(dir, "river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/data/hydrography.json"));
   await assert.rejects(validateRiverPackages(dir), /ENOENT/);
 });

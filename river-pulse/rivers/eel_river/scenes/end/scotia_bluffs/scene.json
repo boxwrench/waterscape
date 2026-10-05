@@ -1,0 +1,24 @@
+{
+  "schema_version": "river-pulse-scene-0.1",
+  "id": "scotia_bluffs",
+  "river": "eel_river",
+  "slot": "end",
+  "name": "Scotia Bluffs visual study",
+  "status": "built",
+  "fidelity": "USGS terrain, illustrative water",
+  "views": [
+    "Overview",
+    "Bluffs",
+    "Eye level",
+    "Shoreline",
+    "Bend"
+  ],
+  "data": {
+    "live_gauge": false,
+    "history": false,
+    "condition": false,
+    "fine_terrain": true
+  },
+  "entry": "index.html",
+  "thumb": "thumb.jpg"
+}

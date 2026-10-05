@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { decodeRiverTerrain, RIVER_TERRAIN_SCHEMA } from "../../river-pulse/renderer/terrain.js";
-import { buildRiverTerrainGrid } from "../../river-pulse/renderer/terrain-mesh.js";
+import { decodeRiverTerrain, RIVER_TERRAIN_SCHEMA } from "../../river-pulse/scene-kit/terrain.js";
+import { buildRiverTerrainGrid } from "../../river-pulse/scene-kit/terrain-mesh.js";
 
 function encode(values, width, height, codec) {
   const quantized = values.map((v) => Math.max(0, Math.min(65535, Math.round((v - codec.offset) / codec.scale)))),

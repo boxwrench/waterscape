@@ -3,10 +3,10 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { gunzipSync } from "node:zlib";
-import { decodeRiverTerrain } from "../../river-pulse/renderer/terrain.js";
-import { localReach, bankTreeSites } from "../../river-pulse/renderer/bank-setting-layout.js";
+import { decodeRiverTerrain } from "../../river-pulse/scene-kit/terrain.js";
+import { localReach, bankTreeSites } from "../../river-pulse/scene-kit/bank-setting-layout.js";
 
-const base = new URL("../../river-pulse/data/russian_river/places/hacienda_bridge/", import.meta.url),
+const base = new URL("../../river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/data/", import.meta.url),
   raw = gunzipSync(readFileSync(new URL("terrain.bin.gz", base))),
   terrain = decodeRiverTerrain(JSON.parse(readFileSync(new URL("terrain.json", base))),
     raw.buffer.slice(raw.byteOffset, raw.byteOffset + raw.byteLength)),

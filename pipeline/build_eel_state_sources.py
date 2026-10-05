@@ -6,7 +6,7 @@ import urllib.error
 from datetime import datetime, timezone
 from pathlib import Path
 
-OUT = Path(__file__).resolve().parent.parent / "river-pulse/data/eel_river/places/scotia_bluffs"
+OUT = Path(__file__).resolve().parent.parent / "river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/data"
 CALWATER = "https://gispublic.waterboards.ca.gov/arcgis/rest/services/Hydrography/CalWater_Boundaries/MapServer"
 DWR_DEM = "https://gis.water.ca.gov/arcgisimg/rest/services/elevation/CA_NoCAL_Wildfires_B5a_2018/ImageServer"
 TNM = "https://tnmaccess.nationalmap.gov/api/v1/products"

@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { bankEdges, beachGround, beachWaterGrid, constrainBeachCamera } from "../../river-pulse/renderer/beach-layout.js";
-import { mapFlowIsMoving } from "../../river-pulse/visual-bindings/map-flow.js";
+import { bankEdges, beachGround, beachWaterGrid, constrainBeachCamera } from "../../river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/beach-layout.js";
+import { mapFlowIsMoving } from "../../river-pulse/core/visual-bindings/map-flow.js";
 
 test("Map flow stops for missing, invalid and zero selected discharge", () => {
   const state = (value, availability = "present") => ({ selected_quantities:

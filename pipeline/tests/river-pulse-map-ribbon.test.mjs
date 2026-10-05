@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { MAP_RIBBON_WIDTH, mapRibbonBinding } from "../../river-pulse/visual-bindings/map-flow.js";
-import { buildMapRibbonSkeleton, mapRibbonPositions } from "../../river-pulse/renderer/map-ribbon-geometry.js";
+import { MAP_RIBBON_WIDTH, mapRibbonBinding } from "../../river-pulse/core/visual-bindings/map-flow.js";
+import { buildMapRibbonSkeleton, mapRibbonPositions } from "../../river-pulse/scene-kit/map-ribbon-geometry.js";
 
 const state = (value) => ({ selected_quantities: [{ phenomenon: "discharge",
   availability: "present", value, quantity_id: `test-${value}` }] });

@@ -1,0 +1,33 @@
+{
+  "schema_version": "river-pulse-river-0.2",
+  "id": "eel_river",
+  "name": "Eel River",
+  "status": "in_development",
+  "summary": "A first visual study of Scotia Bluffs: the Eel's river bend, gravel bars and steep valley sides. Review the landforms before detailed vegetation and water work.",
+  "map": {
+    "status": "planned"
+  },
+  "scenes": [
+    {
+      "slot": "start",
+      "id": "start_to_be_chosen"
+    },
+    {
+      "slot": "middle",
+      "id": "middle_to_be_chosen"
+    },
+    {
+      "slot": "end",
+      "id": "scotia_bluffs"
+    }
+  ],
+  "next_steps": [
+    "Review the fixed cameras and accept or refine the major forms before detailed setting work."
+  ],
+  "references": [
+    {
+      "label": "National Wild and Scenic Rivers System",
+      "url": "https://www.fws.gov/rivers/river/eel"
+    }
+  ]
+}

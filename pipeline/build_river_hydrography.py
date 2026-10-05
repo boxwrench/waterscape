@@ -9,7 +9,7 @@ hydraulic width, depth, or velocity.
 Usage:
 
     python pipeline/build_river_hydrography.py \
-      river-pulse/data/russian_river/places/hacienda_bridge/source.json
+      river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/data/source.json
 """
 
 import json

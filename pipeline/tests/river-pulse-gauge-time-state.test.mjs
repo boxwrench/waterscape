@@ -1,10 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { quantity } from "../../river-pulse/data-model/quantity.js";
+import { quantity } from "../../river-pulse/core/data-model/quantity.js";
 import {
   GAUGE_TIME_MODES,
   resolveGaugeDischargeState,
-} from "../../river-pulse/data-model/gauge-time-state.js";
+} from "../../river-pulse/core/data-model/gauge-time-state.js";
 
 function q({ id, start, end = start, value, evidence = "observation" }) {
   return quantity({

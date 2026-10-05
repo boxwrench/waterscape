@@ -1,0 +1,9 @@
+{
+  "schema_version": "river-pulse-scene-0.1",
+  "id": "end_to_be_chosen",
+  "river": "san_joaquin_river",
+  "slot": "end",
+  "name": "End (to be chosen)",
+  "status": "planned",
+  "note": "Placeholder that blocks out the river's structure. No scene, data or geography is implied."
+}

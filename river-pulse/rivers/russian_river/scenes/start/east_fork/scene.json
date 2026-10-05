@@ -1,0 +1,9 @@
+{
+  "schema_version": "river-pulse-scene-0.1",
+  "id": "east_fork",
+  "river": "russian_river",
+  "slot": "start",
+  "name": "East Fork (Lake Mendocino area)",
+  "status": "planned",
+  "note": "Placeholder that blocks out the river's structure. No scene, data or geography is implied."
+}

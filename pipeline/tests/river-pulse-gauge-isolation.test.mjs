@@ -1,10 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { quantity } from "../../river-pulse/data-model/quantity.js";
+import { quantity } from "../../river-pulse/core/data-model/quantity.js";
 import {
   resolveGaugeDischargeState,
   GAUGE_TIME_MODES,
-} from "../../river-pulse/data-model/gauge-time-state.js";
+} from "../../river-pulse/core/data-model/gauge-time-state.js";
 
 const validTime = "2026-09-27T12:10:00Z",
   featureId = "USGS-11467000";

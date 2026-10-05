@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { quantity } from "../../river-pulse/data-model/quantity.js";
-import { dailyHydrograph } from "../../river-pulse/visual-bindings/hydrograph.js";
+import { quantity } from "../../river-pulse/core/data-model/quantity.js";
+import { dailyHydrograph } from "../../river-pulse/core/visual-bindings/hydrograph.js";
 
 function daily(date, value, id = date) {
   return quantity({

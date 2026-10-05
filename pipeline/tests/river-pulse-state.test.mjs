@@ -1,8 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { quantity } from "../../river-pulse/data-model/quantity.js";
-import { latestAtOrBeforePolicy } from "../../river-pulse/data-model/selection.js";
-import { riverState } from "../../river-pulse/data-model/river-state.js";
+import { quantity } from "../../river-pulse/core/data-model/quantity.js";
+import { latestAtOrBeforePolicy } from "../../river-pulse/core/data-model/selection.js";
+import { riverState } from "../../river-pulse/core/data-model/river-state.js";
 
 function q(time, value) {
   return quantity({

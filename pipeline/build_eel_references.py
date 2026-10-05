@@ -8,7 +8,7 @@ from pathlib import Path
 from aerial import SERVICE, CREDIT, grid_extent
 import geo
 
-OUT = Path(__file__).resolve().parent.parent / "river-pulse/data/eel_river/places/scotia_bluffs"
+OUT = Path(__file__).resolve().parent.parent / "river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/data"
 
 
 def fetch(url):

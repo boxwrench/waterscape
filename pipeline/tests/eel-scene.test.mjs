@@ -2,9 +2,9 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { gunzipSync } from "node:zlib";
-import { decodeRiverTerrain } from "../../river-pulse/renderer/terrain.js";
-import { EEL_CAMERAS, reviewCamera, clippedWaterTriangle, mappedRiverAt } from "../../river-pulse/renderer/eel-layout.js";
-const root = new URL("../../river-pulse/data/eel_river/places/scotia_bluffs/", import.meta.url);
+import { decodeRiverTerrain } from "../../river-pulse/scene-kit/terrain.js";
+import { EEL_CAMERAS, reviewCamera, clippedWaterTriangle, mappedRiverAt } from "../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/eel-layout.js";
+const root = new URL("../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/data/", import.meta.url);
 const json = async file => JSON.parse(await readFile(new URL(file, root), "utf8"));
 
 test("Eel geographic terrain and fixed review cameras retain native elevations and clearance", async () => {

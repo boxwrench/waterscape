@@ -18,7 +18,7 @@ from PIL import Image
 from pyproj import Transformer
 
 ROOT = Path(__file__).resolve().parent.parent
-ASSET = ROOT / "river-pulse/data/eel_river/places/scotia_bluffs"
+ASSET = ROOT / "river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/data"
 AUDIT = ROOT / "previews/river-pulse/rp27/lidar-audit"
 SOURCE_URL = ("https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/1m/Projects/"
               "CA_NoCAL_Wildfires_B4_2018/TIFF/USGS_1m_x40y449_CA_NoCAL_Wildfires_B4_2018.tif")

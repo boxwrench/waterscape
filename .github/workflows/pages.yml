@@ -24,7 +24,7 @@ jobs:
       - run: npm ci
       - run: pip install numpy scipy Pillow pytest
       - run: node --check renderer/explore.js
-      - run: node --check river-pulse/renderer/hacienda.js
+      - run: node --check river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/hacienda.js
       - run: npm run check
       - run: node --test "pipeline/tests/*.test.mjs"
       - run: python -m pytest pipeline/tests -q

@@ -1,14 +1,14 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { quantity } from "../../river-pulse/data-model/quantity.js";
+import { quantity } from "../../river-pulse/core/data-model/quantity.js";
 import {
   dayOfYearStatisticsUrl,
   parseDayOfYearStatistics,
-} from "../../river-pulse/adapters/usgs-statistics.js";
+} from "../../river-pulse/core/adapters/usgs-statistics.js";
 import {
   MINIMUM_RANKING_SAMPLE_COUNT,
   streamflowCondition,
-} from "../../river-pulse/visual-bindings/streamflow-condition.js";
+} from "../../river-pulse/core/visual-bindings/streamflow-condition.js";
 
 function current(value) {
   return quantity({

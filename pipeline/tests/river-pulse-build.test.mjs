@@ -5,7 +5,7 @@ import { readFile, access } from "node:fs/promises";
 test("production ships every module and stylesheet referenced by the River Pulse page", async () => {
   const root = new URL("../../", import.meta.url);
   await import("../../scripts/build.mjs");
-  const page = new URL("dist/river-pulse/renderer/hacienda.html", root),
+  const page = new URL("dist/river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/index.html", root),
     html = await readFile(page, "utf8");
   const assets = [
     ...html.matchAll(

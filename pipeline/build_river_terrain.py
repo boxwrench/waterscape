@@ -6,7 +6,7 @@ absolute NAVD88 metres from 3DEP, with a local x/z origin pinned to the configur
 
 Usage:
 
-    python pipeline/build_river_terrain.py river-pulse/data/russian_river/places/hacienda_bridge/source.json
+    python pipeline/build_river_terrain.py river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/data/source.json
 
 The source JSON must contain ``id``, ``name``, ``anchor`` [lat, lon], ``bbox``
 [west, south, east, north], and ``size`` [width, height].

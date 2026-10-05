@@ -1,27 +1,27 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFile, access } from "node:fs/promises";
-import { riverDestination, overviewRiverOrder } from "../../river-pulse/data-model/overview-navigation.js";
+import { riverDestination, overviewRiverOrder } from "../../river-pulse/core/data-model/overview-navigation.js";
 
 const root = new URL("../../", import.meta.url);
 const load = async file => JSON.parse(await readFile(new URL(file, root), "utf8"));
 
 test("every mapped river resolves to its own home with available scenes", async () => {
-  const registry = await load("river-pulse/data/registry.json"),
-    geography = await load("river-pulse/data/california-overview.json");
+  const registry = await load("river-pulse/registry.json"),
+    geography = await load("river-pulse/app/data/california-overview.json");
   assert.deepEqual(geography.rivers.map(r => r.id).sort(), registry.rivers.map(r => r.id).sort());
   for (const entry of registry.rivers) {
-    const manifest = await load(`river-pulse/data/${entry.manifest}`), destination = riverDestination(manifest);
+    const manifest = await load(`river-pulse/${entry.manifest}`), destination = riverDestination(manifest);
     await access(new URL(destination, new URL("river-pulse/index.html", root)));
     assert.ok(destination.startsWith("./river.html?"));
     assert.equal(new URL(destination, "https://example.test/river-pulse/").searchParams.get("river"), entry.id);
-    for (const scene of manifest.scenes ?? [])
-      await access(new URL(scene.entry, new URL(`river-pulse/data/${entry.manifest}`, root)));
+    for (const { slot, id } of manifest.scenes)
+      await access(new URL(`scenes/${slot}/${id}/scene.json`, new URL(`river-pulse/${entry.manifest}`, root)));
   }
 });
 
 test("state and river paths retain finite geographic coordinates and source evidence", async () => {
-  const geography = await load("river-pulse/data/california-overview.json");
+  const geography = await load("river-pulse/app/data/california-overview.json");
   assert.equal(geography.schema_version, "river-pulse-overview-0.1");
   assert.equal(geography.crs, "EPSG:3857");
   assert.ok(geography.state_path.includes("Z"));
@@ -38,7 +38,7 @@ test("state and river paths retain finite geographic coordinates and source evid
   assert.equal(geography.sources.length, 3);
   for (const source of geography.sources) assert.match(source.url, /^https:\/\/.*(?:census\.gov|nationalmap\.gov)\//);
   assert.ok(Number.isFinite(Date.parse(geography.retrieval_time)));
-  const relief = await readFile(new URL(`river-pulse/data/${geography.relief}`, root));
+  const relief = await readFile(new URL(`river-pulse/app/data/${geography.relief}`, root));
   assert.deepEqual([...relief.subarray(0, 2)], [255, 216]);
 });
 

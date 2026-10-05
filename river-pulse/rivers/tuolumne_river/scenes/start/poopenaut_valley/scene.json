@@ -1,0 +1,27 @@
+{
+  "schema_version": "river-pulse-scene-0.1",
+  "id": "poopenaut_valley",
+  "river": "tuolumne_river",
+  "slot": "start",
+  "name": "Poopenaut Valley form study",
+  "status": "built",
+  "fidelity": "Native elevations, authored water",
+  "views": [
+    "Overview",
+    "Valley",
+    "Eye level",
+    "River contact",
+    "Dam transition",
+    "Dam close-up",
+    "Below dam",
+    "Reservoir"
+  ],
+  "data": {
+    "live_gauge": false,
+    "history": false,
+    "condition": false,
+    "fine_terrain": false
+  },
+  "entry": "index.html",
+  "thumb": "thumb.jpg"
+}

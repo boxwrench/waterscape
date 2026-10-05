@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { parseLatestContinuousFeature } from "../../river-pulse/adapters/usgs.js";
-import { jennerLevelState, jennerLevelPresentation } from "../../river-pulse/visual-bindings/jenner-level.js";
-import { jennerCoast, jennerGround, JENNER_VIEWS, constrainJennerCamera } from "../../river-pulse/renderer/jenner-layout.js";
+import { parseLatestContinuousFeature } from "../../river-pulse/core/adapters/usgs.js";
+import { jennerLevelState, jennerLevelPresentation } from "../../river-pulse/rivers/russian_river/scenes/end/jenner/jenner-level.js";
+import { jennerCoast, jennerGround, JENNER_VIEWS, constrainJennerCamera } from "../../river-pulse/rivers/russian_river/scenes/end/jenner/jenner-layout.js";
 
 // Explicit synthetic observations; never shipped as river records.
 const now = "2026-09-29T20:00:00Z";

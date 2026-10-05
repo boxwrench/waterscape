@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { quantity } from "../../river-pulse/data-model/quantity.js";
-import { coveringInterval, coveringIntervalPolicy } from "../../river-pulse/data-model/selection.js";
+import { quantity } from "../../river-pulse/core/data-model/quantity.js";
+import { coveringInterval, coveringIntervalPolicy } from "../../river-pulse/core/data-model/selection.js";
 
 function daily(date, value, id = date) {
   const start = `${date}T00:00:00.000Z`,

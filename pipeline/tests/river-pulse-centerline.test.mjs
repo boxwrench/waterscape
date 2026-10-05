@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import {
   buildRiverCenterlineSegments,
   projectedToScene,
-} from "../../river-pulse/renderer/river-centerline.js";
+} from "../../river-pulse/scene-kit/river-centerline.js";
 
 function terrain() {
   return {

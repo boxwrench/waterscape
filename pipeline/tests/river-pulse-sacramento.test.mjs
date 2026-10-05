@@ -1,10 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import { parseLatestContinuousFeature, parseDailyFeature } from "../../river-pulse/adapters/usgs.js";
-import { matchingSeries } from "../../river-pulse/data-model/binding-series.js";
-import { latestAtOrBefore } from "../../river-pulse/data-model/selection.js";
-import { dailyHydrograph } from "../../river-pulse/visual-bindings/hydrograph.js";
+import { parseLatestContinuousFeature, parseDailyFeature } from "../../river-pulse/core/adapters/usgs.js";
+import { matchingSeries } from "../../river-pulse/core/data-model/binding-series.js";
+import { latestAtOrBefore } from "../../river-pulse/core/data-model/selection.js";
+import { dailyHydrograph } from "../../river-pulse/core/visual-bindings/hydrograph.js";
 
 function feature(parameter, time, series, statistic, value = "100") {
   return { id: `${parameter}-${time}`, properties: { monitoring_location_id: "USGS-11447650",
@@ -34,7 +34,7 @@ test("a competing Freeport series or a different station cannot replace the conf
   assert.equal(latestAtOrBefore(matches, "2026-10-03T11:00:00Z").quantity, null);
 });
 test("the atlas distinguishes two planned rivers and the in-development Eel and Tuolumne studies from Sacramento's data place", async () => {
-  const registry = JSON.parse(await readFile(new URL("../../river-pulse/data/registry.json", import.meta.url), "utf8"));
+  const registry = JSON.parse(await readFile(new URL("../../river-pulse/registry.json", import.meta.url), "utf8"));
   assert.equal(registry.rivers.length, 6);
   assert.equal(registry.rivers.filter(r => r.status === "planned").length, 2);
   assert.equal(registry.rivers.find(r => r.id === "eel_river").status, "in_development");

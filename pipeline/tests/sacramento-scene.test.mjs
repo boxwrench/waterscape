@@ -2,18 +2,18 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFile, access } from "node:fs/promises";
 import { gunzipSync } from "node:zlib";
-import { decodeRiverTerrain } from "../../river-pulse/renderer/terrain.js";
-import { FREEPORT_VIEWS, freeportChannel, freeportGround, constrainFreeportCamera } from "../../river-pulse/renderer/freeport-layout.js";
-import { freeportDischarge } from "../../river-pulse/visual-bindings/freeport-discharge.js";
-import { parseLatestContinuousFeature } from "../../river-pulse/adapters/usgs.js";
-import { riverDestination } from "../../river-pulse/data-model/overview-navigation.js";
+import { decodeRiverTerrain } from "../../river-pulse/scene-kit/terrain.js";
+import { FREEPORT_VIEWS, freeportChannel, freeportGround, constrainFreeportCamera } from "../../river-pulse/rivers/sacramento_river/scenes/end/freeport/freeport-layout.js";
+import { freeportDischarge } from "../../river-pulse/rivers/sacramento_river/scenes/end/freeport/freeport-discharge.js";
+import { parseLatestContinuousFeature } from "../../river-pulse/core/adapters/usgs.js";
+import { riverDestination } from "../../river-pulse/core/data-model/overview-navigation.js";
 
 import * as THREE from "../../vendor/three/three.webgpu.js";
-import { createFreeportBridge } from "../../river-pulse/renderer/freeport-bridge.js";
-import { FREEPORT_BRIDGE, FREEPORT_BRIDGE_ANGLES, bridgeToWorld, worldToBridge, freeportBridgeCamera } from "../../river-pulse/renderer/freeport-bridge-layout.js";
-import { freeportLeveeRoad, freeportMarinaLayout } from "../../river-pulse/renderer/freeport-riverfront-layout.js";
+import { createFreeportBridge } from "../../river-pulse/rivers/sacramento_river/scenes/end/freeport/freeport-bridge.js";
+import { FREEPORT_BRIDGE, FREEPORT_BRIDGE_ANGLES, bridgeToWorld, worldToBridge, freeportBridgeCamera } from "../../river-pulse/rivers/sacramento_river/scenes/end/freeport/freeport-bridge-layout.js";
+import { freeportLeveeRoad, freeportMarinaLayout } from "../../river-pulse/rivers/sacramento_river/scenes/end/freeport/freeport-riverfront-layout.js";
 
-const base = new URL("../../river-pulse/data/sacramento_river/places/freeport/", import.meta.url),
+const base = new URL("../../river-pulse/rivers/sacramento_river/scenes/end/freeport/data/", import.meta.url),
   json = async file => JSON.parse(await readFile(new URL(file, base), "utf8"));
 
 test("Freeport bank, road and underside cameras stay in their intended domains", () => {
@@ -118,11 +118,15 @@ test("Freeport observation excludes future/wrong-series/daily readings and prese
   assert.equal(current.state.features.model_fields.length, 0, "Discharge must not create local hydraulics");
 });
 
-test("Sacramento opens its own river home, which lists its first immersive scene, and retains separate history", async () => {
-  const river = JSON.parse(await readFile(new URL("../../river.json", base), "utf8"));
+test("Sacramento opens its own river home, which lists its built end scene, and retains separate history", async () => {
+  const riverUrl = new URL("../../../../river.json", base), river = JSON.parse(await readFile(riverUrl, "utf8"));
   assert.equal(riverDestination(river), "./river.html?river=sacramento_river");
-  await access(new URL(river.scenes[0].entry, new URL("../../river.json", base)));
-  const html = await readFile(new URL("../../../../renderer/freeport.html", base), "utf8");
-  assert.ok(html.includes("../river.html?river=sacramento_river"));
+  assert.deepEqual(river.scenes.map(scene => scene.slot), ["start", "middle", "end"]);
+  const end = river.scenes.find(scene => scene.slot === "end"), sceneUrl = new URL(`scenes/end/${end.id}/scene.json`, riverUrl),
+    scene = JSON.parse(await readFile(sceneUrl, "utf8"));
+  assert.equal(scene.status, "built");
+  await access(new URL(scene.entry, sceneUrl));
+  const html = await readFile(new URL(scene.entry, sceneUrl), "utf8");
+  assert.ok(html.includes("river.html?river=sacramento_river"));
   assert.ok(html.includes("photo-informed") && html.includes("approximately 7.7 m"));
 });

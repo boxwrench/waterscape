@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { flowDisplay } from "../../river-pulse/visual-bindings/flow-status.js";
+import { flowDisplay } from "../../river-pulse/core/visual-bindings/flow-status.js";
 
 const quantity = { value: 16500, unit: "ft^3/s", time: { valid_start: "2026-10-05T12:15:00Z" } };
 

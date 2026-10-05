@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#102f3c">
     <title>River Pulse · California rivers · Waterscape</title>
-    <link rel="stylesheet" href="./atlas.css">
+    <link rel="stylesheet" href="./app/atlas.css">
   </head>
   <body>
     <a class="skip" href="#river-list">Skip to river navigation</a>
     <header class="topbar">
-      <a class="brand" href="./" aria-label="River Pulse California overview"><svg viewBox="0 0 38 38" aria-hidden="true"><path d="M4 10c10-9 20 9 30 0M4 19c10-9 20 9 30 0M4 28c10-9 20 9 30 0"/></svg><span>River Pulse<small>A living river atlas</small></span></a>
+      <a class="brand" href=".//" aria-label="River Pulse California overview"><svg viewBox="0 0 38 38" aria-hidden="true"><path d="M4 10c10-9 20 9 30 0M4 19c10-9 20 9 30 0M4 28c10-9 20 9 30 0"/></svg><span>River Pulse<small>A living river atlas</small></span></a>
       <nav aria-label="Waterscape"><a href="#river-list">All rivers</a><a href="../">Waterscape</a></nav>
     </header>
     <main class="overview">
@@ -23,7 +23,7 @@
           <p class="availability" id="preview-status">Explore the rivers</p>
           <h2 id="preview-title">Russian River</h2>
           <p id="preview-description">Hacienda Bridge and the Pacific shoreline at Jenner.</p>
-          <a id="open-river" class="open-river" href="./renderer/hacienda.html">Explore Russian River <span aria-hidden="true">↗</span></a>
+          <a id="open-river" class="open-river" href="./rivers/russian_river/scenes/middle/hacienda_bridge/index.html">Explore Russian River <span aria-hidden="true">↗</span></a>
           <div id="place-links" class="place-links"></div>
         </section>
         <nav id="river-list" class="river-list" aria-label="Choose a river"><p>Loading river navigation…</p></nav>
@@ -35,7 +35,7 @@
       </figure>
     </main>
     <footer><span>Waterscape / River Pulse</span><details class="map-sources"><summary>Map sources</summary><div id="map-sources"><p>U.S. Census Bureau boundary. USGS hydrography and elevation relief.</p></div></details></footer>
-    <noscript><p class="noscript">JavaScript enables the map. Open <a href="./renderer/hacienda.html">Russian River at Hacienda</a> or <a href="./river.html?river=sacramento_river">Sacramento River</a>.</p></noscript>
-    <script type="module" src="./atlas.js"></script>
+    <noscript><p class="noscript">JavaScript enables the map. Open <a href="./rivers/russian_river/scenes/middle/hacienda_bridge/index.html">Russian River at Hacienda</a> or <a href="./river.html?river=sacramento_river">Sacramento River</a>.</p></noscript>
+    <script type="module" src="./app/atlas.js"></script>
   </body>
 </html>

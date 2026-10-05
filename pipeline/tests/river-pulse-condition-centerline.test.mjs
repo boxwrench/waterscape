@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { centerlineConditionStyle } from "../../river-pulse/visual-bindings/condition-centerline.js";
+import { centerlineConditionStyle } from "../../river-pulse/core/visual-bindings/condition-centerline.js";
 
 test("centerline seasonal styles are deterministic categorical encodings", () => {
   const low = centerlineConditionStyle({ kind: "much-below-normal" }),

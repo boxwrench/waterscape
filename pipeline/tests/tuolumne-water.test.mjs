@@ -3,9 +3,9 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { gunzipSync } from "node:zlib";
 import { buildTuolumneWaterGeometry, createTuolumneWater,
-  buildTuolumneContactPositions, tuolumneTerrainSurfaceGround } from "../../river-pulse/renderer/tuolumne-water.js";
-import { decodeRiverTerrain } from "../../river-pulse/renderer/terrain.js";
-import { buildRiverTerrainGrid } from "../../river-pulse/renderer/terrain-mesh.js";
+  buildTuolumneContactPositions, tuolumneTerrainSurfaceGround } from "../../river-pulse/rivers/tuolumne_river/scenes/start/poopenaut_valley/tuolumne-water.js";
+import { decodeRiverTerrain } from "../../river-pulse/scene-kit/terrain.js";
+import { buildRiverTerrainGrid } from "../../river-pulse/scene-kit/terrain-mesh.js";
 
 test("Tuolumne ribbon follows the source line and clips against a sloped dry bank", () => {
   const terrain = { x0: -50, z0: -80, width: 101, height: 161, cellX: 1, cellZ: 1,
@@ -66,7 +66,7 @@ test("study contact cut is copied, bounded under the ribbon, and reports its aut
 });
 
 test("bundled Poopenaut source builds bounded, DEM-clipped illustrative water", () => {
-  const base = new URL("../../river-pulse/data/tuolumne_river/foundation/poopenaut/", import.meta.url),
+  const base = new URL("../../river-pulse/rivers/tuolumne_river/scenes/start/poopenaut_valley/data/", import.meta.url),
     meta = JSON.parse(readFileSync(new URL("terrain.json", base))),
     compressed = gunzipSync(readFileSync(new URL("terrain.bin.gz", base))),
     terrain = decodeRiverTerrain(meta, compressed.buffer.slice(compressed.byteOffset, compressed.byteOffset + compressed.byteLength)),
