@@ -27,3 +27,19 @@ terrain/forest changes in this pass.
 
 Record critique, unresolved limits and explicit acceptance checkpoint. Commit the
 implementation with this task title, then append and separately commit Result.
+
+## Result
+
+- Status: done (bounded correction; residual contact still visibly weak).
+- Commit: `3956dd1`.
+- Checks: four focused Eel suites listed above: 15 pass, 0 fail. Initial sandbox
+  worker spawn failed with EPERM; elevated retry passed. River package validator:
+  `River packages valid.` Build: `Built experience pages and river assets valid.`
+  `git diff --cached --check`: exit 0, no output.
+- Notes: six matched desktop/phone pairs at phase zero, overview/bend/form/source,
+  motion and pixel-identical paused frames, plus Hacienda smoke inspected. Broad
+  white patches are strongly reduced; thin bright rim, distorted reflection and
+  coarse bank remain. No added triangles/draw calls; GPU allocation/time unknown.
+  Three agents supplied audits/gallery/checks. No merge/push in this pass. The
+  subsequent user request authorizes Eel default adoption and RP23 integration
+  in the next task; it does not turn this shoreline into reservoir visual parity.
