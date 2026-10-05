@@ -19,6 +19,17 @@ scene looks right. Agent critique and human feedback must both enter each bounde
 pass. The trial has not established faster overall delivery; assess that after
 comparable detailed passes, not from a coarse Eel study versus a developed bridge.
 
+## Start from the existing renderer
+
+For each river, inventory the user's existing reservoir terrain, relief shading,
+materials, lighting, vegetation and water treatments before building substitutes.
+Compare their actual runtime against the proposed river scene. Reuse proven pieces
+where local landforms, materials and source coverage fit; calibrate them against
+that river's references. [Reservoir reuse guidance](river-pulse/reservoir-renderer-reuse.md)
+records the components, candidate places and limitations. A fine shading tile does
+not establish equally fine source geometry, and reservoir water/shoreline assumptions
+must not silently become river stage or bathymetry.
+
 ## Before implementation
 
 1. Pick a specific reach or structure and a bounded visual pass. State its acceptance

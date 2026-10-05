@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tuolumne · Hetch Hetchy reservoir context review</title>
+  <style>
+    :root{color-scheme:dark;background:#102622;color:#eaf0e7;font:16px/1.6 system-ui,sans-serif}
+    body{max-width:1280px;margin:auto;padding:clamp(16px,4vw,40px)}
+    h1,h2{font-family:Georgia,serif;font-weight:400;line-height:1.15}
+    h1{font-size:clamp(32px,5vw,54px);margin:.3em 0}
+    h2{font-size:clamp(24px,3vw,34px);margin:1.8em 0 .7em}
+    a{color:#a8ddce}p{max-width:960px;color:#d3ded5}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+    figure{margin:0 0 10px;min-width:0}
+    img{width:100%;height:auto;display:block;border-radius:9px;background:#203632}
+    figcaption{color:#bacec4;padding:8px 2px;font-size:14px}
+    .note{border-left:2px solid #a8ddce;padding-left:14px}
+    .cost{background:#18332e;border-radius:10px;padding:16px 20px}
+    @media(max-width:700px){body{padding:16px}.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <h1>Hetch Hetchy in the Tuolumne scene</h1>
+  <p>Actual runtime captures for RP23, awaiting human acceptance. The complete Hetch Hetchy
+    reservoir experience appears as a separate context at the dam; Poopenaut keeps its own
+    native terrain and source views. <a href="../../../river-pulse/renderer/tuolumne.html?view=below">Open the live named downstream view</a>
+    · <a href="../../../docs/river-pulse/reservoir-renderer-reuse.md">Reuse guidance</a>
+    · <a href="../rp22/review.html">Previous dam study</a>.</p>
+
+  <h2>Named downstream view</h2>
+  <p class="note">The reference and integrated captures use the same named original downstream
+    camera pose at 980×820. Their animation phases differ; this compares composition and materials.
+    The reservoir keeps its own terrain, water reference and renderer.</p>
+  <div class="grid">
+    <figure><img src="reference-below.png" alt="Original Hetch Hetchy downstream dam view"><figcaption>Original Hetch Hetchy scene at its named downstream viewpoint.</figcaption></figure>
+    <figure><img src="after-below.png" alt="Integrated Hetch Hetchy downstream view in the Tuolumne page"><figcaption>The same named pose in the integrated reservoir context.</figcaption></figure>
+  </div>
+
+  <h2>Dam close view and prior study comparison</h2>
+  <p>The native Poopenaut close view uses 52° desktop / 84° phone FOV; the full reservoir
+    renderer uses about 64° in both contexts, so these are same-pose comparisons with different
+    framing. Trees partly obscure the dam at the inherited close camera. Reservoir water and
+    releases are illustrative.</p>
+  <div class="grid">
+    <figure><img src="before-close.png" alt="Poopenaut terrain with the reused dam visible in the previous study"><figcaption>Previous dam study with the dam ON; native terrain and the reused model.</figcaption></figure>
+    <figure><img src="after-close.png" alt="Full Hetch Hetchy reservoir context at the dam close camera"><figcaption>Full reservoir context. The inherited trees partly occlude the dam.</figcaption></figure>
+    <figure><img src="after-lake.png" alt="Hetch Hetchy reservoir from the integrated lake view"><figcaption>Original reservoir shoreline viewpoint.</figcaption></figure>
+    <figure><img src="form-close.png" alt="Plain form view of the dam"><figcaption>Previous study, plain form presentation.</figcaption></figure>
+    <figure><img src="source-close.png" alt="Archival aerial source view at the dam"><figcaption>Previous study, source aerial on the native mesh.</figcaption></figure>
+  </div>
+
+  <h2>Poopenaut native views</h2>
+  <p>The native valley remains coarse, and native 1 m terrain data is not installed. Fine-relief
+    references in the reservoir bundle are shading images, not geometric terrain.</p>
+  <div class="grid">
+    <figure><img src="native-overview.png" alt="Native Poopenaut overview"><figcaption>Overview.</figcaption></figure>
+    <figure><img src="native-primary.png" alt="Native Poopenaut valley view"><figcaption>Valley silhouette.</figcaption></figure>
+    <figure><img src="native-eye.png" alt="Native Poopenaut eye-level view"><figcaption>Valley floor.</figcaption></figure>
+    <figure><img src="native-shore.png" alt="Native Poopenaut mapped river contact"><figcaption>Mapped river contact.</figcaption></figure>
+    <figure><img src="native-dam.png" alt="Native Poopenaut upstream dam transition"><figcaption>Upstream transition.</figcaption></figure>
+    <figure><img src="after-dam.png" alt="Full Hetch Hetchy context at the same upstream transition camera"><figcaption>Same transition pose with the original reservoir renderer and wider projection.</figcaption></figure>
+  </div>
+
+  <h2>Reservoir lighting and motion</h2>
+  <p>Water appearance and any outlet releases are visual interpretations from the original
+    reservoir scene. They do not describe Tuolumne river stage, discharge, bathymetry or a
+    live dam release. The two captured pause images are byte-identical.</p>
+  <div class="grid">
+    <figure><img src="lake-midday.png" alt="Reservoir under the midday lighting preset"><figcaption>Midday lighting preset.</figcaption></figure>
+    <figure><img src="lake-morning.png" alt="Reservoir under the morning lighting preset"><figcaption>Morning lighting preset.</figcaption></figure>
+    <figure><img src="motion-lake-1.png" alt="First captured reservoir motion frame"><figcaption>Running reservoir frame, sample one.</figcaption></figure>
+    <figure><img src="motion-lake-2.png" alt="Second captured reservoir motion frame"><figcaption>Running reservoir frame, sample two.</figcaption></figure>
+    <figure><img src="pause-lake-1.png" alt="First captured paused reservoir frame"><figcaption>Paused frame, sample one.</figcaption></figure>
+    <figure><img src="pause-lake-2.png" alt="Second captured paused reservoir frame"><figcaption>Paused frame, sample two; pixel-identical to the prior capture.</figcaption></figure>
+  </div>
+
+  <h2>Phone review</h2>
+  <p>Full reservoir context uses a 64° field of view; native close framing uses 84°.</p>
+  <div class="grid">
+    <figure><img src="phone-below.png" alt="Integrated named downstream view on a phone"><figcaption>Named downstream view.</figcaption></figure>
+    <figure><img src="phone-lake.png" alt="Integrated reservoir shoreline view on a phone"><figcaption>Reservoir shoreline.</figcaption></figure>
+    <figure><img src="phone-dam-full.png" alt="Full reservoir context at the dam transition on a phone"><figcaption>Full context at the dam transition.</figcaption></figure>
+    <figure><img src="phone-close-full.png" alt="Full reservoir context at the dam close-up on a phone"><figcaption>Full context, dam close-up; inherited tree occlusion remains.</figcaption></figure>
+    <figure><img src="phone-dam.png" alt="Native dam transition on a phone"><figcaption>Native dam transition.</figcaption></figure>
+    <figure><img src="phone-overview.png" alt="Native overview on a phone"><figcaption>Native overview.</figcaption></figure>
+    <figure><img src="phone-primary.png" alt="Native valley silhouette on a phone"><figcaption>Native valley.</figcaption></figure>
+    <figure><img src="phone-eye.png" alt="Native eye-level valley view on a phone"><figcaption>Native valley floor.</figcaption></figure>
+    <figure><img src="phone-shore.png" alt="Native river contact on a phone"><figcaption>Native mapped river contact.</figcaption></figure>
+    <figure><img src="phone-form.png" alt="Plain form presentation on a phone"><figcaption>Form mode.</figcaption></figure>
+    <figure><img src="phone-source.png" alt="Source aerial presentation on a phone"><figcaption>Source aerial mode.</figcaption></figure>
+    <figure><img src="phone-evidence.png" alt="Evidence panel on a phone"><figcaption>Evidence panel and watershed context.</figcaption></figure>
+  </div>
+
+  <h2>Runtime notes</h2>
+  <div class="cost">
+    <p>Desktop full reservoir, shoreline view: 768×648, low quality; 62.3 ms median over 120
+      submission-plus-GPU-completion waits; 121.78 MiB tracked engine GPU buffers. Phone below
+      view: 448×976, low quality; 35.5 ms median over 25 waits; 117.86 MiB tracked buffers.
+      These are rolling samples under automatic quality, not controlled benchmarks,
+      GPU-only timings or FPS. Buffer totals exclude textures, driver,
+      uniforms and the native renderer. Cached ready time was 5.681 s desktop and 2.920 s
+      phone; these are not cold-load benchmarks.</p>
+    <p>The native view retains 25.69 MiB CPU geometry and a 13.33 MiB texture estimate. It
+      renders on control changes; the full reservoir requires ongoing frames. Performance
+      remains weak, with tree occlusion, bright near-water highlights and the coarse native
+      valley still visible.</p>
+  </div>
+</body>
+</html>

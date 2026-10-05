@@ -1,5 +1,57 @@
 # Handoff — 2026-10-04
 
+## Full reservoir renderer reused at Tuolumne's dam — RP23
+
+Complete locally on `task/RP23`, awaiting human visual acceptance. The user found
+isolated dam reuse inferior to their existing reservoir and requested using their
+terrain/water/lighting solutions across suitable river environments. The dam now
+shows the actual original Hetch Hetchy bundle and complete `createWaterscape`
+renderer: granite materials, relief shading, baked terrain light, vegetation,
+concrete and water. Original engine/kernel/vendor files are unchanged.
+Live recommended view: http://localhost:5174/river-pulse/renderer/tuolumne.html?view=below .
+
+Two full-viewport canvases keep reservoir context and native Poopenaut separate.
+Only cameras are translated between shared UTM 11 / NAVD88 frames. Original five
+v3 river cameras and native elevation cells remain unchanged; previous dam study,
+plain form and source aerial remain inspectable. The original reservoir shoreline
+and downstream dam cameras are added. Light presets and pause work. Lazy loading
+retains one engine; inactive/hidden/paused scenes do not schedule ongoing frames.
+Phone output width is capped to the viewport and aligned for the kernel's row copy.
+Actual CalWater state polygons and attribution remain featured in both contexts.
+
+Actual reference/integrated named downstream captures use 980×820 and the same
+pose. Close before/after has a different projection (native 52° desktop / 84°
+phone; reservoir about 64°). Five native desktop/phone views, full dam transition,
+close/downstream/shoreline, form/source, three light presets, motion frames,
+pause and Evidence were inspected. Paused captures are byte-identical and their
+frame counter stayed fixed. Console errors are empty; phone document width is
+390 px and all eight camera buttons are 44 px high. Reservoir source assumptions,
+illustrative bed/water/ribbon/release and 1 m-spaced shading versus geometry are
+explicit in Evidence. No native 1 m terrain has been installed.
+
+Rolling submission-plus-GPU-completion waits under automatic quality: desktop
+shoreline 62.3 ms median / 120 samples at final 768×648 low; phone downstream
+35.5 ms / 25 samples at 448×976 low. These are not controlled benchmarks, pure
+GPU elapsed times or FPS. Tracked engine GPU buffers are 121.78 / 117.86 MiB,
+excluding textures, uniforms, driver and native renderer. Native assets still
+retain 25.69 MiB CPU geometry and 13.33 MiB estimated texture memory; these
+different accounting categories are not a total memory sum. Cached ready times
+were 5.681 s desktop / 2.920 s phone. The added renderer has an ongoing frame cost
+versus the previous static study. Performance remains a weakness.
+
+The complete context improves the bare dam/rock surroundings and shoreline water.
+Inherited trees obscure the old close camera, near-water highlights look harsh,
+and the native valley is still coarse and bare. This is a review baseline, not
+final visual acceptance or improved terrain on every river. Two cheaper agents
+tested coordinates, audited lifecycle/fallback, drafted reuse guidance/gallery,
+and inventoried candidates. Root fixed fallback labels, integrated the renderer,
+checked their paths/arithmetic and inspected actual renders. Nine focused Node
+checks, source validation, river package checks and the 119-module build pass.
+[Actual evidence](../previews/tuolumne/rp23/review.html) and
+[reuse-first guidance](river-pulse/reservoir-renderer-reuse.md) record next small
+Eel bluff, Sacramento bank and Tuolumne dry-slope trials. Work stays isolated in
+`C:/Github/waterscape-tuolumne-rp19`; never pushed or merged.
+
 ## Tuolumne reuses the existing reservoir dam — RP22
 
 Complete locally on `task/RP22`, awaiting human visual acceptance. User identified

@@ -5,7 +5,8 @@ import { createTuolumneDam, damContactPositions } from "./tuolumne-dam.js";
 
 const $ = id => document.getElementById(id), base = "../data/tuolumne_river/foundation/poopenaut/", started = performance.now();
 const requestedView = new URLSearchParams(location.search).get("view");
-let active = ["overview", "primary", "eye", "shore", "dam", "dam-close"].includes(requestedView) ? requestedView : "overview";
+let active = ["overview", "primary", "eye", "shore", "dam", "dam-close", "below", "lake"].includes(requestedView) ? requestedView : "overview";
+if (new URLSearchParams(location.search).get("mode") === "plain") $("mode").value = "plain";
 $("evidence").onclick = () => {
   $("sources").hidden = !$("sources").hidden;
   $("evidence").setAttribute("aria-expanded", String(!$("sources").hidden));
@@ -93,28 +94,74 @@ async function main() {
   const camera = new THREE.PerspectiveCamera(48, 1, 1, 20000),
     geometryBytes = nativePosition.array.byteLength + [geometry, guide.geometry, ...damMeshes.map(mesh => mesh.geometry)].reduce((sum, g) => sum + Object.values(g.attributes).reduce((n, a) => n + a.array.byteLength, 0) + (g.index?.array.byteLength ?? 0), 0),
     concrete = dam.textures[0], concreteMiB = concrete.image.width * concrete.image.height * 4 * 4 / 3 / 1048576;
-  let firstMs = null;
+  const nativeReadyMs = performance.now() - started;
+  let context = null, contextLoading = null, full = false, fullFailed = false;
+  function reservoirFailed(error) {
+    fullFailed = true; full = false; context?.hide(); $("reservoir-scene").hidden = true;
+    document.body.classList.remove("reservoir-context");
+    $("reservoir-controls").hidden = true; $("native-controls").hidden = false;
+    $("disclosure").textContent = "Previous dam study · Symbolic river guide · Reservoir renderer unavailable";
+    $("environment").textContent = `Reservoir renderer unavailable: ${error.message}. Showing the previous dam study.`;
+    $("loading").hidden = true; render(); console.error(error);
+  }
+  async function showReservoir(pose) {
+    contextLoading ??= import("./reservoir-context.js").then(({ reservoirContext }) => {
+      context = reservoirContext($("reservoir-scene"), {
+        onProgress: message => { if (full) $("loading").textContent = message; },
+        onMetrics: message => { if (full) $("metrics").textContent = message; },
+        onReady: () => { if (full) $("loading").hidden = true; },
+        onError: reservoirFailed,
+      });
+      $("motion").textContent = context.playing ? "Pause water" : "Resume water";
+      $("motion").setAttribute("aria-pressed", String(!context.playing));
+      return context;
+    });
+    try {
+      const loaded = await contextLoading;
+      if (full) await loaded.show(pose);
+    } catch (error) { reservoirFailed(error); }
+  }
   function render() {
-    renderer.render(scene, camera); firstMs ??= performance.now() - started;
+    if (full) return;
+    renderer.render(scene, camera);
     $("loading").hidden = true;
-    $("metrics").textContent = `${renderer.info.render.triangles.toLocaleString()} triangles · ${renderer.info.render.drawCalls} draw calls · ${(geometryBytes / 1048576).toFixed(2)} MiB CPU geometry buffers\nResident texture RGBA+mips estimate ${(8 + concreteMiB).toFixed(2)} MiB (aerial 8.0 + concrete ${concreteMiB.toFixed(2)}) · First frame ${firstMs.toFixed(0)} ms\nStatic scene rendered on view/control changes. GPU timing, full browser/GPU memory and foreground FPS are unmeasured.`;
+    $("metrics").textContent = `${renderer.info.render.triangles.toLocaleString()} triangles · ${renderer.info.render.drawCalls} draw calls · ${(geometryBytes / 1048576).toFixed(2)} MiB CPU geometry buffers\nResident texture RGBA+mips estimate ${(8 + concreteMiB).toFixed(2)} MiB (aerial 8.0 + concrete ${concreteMiB.toFixed(2)}) · Native initialization ${nativeReadyMs.toFixed(0)} ms (cache-dependent)\nStatic scene rendered on view/control changes. GPU timing, full browser/GPU memory and foreground FPS are unmeasured. A lazily loaded reservoir engine stays resident after visiting its views.`;
   }
   function view(id) {
-    active = id; const preset = [...presets.cameras, ...damPresets.cameras].find(c => c.id === id);
+    active = id;
+    const nativeId = ["below", "lake"].includes(id) ? "dam-close" : id,
+      preset = [...presets.cameras, ...damPresets.cameras].find(c => c.id === nativeId);
     if (!preset) throw new Error(`Unknown review camera ${id}`);
     const [x, z] = preset.positionXZ, [tx, tz] = preset.targetXZ;
     camera.position.set(x, terrain.ground(x, z) + preset.groundClearance, z);
     camera.lookAt(tx, preset.targetElevation ?? terrain.ground(tx, tz) + preset.targetGroundClearance, tz);
     camera.near = ["overview", "primary", "dam"].includes(id) ? 10 : 0.5;
     camera.fov = innerWidth < 600 ? (preset.phoneFov ?? (id === "overview" ? 65 : preset.fov)) : preset.fov; camera.updateProjectionMatrix();
-    document.body.classList.toggle("dam-focus", id === "dam-close");
-    $("view-label").textContent = preset.label;
+    document.body.classList.toggle("dam-focus", ["dam-close", "below", "lake"].includes(id));
+    $("view-label").textContent = id === "below" ? "O’Shaughnessy Dam · Original downstream viewpoint" : id === "lake" ? "Hetch Hetchy · Original reservoir shoreline viewpoint" : preset.label;
     for (const button of document.querySelectorAll("[data-camera]")) button.setAttribute("aria-pressed", String(button.dataset.camera === id));
     $("environment").textContent = `${renderer.backend.isWebGPUBackend ? "WebGPU" : "WebGL2"} · ${innerWidth}×${innerHeight} · DPR ${renderer.getPixelRatio()} · ${id === "dam-close" ? damPresets.version : presets.version}`;
-    render();
+    full = !fullFailed && ["dam", "dam-close", "below", "lake"].includes(id) && $("mode").value === "study";
+    if (!full && ["below", "lake"].includes(id)) $("view-label").textContent = `${preset.label} · Reservoir context unavailable`;
+    document.body.classList.toggle("reservoir-context", full);
+    $("reservoir-scene").hidden = !full;
+    $("reservoir-controls").hidden = !full; $("native-controls").hidden = full;
+    $("disclosure").textContent = full ? "Hetch Hetchy reservoir context · Illustrative water and release · Development scene" : "Reused dam · Symbolic river guide · Development scene";
+    if (full) {
+      $("environment").textContent = "Hetch Hetchy reservoir context · Original renderer · Fixed 64° field of view · RP23";
+      $("loading").textContent = "Preparing the original Hetch Hetchy reservoir…"; $("loading").hidden = false;
+      const target = [tx, preset.targetElevation ?? terrain.ground(tx, tz) + preset.targetGroundClearance, tz];
+      showReservoir(["below", "lake"].includes(id) ? { named: id === "below" ? "below" : "shore" } :
+        { position: camera.position.toArray(), target, meta: terrain.meta });
+    } else { context?.hide(); render(); }
   }
-  function resize() { renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; view(active); }
-  for (const button of document.querySelectorAll("[data-camera]")) button.onclick = () => view(button.dataset.camera);
+  function resize() { renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; context?.resize(); view(active); }
+  for (const button of document.querySelectorAll("[data-camera]")) button.onclick = () => {
+    if (["below", "lake"].includes(button.dataset.camera) && $("mode").value !== "study") {
+      $("mode").value = "study"; presentation();
+    }
+    view(button.dataset.camera);
+  };
   function presentation() {
     const mode = $("mode").value;
     land.material = mode === "aerial" ? photo : form;
@@ -124,11 +171,19 @@ async function main() {
       geometry.setAttribute("position", position); geometry.computeVertexNormals(); geometry.computeBoundingSphere();
     }
     for (const mesh of damMeshes) mesh.material = mode === "form" ? plainDam : mesh.userData.studyMaterial;
-    render();
+    if (["below", "lake"].includes(active) && mode !== "study") active = "dam-close";
+    view(active);
   }
   $("mode").onchange = presentation;
   $("dam").onchange = presentation;
   $("guide").onchange = () => { guide.visible = $("guide").checked; render(); };
+  $("motion").onclick = () => {
+    if (!context) return;
+    context.setPlaying(!context.playing); $("motion").textContent = context.playing ? "Pause water" : "Resume water";
+    $("motion").setAttribute("aria-pressed", String(!context.playing));
+  };
+  $("light").onchange = () => context?.setPreset($("light").value);
+  document.addEventListener("visibilitychange", () => context?.visibility());
   window.addEventListener("resize", resize); resize();
 }
 main().catch(error => { $("loading").textContent = `This form study could not start: ${error.message}. Evidence remains available.`; console.error(error); });
