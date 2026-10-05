@@ -1,5 +1,20 @@
 # Hacienda Map and authored beach
 
+<!-- scene-card: generated from scene.json; edit scene.json, not this block -->
+> **Scene card**
+>
+> | | |
+> |---|---|
+> | River / slot | `russian_river` / `middle` |
+> | Place id | `hacienda_bridge` |
+> | Fidelity | Photo-informed setting with live USGS discharge |
+> | Data | live gauge, history, condition |
+> | Views | Map, Bridge, Hacienda Beach |
+> | Open locally | <http://localhost:5173/river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/index.html> |
+> | Layout | page `index.html`, scene code beside it, sourced data in `data/`, notes in `notes/` |
+<!-- /scene-card -->
+
+
 RP5 separates two representations. **Map** retains the sourced USGS 3DEP terrain and
 3DHP centerlines and adds an animated symbolic river stroke. **Bridge** and **Hacienda
 Beach** open an authored local scene composed from the user's two contemporary photos.

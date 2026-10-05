@@ -1,10 +1,5 @@
 # Waterscape
 
-Eel River now has a local [Scotia Bluffs visual study](./river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/index.html)
-with fixed review cameras and a plain form mode. It is a first landform pass,
-awaiting visual acceptance. See the [reusable visual workflow](docs/visual-development.md)
-and [actual runtime comparison](previews/eel/review.html).
-
 **Making water visible.** Waterscape is an umbrella for explorable visual representations of
 real water systems. Public data supplies the evidence; scientific state and explicit visual
 bindings connect that evidence to landscapes, charts, animation and interaction.
@@ -13,22 +8,15 @@ A curated [Waterscape resource library](resources/README.md) tracks useful web g
 simulation, rendering and visual-development references, including the upstream licence
 status for each resource.
 
-**[Explore River Pulse at Hacienda Bridge →](https://boxwrench.github.io/waterscape/river-pulse/renderer/hacienda.html)**
-Switch between the blue animated Map river and photo-informed Bridge/Hacienda Beach views,
-with USGS discharge, history and seasonal context alongside the scene.
-
 | Experience | What it shows | Status |
 |---|---|---|
 | [Reservoirs](https://boxwrench.github.io/waterscape/) | Calaveras, San Antonio, Crystal Springs, San Andreas and Hetch Hetchy (with O'Shaughnessy Dam): lidar landscapes, sourced context, modeled water optics and aerial maps | Live journey and WebGPU explorer |
-| [River Pulse](https://boxwrench.github.io/waterscape/river-pulse/) | Hacienda Map with a flow-scaled water ribbon; authored gray steel bridge, rock outcrop, pebble beach and green reflective water; USGS discharge/history | Live prototype; illustrative water and authored setting, no local hydrodynamic model |
+| [River Pulse](https://boxwrench.github.io/waterscape/river-pulse/) | A living river atlas: California relief and six rivers, each with a start, a scenic middle and an end, real USGS data where it exists, and authored 3D places | Live prototype; illustrative water and authored settings, no local hydrodynamic model |
 
-**[Explore Jenner estuary →](https://boxwrench.github.io/waterscape/river-pulse/renderer/jenner.html)**
-[Scene notes](./river-pulse/rivers/russian_river/scenes/end/jenner/README.md), with Estuary lookout,
-River shore and Pacific beach. Photo-informed sand spit, Goat Rock, green coastal bluffs,
-green estuary water and teal Pacific surf; the separate USGS card reports NAVD88 water level
-at Highway 1. Open [Jenner locally](http://localhost:5173/river-pulse/renderer/jenner.html) after
-building and starting the server. Supported capabilities
-in a manifest are not promises of current data availability.
+**[Explore River Pulse →](https://boxwrench.github.io/waterscape/river-pulse/)**
+or go straight to the reference river:
+[Hacienda Bridge](https://boxwrench.github.io/waterscape/river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/index.html) and
+[Jenner Estuary](https://boxwrench.github.io/waterscape/river-pulse/rivers/russian_river/scenes/end/jenner/index.html).
 
 ![Jenner authored coastal preview: estuary, sand spit and Pacific surf](previews/jenner-estuary.png)
 
@@ -65,37 +53,27 @@ interpretation. The full principle is in
   ~30 fps; a chip shows the GPU in use and how to switch a laptop to its faster one.
 - **Everyone else** — browsers without WebGPU get the flyover video and the same facts.
 
-## River Pulse views
+## River Pulse
 
 ![California relief overview with selectable river courses](previews/california-overview.png)
 
-The local [river atlas](http://localhost:5173/river-pulse/) shows California's relief
-and selectable river courses. It includes Sacramento,
-San Joaquin, Eel, Tuolumne and American River entries alongside the Russian River.
-Sacramento now opens a [Freeport scene](http://localhost:5173/river-pulse/renderer/freeport.html)
-with a detailed reference bridge, eight bridge angles, marina shore, levee roads,
-riverfront buildings and sourced Terrain views,
-plus USGS discharge and separate history.
-The other four are planned placeholders. Select Russian River to open Hacienda or a
-planned river to open its individual page. See the
-[Freeport scene notes](./river-pulse/rivers/sacramento_river/scenes/end/freeport/README.md). These additions are local,
-pending review and publication.
+River Pulse follows one **template** for every river: a river map view and three or four 3D scenes
+(a **start**, a scenic **middle** and an **end**), each with a few fixed views. Unbuilt slots are shown as
+honest "planned" placeholders. The [Russian River](river-pulse/rivers/russian_river/README.md) is the reference.
+
+| River | Start | Middle | End |
+|---|---|---|---|
+| [Russian](river-pulse/rivers/russian_river/README.md) | East Fork *(planned)* | Hacienda Bridge | Jenner Estuary |
+| [Sacramento](river-pulse/rivers/sacramento_river/README.md) | *planned* | *planned* | Freeport |
+| [Eel](river-pulse/rivers/eel_river/README.md) | *planned* | *planned* | Scotia Bluffs |
+| [Tuolumne](river-pulse/rivers/tuolumne_river/README.md) | Poopenaut Valley | *planned* | *planned* |
+| [San Joaquin](river-pulse/rivers/san_joaquin_river/README.md), [American](river-pulse/rivers/american_river/README.md) | *planned* | *planned* | *planned* |
 
 ![Sacramento River Freeport bridge and reflective water](previews/freeport-bridge.png)
 
-![Freeport marina, levee roads and riverfront setting](previews/freeport-riverfront.png)
-
-Map keeps sourced terrain and river centerlines. Its blue water ribbon widens/narrows with
-selected discharge relative to the loaded history; seasonal condition colors the border.
-Ripple scale and motion are exaggerated. Width is a visual comparison, not measured banks,
-stage, inundation or velocity; zero/missing discharge stops motion.
-
-Bridge and Hacienda Beach use an approximate photo-informed local setting: gray steel span,
-left-pier rock, gray pebble shore and grouped woodland. Green water has reflections,
-refraction, modeled bed detail and approximate caustics. Shore movement stays near the water
-at eye height. Timeline changes preserve this static authored shoreline.
-See the [River Pulse guide](river-pulse/README.md) and
-[scene, sources and rendering notes](./river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/README.md).
+**Start with the [River Pulse documentation](docs/river-pulse/README.md)**: the structure guide, the style and data
+guides, how to make a river, and how to work on it with an AI partner. The code map is in
+[river-pulse/README.md](river-pulse/README.md). Local run: `npm ci && npm start`, then open http://localhost:5173/river-pulse/.
 
 ## Add a reservoir
 

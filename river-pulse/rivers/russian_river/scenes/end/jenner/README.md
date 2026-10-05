@@ -1,5 +1,20 @@
 # Jenner estuary and Pacific shoreline — RP9
 
+<!-- scene-card: generated from scene.json; edit scene.json, not this block -->
+> **Scene card**
+>
+> | | |
+> |---|---|
+> | River / slot | `russian_river` / `end` |
+> | Place id | `jenner` |
+> | Fidelity | Authored setting |
+> | Data | live gauge |
+> | Views | Estuary lookout, River shore, Pacific beach |
+> | Open locally | <http://localhost:5173/river-pulse/rivers/russian_river/scenes/end/jenner/index.html> |
+> | Layout | page `index.html`, scene code beside it, sourced data in `data/`, notes in `notes/` |
+<!-- /scene-card -->
+
+
 Open `river-pulse/renderer/jenner.html` from a built local server. The Hacienda header also
 links to Jenner. The user accepted this as a good starting point and authorized publication
 in RP10. The public entry is [Jenner estuary](https://boxwrench.github.io/waterscape/river-pulse/renderer/jenner.html);

@@ -1,116 +1,62 @@
-# River Pulse
+# River Pulse: code map
 
-A Waterscape experience for understanding rivers through terrain, authoritative observations,
-time selection and declared visual bindings. Read the umbrella principle,
-[Making Water Visible](../docs/making-water-visible.md), and the
-[implementation contract](../docs/river-pulse/reference/implementation-contract.md).
+A Waterscape experience for understanding rivers through terrain, authoritative observations, time selection and declared
+visual bindings. This page is the map of the code. The guides are in [`docs/river-pulse/`](../docs/river-pulse/README.md):
+start with the [Structure guide](../docs/river-pulse/structure.md), then [Make a river](../docs/river-pulse/make-a-river.md).
 
 ## Run
 
-**[Open the live Hacienda experience](https://boxwrench.github.io/waterscape/river-pulse/renderer/hacienda.html)**
-
-From the **repository root**:
+From the repository root:
 
 ```sh
 npm ci
 npm start
 ```
 
-Open http://localhost:5173/river-pulse/ in a modern browser. Windows Chrome/Edge are
-the primary targets; the scene supports WebGPU and WebGL2. Hacienda terrain and USGS
-3DHP centerlines are included. Gauge history and seasonal statistics use live public APIs;
-California DWR geometry is a fallback if the local centerline cannot load.
-
-## Current state
-
-- **River atlas:** `/river-pulse/` opens a California relief map with selectable rivers.
-  The Russian River opens Hacienda; Sacramento opens Freeport; planned rivers open their individual
-  `river.html?river=<id>` pages. See the [overview notes](./app/README.md).
-  Sacramento is the second river with an immersive local scene, a Freeport observation and tidally filtered daily history
-  panel. Eel has an in-development Scotia Bluffs visual study. San Joaquin, Tuolumne
-  and American have source-linked planned entries.
-  See the [Sacramento foundation](./rivers/sacramento_river/README.md).
-
-- **Eel / Scotia Bluffs (local RP17):** first form pass with native 3DEP terrain,
-  mapped river footprints, aligned NAIP source view and explicitly illustrative
-  water. Five fixed review cameras, plain form mode and runtime cost controls support
-  comparison. Trees, structures and convincing close water are later passes.
-  [Actual review](../previews/eel/review.html) · [Process](../docs/visual-development.md).
-
-- **Freeport (local RP16):** detailed closed green steel bridge with both bank sides,
-  east/west approaches, underside and overhead views. Archived bridge dimensions anchor
-  the horizontal envelope; heights and small components are photo-fitted. Reflective river,
-  soil/grass banks, curving levee roads, roofed marina, boats, village/farm buildings
-  and shared riparian meshes remain photo-informed setting. Riverbank opens the marina
-  shore and Above includes the riverfront. Terrain shows bundled
-  3DEP/3DHP geography and aligned NAIP imagery.
-  Discharge is independent of the fixed shoreline and authored optical ripples.
-  [Scene notes](./rivers/sacramento_river/scenes/end/freeport/README.md).
-
-- **Hacienda Bridge:** real USGS 3DEP terrain, USGS 3DHP cartographic centerlines,
-  USGS discharge/history, time selection and seasonal context; Map, Bridge and Hacienda
-  Beach viewpoints.
-- **Jenner:** authored coastal scene and an independent USGS NAVD88 water-level card.
-- **Not implemented:** local hydrodynamic simulation, forecasts, a complete river
-  corridor. Package capabilities describe intent, not
-  guaranteed data availability. Offline replay has a tested data contract, not a finished UI.
-
-The centerline is not measured channel width, depth or local velocity. Current and historical
-data preserve separate time/quality semantics; missing and stale data remain explicit.
-
-## Views and water
-
-- **Map:** sourced topography and a continuous blue water ribbon with irregular moving
-  surface detail. Width follows selected gauge discharge within the loaded history range;
-  seasonal color borders it. This is an illustrative display scale, not surveyed channel
-  width, stage, flood extent or local velocity. Missing history uses a disclosed fixed
-  width scale; zero/missing discharge stops motion. Reduced motion freezes ripples.
-- **Bridge / Hacienda Beach:** photo-informed local reconstruction with a gray steel
-  camelback, concrete approaches, left-pier rock outcrop, gray pebble beach and grouped
-  woodland. Green reflective water includes refraction and approximate caustics over a
-  modeled bed. Beach movement is bounded at eye height near the dry shoreline. Scene
-  geometry is authored, not a survey, and the timeline does not move its shoreline.
-
-Drag to look, scroll to move closer and use WASD to move. View buttons change the composition;
-River toggles water, and Elevation tint applies to Map. Explore hides the data panels.
-Use the history slider or Play history to compare daily discharge, Return to now for the
-latest eligible observation, and Inspect data for source/time/quality evidence. Data remains
-accessible if graphics initialization fails. Source outages show unavailable data explicitly.
-
-The [authored-water notes](./rivers/russian_river/scenes/middle/hacienda_bridge/README.md) record visual mappings,
-photographic references, CC0 ground materials, MIT tree assets and rendering limitations.
+Open http://localhost:5173/river-pulse/ in a recent Chrome or Edge (WebGPU and WebGL2 are supported). The atlas opens first;
+choose a river to reach its home, then one of its scenes. Live gauge history and seasonal statistics call public USGS APIs.
 
 ## Layout
 
-| Directory | Responsibility |
-|---|---|
-| `adapters/` | Normalize USGS and DWR source records, preserving provenance |
-| `data-model/` | Quantities, deterministic selection, RiverState, packages and replay |
-| `visual-bindings/` | Convert scientific state into labels, charts and scene styling |
-| `renderer/` | Hacienda terrain scene and its interface |
-| `data/` | River/place manifests, generated registry and committed terrain/centerlines |
-
-Root `vendor/`, camera/projection utilities, `pipeline/`, `scripts/` and dependency installation
-are shared with the reservoir experience. Do not add another `.git`, vendor copy or npm
-project here. New river behavior must not reuse still-water assumptions as scientific claims.
-
-## Build and validate data
-
-With the documented Python dependencies installed, from the root:
-
-```sh
-python pipeline/build_river_registry.py
-python pipeline/build_river_registry.py --check
-python pipeline/build_river_terrain.py river-pulse/data/russian_river/places/hacienda_bridge/source.json
-python pipeline/build_river_hydrography.py river-pulse/data/russian_river/places/hacienda_bridge/source.json
-npm run validate
-npm run test:unit
-python -m pytest pipeline/tests -q
-npm run test:build
-node scripts/verify-river-pulse.mjs
+```
+river-pulse/
+  index.html  river.html      entry pages (stable URLs)
+  registry.json               generated index of rivers and places (pipeline/build_river_registry.py)
+  app/                        atlas and river-home code, plus the state overview data (app/data/)
+  core/                       adapters/, data-model/, visual-bindings/: no DOM, no 3D
+  scene-kit/                  shared 3D: terrain, water, banks, materials, centerline, reservoir reuse
+  ui/                         tokens.css and shared scene chrome
+  rivers/<river>/             one folder per river
+    river.json  README.md
+    scenes/<slot>/<place>/    slot = start | middle | end | extra
+      scene.json  README.md  index.html  <scene code>  thumb.jpg  notes/  data/
 ```
 
-Only rebuild terrain and hydrography deliberately: the builder fetches USGS elevation and records the service,
-crop, projection and encoding in `terrain.json`. It does not detect a reservoir level or
-invent bathymetry. Place manifests without terrain are allowed, but a declared terrain source
-must have a valid payload before the site can build.
+| Rivers today | Built scenes | Planned |
+|---|---|---|
+| [Russian](rivers/russian_river/README.md) (reference) | Hacienda Bridge (middle), Jenner Estuary (end) | East Fork (start) |
+| [Sacramento](rivers/sacramento_river/README.md) | Freeport (end) | start, middle |
+| [Eel](rivers/eel_river/README.md) | Scotia Bluffs (end) | start, middle |
+| [Tuolumne](rivers/tuolumne_river/README.md) | Poopenaut Valley (start) | middle, end |
+| [San Joaquin](rivers/san_joaquin_river/README.md), [American](rivers/american_river/README.md) | none | all slots |
+
+Root `vendor/`, the camera and projection utilities in `renderer/engine/`, `pipeline/`, `scripts/` and dependency installation are shared with
+the reservoir experience. Do not add another `.git`, vendor copy or npm project here. River behaviour must not reuse still-water
+assumptions as scientific claims.
+
+## Build and check
+
+```sh
+python pipeline/build_river_registry.py            # regenerate registry.json (then add --check)
+npm run validate                                   # reservoir bundles and river packages
+node --test "pipeline/tests/*.test.mjs"            # unit tests
+python -m pytest pipeline/tests -q                 # pipeline tests
+npm run test:build                                 # production build and artifact check
+node scripts/check-doc-links.mjs                   # Markdown links
+```
+
+Rebuild terrain and centerlines only deliberately: the builders fetch USGS data. See the
+[Data guide](../docs/river-pulse/data-guide.md) for the commands and what they record.
+
+The principle behind everything here is [Making Water Visible](../docs/making-water-visible.md); the full scientific-state design is the
+[implementation contract](../docs/river-pulse/reference/implementation-contract.md).

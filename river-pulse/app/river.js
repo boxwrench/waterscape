@@ -6,6 +6,7 @@ import { observedFlowStatus } from "../core/visual-bindings/flow-status.js";
 import { dailyHydrograph } from "../core/visual-bindings/hydrograph.js";
 import { matchingSeries } from "../core/data-model/binding-series.js";
 import { loadRiver, SLOT_LABELS } from "../core/data-model/river-package.js";
+import { overviewRiverOrder } from "../core/data-model/overview-navigation.js";
 
 const list = document.querySelector("#river-list"), detail = document.querySelector("#river-detail"),
   crumb = document.querySelector("#crumb-river"),
@@ -224,12 +225,8 @@ function selectedId() {
 }
 try {
   registry = await json("./registry.json");
-  const order = ["russian_river", "sacramento_river", "san_joaquin_river", "eel_river", "tuolumne_river", "american_river"];
   list.replaceChildren();
-  const rivers = [...registry.rivers].sort((a, b) => {
-    const rank = id => order.includes(id) ? order.indexOf(id) : order.length;
-    return rank(a.id) - rank(b.id) || a.name.localeCompare(b.name);
-  });
+  const rivers = overviewRiverOrder(registry.rivers);
   for (const river of rivers) {
     const choice = link("", `?river=${river.id}`); choice.className = "river-choice"; choice.dataset.river = river.id; choice.dataset.status = river.status;
     const dot = element("span", null, "dot"); dot.setAttribute("aria-hidden", "true");

@@ -2,7 +2,7 @@
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
-const P = path.posix, files = execFileSync("git", ["ls-files", "*.md"], { encoding: "utf8" }).split("\n").filter(f => f && fs.existsSync(f));
+const P = path.posix, files = execFileSync("git", ["ls-files", "--cached", "--others", "--exclude-standard", "*.md"], { encoding: "utf8" }).split("\n").filter(f => f && fs.existsSync(f));
 const broken = [];
 for (const file of files) {
   const text = fs.readFileSync(file, "utf8").replace(/```[\s\S]*?```/g, "");

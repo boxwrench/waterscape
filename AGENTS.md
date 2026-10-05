@@ -8,9 +8,11 @@ see `docs/HANDOFF.md`.
 
 Waterscape is an umbrella for visual representations of water-system data. Read
 `docs/making-water-visible.md` before adding a data source, scientific claim or visual binding.
-Reservoirs use `renderer/`, `site/` and `data/<id>/`; River Pulse uses `river-pulse/` for
-river-specific adapters, state, visual bindings, scenes and data. Both share root vendor,
-pipeline/build tooling and tests. See `README.md` and `docs/architecture.md`.
+Reservoirs use `renderer/`, `site/` and `data/<id>/`; River Pulse uses `river-pulse/`, organised as
+river -> slot -> place (`river-pulse/rivers/<river>/scenes/<start|middle|end|extra>/<place>/`) with shared
+`core/`, `scene-kit/`, `ui/` and `app/`. Both share root vendor, pipeline/build tooling and tests.
+See `README.md` and `docs/architecture.md`. **For any River Pulse work read `docs/river-pulse/README.md` first**
+(structure, style, data, make-a-river, working with AI).
 
 ## Setup (once)
 
@@ -29,6 +31,8 @@ Microsoft Edge must be installed (the browser tests use it).
 | Python tests | `python -m pytest pipeline/tests -q` | `N passed`, no `failed` |
 | Data checks | `node pipeline/validate-bundles.mjs` | `Bundles valid.` |
 | River data checks | `node pipeline/validate-river-packages.mjs` | `River packages valid.` |
+| River registry | `python pipeline/build_river_registry.py --check` | `River Pulse registry is current` |
+| Doc links | `node scripts/check-doc-links.mjs` | `Documentation links valid` |
 | Built assets | `npm run test:build` | `Built experience pages and river assets valid.` |
 | Everything | `npm test` | ends with `Journey checks passed.` |
 | Build the site | `npm run build` | `Built Pages with …` |

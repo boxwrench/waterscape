@@ -1,4 +1,31 @@
-# Sacramento River foundation
+# Sacramento River
+
+Lower-river reach at Freeport, tidally influenced, with a detailed closed green steel bridge and live USGS discharge with a 30-day tidally filtered history.
+
+Status: **available**. Explore the Sacramento River at Freeport: green steel, tree-lined levees and a broad reflective channel, alongside sourced USGS discharge.
+
+## Scenes
+
+<!-- slots: generated from river.json and scene.json files -->
+| Slot | Scene | Status | Data | Views |
+|---|---|---|---|---|
+| start | Start (to be chosen) | **planned** | n/a | n/a |
+| middle | Middle (to be chosen) | **planned** | n/a | n/a |
+| end | [Freeport](scenes/end/freeport/README.md) | built | live gauge, history | Bridge, Riverbank, Terrain |
+<!-- /slots -->
+
+## Sources
+
+- [California DWR Sacramento River region](https://water.ca.gov/-/media/DWR-Website/Web-Pages/Work-With-Us/Grants-And-Loans/Sustainable-Groundwater/Technical-Assistance/Educational-Material-Dec-2022/Sacramento_River_Lesson_Plan_11_11_22.pdf)
+- [USGS Sacramento River at Freeport](https://waterdata.usgs.gov/monitoring-location/USGS-11447650/)
+
+## Layout
+
+`river.json` lists the slots in order. Each scene lives in `scenes/<slot>/<place_id>/` with a `scene.json`; built scenes add `index.html`, their code, `thumb.jpg` and `data/`. The map view is a planned part of the template (`map.status` in `river.json`).
+
+---
+
+## Notes from build history
 
 Sacramento is the second River Pulse river with a local scene (RP13). San Joaquin, Eel, Tuolumne
 and American are river-level placeholders, with no fabricated gauges, anchors or scenes.

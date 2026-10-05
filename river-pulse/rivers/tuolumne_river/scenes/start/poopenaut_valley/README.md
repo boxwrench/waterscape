@@ -1,5 +1,20 @@
 # Tuolumne River: Poopenaut Valley foundation
 
+<!-- scene-card: generated from scene.json; edit scene.json, not this block -->
+> **Scene card**
+>
+> | | |
+> |---|---|
+> | River / slot | `tuolumne_river` / `start` |
+> | Place id | `poopenaut_valley` |
+> | Fidelity | Native elevations, authored water |
+> | Data | geography only |
+> | Views | Overview, Valley, Eye level, River contact, Dam transition, Dam close-up, Below dam, Reservoir |
+> | Open locally | <http://localhost:5173/river-pulse/rivers/tuolumne_river/scenes/start/poopenaut_valley/index.html> |
+> | Layout | page `index.html`, scene code beside it, sourced data in `data/`, notes in `notes/` |
+<!-- /scene-card -->
+
+
 This records the RP19 source-data checkpoint. RP21 now adds an actual
 [plain-form runtime and visual review](./notes/tuolumne-visual-review.md); the river is
 in development and visual acceptance remains pending.

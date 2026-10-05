@@ -1,5 +1,20 @@
 # Sacramento at Freeport — RP13–RP16
 
+<!-- scene-card: generated from scene.json; edit scene.json, not this block -->
+> **Scene card**
+>
+> | | |
+> |---|---|
+> | River / slot | `sacramento_river` / `end` |
+> | Place id | `freeport` |
+> | Fidelity | Photo-informed setting with live USGS discharge |
+> | Data | live gauge, history |
+> | Views | Bridge, Riverbank, Terrain |
+> | Open locally | <http://localhost:5173/river-pulse/rivers/sacramento_river/scenes/end/freeport/index.html> |
+> | Layout | page `index.html`, scene code beside it, sourced data in `data/`, notes in `notes/` |
+<!-- /scene-card -->
+
+
 The user's next step after the accepted California overview is the first detailed
 Sacramento place. Freeport already supplies a pinned USGS discharge series and separate
 tidally filtered daily history, making it a useful first local scene. The overview and

@@ -9,9 +9,11 @@ derived, illustrative or setting class belongs to each visual binding.
 
 - **Reservoirs:** existing `index.html`, `site/`, `renderer/`, and `data/` retain their URLs
   and still-water semantics. The root opens the reservoir journey, with navigation to River Pulse.
-- **River Pulse:** `river-pulse/` contains `adapters/`, `data-model/`, `visual-bindings/`,
-  `renderer/`, and `data/`. `/river-pulse/` opens the Hacienda prototype; its header links to
-  Jenner's coastal scene, which uses the same place registry and a separate source level card.
+- **River Pulse:** `river-pulse/` is organised as river -> slot -> place: `rivers/<river>/scenes/<slot>/<place>/`
+  holds each scene's page, code, sourced data and notes; `core/` (adapters, data model, visual bindings),
+  `scene-kit/` (shared 3D), `ui/` (tokens and chrome) and `app/` (atlas and river home) are shared. `/river-pulse/`
+  opens the atlas; each river has a home that lists its start, middle and end scenes (planned slots are shown as
+  placeholders). See [docs/river-pulse/structure.md](river-pulse/structure.md).
 - **Shared infrastructure:** one `vendor/`, `pipeline/`, `scripts/`, npm install and Pages
   build. River Pulse already imports the root camera utilities and inverse UTM helper. Python
   river builders reuse elevation acquisition and projection, not reservoir detection.
@@ -25,7 +27,8 @@ both experiences actually use the same behavior. Future experiences can follow t
 boundary; this is one repository, not a collection of nested repositories or submodules.
 
 The Pages build follows browser imports from all HTML module entries and explicitly copies
-styles, static assets and both data roots. `validate-river-packages.mjs` rejects missing or
+styles (following CSS `@import`), static assets, the reservoir data root and the river packages. River scenes are
+found by walking `rivers/*/scenes/*/*/index.html`, so adding a river needs no build-script edit. `validate-river-packages.mjs` rejects missing or
 malformed terrain, missing centerlines and stale registries before publication. Hacienda terrain is a committed
 USGS artifact; rebuilding it is deliberate, not a deployment-time network dependency.
 
@@ -35,27 +38,26 @@ scene and time selection UI; the existing reservoir engine is not its river-flow
 
 ### River Pulse rendering
 
-Hacienda keeps two scene spaces: Map drapes a continuous ribbon over sourced USGS terrain;
-Bridge and Hacienda Beach show a separate photo-informed local reconstruction. Only Map
-reports source coordinates/elevation. The authored shoreline stays fixed during time selection.
+Scenes share code through `scene-kit/` and keep scene-specific code beside their page. Hacienda keeps two scene
+spaces: Map drapes a continuous ribbon over sourced USGS terrain; Bridge and Hacienda Beach show a separate
+photo-informed local reconstruction. Only Map reports source coordinates and elevation. The authored shoreline stays fixed
+during time selection.
 
-`visual-bindings/map-flow.js` maps eligible selected discharge to bounded display width
-within the loaded history range. `renderer/map-ribbon-geometry.js` builds the terrain-draped
-strip; `renderer/map-flow.js` gives it blue irregular moving detail and seasonal-color margins.
-Zero/missing discharge stops motion; absent history uses a disclosed fixed fallback scale.
-These mappings are illustrative, not inferred stage, banks or local velocity.
+`core/visual-bindings/map-flow.js` maps eligible selected discharge to bounded display width within the loaded history range.
+`scene-kit/map-ribbon-geometry.js` builds the terrain-draped strip and `scene-kit/map-flow.js` gives it moving detail and
+seasonal-colour margins. Zero or missing discharge stops motion; absent history uses a disclosed fixed fallback scale. These
+mappings are illustrative, not inferred stage, banks or local velocity.
 
-`hacienda-beach.js` composes bridge, rock, pebbles and woodland; `authored-water.js` supplies
-green water, planar reflections, refraction and approximate caustics. Local setting assets
-live under Hacienda's `setting/` package, with source/license metadata. Three/TSL is shared
-with the umbrella; reservoir water kernels are not used as river hydraulics. See
-[authored-water notes](../river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/README.md) for sources and optical limits.
+`hacienda-beach.js` (in Hacienda's scene folder) composes bridge, rock, pebbles and woodland. `scene-kit/authored-water.js`
+supplies green water, planar reflections, refraction and approximate caustics, and is reused by Eel, Tuolumne and Freeport.
+Local setting assets live under each scene's `data/setting/` with source and licence metadata. Three/TSL is shared with the
+umbrella; reservoir water kernels are not used as river hydraulics, though Tuolumne's dam context reuses the reservoir
+renderer through `scene-kit/reservoir-context.js`.
 
-`jenner.js` composes an authored coastal height field, sand spit, rocks, woodland and shore
-views. `jenner-water.js` contrasts calm estuary optics with Pacific swell/foam using a small
-MIT Tidewater noise adaptation. `jenner-level.js` selects eligible USGS NAVD88 observations
-for the separate Highway 1 card; it does not drive coastline, tide, currents or mouth status.
-Both pages load through `data-model/place-registry.js`. See [Jenner notes](../river-pulse/rivers/russian_river/scenes/end/jenner/README.md).
+Jenner composes an authored coastal height field, sand spit, rocks, woodland and shore views with a small MIT Tidewater
+noise adaptation (`scene-kit/water-noise.js`). Its `jenner-level.js` selects eligible USGS NAVD88 observations for the separate
+Highway 1 card; it does not drive coastline, tide, currents or mouth status. Scenes load their places through
+`core/data-model/place-registry.js`. Per-scene notes live in the `README.md` of each scene folder.
 
 ## Data flow
 

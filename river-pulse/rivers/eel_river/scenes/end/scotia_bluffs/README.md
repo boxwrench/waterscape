@@ -1,5 +1,20 @@
 # Eel River / Scotia Bluffs — visual review
 
+<!-- scene-card: generated from scene.json; edit scene.json, not this block -->
+> **Scene card**
+>
+> | | |
+> |---|---|
+> | River / slot | `eel_river` / `end` |
+> | Place id | `scotia_bluffs` |
+> | Fidelity | USGS terrain, illustrative water |
+> | Data | fine terrain |
+> | Views | Overview, Bluffs, Eye level, Shoreline, Bend |
+> | Open locally | <http://localhost:5173/river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/index.html> |
+> | Layout | page `index.html`, scene code beside it, sourced data in `data/`, notes in `notes/` |
+<!-- /scene-card -->
+
+
 RP17 trials the user's research → form → fixed cameras → render → compare → refine
 workflow. [Open the study](./index.html) or
 [actual runtime comparison](../../../../../../previews/eel/review.html).
