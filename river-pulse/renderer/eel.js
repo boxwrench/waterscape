@@ -8,7 +8,7 @@ import { createEelWaterSpike } from "./eel-water-spike.js";
 
 const $ = id => document.getElementById(id), base = "../data/eel_river/places/scotia_bluffs/",
   started = performance.now(), reduced = matchMedia("(prefers-reduced-motion: reduce)"), query = new URLSearchParams(location.search);
-let active = EEL_CAMERAS[query.get("view")] ? query.get("view") : "overview", paused = reduced.matches,
+let active = EEL_CAMERAS[query.get("view")] ? query.get("view") : "overview", paused = reduced.matches || query.get("freeze") === "1",
   mode = "study", pass = "refined", measure = null, settingPass = "detail", surfacePass = "photo",
   waterPass = query.get("water") === "optics" ? "optics" : "previous";
 $("water-pass").value = waterPass;
@@ -212,7 +212,7 @@ async function main() {
           `CPU render submission p50 ${percentile(measure.cpu, 0.5).toFixed(2)} ms / p95 ${percentile(measure.cpu, 0.95).toFixed(2)} ms\n` +
           `First frame ${loadMs.toFixed(0)} ms · ${1 + setting.textures.length} source textures, RGBA+mips estimate ${(textureBytes / 1048576).toFixed(1)} MiB; reflection targets excluded\n` +
           `Optical-depth attribute ${(opticalWater.depthBytes / 1048576).toFixed(3)} MiB; original surface/index buffers shared. Reflection plane ${opticalWater.focus.y.toFixed(2)} m; surface ${opticalWater.heightRange.map(v => v.toFixed(2)).join("–")} m (DEM proxy, not stage).\n` +
-          `Reflection target estimate ${reflectWidth}×${reflectHeight}, ${(reflectWidth * reflectHeight * 8 / 1048576).toFixed(2)} MiB color only (depth/driver excluded); retained after first use.\n` +
+          `Reflection target estimate ${reflectWidth}×${reflectHeight}, ${(reflectWidth * reflectHeight * 8 / 1048576).toFixed(2)} MiB color + ${(reflectWidth * reflectHeight * 4 / 1048576).toFixed(2)} MiB nominal 32-bit ${opticalWater.reflectionDepthEnabled ? "sampled" : "implicit"} depth (backend/driver allocation unmeasured); retained after first use.\n` +
           `${setting.treeCount} authored tree sites; ${setting.detailCount()} detailed near this camera. GPU time, reflection allocation and total browser memory are not measured.`;
         measure = null; $("measure").disabled = false;
       }

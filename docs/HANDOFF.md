@@ -1,5 +1,18 @@
 # Handoff — 2026-10-04
 
+## Eel reflection contact — RP26
+
+Implemented locally on `task/RP26`, pending human visual acceptance. Three cheaper
+agents were reused for reflection/contact audits, peer review, gallery and checks.
+[Actual comparison gallery](../previews/eel/rp26/review.html) and
+[review record](river-pulse/eel-reflection-contact-review.md) preserve six matched
+desktop/phone pairs at zero wave phase. An Eel-only depth-sensitive reflection guard
+strongly reduces broad white bank patches while retaining main-view reflections.
+A thin bright rim, warped reflection and coarse contact remain; this is not a
+geometry repair or reservoir visual parity. Original water stays the default.
+Counts remain 2,514,254 triangles / 14 calls; sampled depth allocation and GPU
+time are unmeasured. Shared extraction/adoption remain deferred. No merge/push.
+
 ## Eel water optics spike — RP25
 
 Implemented locally on `task/RP25`, pending human visual acceptance. Three cheaper

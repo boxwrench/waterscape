@@ -1,7 +1,7 @@
 import * as THREE from "../../vendor/three/three.webgpu.js";
 import {
   attribute, cameraPosition, color, cos, dot, exp, float, floor, fract, fwidth,
-  mix, normalize, positionWorld, pow, reflector, refract, sin, texture, uniform, vec2, vec3,
+  mix, normalize, positionWorld, pow, reflector, refract, sin, smoothstep, texture, uniform, vec2, vec3,
 } from "../../vendor/three/three.tsl.js";
 import { buildAuthoredWaterGeometry } from "./authored-water-geometry.js";
 import { grayStone } from "./beach-materials.js";
@@ -59,12 +59,20 @@ export function createAuthoredWater(document, terrain, maps = null, authoredGrid
       .mul(vec3(0.85, 1, 0.8)), transmission),
     sun = normalize(vec3(...(options.sunDirection ?? [0.68, 0.73, 0.18]))),
     glint = pow(dot(normal, normalize(sun.add(eye))).max(0), 260).mul(1.8),
-    mirror = reflector({ resolutionScale: 0.65, bounces: false });
+    mirror = reflector({ resolutionScale: 0.65, bounces: false, depth: Boolean(options.shoreReflectionRange) });
   mirror.target.rotation.x = -Math.PI / 2;
   mirror.target.position.y = grid.focus.y;
   mirror.uvNode = mirror.uvNode.add(vec2(normal.x, normal.z).mul(0.035));
   const material = new THREE.MeshBasicNodeMaterial({ side: THREE.FrontSide });
-  const reflected = mix(mirror.rgb, color(0x294c38), 0.12);
+  let reflected = mix(mirror.rgb, color(0x294c38), 0.12);
+  // Preserve reflected geometry; mute background gaps over the modeled shallows.
+  // This authored proxy guard is not a physical Fresnel law or a geometry repair.
+  if (options.shoreReflectionRange) {
+    const reflectionDepth = mirror.getDepthNode(); reflectionDepth.uvNode = mirror.uvNode;
+    const geometryConfidence = float(1).sub(smoothstep(0.95, 0.9999, reflectionDepth)),
+      agreement = mix(smoothstep(...options.shoreReflectionRange, depth).pow(2), float(1), geometryConfidence);
+    reflected = mix(color(0x294c38), reflected, agreement);
+  }
   material.colorNode = mix(underwater, reflected, fresnel).add(color(0xfff2d8).mul(glint));
   const mesh = new THREE.Mesh(geometry, material);
   mesh.name = "Hacienda authored water";
@@ -72,7 +80,7 @@ export function createAuthoredWater(document, terrain, maps = null, authoredGrid
   mesh.visible = false;
   mesh.userData = { representation: grid.representation, bindingClass: "illustrative",
     optics: "derived from illustrative surface, bed and lighting", focus: grid.focus };
-  return { mesh, focus: grid.focus, update(seconds, reducedMotion) {
+  return { mesh, focus: grid.focus, reflectionDepthEnabled: Boolean(options.shoreReflectionRange), update(seconds, reducedMotion) {
     clock.value = reducedMotion ? 0 : seconds;
   } };
 }

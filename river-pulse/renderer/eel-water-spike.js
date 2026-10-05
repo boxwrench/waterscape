@@ -6,7 +6,7 @@ export function createEelWaterSpike(terrain, geometry, field) {
   const positions = geometry.attributes.position.array, indices = geometry.index.array,
     grid = buildEelOpticalGrid(terrain, field, positions, indices),
     water = createAuthoredWater(null, terrain, null, grid, {
-      sunDirection: [-1600, 2300, 700], filterProceduralBed: true,
+      sunDirection: [-1600, 2300, 700], filterProceduralBed: true, shoreReflectionRange: [0.02, 2.6],
     });
   // Share the actual BufferAttributes too, avoiding duplicate GPU geometry buffers.
   water.mesh.geometry.setAttribute("position", geometry.attributes.position);

@@ -3,7 +3,9 @@
 Status: proposal from a read-only review on 2026-10-04 (branch `task/RP24`). RP25 now
 implements the first isolated Eel optics experiment; later adoption/extraction remains
 pending human acceptance. Its [rendered review and cost record](eel-water-optics-review.md)
-identify close-view reflection issues; shared extraction is deferred. No later step
+identify close-view reflection issues. [RP26](eel-reflection-contact-review.md)
+strongly reduces the broad white band with an authored background guard, but
+contact remnants persist; shared extraction is deferred. No later step
 is implemented by this trial.
 Human visual acceptance decides every pass, as in [visual-development.md](../visual-development.md).
 

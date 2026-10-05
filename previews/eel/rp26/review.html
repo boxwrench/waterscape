@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Eel River | RP26 reflection contact review</title>
+  <style>
+    :root{color-scheme:light;--ink:#203632;--muted:#61736b;--paper:#f0eee5;--card:#fbfaf5;--line:#d1d8ce;--moss:#436450;--deep:#1e3834}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 "Segoe UI",system-ui,sans-serif}
+    main{width:min(1320px,calc(100% - 40px));margin:auto;padding:30px 0 56px}h1,h2{font-family:Georgia,"Times New Roman",serif;font-weight:500;line-height:1.1}
+    h1{font-size:clamp(36px,6vw,64px);margin:10px 0}h2{font-size:25px;margin:0}.eyebrow{color:var(--moss);font-size:11px;font-weight:750;letter-spacing:.14em;text-transform:uppercase}
+    .hero{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:24px;align-items:end;padding:24px 0;border-bottom:1px solid var(--line)}
+    p{max-width:850px;color:#465b52}.dek{font-size:17px;margin-bottom:0}.status{padding:15px;border-left:3px solid #8b7047;background:#e5dfd0;color:#4b483d}.status strong{display:block;color:#604f31;font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+    a{color:#285344;text-underline-offset:3px}.links{display:flex;gap:18px;flex-wrap:wrap;padding:16px 0}.controls{position:sticky;top:0;z-index:2;display:flex;gap:8px;align-items:center;padding:10px 0;background:#f0eee5ed;backdrop-filter:blur(8px)}
+    .controls span{margin-right:4px;color:var(--muted);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}button{padding:8px 15px;border:1px solid #9caea1;border-radius:999px;background:transparent;color:var(--ink);font:inherit;cursor:pointer}button[aria-pressed="true"]{background:var(--deep);border-color:var(--deep);color:#f3f1e8}
+    .gallery{display:grid;gap:16px;margin-top:12px}.camera{overflow:hidden;border:1px solid var(--line);border-radius:13px;background:var(--card)}.camera header{padding:13px 16px}.camera small{color:var(--muted)}
+    .pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;border-top:1px solid var(--line);background:var(--line)}figure{min-width:0;margin:0;padding:9px;background:var(--card)}img{display:block;width:100%;height:auto;aspect-ratio:980/820;object-fit:contain;background:#dce3da}figcaption{padding:6px 1px 0;color:#4b6056;font-size:13px}figcaption strong{color:var(--ink)}
+    .phone-view{display:none}.phone-view.active,.desktop-view.active{display:grid}.desktop-view{display:none}.phone-view img{aspect-ratio:390/844}.note{margin-top:20px;padding:15px 18px;border-radius:10px;background:#e2e7dd}.note p{margin:5px 0 0}.foot{margin-top:20px;padding-top:12px;border-top:1px solid var(--line);color:var(--muted);font-size:12px}
+    @media(max-width:720px){main{width:calc(100% - 26px);padding-top:18px}.hero{grid-template-columns:1fr;gap:12px}.pair{grid-template-columns:1fr}.controls{flex-wrap:wrap;top:0}}
+  </style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">River Pulse | Visual development | RP26</div>
+  <section class="hero">
+    <div><h1>Scotia Bluffs<br><em>Reflection contact.</em></h1>
+      <p class="dek">Compare the RP25 optics pass with the RP26 candidate contact correction in three fixed views at matched desktop and phone sizes.</p></div>
+    <aside class="status"><strong>Ready for human review</strong>The Eel-only guard strongly reduces broad white patches while retaining bank reflections. A thin bright angular rim remains; this does not repair source geometry or establish production acceptance.</aside>
+  </section>
+  <nav class="links" aria-label="Review links">
+    <a href="../../../river-pulse/renderer/eel.html?water=optics&amp;view=primary&amp;freeze=1">Open live Eel optics view | frozen phase zero</a>
+    <a href="../../../docs/river-pulse/eel-reflection-contact-review.md">Reflection contact review notes</a>
+  </nav>
+  <div class="controls" aria-label="Capture size"><span>Capture</span><button type="button" data-size="desktop" aria-pressed="true">Desktop | 980 x 820</button><button type="button" data-size="phone" aria-pressed="false">Phone | 390 x 844</button></div>
+
+  <section class="gallery desktop-view active" data-size-view="desktop" aria-label="Desktop before and after comparisons">
+    <article class="camera"><header><h2>Primary</h2><small>Fixed primary view | desktop 980 x 820</small></header><div class="pair">
+      <figure><img src="before-primary.jpg" alt="RP25 Eel optics in the primary view"><figcaption><strong>Before</strong> | RP25 optics.</figcaption></figure>
+      <figure><img src="after-primary.jpg" alt="RP26 candidate Eel optics in the primary view"><figcaption><strong>After</strong> | RP26 candidate.</figcaption></figure>
+    </div></article>
+    <article class="camera"><header><h2>Eye level</h2><small>Fixed eye view | desktop 980 x 820</small></header><div class="pair">
+      <figure><img src="before-eye.jpg" alt="RP25 Eel optics from eye level"><figcaption><strong>Before</strong> | RP25 optics.</figcaption></figure>
+      <figure><img src="after-eye.jpg" alt="RP26 candidate Eel optics from eye level"><figcaption><strong>After</strong> | RP26 candidate.</figcaption></figure>
+    </div></article>
+    <article class="camera"><header><h2>Shoreline</h2><small>Fixed shore view | desktop 980 x 820</small></header><div class="pair">
+      <figure><img src="before-shore.jpg" alt="RP25 Eel optics from the shoreline"><figcaption><strong>Before</strong> | RP25 optics.</figcaption></figure>
+      <figure><img src="after-shore.jpg" alt="RP26 candidate Eel optics from the shoreline"><figcaption><strong>After</strong> | RP26 candidate.</figcaption></figure>
+    </div></article>
+  </section>
+
+  <section class="gallery phone-view" data-size-view="phone" aria-label="Phone before and after comparisons">
+    <article class="camera"><header><h2>Primary | Phone</h2><small>Fixed primary view | 390 x 844</small></header><div class="pair">
+      <figure><img src="before-phone-primary.jpg" alt="RP25 Eel optics in the phone primary view"><figcaption><strong>Before</strong> | RP25 optics.</figcaption></figure>
+      <figure><img src="after-phone-primary.jpg" alt="RP26 candidate Eel optics in the phone primary view"><figcaption><strong>After</strong> | RP26 candidate.</figcaption></figure>
+    </div></article>
+    <article class="camera"><header><h2>Eye level | Phone</h2><small>Fixed eye view | 390 x 844</small></header><div class="pair">
+      <figure><img src="before-phone-eye.jpg" alt="RP25 Eel optics from eye level on phone"><figcaption><strong>Before</strong> | RP25 optics.</figcaption></figure>
+      <figure><img src="after-phone-eye.jpg" alt="RP26 candidate Eel optics from eye level on phone"><figcaption><strong>After</strong> | RP26 candidate.</figcaption></figure>
+    </div></article>
+    <article class="camera"><header><h2>Shoreline | Phone</h2><small>Fixed shore view | 390 x 844</small></header><div class="pair">
+      <figure><img src="before-phone-shore.jpg" alt="RP25 Eel optics from the shoreline on phone"><figcaption><strong>Before</strong> | RP25 optics.</figcaption></figure>
+      <figure><img src="after-phone-shore.jpg" alt="RP26 candidate Eel optics from the shoreline on phone"><figcaption><strong>After</strong> | RP26 candidate.</figcaption></figure>
+    </div></article>
+  </section>
+  <section class="note"><strong>Visual read.</strong> The deterministic before/after pairs use freeze-at-phase-zero captures and normal glint strength. The guard suppresses most of the broad reflected white patches in eye-level and shoreline views; a thin bright angular rim still traces parts of the edge. Useful bank and forest reflections remain. At the bend, authored shallow and reflective contours read more clearly, while the source terrain remains coarse. This is a bounded reflection improvement, not a geometry/contact repair or a production-ready shared change. The Eel-only candidate is ready for human review; no shared adoption is claimed.</section>
+  <section class="note"><strong>Runtime cost | desktop 980 x 820, WebGPU.</strong> Both passes report 2,514,254 rendered triangles, 14 draw calls, and 18.03 MiB geometry buffers. RP25's 0.091 MiB optical-depth attribute and the original surface/index buffers are present in both; RP26 adds no triangles, draw calls, or CPU geometry allocation. Eight source textures have an estimated 55.0 MiB RGBA/mip footprint. The 637 x 533 reflection target is estimated at 2.59 MiB color plus 1.30 MiB nominal 32-bit sampled depth. A depth attachment already existed implicitly; sampled depth is newly exposed for RP26's shader, and the incremental/backend allocation is unmeasured.</section>
+  <section class="note"><strong>Captured timing.</strong> Before: frame interval p50/p95 52.25/95.14 ms, CPU submission p50/p95 0.69/1.52 ms, first frame 850 ms. After: frame interval p50/p95 47.59/93.50 ms, CPU submission p50/p95 0.76/1.44 ms, first frame 907 ms. These automated frame intervals are not FPS or GPU-only time and do not establish a performance improvement.</section>
+  <footer class="foot">Three fixed views | RP25 optics versus RP26 Eel-only candidate | Visual review pending</footer>
+</main>
+<script>
+  const buttons=[...document.querySelectorAll("[data-size]")],views=[...document.querySelectorAll("[data-size-view]")];
+  for(const button of buttons)button.addEventListener("click",()=>{const size=button.dataset.size;for(const b of buttons)b.setAttribute("aria-pressed",String(b===button));for(const view of views)view.classList.toggle("active",view.dataset.sizeView===size)});
+</script>
+</body>
+</html>
