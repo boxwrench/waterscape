@@ -25,7 +25,9 @@ camera change.
 
 ## Remaining
 
-- Jenner has no history; Eel and Tuolumne have no gauge and still show developer "Review tools
+- Jenner has no history. Checked 2026-10-05: the USGS daily collection returns zero features for
+  USGS-11467270 (parameter 63160, daily mean, and unfiltered), so a history chart would need a
+  continuous-series adapter that the project does not have. Not added. Eel and Tuolumne have no gauge and still show developer "Review tools
   & runtime cost" controls to all visitors. Hiding those behind a review flag would change the
   review workflow and needs a decision.
 - Camera button rows differ in style between scenes.
