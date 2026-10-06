@@ -5,12 +5,12 @@
 >
 > | | |
 > |---|---|
-> | River / slot | `sacramento_river` / `end` |
+> | River / slot | `sacramento_river` / `middle` |
 > | Place id | `freeport` |
 > | Fidelity | Photo-informed setting with live USGS discharge |
 > | Data | live gauge, history |
 > | Views | Bridge, Riverbank, Terrain |
-> | Open locally | <http://localhost:5173/river-pulse/rivers/sacramento_river/scenes/end/freeport/index.html> |
+> | Open locally | <http://localhost:5173/river-pulse/rivers/sacramento_river/scenes/middle/freeport/index.html> |
 > | Layout | page `index.html`, scene code beside it, sourced data in `data/`, notes in `notes/` |
 <!-- /scene-card -->
 

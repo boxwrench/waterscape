@@ -68,7 +68,7 @@ Freeport (RP13) continues this approach with the existing irregular noise, plana
 CC0 stone materials and detailed MIT ez-tree broadleaf bakes from the reservoir work.
 Its broad lowland river and green steel crossing are original approximate geometry;
 the separate terrain view uses aligned USGS 3DEP/3DHP/NAIP data.
-See [Freeport notes](../river-pulse/rivers/sacramento_river/scenes/end/freeport/README.md).
+See [Freeport notes](../river-pulse/rivers/sacramento_river/scenes/middle/freeport/README.md).
 
 ## Rivers, currents & coastal flow
 

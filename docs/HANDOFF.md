@@ -30,7 +30,7 @@ the scene folders (`notes/`) or `docs/archive/`.
 **No 3D data was lost.** A SHA-256 inventory of every file under `river-pulse/` was recorded before the move
 ([`archive/restructure-2026-10-05/asset-inventory.sha256`](./archive/restructure-2026-10-05/asset-inventory.sha256)). All 33 binary and data assets
 (terrain, trees, textures, GeoJSON) are byte-identical at their new paths. At the moment of the move, the 46 text files that changed differed only in
-rewritten import/path strings (+162/-162 lines); later edits (registry, validators, river home, docs) are separate commits. The Freeport bridge model is `rivers/sacramento_river/scenes/end/freeport/freeport-bridge.js` and
+rewritten import/path strings (+162/-162 lines); later edits (registry, validators, river home, docs) are separate commits. The Freeport bridge model is `rivers/sacramento_river/scenes/middle/freeport/freeport-bridge.js` and
 `freeport-bridge-layout.js`; the former is identical apart from its vendor import depth, the latter is byte-identical. The restore
 point is the git tag `pre-restructure-2026-10-05`; the move tools are kept in `docs/archive/restructure-2026-10-05/`.
 

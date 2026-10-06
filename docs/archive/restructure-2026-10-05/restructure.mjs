@@ -13,7 +13,7 @@ const oldFiles = tracked.filter(f => f.startsWith(RP)).map(f => f.slice(RP.lengt
 const SCENE = {
   hacienda: "rivers/russian_river/scenes/middle/hacienda_bridge",
   jenner: "rivers/russian_river/scenes/end/jenner",
-  freeport: "rivers/sacramento_river/scenes/end/freeport",
+  freeport: "rivers/sacramento_river/scenes/middle/freeport",
   eel: "rivers/eel_river/scenes/end/scotia_bluffs",
   tuolumne: "rivers/tuolumne_river/scenes/start/poopenaut_valley",
 };

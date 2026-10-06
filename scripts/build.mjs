@@ -113,7 +113,7 @@ await cp(path.join(root, "river-pulse", "registry.json"), path.join(out, "river-
 const movedScenes = {
   hacienda: "rivers/russian_river/scenes/middle/hacienda_bridge/",
   jenner: "rivers/russian_river/scenes/end/jenner/",
-  freeport: "rivers/sacramento_river/scenes/end/freeport/",
+  freeport: "rivers/sacramento_river/scenes/middle/freeport/",
   eel: "rivers/eel_river/scenes/end/scotia_bluffs/",
   tuolumne: "rivers/tuolumne_river/scenes/start/poopenaut_valley/",
 };

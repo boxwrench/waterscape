@@ -1,0 +1,10 @@
+{
+  "schema_version": "river-pulse-scene-0.1",
+  "id": "delta_confluence",
+  "river": "sacramento_river",
+  "slot": "end",
+  "name": "Delta confluence with the San Joaquin (Collinsville and Pittsburg area)",
+  "status": "planned",
+  "note": "Placeholder that blocks out the river's structure. No scene, data or geography is implied.",
+  "choice": "The tidal mouth, where the Sacramento meets the San Joaquin. The exact view (shore, bridge or waterfront) is decided when the place is sourced."
+}

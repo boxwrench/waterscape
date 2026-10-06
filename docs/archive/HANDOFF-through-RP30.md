@@ -388,7 +388,7 @@ Scientific observations, water bindings and geographic terrain remain independen
 Verification: 11 focused tests pass, river packages validate, and the complete build
 passes. Eight desktop/phone angles and evidence/pause/navigation controls were inspected;
 no console errors. Local previews include bridge, east approach, underside and overhead.
-See [scene notes](../../river-pulse/rivers/sacramento_river/scenes/end/freeport/README.md) and
+See [scene notes](../../river-pulse/rivers/sacramento_river/scenes/middle/freeport/README.md) and
 [task](../roadmap/tasks/RP14-freeport-bridge-fidelity.md). No push or merge.
 
 ## Sacramento at Freeport — RP13
@@ -401,7 +401,7 @@ frame: 3DEP NAVD88 elevation, 3DHP Sacramento centerline and aligned NAIP imager
 Live matched Freeport discharge starts independently of graphics; stale/missing values
 stay explicit. The existing distinct tidally filtered daily history remains on the
 individual river page. No discharge-to-stage/current/flood conversion is made.
-See [scene notes](../../river-pulse/rivers/sacramento_river/scenes/end/freeport/README.md) and
+See [scene notes](../../river-pulse/rivers/sacramento_river/scenes/middle/freeport/README.md) and
 [task](../roadmap/tasks/RP13-sacramento-freeport.md). Work is local; no push or merge.
 
 ## California relief overview — RP12

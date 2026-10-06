@@ -2,7 +2,7 @@
   "schema_version": "river-pulse-scene-0.1",
   "id": "freeport",
   "river": "sacramento_river",
-  "slot": "end",
+  "slot": "middle",
   "name": "Freeport",
   "status": "built",
   "fidelity": "Photo-informed setting with live USGS discharge",

@@ -3,17 +3,17 @@ import assert from "node:assert/strict";
 import { readFile, access } from "node:fs/promises";
 import { gunzipSync } from "node:zlib";
 import { decodeRiverTerrain } from "../../river-pulse/scene-kit/terrain.js";
-import { FREEPORT_VIEWS, freeportChannel, freeportGround, constrainFreeportCamera } from "../../river-pulse/rivers/sacramento_river/scenes/end/freeport/freeport-layout.js";
-import { freeportDischarge } from "../../river-pulse/rivers/sacramento_river/scenes/end/freeport/freeport-discharge.js";
+import { FREEPORT_VIEWS, freeportChannel, freeportGround, constrainFreeportCamera } from "../../river-pulse/rivers/sacramento_river/scenes/middle/freeport/freeport-layout.js";
+import { freeportDischarge } from "../../river-pulse/rivers/sacramento_river/scenes/middle/freeport/freeport-discharge.js";
 import { parseLatestContinuousFeature } from "../../river-pulse/core/adapters/usgs.js";
 import { riverDestination } from "../../river-pulse/core/data-model/overview-navigation.js";
 
 import * as THREE from "../../vendor/three/three.webgpu.js";
-import { createFreeportBridge } from "../../river-pulse/rivers/sacramento_river/scenes/end/freeport/freeport-bridge.js";
-import { FREEPORT_BRIDGE, FREEPORT_BRIDGE_ANGLES, bridgeToWorld, worldToBridge, freeportBridgeCamera } from "../../river-pulse/rivers/sacramento_river/scenes/end/freeport/freeport-bridge-layout.js";
-import { freeportLeveeRoad, freeportMarinaLayout } from "../../river-pulse/rivers/sacramento_river/scenes/end/freeport/freeport-riverfront-layout.js";
+import { createFreeportBridge } from "../../river-pulse/rivers/sacramento_river/scenes/middle/freeport/freeport-bridge.js";
+import { FREEPORT_BRIDGE, FREEPORT_BRIDGE_ANGLES, bridgeToWorld, worldToBridge, freeportBridgeCamera } from "../../river-pulse/rivers/sacramento_river/scenes/middle/freeport/freeport-bridge-layout.js";
+import { freeportLeveeRoad, freeportMarinaLayout } from "../../river-pulse/rivers/sacramento_river/scenes/middle/freeport/freeport-riverfront-layout.js";
 
-const base = new URL("../../river-pulse/rivers/sacramento_river/scenes/end/freeport/data/", import.meta.url),
+const base = new URL("../../river-pulse/rivers/sacramento_river/scenes/middle/freeport/data/", import.meta.url),
   json = async file => JSON.parse(await readFile(new URL(file, base), "utf8"));
 
 test("Freeport bank, road and underside cameras stay in their intended domains", () => {
@@ -118,13 +118,17 @@ test("Freeport observation excludes future/wrong-series/daily readings and prese
   assert.equal(current.state.features.model_fields.length, 0, "Discharge must not create local hydraulics");
 });
 
-test("Sacramento opens its own river home, which lists its built end scene, and retains separate history", async () => {
+test("Sacramento opens its own river home: Freeport is the built middle, the start and end are planned", async () => {
   const riverUrl = new URL("../../../../river.json", base), river = JSON.parse(await readFile(riverUrl, "utf8"));
   assert.equal(riverDestination(river), "./river.html?river=sacramento_river");
   assert.deepEqual(river.scenes.map(scene => scene.slot), ["start", "middle", "end"]);
-  const end = river.scenes.find(scene => scene.slot === "end"), sceneUrl = new URL(`scenes/end/${end.id}/scene.json`, riverUrl),
-    scene = JSON.parse(await readFile(sceneUrl, "utf8"));
-  assert.equal(scene.status, "built");
+  const scenes = await Promise.all(river.scenes.map(async ({ slot, id }) => {
+    const url = new URL(`scenes/${slot}/${id}/scene.json`, riverUrl);
+    return { url, scene: JSON.parse(await readFile(url, "utf8")) };
+  }));
+  assert.deepEqual(scenes.map(({ scene }) => scene.status), ["planned", "built", "planned"]);
+  const { url: sceneUrl, scene } = scenes[1];
+  assert.equal(scene.id, "freeport");
   await access(new URL(scene.entry, sceneUrl));
   const html = await readFile(new URL(scene.entry, sceneUrl), "utf8");
   assert.ok(html.includes("river.html?river=sacramento_river"));

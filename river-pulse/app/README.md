@@ -51,4 +51,4 @@ upstream code, textures or reference photos are copied into this map.
 Desktop keeps the whole California silhouette visible. Mobile uses larger SVG label
 boxes and a stacked map, preview and river list. The existing local 3D scenes retain
 their own rendering and water systems. Sacramento now has a first authored Freeport
-scene and a separately sourced terrain view; see [scene notes](../rivers/sacramento_river/scenes/end/freeport/README.md).
+scene and a separately sourced terrain view; see [scene notes](../rivers/sacramento_river/scenes/middle/freeport/README.md).

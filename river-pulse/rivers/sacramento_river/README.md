@@ -9,9 +9,9 @@ Status: **available**. Explore the Sacramento River at Freeport: green steel, tr
 <!-- slots: generated from river.json and scene.json files; run node scripts/sync-river-readmes.mjs -->
 | Slot | Scene | Status | Data | Views |
 |---|---|---|---|---|
-| start | Start (to be chosen) | **planned** | n/a | n/a |
-| middle | Middle (to be chosen) | **planned** | n/a | n/a |
-| end | [Freeport](scenes/end/freeport/README.md) | built | live gauge, history | Bridge, Riverbank, Terrain |
+| start | Headwaters Park, Mount Shasta (Big Springs) | **planned** | n/a | n/a |
+| middle | [Freeport](scenes/middle/freeport/README.md) | built | live gauge, history | Bridge, Riverbank, Terrain |
+| end | Delta confluence with the San Joaquin (Collinsville and Pittsburg area) | **planned** | n/a | n/a |
 <!-- /slots -->
 
 ## Sources
@@ -63,7 +63,7 @@ source's local aggregation boundary. The source date remains visible in each rec
 Observation and daily chart bindings are Exact to selected source quantities; daily
 means remain derived statistics. Freeport data does not describe the downtown waterfront
 or every reach. No discharge-to-depth, stage, velocity or flood conversion is made.
-RP13 adds the [first Freeport scene](./scenes/end/freeport/README.md): an approximate
+RP13 adds the [first Freeport scene](./scenes/middle/freeport/README.md): an approximate
 photo-informed bridge/bank setting and a separate 3DEP/3DHP/NAIP terrain view.
 
 Next: review/refine Freeport and choose the next local Sacramento viewpoint. Lengths are omitted from factual UI

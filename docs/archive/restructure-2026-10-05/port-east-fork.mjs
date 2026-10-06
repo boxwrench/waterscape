@@ -13,7 +13,7 @@ const show = (rev, f) => execFileSync("git", ["show", `${rev}:${f}`], { maxBuffe
 
 const SCENE = {
   hacienda: "rivers/russian_river/scenes/middle/hacienda_bridge", jenner: "rivers/russian_river/scenes/end/jenner",
-  freeport: "rivers/sacramento_river/scenes/end/freeport", eel: "rivers/eel_river/scenes/end/scotia_bluffs",
+  freeport: "rivers/sacramento_river/scenes/middle/freeport", eel: "rivers/eel_river/scenes/end/scotia_bluffs",
   tuolumne: "rivers/tuolumne_river/scenes/start/poopenaut_valley", eastfork: "rivers/russian_river/scenes/start/east_fork",
 };
 const rules = [], file = (o, n) => rules.push([o, n]);

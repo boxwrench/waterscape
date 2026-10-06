@@ -3,22 +3,22 @@
   "id": "sacramento_river",
   "name": "Sacramento River",
   "status": "available",
-  "summary": "Explore the Sacramento River at Freeport: green steel, tree-lined levees and a broad reflective channel, alongside sourced USGS discharge.",
+  "summary": "From the springs at Mount Shasta to the Delta: the Sacramento River at Freeport, green steel, tree-lined levees and a broad reflective channel, alongside sourced USGS discharge.",
   "map": {
     "status": "planned"
   },
   "scenes": [
     {
       "slot": "start",
-      "id": "start_to_be_chosen"
+      "id": "headwaters_park"
     },
     {
       "slot": "middle",
-      "id": "middle_to_be_chosen"
+      "id": "freeport"
     },
     {
       "slot": "end",
-      "id": "freeport"
+      "id": "delta_confluence"
     }
   ],
   "live_data_scene": "freeport",

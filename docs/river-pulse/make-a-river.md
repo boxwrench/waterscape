@@ -93,7 +93,7 @@ Pick one slot and one place. Do the steps in order; each ends with something you
    - Then `python pipeline/build_river_registry.py` so the registry lists the place.
 
 4. **Build the page.** Add `index.html` and your scene module beside `scene.json`. Start from the closest existing scene:
-   - Terrain plus a live card and history → [Freeport](../../river-pulse/rivers/sacramento_river/scenes/end/freeport/README.md) or [Hacienda](../../river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/README.md).
+   - Terrain plus a live card and history → [Freeport](../../river-pulse/rivers/sacramento_river/scenes/middle/freeport/README.md) or [Hacienda](../../river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/README.md).
    - Terrain study with fixed cameras and no gauge → [Scotia Bluffs](../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/README.md).
    - A coastal or authored setting → [Jenner](../../river-pulse/rivers/russian_river/scenes/end/jenner/README.md).
    Reuse `scene-kit/` (terrain, water, banks, materials) and `ui/tokens.css`. Do not copy shared code into the scene; if you need

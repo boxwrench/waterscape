@@ -10,7 +10,7 @@ from pathlib import Path
 from aerial import SERVICE, CREDIT, grid_extent
 
 ROOT = Path(__file__).resolve().parent.parent
-OUTPUT = ROOT / "river-pulse/rivers/sacramento_river/scenes/end/freeport/data"
+OUTPUT = ROOT / "river-pulse/rivers/sacramento_river/scenes/middle/freeport/data"
 
 
 def build():

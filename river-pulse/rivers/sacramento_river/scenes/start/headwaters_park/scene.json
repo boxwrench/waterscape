@@ -1,0 +1,10 @@
+{
+  "schema_version": "river-pulse-scene-0.1",
+  "id": "headwaters_park",
+  "river": "sacramento_river",
+  "slot": "start",
+  "name": "Headwaters Park, Mount Shasta (Big Springs)",
+  "status": "planned",
+  "note": "Placeholder that blocks out the river's structure. No scene, data or geography is implied.",
+  "choice": "The public start: where visitors go to see the river begin, at Big Springs in Mount Shasta City. The official origin, the confluence of the South, Middle and North Forks near Mount Eddy, is a hard-to-reach point and is not the scene. Both statements come from the project owner's reading and must be sourced before a scene is built on them."
+}

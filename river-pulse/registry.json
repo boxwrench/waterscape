@@ -93,7 +93,7 @@
       "id": "freeport",
       "name": "Sacramento River at Freeport",
       "hydrologic_context": "tidally_influenced_river_reach",
-      "manifest": "rivers/sacramento_river/scenes/end/freeport/data/place.json",
+      "manifest": "rivers/sacramento_river/scenes/middle/freeport/data/place.json",
       "supported_capabilities": [
         "historical_tidally_filtered_discharge",
         "observed_discharge"

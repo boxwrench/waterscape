@@ -6,7 +6,7 @@ const P = path.posix, git = (...a) => execFileSync("git", a, { encoding: "utf8",
 const RP = "river-pulse/rivers";
 const S = {
   hacienda: `${RP}/russian_river/scenes/middle/hacienda_bridge`, jenner: `${RP}/russian_river/scenes/end/jenner`,
-  freeport: `${RP}/sacramento_river/scenes/end/freeport`, eel: `${RP}/eel_river/scenes/end/scotia_bluffs`,
+  freeport: `${RP}/sacramento_river/scenes/middle/freeport`, eel: `${RP}/eel_river/scenes/end/scotia_bluffs`,
   tuolumne: `${RP}/tuolumne_river/scenes/start/poopenaut_valley`,
 };
 const D = "docs/river-pulse/", REF = D + "reference/", ARC = "docs/archive/river-pulse-history/";
