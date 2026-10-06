@@ -80,8 +80,13 @@ export async function validateRiverPackages(root) {
     }
     // A scene folder that river.json does not list would be invisible on the river home.
     for (const slot of await readdir(path.join(riverDir, "scenes")))
-      for (const id of await readdir(path.join(riverDir, "scenes", slot)))
-        assert.ok(listed.has(`${slot}/${id}`), `Scene folder ${slot}/${id} is not listed in ${river.name}/river.json`);
+      for (const id of await readdir(path.join(riverDir, "scenes", slot))) {
+        if (listed.has(`${slot}/${id}`)) continue;
+        // A published URL that moved leaves a redirect stub (only index.html, titled "Moved") in the build output.
+        const stub = path.join(riverDir, "scenes", slot, id, "index.html");
+        if (!(await exists(path.join(riverDir, "scenes", slot, id, "scene.json"))) && (await exists(stub)) && (await readFile(stub, "utf8")).includes("<title>Moved</title>")) continue;
+        assert.fail(`Scene folder ${slot}/${id} is not listed in ${river.name}/river.json`);
+      }
     rivers.push({ id: manifest.id, name: manifest.name, status: manifest.status, manifest: `rivers/${river.name}/river.json` });
   }
   discovered.sort((a, b) => a.river_pack.localeCompare(b.river_pack) || a.id.localeCompare(b.id));
