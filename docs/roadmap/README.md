@@ -31,12 +31,14 @@ D1 reservoir context comes first, then P1b startup profiling, then W1/W2 and T1/
 storage history. Preserve the shallow-water opening cameras. Landscape refinement and
 Ultra are secondary. Track dependencies still apply; storage history needs Crystal Springs.
 
-## Track RP — River Pulse
+## Track RP: River Pulse
 
-The accepted Hacienda scene, Map ribbon and Jenner coastal baseline are merged, pushed
-and deployed through RP10. Its bounded screenshot-capture fix resolved the historical RP8
-Pages block while preserving assertions. Local hydrodynamics and surveyed bed geometry
-remain future work.
+River Pulse follows the river template: a river map and a start, a scenic middle and an end per river, with the Russian River
+as the reference. Read the [River Pulse documentation](../river-pulse/README.md) first; the current state is in the
+[handoff](../HANDOFF.md). The numbering RP11-RP13 was used on two
+lines of work (suffix `b` marks the second).
+
+### Done (all on `main`, deployed)
 
 | ID | Task | Who | Needs | Status |
 |---|---|---|---|---|
@@ -49,6 +51,39 @@ remain future work.
 | RP8 | [Document and publish River Pulse](tasks/RP8-publish-river-pulse.md) | capable | RP7 | historical Pages timeout; accepted scenes deployed in RP10 |
 | RP9 | [Jenner estuary and Pacific shoreline](tasks/RP9-jenner-estuary.md) | capable | RP8 code | user accepted as a good starting point; focused checks pass |
 | RP10 | [Merge and publish Jenner](tasks/RP10-publish-jenner.md) | capable | RP9 | merged/pushed 4a404c4; Pages and live assets verified |
+| [RP11](tasks/RP11-river-atlas-sacramento.md) | River atlas and Sacramento data foundation | capable | merged | complete, on main |
+| [RP11b](tasks/RP11-hacienda-high-low.md) | Hacienda historical high and low water (east-fork line; its id collides with RP11) | capable | merged | complete, on main |
+| [RP12](tasks/RP12-california-overview.md) | California overview map | capable | merged | complete, on main |
+| [RP12b](tasks/RP12-river-pulse-visuals.md) | River Pulse visual pass (east-fork line) | capable | merged | complete, on main |
+| [RP13](tasks/RP13-sacramento-freeport.md) | Sacramento Freeport scene | capable | merged | complete, on main |
+| [RP13b](tasks/RP13-publish-branch.md) | Publish the east-fork work as a branch | capable | merged | complete; ported in RP32 |
+| [RP14-RP16](tasks/RP14-freeport-bridge-fidelity.md) | Freeport bridge, upper links, riverfront | capable | merged | complete, on main |
+| [RP17-RP18](tasks/RP17-eel-visual-baseline.md) | Eel visual baseline and state sources | capable | merged | complete, on main |
+| [RP19-RP23](tasks/RP23-tuolumne-reservoir-visuals.md) | Tuolumne foundation, form, dam and reservoir visuals | capable | merged | complete, on main |
+| [RP20, RP24-RP26](tasks/RP20-eel-bluff-forest.md) | Eel bluffs, forest, rock detail, water optics and reflection contact | capable | merged | complete, on main; contact still imperfect |
+| [RP27](tasks/RP27-river-water-adoption-land-form.md) | Shared river water, Eel 1 m hero land | capable | merged | complete, on main |
+| [RP28-RP30](tasks/RP28-river-home-layout.md) | River home, scene data cards, scene chrome consistency | capable | merged | complete, on main |
+| [RP31](tasks/RP31-river-template-restructure.md) | River template and modular structure, documentation rewrite | capable | merged | complete, on main |
+| [LM2, RP32](tasks/RP32-port-east-fork.md) | East Fork scene, river map, Jenner and Hacienda upgrades ported onto the template | capable | merged | complete, on main (946850a), deployed |
+
+### Open
+
+| ID | Task | Who | Needs | Status |
+|---|---|---|---|---|
+| RP34 | Human visual acceptance of the new river home, East Fork, Jenner and Hacienda extremes | human | live on Pages | open |
+| RP35 | Put the river map on the river home page (pins for start / middle / end) | capable | RP32 | open |
+| RP36 | Extract shared scene chrome (topbar, data card, view bar, evidence drawer) into `ui/` and migrate all six scenes | capable | RP30 | open |
+| RP37 | Bind live gauges: Eel at Scotia (USGS-11477000) is documented; find and verify a Tuolumne gauge. No invented values | capable | RP36 helps | open |
+| RP38 | River maps for the other five rivers (`map.status` is `planned`) | small | RP35 | open |
+| RP39 | Fill planned slots, one per pass, following Make a river: Sacramento, Eel and Tuolumne first (they already have a built scene) | capable | RP31 docs | open |
+| RP40 | Hide or gate the Review tools & runtime cost control for visitors on Eel and Tuolumne (needs your call: it is your review workflow) | small | decision | open |
+| RP41 | Measure GPU time and phone performance for Eel and Tuolumne (62 ms desktop at lowest tier with the dam context) | capable | none | open |
+| RP42 | Fix `scripts/verify-river-pulse.mjs` on Windows (static server path built from `URL.pathname`); predates RP31 | small | none | open |
+| RP43 | Eel water-to-shore contact and bluff silhouettes (remaining visual weaknesses from RP24-RP27) | capable | RP37 | open |
+| LM1 | Lake Mendocino reservoir bundle: the lake-side reservoir work was not in the pushed branch. Locate it before deciding | decision | find the branch | open |
+
+Task files for open items are written when they are picked up (copy the closest `tasks/RP*.md`). "small" suits a local model with
+exact files and checks; "capable" needs design and visual judgment; "human" and "decision" are yours.
 
 ## Track D — reservoir context
 

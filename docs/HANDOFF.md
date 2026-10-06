@@ -49,6 +49,8 @@ GPU timing and phone performance are unmeasured.
 
 ### Open items
 
+The maintained queue, with owners and dependencies, is [Track RP in the roadmap](./roadmap/README.md). The list below is the context behind it.
+
 - **Human acceptance** of the new layout, the river-home cards and the docs.
 - **River map view**: built for the Russian River (inset in each scene, from `rivers/russian_river/map/overview.json`); `planned` for the other five, and not yet shown on the river home page.
 - **Fill the planned slots** on the other rivers, following the Russian River. Follow [Make a river](./river-pulse/make-a-river.md).
