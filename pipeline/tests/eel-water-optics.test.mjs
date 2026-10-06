@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buildEelOpticalGrid } from "../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/eel-water-depth.js";
+import { buildEelOpticalGrid } from "../../river-pulse/rivers/eel_river/scenes/middle/scotia_bluffs/eel-water-depth.js";
 
 const terrain = (width, height, cellX = 1, cellZ = 1) => ({
   width, height, x0: -2, z0: -3, cellX, cellZ,

@@ -65,7 +65,7 @@ honest "planned" placeholders. The [Russian River](river-pulse/rivers/russian_ri
 |---|---|---|---|
 | [Russian](river-pulse/rivers/russian_river/README.md) | East Fork | Hacienda Bridge | Jenner Estuary |
 | [Sacramento](river-pulse/rivers/sacramento_river/README.md) | Headwaters Park *(planned)* | Freeport | Delta confluence *(planned)* |
-| [Eel](river-pulse/rivers/eel_river/README.md) | *planned* | *planned* | Scotia Bluffs |
+| [Eel](river-pulse/rivers/eel_river/README.md) | Lake Pillsbury *(planned)* | Scotia Bluffs | Estuary *(planned)* |
 | [Tuolumne](river-pulse/rivers/tuolumne_river/README.md) | Poopenaut Valley | *planned* | *planned* |
 | [San Joaquin](river-pulse/rivers/san_joaquin_river/README.md), [American](river-pulse/rivers/american_river/README.md) | *planned* | *planned* | *planned* |
 

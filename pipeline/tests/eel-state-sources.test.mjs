@@ -1,9 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import { watershedMap } from "../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/eel-state-layout.js";
+import { watershedMap } from "../../river-pulse/rivers/eel_river/scenes/middle/scotia_bluffs/eel-state-layout.js";
 
-const root = new URL("../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/data/", import.meta.url),
+const root = new URL("../../river-pulse/rivers/eel_river/scenes/middle/scotia_bluffs/data/", import.meta.url),
   json = async file => JSON.parse(await readFile(new URL(file, root), "utf8"));
 
 function contains(feature, [x, y]) {

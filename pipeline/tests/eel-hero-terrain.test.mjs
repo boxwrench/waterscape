@@ -4,9 +4,9 @@ import { readFileSync } from "node:fs";
 import { gunzipSync } from "node:zlib";
 import { buildRiverTerrainGrid } from "../../river-pulse/scene-kit/terrain-mesh.js";
 import { decodeRiverTerrain } from "../../river-pulse/scene-kit/terrain.js";
-import { buildEelHeroLand, createHeroGroundSampler, heroGround } from "../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/eel-hero-terrain.js";
+import { buildEelHeroLand, createHeroGroundSampler, heroGround } from "../../river-pulse/rivers/eel_river/scenes/middle/scotia_bluffs/eel-hero-terrain.js";
 
-const eelData = new URL("../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/data/", import.meta.url);
+const eelData = new URL("../../river-pulse/rivers/eel_river/scenes/middle/scotia_bluffs/data/", import.meta.url);
 
 function loadTerrainBundle(name) {
   const meta = JSON.parse(readFileSync(new URL(`${name}.json`, eelData), "utf8")),

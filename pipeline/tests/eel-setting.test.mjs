@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { forestSites, forestDetailSites } from "../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/eel-setting-layout.js";
+import { forestSites, forestDetailSites } from "../../river-pulse/rivers/eel_river/scenes/middle/scotia_bluffs/eel-setting-layout.js";
 
 test("forest scatter is deterministic and excludes mapped water, steep faces and cameras", () => {
   const terrain = { width: 40, height: 40, x0: 900, z0: -1600, cellX: 14, cellZ: 14,

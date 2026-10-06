@@ -1,0 +1,10 @@
+{
+  "schema_version": "river-pulse-scene-0.1",
+  "id": "lake_pillsbury",
+  "river": "eel_river",
+  "slot": "start",
+  "name": "Lake Pillsbury and Scott Dam outflow",
+  "status": "planned",
+  "note": "Placeholder that blocks out the river's structure. No scene, data or geography is implied.",
+  "choice": "The public start, as a dam-outflow start like the Russian and Sacramento rivers: the upper mainstem below Scott Dam, where the lake hands water to the river. The official source is high on the southern slopes of Bald Mountain in the Mendocino National Forest (roughly 6,700 ft), which is not the scene. Both statements come from the project owner's reading and must be sourced before a scene is built on them."
+}

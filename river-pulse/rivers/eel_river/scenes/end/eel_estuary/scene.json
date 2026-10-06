@@ -1,0 +1,10 @@
+{
+  "schema_version": "river-pulse-scene-0.1",
+  "id": "eel_estuary",
+  "river": "eel_river",
+  "slot": "end",
+  "name": "Eel River estuary and mouth (near Ferndale)",
+  "status": "planned",
+  "note": "Placeholder that blocks out the river's structure. No scene, data or geography is implied.",
+  "choice": "The mouth: the river spreading across the coastal plain and salt marsh to the Pacific, in Humboldt County south of Humboldt Bay. The exact view is decided when the place is sourced. Winter sediment plumes are a known feature but not a claim about any scene."
+}

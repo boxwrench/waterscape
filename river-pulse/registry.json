@@ -44,7 +44,7 @@
       "id": "scotia_bluffs",
       "name": "Scotia Bluffs visual study",
       "hydrologic_context": "river_reach",
-      "manifest": "rivers/eel_river/scenes/end/scotia_bluffs/data/place.json",
+      "manifest": "rivers/eel_river/scenes/middle/scotia_bluffs/data/place.json",
       "supported_capabilities": [
         "terrain_context",
         "visual_study"

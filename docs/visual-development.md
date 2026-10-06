@@ -1,6 +1,6 @@
 # Visual development and verification
 
-Trialed on [Eel River / Scotia Bluffs](../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/README.md), RP17.
+Trialed on [Eel River / Scotia Bluffs](../river-pulse/rivers/eel_river/scenes/middle/scotia_bluffs/README.md), RP17.
 The first rendered comparison exposed a broken water/terrain contact that code
 checks had missed. The process is useful; visual acceptance remains a human decision.
 
@@ -38,7 +38,7 @@ fit and rendered evidence. Dry-slope surface shading can often be adapted while
 retaining the native river elevations; reservoir water-level, shoreline and
 bathymetry assumptions require their own river binding. Preserve a selectable
 previous material so a narrow surface pass can be compared with identical
-geometry, forest, camera and lighting. RP24's [source audit](../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/notes/rp24-source-audit.md)
+geometry, forest, camera and lighting. RP24's [source audit](../river-pulse/rivers/eel_river/scenes/middle/scotia_bluffs/notes/rp24-source-audit.md)
 records candidates across rivers. Tuolumne's full original Hetch Hetchy context
 and reuse matrix are currently in the isolated `waterscape-tuolumne-rp19` checkout.
 

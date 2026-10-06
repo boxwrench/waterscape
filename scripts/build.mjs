@@ -114,7 +114,7 @@ const movedScenes = {
   hacienda: "rivers/russian_river/scenes/middle/hacienda_bridge/",
   jenner: "rivers/russian_river/scenes/end/jenner/",
   freeport: "rivers/sacramento_river/scenes/middle/freeport/",
-  eel: "rivers/eel_river/scenes/end/scotia_bluffs/",
+  eel: "rivers/eel_river/scenes/middle/scotia_bluffs/",
   tuolumne: "rivers/tuolumne_river/scenes/start/poopenaut_valley/",
 };
 await mkdir(path.join(out, "river-pulse", "renderer"), { recursive: true });
@@ -125,12 +125,14 @@ for (const [name, target] of Object.entries(movedScenes)) {
     `<link rel="canonical" href="${to}"><p>This scene moved to <a href="${to}">${target}</a>.</p>
 `);
 }
-// Freeport was briefly published in the end slot before it became the Sacramento middle (RP44).
-const freeportOld = path.join(out, "river-pulse", "rivers", "sacramento_river", "scenes", "end", "freeport");
-await mkdir(freeportOld, { recursive: true });
-await writeFile(path.join(freeportOld, "index.html"),
-  '<!doctype html><meta charset="utf-8"><title>Moved</title><meta http-equiv="refresh" content="0; url=../../middle/freeport/">' +
-  '<link rel="canonical" href="../../middle/freeport/"><p>This scene moved to <a href="../../middle/freeport/">the Sacramento middle slot</a>.</p>');
+// Scenes briefly published in the end slot before becoming a river's middle (RP44) keep their URLs as redirects.
+for (const [river, scene] of [["sacramento_river", "freeport"], ["eel_river", "scotia_bluffs"]]) {
+  const oldDir = path.join(out, "river-pulse", "rivers", river, "scenes", "end", scene), to = `../../middle/${scene}/`;
+  await mkdir(oldDir, { recursive: true });
+  await writeFile(path.join(oldDir, "index.html"),
+    `<!doctype html><meta charset="utf-8"><title>Moved</title><meta http-equiv="refresh" content="0; url=${to}">` +
+    `<link rel="canonical" href="${to}"><p>This scene moved to <a href="${to}">the middle slot</a>.</p>`);
+}
 await writeFile(path.join(out, ".nojekyll"), "");
 console.log(
   `Built Pages with ${modules.size} browser modules, shared CUDA source and licensed assets.`,

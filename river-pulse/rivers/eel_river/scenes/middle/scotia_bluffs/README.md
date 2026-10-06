@@ -5,12 +5,12 @@
 >
 > | | |
 > |---|---|
-> | River / slot | `eel_river` / `end` |
+> | River / slot | `eel_river` / `middle` |
 > | Place id | `scotia_bluffs` |
 > | Fidelity | USGS terrain, illustrative water |
 > | Data | fine terrain |
 > | Views | Overview, Bluffs, Eye level, Shoreline, Bend |
-> | Open locally | <http://localhost:5173/river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/index.html> |
+> | Open locally | <http://localhost:5173/river-pulse/rivers/eel_river/scenes/middle/scotia_bluffs/index.html> |
 > | Layout | page `index.html`, scene code beside it, sourced data in `data/`, notes in `notes/` |
 <!-- /scene-card -->
 

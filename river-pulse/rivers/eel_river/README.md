@@ -9,9 +9,9 @@ Status: **in development**. A first visual study of Scotia Bluffs: the Eel's riv
 <!-- slots: generated from river.json and scene.json files; run node scripts/sync-river-readmes.mjs -->
 | Slot | Scene | Status | Data | Views |
 |---|---|---|---|---|
-| start | Start (to be chosen) | **planned** | n/a | n/a |
-| middle | Middle (to be chosen) | **planned** | n/a | n/a |
-| end | [Scotia Bluffs visual study](scenes/end/scotia_bluffs/README.md) | built | fine terrain | Overview, Bluffs, Eye level, Shoreline, Bend |
+| start | Lake Pillsbury and Scott Dam outflow | **planned** | n/a | n/a |
+| middle | [Scotia Bluffs visual study](scenes/middle/scotia_bluffs/README.md) | built | fine terrain | Overview, Bluffs, Eye level, Shoreline, Bend |
+| end | Eel River estuary and mouth (near Ferndale) | **planned** | n/a | n/a |
 <!-- /slots -->
 
 ## Sources

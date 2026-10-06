@@ -24,7 +24,7 @@ and are grounded on the selected surface.
 
 - Eel bundles an 800×750-cell, all-valid crop from USGS 3DEP Northern California
   Wildfires B4, 2018 project. Bounded byte ranges verify the source and crop;
-  [source audit](../../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/notes/eel-hero-lidar-audit.md) records alternatives, coordinates, CRS
+  [source audit](../../../river-pulse/rivers/eel_river/scenes/middle/scotia_bluffs/notes/eel-hero-lidar-audit.md) records alternatives, coordinates, CRS
   operation and provenance. Source spacing is 1 m; desktop eye/shore meshes use
   2 m spacing, primary/phone meshes 4 m, with the original 14.05 m terrain outside.
   A two-coarse-cell seam and wet-edge blend preserve the existing water contact.

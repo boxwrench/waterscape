@@ -60,7 +60,7 @@ below describe their original checkpoints, including the earlier opt-in defaults
 Implemented locally on `task/RP26`, pending human visual acceptance. Three cheaper
 agents were reused for reflection/contact audits, peer review, gallery and checks.
 [Actual comparison gallery](../../previews/eel/rp26/review.html) and
-[review record](../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/notes/eel-reflection-contact-review.md) preserve six matched
+[review record](../../river-pulse/rivers/eel_river/scenes/middle/scotia_bluffs/notes/eel-reflection-contact-review.md) preserve six matched
 desktop/phone pairs at zero wave phase. An Eel-only depth-sensitive reflection guard
 strongly reduces broad white bank patches while retaining main-view reflections.
 A thin bright rim, warped reflection and coarse contact remain; this is not a
@@ -74,7 +74,7 @@ Implemented locally on `task/RP25`, pending human visual acceptance. Three cheap
 agents handled the deterministic depth adapter/tests, compatibility audit and
 comparison gallery; root integrated and inspected actual desktop/phone renders.
 [Comparison gallery](../../previews/eel/rp25/review.html) and
-[review record](../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/notes/eel-water-optics-review.md) preserve paired evidence.
+[review record](../../river-pulse/rivers/eel_river/scenes/middle/scotia_bluffs/notes/eel-water-optics-review.md) preserve paired evidence.
 The previous water remains the default. Optional Hacienda optics improve forest
 reflection and shallows, but close bright edges and nonplanar reflection mismatch
 remain. Added reflection nearly doubles rendered triangles; GPU time is unmeasured.
@@ -106,7 +106,7 @@ Freeport review cameras remains unverified; Eel still renders the 14.05 m 3DEP g
 
 Complete locally on `task/RP24`; awaiting human visual acceptance. The
 [actual comparison gallery](../../previews/eel/rp24/review.html) and
-[review record](../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/notes/eel-reservoir-surface-review.md) preserve five fixed
+[review record](../../river-pulse/rivers/eel_river/scenes/middle/scotia_bluffs/notes/eel-reservoir-surface-review.md) preserve five fixed
 desktop/phone before-after pairs, form/source views, California context, material
 iterations, motion/pause frames and runtime measurements. Eel's dry bluff material
 reuses existing CC0 Rock030 maps and reservoir triplanar technique through
@@ -118,7 +118,7 @@ Three cheaper agents were reused and redeployed for the module/gallery, source a
 projection audit, and Tuolumne performance audit. Root corrected an identified UV /
 normal-axis mismatch, integrated the module and inspected actual runtime renders.
 Reuse-first guidance now appears in `docs/visual-development.md`; cross-river
-recommendations are in [the source audit](../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/notes/rp24-source-audit.md).
+recommendations are in [the source audit](../../river-pulse/rivers/eel_river/scenes/middle/scotia_bluffs/notes/rp24-source-audit.md).
 
 Seven focused tests, package validation and the 120-module build pass. Browser
 errors are empty; phone has no horizontal overflow; settled pause images match.
@@ -151,7 +151,7 @@ the next material reuse candidate. This isolated work is not merged into this ch
 
 Complete locally on `task/RP20`; this visual pass awaits human acceptance.
 The [actual comparison gallery](../../previews/eel/rp20/review.html) and
-[review record](../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/notes/eel-bluff-forest-review.md) preserve five fixed desktop
+[review record](../../river-pulse/rivers/eel_river/scenes/middle/scotia_bluffs/notes/eel-bluff-forest-review.md) preserve five fixed desktop
 and phone views, the original primary baseline, source/form presentations, failed
 iterations and measured costs. Deterministic Setting trees reuse licensed reservoir
 mesh/atlas assets; authored rock grain and weathering improve the forest silhouette
@@ -209,11 +209,11 @@ catalog did not intersect this study extent. The actual CA09_Perkins survey
 footprint verifies partial 1 m availability at the station, but not the main bluff
 review targets; this NCALM/NSF/UC Santa Cruz project is not state agency data.
 Full-study 1 m availability remains unverified; a failed National Map catalog
-request is not evidence of absence. See the [source audit](../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/notes/eel-source-audit.md).
+request is not evidence of absence. See the [source audit](../../river-pulse/rivers/eel_river/scenes/middle/scotia_bluffs/notes/eel-source-audit.md).
 The [workflow](../visual-development.md) now requires a California source search and
 coverage/date/CRS/vertical-datum/source-resolution/runtime-sampling audit, while
 retaining federal origins for state-hosted federal products. Source inputs and
-limitations are in the [Eel review](../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/README.md).
+limitations are in the [Eel review](../../river-pulse/rivers/eel_river/scenes/middle/scotia_bluffs/README.md).
 
 Verification: five focused source/geometry tests, river package validation and
 the complete 117-module build pass. Actual state inset and entry button inspected
@@ -330,7 +330,7 @@ The first actual render exposed triangular water/terrain gaps; related plane/dep
 corrections are preserved in before/after evidence. Detailed vegetation/structures
 and convincing close water remain future passes. The user subsequently accepted
 this first form baseline on 2026-10-04; the detailed environment remains unfinished.
-The [reusable process](../visual-development.md) and [review record](../../river-pulse/rivers/eel_river/scenes/end/scotia_bluffs/README.md)
+The [reusable process](../visual-development.md) and [review record](../../river-pulse/rivers/eel_river/scenes/middle/scotia_bluffs/README.md)
 explain provenance, weak points and measurement limits. Work is local; never pushed.
 Verification: 9 focused tests, river validation, registry regeneration check and
 complete build pass. Five desktop/phone cameras, form/source modes, Evidence,

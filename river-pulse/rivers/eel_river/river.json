@@ -10,19 +10,20 @@
   "scenes": [
     {
       "slot": "start",
-      "id": "start_to_be_chosen"
+      "id": "lake_pillsbury"
     },
     {
       "slot": "middle",
-      "id": "middle_to_be_chosen"
+      "id": "scotia_bluffs"
     },
     {
       "slot": "end",
-      "id": "scotia_bluffs"
+      "id": "eel_estuary"
     }
   ],
   "next_steps": [
-    "Review the fixed cameras and accept or refine the major forms before detailed setting work."
+    "Review the fixed cameras and accept or refine the major forms before detailed setting work.",
+    "Other recognisable places for an optional `extra` slot or a later pass: the Dos Rios confluence of the Middle and North Forks, and the South Fork confluence at Dyerville in Humboldt Redwoods."
   ],
   "references": [
     {
