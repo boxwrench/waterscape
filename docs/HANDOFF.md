@@ -58,4 +58,4 @@ The maintained queue, with owners and dependencies, is [Track RP in the roadmap]
 - **Hacienda's data language** (live card, history chart, condition band) should reach Jenner (no daily series exists for its tidal gauge) and the
   terrain-only scenes only where their data supports it.
 - **Eel and Tuolumne** still show a small `Review tools & runtime cost` control to every visitor.
-- **Tuolumne dam context** costs 62 ms per frame on desktop at the lowest quality tier (see `rivers/tuolumne_river/scenes/start/poopenaut_valley/notes/`).
+- **Tuolumne dam context** costs 62 ms per frame on desktop at the lowest quality tier (see `rivers/tuolumne_river/scenes/middle/poopenaut_valley/notes/`).

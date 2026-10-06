@@ -139,7 +139,7 @@ http://localhost:5174/river-pulse/renderer/tuolumne.html?view=below ; actual rev
 http://localhost:5174/previews/tuolumne/rp23/review.html . Native 1 m LiDAR remains
 unacquired; a 1 m-spaced service-resampled shading image does not supply 1 m geometry.
 
-The [performance audit](../../river-pulse/rivers/tuolumne_river/scenes/start/poopenaut_valley/notes/rp24-tuolumne-performance-audit.md) records
+The [performance audit](../../river-pulse/rivers/tuolumne_river/scenes/middle/poopenaut_valley/notes/rp24-tuolumne-performance-audit.md) records
 62.3 ms desktop / 35.5 ms phone submission-plus-completion waits at low quality,
 121.78 / 117.86 MiB tracked engine buffers and unmeasured follow-up hypotheses.
 Hidden/paused gating stops submissions but retains allocated buffers. The desktop

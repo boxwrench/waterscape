@@ -12,7 +12,7 @@ RP23 keeps Poopenaut's native scene in its own Three.js renderer. Its current re
 triangles and three calls, while geometry and texture totals stay resident. Its scene renders
 on view or control changes. These are native renderer counters and estimates, not GPU timing or
 whole-page memory ([Tuolumne review](../../../previews/tuolumne/rp23/review.html),
-[integration](../../../river-pulse/rivers/tuolumne_river/scenes/start/poopenaut_valley/tuolumne.js)).
+[integration](../../../river-pulse/rivers/tuolumne_river/scenes/middle/poopenaut_valley/tuolumne.js)).
 
 The lazily loaded Hetch Hetchy renderer is a second rendering path and retains one engine after
 first use. At 768x648 desktop low quality, its rolling submission-plus-GPU-completion wait

@@ -98,7 +98,7 @@ retry outside the sandbox passed. No test failure was hidden by a visual claim.
 ## Parallel work and next pass
 
 Three cheaper agents produced the isolated material module/comparison gallery,
-source/projection audit, and [Tuolumne performance audit](../../../../../tuolumne_river/scenes/start/poopenaut_valley/notes/rp24-tuolumne-performance-audit.md).
+source/projection audit, and [Tuolumne performance audit](../../../../../tuolumne_river/scenes/middle/poopenaut_valley/notes/rp24-tuolumne-performance-audit.md).
 Completed agents were redeployed within the pass; root integrated and reviewed.
 The Tuolumne audit identifies wrapper-level resolution/glare trials with no measured
 savings yet. Its full reservoir context remains in the isolated RP23 checkout.

@@ -2,7 +2,7 @@
   "schema_version": "river-pulse-scene-0.1",
   "id": "poopenaut_valley",
   "river": "tuolumne_river",
-  "slot": "start",
+  "slot": "middle",
   "name": "Poopenaut Valley form study",
   "status": "built",
   "fidelity": "Native elevations, authored water",

@@ -1,0 +1,10 @@
+{
+  "schema_version": "river-pulse-scene-0.1",
+  "id": "upper_tuolumne",
+  "river": "tuolumne_river",
+  "slot": "start",
+  "name": "Upper Tuolumne (Hetch Hetchy or the meadows: to be chosen)",
+  "status": "planned",
+  "note": "Placeholder that blocks out the river's structure. No scene, data or geography is implied.",
+  "choice": "Open. O'Shaughnessy Dam is the regulated river's natural start (a dam-outflow start, like the other rivers), and the project owner can also see it as the middle. Poopenaut Valley, below the dam, is the middle scene, and its dam views already cover the dam. The start is therefore reserved for the upper river; the choice is made when it is sourced. Reversible: a one-folder rename."
+}

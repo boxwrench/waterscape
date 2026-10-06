@@ -4,7 +4,7 @@ from pathlib import Path
 
 import geo
 
-OUT = Path(__file__).resolve().parent.parent / "river-pulse/rivers/tuolumne_river/scenes/start/poopenaut_valley/data"
+OUT = Path(__file__).resolve().parent.parent / "river-pulse/rivers/tuolumne_river/scenes/middle/poopenaut_valley/data"
 
 
 def main():

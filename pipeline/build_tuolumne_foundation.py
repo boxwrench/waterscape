@@ -12,7 +12,7 @@ from pathlib import Path
 from aerial import SERVICE, CREDIT, grid_extent
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT = ROOT / "river-pulse/rivers/tuolumne_river/scenes/start/poopenaut_valley/data"
+OUT = ROOT / "river-pulse/rivers/tuolumne_river/scenes/middle/poopenaut_valley/data"
 CALWATER = "https://gispublic.waterboards.ca.gov/portalserver/rest/services/Hydrology/CalWater_Boundaries/MapServer"
 FLOWLINES = "https://3dhp.nationalmap.gov/arcgis/rest/services/usgs_3dhp_all/FeatureServer/50"
 

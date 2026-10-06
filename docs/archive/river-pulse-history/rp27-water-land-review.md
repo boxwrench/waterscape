@@ -42,7 +42,7 @@ and are grounded on the selected surface.
   retains the separate existing dam-contact treatment while the dam is visible.
 - The eye-level Tuolumne camera was corrected from v3 to v4 after the first
   render exposed off-channel dry-ground occlusion. Its new sightline crosses the
-  mapped river without excavating that dry foreground. [Camera record](../../../river-pulse/rivers/tuolumne_river/scenes/start/poopenaut_valley/notes/tuolumne-eye-camera-review.md).
+  mapped river without excavating that dry foreground. [Camera record](../../../river-pulse/rivers/tuolumne_river/scenes/middle/poopenaut_valley/notes/tuolumne-eye-camera-review.md).
 - The clarified journey uses existing content: California overview → each
   river's own home → manifest scenes → fixed views. Camera views are not new
   geographic scenes. [Inventory](./river-scene-journey.md).

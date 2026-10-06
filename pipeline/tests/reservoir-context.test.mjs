@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { riverPoseToReservoir } from "../../river-pulse/scene-kit/reservoir-context-pose.js";
 
 const json = (file) => JSON.parse(readFileSync(new URL(file, import.meta.url))),
-  riverMeta = json("../../river-pulse/rivers/tuolumne_river/scenes/start/poopenaut_valley/data/terrain.json"),
+  riverMeta = json("../../river-pulse/rivers/tuolumne_river/scenes/middle/poopenaut_valley/data/terrain.json"),
   reservoirMeta = json("../../data/hetch_hetchy/terrain.json"),
   close = (actual, expected, tolerance = 1e-8) => assert.ok(Math.abs(actual - expected) <= tolerance,
     `${actual} differs from ${expected} by more than ${tolerance}`);

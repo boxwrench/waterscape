@@ -1,0 +1,10 @@
+{
+  "schema_version": "river-pulse-scene-0.1",
+  "id": "san_joaquin_confluence",
+  "river": "tuolumne_river",
+  "slot": "end",
+  "name": "San Joaquin confluence (Dos Rios State Park, near Grayson and Modesto)",
+  "status": "planned",
+  "note": "Placeholder that blocks out the river's structure. No scene, data or geography is implied.",
+  "choice": "Where the Tuolumne empties into the San Joaquin, about 2 miles north of Grayson and west of Modesto in Stanislaus County, within the San Joaquin River National Wildlife Refuge and the focus of Dos Rios State Park (floodplain and riparian restoration). Note: this is a different Dos Rios from the Eel River's confluence in Mendocino County. From the project owner's reading; to be sourced before a scene is built."
+}

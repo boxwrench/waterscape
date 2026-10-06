@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { gunzipSync } from "node:zlib";
 import { buildTuolumneWaterGeometry, createTuolumneWater,
-  buildTuolumneContactPositions, tuolumneTerrainSurfaceGround } from "../../river-pulse/rivers/tuolumne_river/scenes/start/poopenaut_valley/tuolumne-water.js";
+  buildTuolumneContactPositions, tuolumneTerrainSurfaceGround } from "../../river-pulse/rivers/tuolumne_river/scenes/middle/poopenaut_valley/tuolumne-water.js";
 import { decodeRiverTerrain } from "../../river-pulse/scene-kit/terrain.js";
 import { buildRiverTerrainGrid } from "../../river-pulse/scene-kit/terrain-mesh.js";
 
@@ -66,7 +66,7 @@ test("study contact cut is copied, bounded under the ribbon, and reports its aut
 });
 
 test("bundled Poopenaut source builds bounded, DEM-clipped illustrative water", () => {
-  const base = new URL("../../river-pulse/rivers/tuolumne_river/scenes/start/poopenaut_valley/data/", import.meta.url),
+  const base = new URL("../../river-pulse/rivers/tuolumne_river/scenes/middle/poopenaut_valley/data/", import.meta.url),
     meta = JSON.parse(readFileSync(new URL("terrain.json", base))),
     compressed = gunzipSync(readFileSync(new URL("terrain.bin.gz", base))),
     terrain = decodeRiverTerrain(meta, compressed.buffer.slice(compressed.byteOffset, compressed.byteOffset + compressed.byteLength)),

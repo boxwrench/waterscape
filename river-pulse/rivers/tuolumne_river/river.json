@@ -10,15 +10,15 @@
   "scenes": [
     {
       "slot": "start",
-      "id": "poopenaut_valley"
+      "id": "upper_tuolumne"
     },
     {
       "slot": "middle",
-      "id": "middle_to_be_chosen"
+      "id": "poopenaut_valley"
     },
     {
       "slot": "end",
-      "id": "end_to_be_chosen"
+      "id": "san_joaquin_confluence"
     }
   ],
   "next_steps": [

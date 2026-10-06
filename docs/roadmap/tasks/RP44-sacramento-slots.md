@@ -27,3 +27,9 @@ Same correction for the Eel River: Scotia Bluffs (downstream of the South Fork c
 The **start** is Lake Pillsbury and Scott Dam outflow (a dam-outflow start; the official source on Bald Mountain is a note), the **end** is the Eel River estuary and
 mouth near Ferndale. The owner's diagram also names the Dos Rios and South Fork (Dyerville) confluences; they are recorded as candidates for an optional `extra` slot.
 All of this comes from the owner's reading and must be sourced before a scene is built. The published `scenes/end/scotia_bluffs/` URL redirects to the middle.
+
+## Addendum: Tuolumne
+
+Poopenaut Valley (the valley below O'Shaughnessy Dam, with the dam views) moved from `start` to `middle`; the owner said the dam is arguably the start but could be seen as the
+middle. The **start** is reserved for the upper river (Hetch Hetchy or the meadows, to be chosen), the **end** is the San Joaquin confluence at Dos Rios State Park near Grayson and
+Modesto (a different Dos Rios from the Eel's). Reversible with a folder rename. From the owner's reading; to be sourced. The published `scenes/start/poopenaut_valley/` URL redirects.

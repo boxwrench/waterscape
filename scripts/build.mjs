@@ -115,7 +115,7 @@ const movedScenes = {
   jenner: "rivers/russian_river/scenes/end/jenner/",
   freeport: "rivers/sacramento_river/scenes/middle/freeport/",
   eel: "rivers/eel_river/scenes/middle/scotia_bluffs/",
-  tuolumne: "rivers/tuolumne_river/scenes/start/poopenaut_valley/",
+  tuolumne: "rivers/tuolumne_river/scenes/middle/poopenaut_valley/",
 };
 await mkdir(path.join(out, "river-pulse", "renderer"), { recursive: true });
 for (const [name, target] of Object.entries(movedScenes)) {
@@ -125,9 +125,9 @@ for (const [name, target] of Object.entries(movedScenes)) {
     `<link rel="canonical" href="${to}"><p>This scene moved to <a href="${to}">${target}</a>.</p>
 `);
 }
-// Scenes briefly published in the end slot before becoming a river's middle (RP44) keep their URLs as redirects.
-for (const [river, scene] of [["sacramento_river", "freeport"], ["eel_river", "scotia_bluffs"]]) {
-  const oldDir = path.join(out, "river-pulse", "rivers", river, "scenes", "end", scene), to = `../../middle/${scene}/`;
+// Scenes briefly published in another slot before becoming a river's middle (RP44) keep their URLs as redirects.
+for (const [river, oldSlot, scene] of [["sacramento_river", "end", "freeport"], ["eel_river", "end", "scotia_bluffs"], ["tuolumne_river", "start", "poopenaut_valley"]]) {
+  const oldDir = path.join(out, "river-pulse", "rivers", river, "scenes", oldSlot, scene), to = `../../middle/${scene}/`;
   await mkdir(oldDir, { recursive: true });
   await writeFile(path.join(oldDir, "index.html"),
     `<!doctype html><meta charset="utf-8"><title>Moved</title><meta http-equiv="refresh" content="0; url=${to}">` +

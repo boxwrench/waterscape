@@ -65,7 +65,7 @@ lines of work (suffix `b` marks the second).
 | [RP28-RP30](tasks/RP28-river-home-layout.md) | River home, scene data cards, scene chrome consistency | capable | merged | complete, on main |
 | [RP31](tasks/RP31-river-template-restructure.md) | River template and modular structure, documentation rewrite | capable | merged | complete, on main |
 | [LM2, RP32](tasks/RP32-port-east-fork.md) | East Fork scene, river map, Jenner and Hacienda upgrades ported onto the template | capable | merged | complete, on main (946850a), deployed |
-| RP44 | Sacramento and Eel slots: Freeport and Scotia Bluffs become the middles; Headwaters Park, the Delta confluence, Lake Pillsbury and the Eel estuary named as planned placeholders | capable | merged | complete, local branch task/RP44-sacramento-slots |
+| RP44 | Sacramento, Eel and Tuolumne slots: Freeport, Scotia Bluffs and Poopenaut Valley become the middles; the six missing starts and ends named as planned placeholders | capable | merged | complete, local branch task/RP44-sacramento-slots |
 
 ### Open
 
@@ -81,8 +81,10 @@ lines of work (suffix `b` marks the second).
 | RP47 | **Eel quality pass** (Scotia Bluffs, the middle): add an authored bank-level scene (gravel bar and bluff face, photo-informed setting, shared bank and tree assets) and keep today's terrain scene as the Overview view. Terrain tuning alone has hit its ceiling (RP20-RP27) | capable | RP36 helps | open |
 | RP49 | Eel end: the Eel River estuary and mouth near Ferndale. Source the place first, then author a bank-level scene | capable | RP44 | open |
 | RP50 | Eel start: Lake Pillsbury and Scott Dam outflow (official source on Bald Mountain is a note, not the scene). Source it, then author | capable | RP44 | open |
+| RP51 | Tuolumne end: the San Joaquin confluence at Dos Rios State Park. Source the place, then author a bank-level scene | capable | RP44 | open |
+| RP52 | Tuolumne start: choose between Hetch Hetchy (the dam as start) and the upper meadows, source it, then author. The dam views already exist in the Poopenaut scene | capable | RP44 | open |
 | RP48 | **Tuolumne quality pass**: add an authored granite river-reach scene below the dam using the Sierra granite and reservoir rock materials; keep the valley and dam views as context | capable | RP36 helps | open |
-| RP39 | Fill the remaining planned slots, one per pass (Tuolumne middle and end, San Joaquin and American), following Make a river | capable | RP31 docs | open |
+| RP39 | Fill the remaining planned slots, one per pass (San Joaquin and American), following Make a river | capable | RP31 docs | open |
 | RP40 | Hide or gate the Review tools & runtime cost control for visitors on Eel and Tuolumne (needs your call: it is your review workflow) | small | decision | open |
 | RP41 | Measure GPU time and phone performance for Eel and Tuolumne (62 ms desktop at lowest tier with the dam context) | capable | none | open |
 | RP42 | Fix `scripts/verify-river-pulse.mjs` on Windows (static server path built from `URL.pathname`); predates RP31 | small | none | open |

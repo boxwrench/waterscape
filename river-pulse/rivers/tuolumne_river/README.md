@@ -9,9 +9,9 @@ Status: **in development**. Yosemite's high Sierra meadows, granite canyons and 
 <!-- slots: generated from river.json and scene.json files; run node scripts/sync-river-readmes.mjs -->
 | Slot | Scene | Status | Data | Views |
 |---|---|---|---|---|
-| start | [Poopenaut Valley form study](scenes/start/poopenaut_valley/README.md) | built | geography only | Overview, Valley, Eye level, River contact, Dam transition, Dam close-up, Below dam, Reservoir |
-| middle | Middle (to be chosen) | **planned** | n/a | n/a |
-| end | End (to be chosen) | **planned** | n/a | n/a |
+| start | Upper Tuolumne (Hetch Hetchy or the meadows: to be chosen) | **planned** | n/a | n/a |
+| middle | [Poopenaut Valley form study](scenes/middle/poopenaut_valley/README.md) | built | geography only | Overview, Valley, Eye level, River contact, Dam transition, Dam close-up, Below dam, Reservoir |
+| end | San Joaquin confluence (Dos Rios State Park, near Grayson and Modesto) | **planned** | n/a | n/a |
 <!-- /slots -->
 
 ## Sources

@@ -37,7 +37,7 @@ river-pulse/
 | [Russian](rivers/russian_river/README.md) (reference) | East Fork (start), Hacienda Bridge (middle), Jenner Estuary (end), plus its river map | none |
 | [Sacramento](rivers/sacramento_river/README.md) | Freeport (middle) | Headwaters Park (start), Delta confluence (end) |
 | [Eel](rivers/eel_river/README.md) | Scotia Bluffs (middle) | Lake Pillsbury (start), Eel estuary (end) |
-| [Tuolumne](rivers/tuolumne_river/README.md) | Poopenaut Valley (start) | middle, end |
+| [Tuolumne](rivers/tuolumne_river/README.md) | Poopenaut Valley (middle) | Upper Tuolumne (start), San Joaquin confluence (end) |
 | [San Joaquin](rivers/san_joaquin_river/README.md), [American](rivers/american_river/README.md) | none | all slots |
 
 Root `vendor/`, the camera and projection utilities in `renderer/engine/`, `pipeline/`, `scripts/` and dependency installation are shared with

@@ -5,12 +5,12 @@
 >
 > | | |
 > |---|---|
-> | River / slot | `tuolumne_river` / `start` |
+> | River / slot | `tuolumne_river` / `middle` |
 > | Place id | `poopenaut_valley` |
 > | Fidelity | Native elevations, authored water |
 > | Data | geography only |
 > | Views | Overview, Valley, Eye level, River contact, Dam transition, Dam close-up, Below dam, Reservoir |
-> | Open locally | <http://localhost:5173/river-pulse/rivers/tuolumne_river/scenes/start/poopenaut_valley/index.html> |
+> | Open locally | <http://localhost:5173/river-pulse/rivers/tuolumne_river/scenes/middle/poopenaut_valley/index.html> |
 > | Layout | page `index.html`, scene code beside it, sourced data in `data/`, notes in `notes/` |
 <!-- /scene-card -->
 

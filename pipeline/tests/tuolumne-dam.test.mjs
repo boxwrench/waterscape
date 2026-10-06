@@ -2,11 +2,11 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { damGeometry, crestScene } from "../../renderer/land/structures.js";
-import { damTerrainAdapter, damContactPositions } from "../../river-pulse/rivers/tuolumne_river/scenes/start/poopenaut_valley/tuolumne-dam.js";
+import { damTerrainAdapter, damContactPositions } from "../../river-pulse/rivers/tuolumne_river/scenes/middle/poopenaut_valley/tuolumne-dam.js";
 
 const json = file => JSON.parse(readFileSync(new URL(file, import.meta.url))),
   structures = json("../../data/hetch_hetchy/structures.json"),
-  river = json("../../river-pulse/rivers/tuolumne_river/scenes/start/poopenaut_valley/data/terrain.json"),
+  river = json("../../river-pulse/rivers/tuolumne_river/scenes/middle/poopenaut_valley/data/terrain.json"),
   reservoir = json("../../data/hetch_hetchy/terrain.json");
 
 test("reused dam retains absolute crest height and UTM position inside Tuolumne terrain", () => {
