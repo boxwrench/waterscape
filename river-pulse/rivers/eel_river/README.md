@@ -2,7 +2,7 @@
 
 A Lower Eel reach at Scotia Bluffs: native 3DEP terrain with a 1 m USGS lidar crop at the hero cameras, mapped river footprint and illustrative water.
 
-Status: **in development**. A first visual study of Scotia Bluffs: the Eel's river bend, gravel bars and steep valley sides. Review the landforms before detailed vegetation and water work.
+Status: **in development**. California's third-largest river system, from Scott Dam in the Coast Ranges, past the gravel bars and steep bluffs at Scotia, to the estuary on the Humboldt coast.
 
 ## Scenes
 
