@@ -125,6 +125,12 @@ for (const [name, target] of Object.entries(movedScenes)) {
     `<link rel="canonical" href="${to}"><p>This scene moved to <a href="${to}">${target}</a>.</p>
 `);
 }
+// Freeport was briefly published in the end slot before it became the Sacramento middle (RP44).
+const freeportOld = path.join(out, "river-pulse", "rivers", "sacramento_river", "scenes", "end", "freeport");
+await mkdir(freeportOld, { recursive: true });
+await writeFile(path.join(freeportOld, "index.html"),
+  '<!doctype html><meta charset="utf-8"><title>Moved</title><meta http-equiv="refresh" content="0; url=../../middle/freeport/">' +
+  '<link rel="canonical" href="../../middle/freeport/"><p>This scene moved to <a href="../../middle/freeport/">the Sacramento middle slot</a>.</p>');
 await writeFile(path.join(out, ".nojekyll"), "");
 console.log(
   `Built Pages with ${modules.size} browser modules, shared CUDA source and licensed assets.`,
