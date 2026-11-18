@@ -108,6 +108,72 @@ Calaveras and San Antonio specify a Diablo oak setting with golden summer grass,
 Springs specifies an oak/fir setting. Reuse the workflow, but implement and verify each biome,
 dam and crop from its own bundle rather than reusing Hetch Hetchy constants.
 
+## Install guide (Linux and Windows)
+
+Checked on 2026-11-18 against Minecraft Java **26.2** (the launcher may offer a newer release;
+do not use it for this world, because the first open of a world in a newer version upgrades it
+one way). Versions below came from the Fabric and Modrinth APIs on that date; re-check each
+project's version page for 26.2 before reusing them.
+
+| Piece | Version for 26.2 | Required for |
+|---|---|---|
+| Fabric Loader | 0.20.1 (installer 1.1.2) | all mods |
+| [Fabric API](https://modrinth.com/mod/fabric-api) | 0.161.0+26.2 | all mods |
+| [Sodium](https://modrinth.com/mod/sodium) | 0.9.2 | performance |
+| [Distant Horizons](https://modrinth.com/mod/distanthorizons) | 3.3.3 | long views |
+| [Creative Fly](https://modrinth.com/mod/creative-fly) | 2.0.0 | fast flight |
+| [Cloth Config](https://modrinth.com/mod/cloth-config) | 26.2.155 | needed by Creative Fly |
+| [Mod Menu](https://modrinth.com/mod/modmenu) | 20.0.3 | Creative Fly settings |
+| [Placeholder API](https://modrinth.com/mod/placeholder-api) | 3.1.0-beta.1+26.2 | needed by Mod Menu |
+
+Optional, also available for 26.2: [Controlify](https://modrinth.com/mod/controlify) 3.5.3
+(needs [YACL](https://modrinth.com/mod/yacl) 3.9.7) and [Iris](https://modrinth.com/mod/iris)
+1.11.4 for shaders. Only the first six rows are needed for the world itself.
+
+### 1. Install the launcher
+
+- **Linux (Debian/Ubuntu):** download the official `Minecraft.deb` from minecraft.net, then
+  `sudo apt install ./Minecraft.deb` (run it from the folder holding the file; a warning about the
+  `_apt` user is harmless). Start `minecraft-launcher`, sign in and click Play once so
+  `~/.minecraft` exists.
+- **Windows:** install the Minecraft Launcher from minecraft.net, sign in and click Play once.
+  The game folder is `%appdata%\.minecraft`.
+
+### 2. Install Fabric for 26.2
+
+Download the installer jar from <https://fabricmc.net/use/installer/>. Close the launcher, then:
+
+- **Any system with Java 17 or newer:**
+  ```text
+  java -jar fabric-installer-1.1.2.jar client -mcversion 26.2 -loader 0.20.1
+  ```
+  Add `-dir <game folder>` for a non-default folder.
+- **Windows, graphical:** double-click the `.jar` (or the `.exe` build), choose Minecraft 26.2 and
+  loader 0.20.1, keep "Create profile" ticked and click Install.
+
+Start the launcher: a `fabric-loader-26.2` profile appears under Installations. Play it once
+without mods so the game downloads, then close it.
+
+### 3. Add the mods
+
+Download the jars in the table (Modrinth's Versions tab, filter by Fabric and 26.2) and put them
+in the `mods` folder: `~/.minecraft/mods` on Linux, `%appdata%\.minecraft\mods` on Windows.
+Check each download's sha512 against Modrinth's page. Remove any mod jar built for another
+version.
+
+### 4. Add the world
+
+Extract [the demo world](demo/Hetch-Hetchy-Dam-Demo.zip) so the folder `Hetch Hetchy - Pool and
+Roads` sits inside `saves` (`~/.minecraft/saves` or `%appdata%\.minecraft\saves`). Keep the zip
+as the pristine copy; work on the extracted folder, and copy it before big edits.
+
+### 5. Play and check
+
+Launch the `fabric-loader-26.2` profile, open Singleplayer, choose the world and run
+`/tp @s 1534 110 778 -42 10` (creative flight on). In Video Settings start with about 12–16
+render chunks, and set the Distant Horizons render distance to about 96 chunks. If it fails to
+start, remove the mods one at a time, newest first, and read `logs/latest.log` in the game folder.
+
 ## Recommended client setup
 
 This is a Java Edition workflow. Select versions for **the exact Minecraft version and Fabric
