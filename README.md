@@ -102,9 +102,9 @@ mapped roads and buildings from OpenStreetMap, all in ordinary blocks. Hetch Het
 one: a [demo world](experimental/minecraft/demo/README.md) of O'Shaughnessy Dam, the canyon below
 it and Kolana Rock.
 
-- **Version:** built and tested for Minecraft Java **26.2** with Fabric Loader 0.20.1. Opening a
-  world in a newer release upgrades that copy one way, so keep a 26.2 profile for these maps.
-  Mods are optional; Distant Horizons gives the long views. The
+- **Version:** Minecraft Java **26.3**, the current release, with Fabric Loader 0.20.1 for the
+  optional mods. Opening a world in a newer release upgrades that copy one way, so keep a copy
+  before trying one. Mods are optional; Distant Horizons gives the long views. The
   [install guide](experimental/minecraft/README.md#install-guide-linux-and-windows) covers Linux
   and Windows, mod versions and a first run.
 - **Scale:** about 2 m per block across and 4 m per block up, so mountains are vertically

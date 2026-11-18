@@ -38,7 +38,7 @@ class World:
         if not self.region_dir.is_dir():
             self.region_dir = self.path / 'region'
         self.names, self.index = [], {}
-        self.cols, self.chunk, self.where, self.regions = {}, {}, {}, {}
+        self.cols, self.chunk, self.where, self.regions, self.newfmt = {}, {}, {}, {}, {}
         self.dirty = set()
         self.new_entities = collections.defaultdict(list)       # (cx, cz) -> [entity compounds]
         self.new_block_entities = collections.defaultdict(list)
@@ -54,6 +54,29 @@ class World:
         key = (int(nbt['x']) >> 4, int(nbt['z']) >> 4)
         self.new_block_entities[key].append(nbt)
         self.dirty.add(key)
+
+    @staticmethod
+    def normalise(e):
+        """Any palette entry -> {Name, Properties}. 26.2 and earlier store {Name, Properties};
+        26.3 stores a default state as a plain string and others as {id, properties}, and a list
+        mixing the two wraps each string as {"": string}."""
+        if isinstance(e, str):
+            return state(str(e))
+        if set(e.keys()) == {''}:
+            return state(str(e['']))
+        if 'id' in e and 'Name' not in e:
+            props = e.get('properties')
+            return state(str(e['id']), **{k: str(v) for k, v in props.items()}) if props else state(str(e['id']))
+        return e
+
+    @staticmethod
+    def new_format(c):
+        for s in c['sections']:
+            for e in s.get('block_states', {}).get('palette', []):
+                if isinstance(e, str) or 'id' in e or set(e.keys()) == {''}:
+                    return True
+                return False
+        return int(c.get('DataVersion', 0)) >= 5023
 
     def gid(self, c):
         if isinstance(c, str):
@@ -93,9 +116,10 @@ class World:
                     if 'block_states' not in s or not -4 <= int(s['Y']) < 20:
                         continue
                     sy = int(s['Y'])
-                    lut = np.array([self.gid(e) for e in s['block_states']['palette']], dtype=np.int32)
+                    lut = np.array([self.gid(self.normalise(e)) for e in s['block_states']['palette']], dtype=np.int32)
                     full[(sy + 4) * 16:(sy + 5) * 16] = lut[R.unpack(s).reshape(16, 16, 16)]
                 self.cols[(cx, cz)] = full
+                self.newfmt[(cx, cz)] = self.new_format(c)
                 self.chunk[(cx, cz)] = c
                 self.where[(cx, cz)] = (path, k)
 
@@ -120,6 +144,17 @@ class World:
         self.dirty.add((x >> 4, z >> 4))
         return True
 
+    @staticmethod
+    def palette(states, new):
+        """A section palette in the chunk's own format (see normalise)."""
+        if not new:
+            return List[Compound](states)
+        out = [String(str(c['Name'])) if 'Properties' not in c else
+               Compound({'id': String(str(c['Name'])), 'properties': c['Properties']}) for c in states]
+        if all(isinstance(e, str) for e in out):
+            return List[String](out)
+        return List[Compound]([Compound({'': e}) if isinstance(e, str) else e for e in out])
+
     def save(self, apply):
         n = len(self.names)
         hm = {
@@ -140,7 +175,7 @@ class World:
                 old = by_y.get(sy)
                 sec['biomes'] = old['biomes'] if old is not None and 'biomes' in old else \
                     Compound({'palette': List[String]([String('minecraft:forest')])})
-                sec['block_states'] = Compound({'palette': List[Compound]([self.names[j] for j in present])})
+                sec['block_states'] = Compound({'palette': self.palette([self.names[j] for j in present], self.newfmt[key])})
                 if len(present) > 1:
                     sec['block_states']['data'] = longpack(inv.reshape(-1), max(4, (len(present) - 1).bit_length()))
                 out.append(sec)

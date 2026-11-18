@@ -132,7 +132,7 @@ versioned long-lived asset caching or a different host.
 Make a Minecraft Java map of any water body from its `data/<id>/` bundle, as an optional
 companion to the browser version. Read [experimental/minecraft/README.md](../../experimental/minecraft/README.md)
 and its [AGENTS.md](../../experimental/minecraft/AGENTS.md) first. The bundle and the browser's
-rules are the only source; worlds are built, never hand-edited. Pinned to Minecraft Java 26.2.
+rules are the only source; worlds are built, never hand-edited. Minecraft Java 26.3 (the current release); scripts read and write 26.2 and 26.3 chunks.
 
 | ID | Task | Who | Needs | Status |
 |---|---|---|---|---|

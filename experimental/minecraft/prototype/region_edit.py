@@ -11,9 +11,10 @@ def read_region(path):
     for i in range(1024):
         entry=int.from_bytes(loc[i*4:i*4+4],'big'); sector=entry>>8; count=entry&255
         if not entry: continue
-        assert sector>=2 and count and (sector+count)*4096<=len(data)
+        # Newer versions (26.3) do not pad the file's last sector, so check the chunk's own bytes.
+        assert sector>=2 and count and sector*4096+5<=len(data)
         pos=sector*4096; length=int.from_bytes(data[pos:pos+4],'big')
-        assert 1<=length<=count*4096-4 and not(data[pos+4]&128), 'unsupported external chunk'
+        assert 1<=length<=count*4096-4 and pos+4+length<=len(data) and not(data[pos+4]&128), 'unsupported external chunk'
         chunks[i]=data[pos:pos+4+length]
     return chunks,timestamps
 

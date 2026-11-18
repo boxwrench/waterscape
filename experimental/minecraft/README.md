@@ -15,6 +15,7 @@ not something these scripts do yet.
 | Play the Hetch Hetchy map | [Install guide](#install-guide-linux-and-windows), then the [demo](demo/README.md) |
 | Know what is real and what is approximate | [How a world is made](#how-a-world-is-made) |
 | Rebuild or improve the Hetch Hetchy world | [Build or update a world](#build-or-update-a-world) |
+| Play together on the server | [Join the server](#join-the-server); hosts see [Host a server](#host-a-server) |
 | Work on this as an agent | [AGENTS.md](AGENTS.md), plus the repository [AGENTS.md](../../AGENTS.md) |
 
 ## Status
@@ -22,44 +23,46 @@ not something these scripts do yet.
 As of 2026-11-18:
 
 - **Demo download** — [`demo/Hetch-Hetchy-Dam-Demo.zip`](demo/README.md) is the earlier version
-  ("Pool and Roads"): flat road lines, box buildings and a hand-cut canyon below the dam. It has
-  been opened in Java 26.2.
+  ("Pool and Roads"): flat road lines, box buildings and a hand-cut canyon below the dam.
 - **Improved version** — the [optional upgrades](#2-optional-upgrades) rebuild the canyon, dam face
-  and river from the browser's own inputs and add graded roads, dam-crest parapets and proper
-  buildings. Checked offline (block sections, water edges, wall connections, renders); an in-game
-  check comes next, then the demo zip is refreshed with it.
+  and river from the browser's own inputs and add graded roads, dam-crest parapets, proper
+  buildings and fishing spots. Checked offline (block sections, water edges, wall connections,
+  renders); an in-game check comes next, then the demo zip is refreshed with it.
 - **Not yet a builder** — making a world still starts from a prepared base world and
   Hetch Hetchy-specific scripts. A one-command builder for any bundle is task
   [MC1](../../docs/roadmap/tasks/MC1-minecraft-builder.md).
-- **Version** — Minecraft Java **26.2** with Fabric Loader 0.20.1. Other versions are untested.
+- **Version** — Minecraft Java **26.3** (the current release) with Fabric Loader 0.20.1. Worlds
+  saved by 26.2 open in 26.3 and are upgraded on first open; the scripts read and write both the
+  26.2 and the 26.3 chunk formats.
 
 ## Install guide (Linux and Windows)
 
-Checked on 2026-11-18 against Minecraft Java **26.2** (the launcher may offer a newer release;
-do not use it for this world, because the first open of a world in a newer version upgrades it
-one way). Versions below came from the Fabric and Modrinth APIs on that date; re-check each
-project's version page for 26.2 before reusing them. Mods are optional: the world is ordinary
-blocks and opens in plain 26.2.
+Checked on 2026-11-18 against Minecraft Java **26.3**, the launcher's current release. Versions
+below came from the Fabric and Modrinth APIs on that date; when a newer Minecraft release comes
+out, use the matching version of each mod (or stay on 26.3 with a pinned installation). Mods are
+optional: the world is ordinary blocks and opens in plain 26.3. Opening a world in a newer release
+upgrades that copy one way, so keep a copy before trying one.
 
-| Piece | Version for 26.2 | What it is for |
+| Piece | Version for 26.3 | What it is for |
 |---|---|---|
 | Fabric Loader | 0.20.1 (installer 1.1.2) | all mods |
-| [Fabric API](https://modrinth.com/mod/fabric-api) | 0.161.0+26.2 | all mods |
+| [Fabric API](https://modrinth.com/mod/fabric-api) | 0.166.2+26.3 | all mods |
 | [Sodium](https://modrinth.com/mod/sodium) | 0.9.2 | performance |
-| [Distant Horizons](https://modrinth.com/mod/distanthorizons) | 3.3.3 | long views of the canyon walls |
+| [Distant Horizons](https://modrinth.com/mod/distanthorizons) | 3.3.4 | long views of the canyon walls |
 | [Creative Fly](https://modrinth.com/mod/creative-fly) | 2.0.0 | faster flight |
-| [Cloth Config](https://modrinth.com/mod/cloth-config) | 26.2.155 | needed by Creative Fly |
-| [Mod Menu](https://modrinth.com/mod/modmenu) | 20.0.3 | Creative Fly settings without a mouse wheel |
-| [Placeholder API](https://modrinth.com/mod/placeholder-api) | 3.1.0-beta.1+26.2 | needed by Mod Menu |
+| [Cloth Config](https://modrinth.com/mod/cloth-config) | 26.3.159 | needed by Creative Fly |
+| [Mod Menu](https://modrinth.com/mod/modmenu) | 21.0.1 | Creative Fly settings without a mouse wheel |
+| [Placeholder API](https://modrinth.com/mod/placeholder-api) | 3.2.0+26.3 | needed by Mod Menu |
 
-Also available for 26.2 and useful here:
+Also available for 26.3 and useful here:
 
 - **Exploring and editing:** [Xaero's World Map](https://modrinth.com/mod/xaeros-world-map)
-  fabric-26.2-1.47.2 (a full map with coordinates, for finding places and reporting them),
+  fabric-26.3-1.47.2 (a full map with coordinates, for finding places and reporting them),
   [Chunky](https://modrinth.com/mod/chunky) 1.5.66 (pre-generates chunks so Distant Horizons has
-  the whole map) and [WorldEdit](https://modrinth.com/mod/worldedit) 7.4.5 (hand edits in game).
+  the whole map; single-player only, see [hosting](#host-a-server)) and
+  [WorldEdit](https://modrinth.com/mod/worldedit) 7.4.6 (hand edits in game).
 - **Extras:** [Controlify](https://modrinth.com/mod/controlify) 3.5.3 for controllers (needs
-  [YACL](https://modrinth.com/mod/yacl) 3.9.7) and [Iris](https://modrinth.com/mod/iris) 1.11.4
+  [YACL](https://modrinth.com/mod/yacl) 3.9.7) and [Iris](https://modrinth.com/mod/iris) 1.11.7
   for shaders (pick a pack that supports Distant Horizons; try without shaders first).
 
 ### 1. Install the launcher
@@ -69,43 +72,46 @@ Also available for 26.2 and useful here:
   `_apt` user is harmless). Start `minecraft-launcher`, sign in and click Play once so
   `~/.minecraft` exists.
 - **Windows:** install the Minecraft Launcher from minecraft.net, sign in and click Play once.
-  The game folder is `%appdata%\.minecraft`.
+  The game folder is `%appdata%\.minecraft`. Make sure it is **Java Edition**: "Minecraft for
+  Windows" from the Microsoft Store is Bedrock, which cannot open these worlds or join the server.
 
-### 2. Install Fabric for 26.2
+### 2. Install Fabric for 26.3 (only if you want mods)
 
 Download the installer jar from <https://fabricmc.net/use/installer/>. Close the launcher, then:
 
 - **Any system with Java 17 or newer:**
   ```text
-  java -jar fabric-installer-1.1.2.jar client -mcversion 26.2 -loader 0.20.1
+  java -jar fabric-installer-1.1.2.jar client -mcversion 26.3 -loader 0.20.1
   ```
   Add `-dir <game folder>` for a non-default folder.
-- **Windows, graphical:** double-click the `.jar` (or the `.exe` build), choose Minecraft 26.2 and
+- **Windows, graphical:** double-click the `.jar` (or the `.exe` build), choose Minecraft 26.3 and
   loader 0.20.1, keep "Create profile" ticked and click Install.
 
-Start the launcher: a `fabric-loader-26.2` profile appears under Installations. Play it once
+Start the launcher: a `fabric-loader-26.3` profile appears under Installations. Play it once
 without mods so the game downloads, then close it.
 
 ### 3. Add the mods
 
-Download the jars (Modrinth's Versions tab, filter by Fabric and 26.2) and put them in the `mods`
+Download the jars (Modrinth's Versions tab, filter by Fabric and 26.3) and put them in the `mods`
 folder: `~/.minecraft/mods` on Linux, `%appdata%\.minecraft\mods` on Windows. Check each
-download's sha512 against Modrinth's page. Remove any mod jar built for another version.
+download's sha512 against Modrinth's page. The folder is shared by all installations, so move out
+any jar built for another Minecraft version.
 
 ### 4. Add the world
 
 Extract [the demo world](demo/Hetch-Hetchy-Dam-Demo.zip) so the folder `Hetch Hetchy - Pool and
 Roads` sits inside `saves` (`~/.minecraft/saves` or `%appdata%\.minecraft\saves`). Keep the zip
-as the pristine copy; work on the extracted folder, and copy it before big edits.
+as the pristine copy; work on the extracted folder, and copy it before big edits. To play on the
+shared server instead, see [Join the server](#join-the-server).
 
 ### 5. Play and check
 
-Launch the `fabric-loader-26.2` profile, open Singleplayer and choose the world. It is creative
-with commands on; double-tap jump to fly. In Video Settings start with about 12–16 render chunks,
-and set the Distant Horizons render distance to about 96 chunks (the dam-to-Kolana distance is
-about 1,265 blocks, or 79 chunks). These are starting settings, not measured guarantees. If the
-game fails to start, remove mods one at a time, newest first, and read `logs/latest.log` in the
-game folder.
+Launch the `fabric-loader-26.3` profile (or plain 26.3), open Singleplayer and choose the world.
+It is creative with commands on; double-tap jump to fly. In Video Settings start with about 12–16
+render chunks, and set the Distant Horizons render distance to about 96 chunks (the dam-to-Kolana
+distance is about 1,265 blocks, or 79 chunks). These are starting settings, not measured
+guarantees. If the game fails to start, remove mods one at a time, newest first, and read
+`logs/latest.log` in the game folder.
 
 Viewpoints, matching the browser version's cameras where they exist:
 
@@ -120,6 +126,41 @@ Viewpoints, matching the browser version's cameras where they exist:
 | Ranger station and parking | `/tp @s 650 100 1600 0 35` |
 | South-shore fishing dock (after upgrade 3) | `/tp @s 733 82 1390 180 15` |
 | North-shore fishing dock by the dam (after upgrade 3) | `/tp @s 509 83 1228 -90 15` |
+
+## Join the server
+
+The Hetch Hetchy world can also be played together on a small private server.
+
+1. Use **Minecraft Java Edition 26.3** on Windows, macOS or Linux (the launcher's default release).
+   Bedrock (Microsoft Store, Xbox, phones) cannot join. Mods are optional; a plain 26.3 game is
+   enough, and Fabric with Distant Horizons adds the long views.
+2. Ask the host for access: they add your Minecraft username to the whitelist.
+3. In Minecraft choose **Multiplayer → Add Server** and enter the address the host gives you.
+
+## Host a server
+
+What the Hetch Hetchy server uses, for anyone setting up their own:
+
+- **Server:** Fabric server 26.3 (loader 0.20.1, `fabric-server-launch.jar` from
+  `https://meta.fabricmc.net/v2/versions/loader/26.3/0.20.1/1.1.2/server/jar`) on Java 25, 2–4 GB
+  of memory, with Fabric API and Distant Horizons (server-side level-of-detail for players who
+  have it) and WorldEdit. Leave **Chunky off the server**: with Distant Horizons 3.3.4 its hook can
+  crash the server when chunks load right after a start, and a finished world needs no
+  pre-generation.
+- **Settings:** `online-mode=true`, `white-list=true`, `enforce-whitelist=true`, creative,
+  peaceful, no PvP, `view-distance=12`, `simulation-distance=6`, a handful of players.
+- **The world:** copy a finished world folder in as `world` with the server stopped. Edit copies,
+  never the server's world; to update it, stop the server, back up `world`, copy the new one in and
+  start again.
+- **Running it:** start it in a detached `tmux` session so console commands can be sent
+  (`tmux send-keys -t mc "whitelist add NAME" Enter`), and stop it with the `stop` command so it
+  saves.
+- **Reaching it from outside:** a tunnel such as [playit.gg](https://playit.gg) gives an address
+  without opening a router port or showing your home IP (Tailscale Funnel does not carry Minecraft
+  traffic). For a few known players, a private network such as Tailscale also works. If you
+  forward port 25565 on a router instead, keep the whitelist and online mode on.
+- **The EULA:** running a server means accepting the [Minecraft EULA](https://aka.ms/MinecraftEULA)
+  (`eula=true`); do that yourself.
 
 ## How a world is made
 
@@ -218,7 +259,7 @@ keeps every block state, recomputes heightmaps and leaves lighting for the game 
 ### 3. Check it
 
 Before opening a world, check it offline: no water next to lower dry ground, the dam crest
-continuous at its height, walls joined. Then open the copy in the 26.2 profile, visit the
+continuous at its height, walls joined. Then open the copy in 26.3, visit the
 viewpoints above and report what you see: an overhead render is not a screenshot.
 
 ## Files

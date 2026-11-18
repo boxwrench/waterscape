@@ -6,7 +6,7 @@ few screens, move older entries to `docs/archive/`. History through RP30 is in [
 ## Minecraft maps: MC0 and track MC (2026-11-18, `task/minecraft-accuracy`)
 
 The Minecraft experiment is now a roadmap track ([track MC](./roadmap/README.md#track-mc--playable-minecraft-maps)):
-playable Java 26.2 maps of any water body from its bundle, Hetch Hetchy first. MC0 added two
+playable Java maps (now 26.3) of any water body from its bundle, Hetch Hetchy first. MC0 added two
 upgrades that rebuild from the browser's own inputs: `rebuild_downstream.py` (canyon, gravity dam
 face, traced river, granite ground rules) and `osm_structures.py` (graded roads, dam parapets,
 axis-aligned buildings), on a shared `world_columns.py`. Superseded one-shot edits moved to

@@ -79,7 +79,7 @@ same place from the same `data/<id>/` bundle. Hetch Hetchy is the working protot
 bundle and the browser's rules are the only source; a world is built from them in one command,
 never hand-edited. Tasks are [track MC](docs/roadmap/README.md#track-mc--playable-minecraft-maps):
 
-1. **One builder** (MC1) — a fresh Java 26.2 world from `data/<id>/` with per-site settings
+1. **One builder** (MC1) — a fresh Java 26.3 world from `data/<id>/` with per-site settings
    (crop, scales, biome palette, upgrades), no Arnis base world; Hetch Hetchy rebuilt with it.
 2. **A second SFPUC reservoir** (MC2) — Calaveras or Crystal Springs: a new biome palette and an
    embankment dam. Needs that reservoir's dam in `structures.json` first (Man-made features).

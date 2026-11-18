@@ -12,14 +12,14 @@ Distant Horizons cache. This is an experimental block interpretation of a real l
 
 ## Open it
 
-Set up Minecraft Java 26.2 first with the [install guide](../README.md#install-guide-linux-and-windows).
+Set up Minecraft Java 26.3 first with the [install guide](../README.md#install-guide-linux-and-windows).
 
 1. Close Minecraft.
 2. Extract the archive. Copy the extracted `Hetch Hetchy - Pool and Roads` folder into the `saves`
    folder of your Minecraft Java installation (`~/.minecraft/saves` on Linux,
    `%appdata%\.minecraft\saves` on Windows; launcher profiles can have their own game folder).
-3. Start the 26.2 profile and choose **Singleplayer → Hetch Hetchy - Pool and Roads**. The save was
-   first made in Java 1.21.4; 26.2 upgrades the copy when it first opens it (this changes that copy
+3. Start Minecraft 26.3 and choose **Singleplayer → Hetch Hetchy - Pool and Roads**. The save was
+   first made in Java 1.21.4; 26.3 upgrades the copy when it first opens it (this changes that copy
    only; keep the zip as the original).
 4. The world is creative with commands enabled. Turn on flight and use the
    [viewpoints](../README.md#5-play-and-check), for example `/tp @s 1534 110 778 -42 10` over the
@@ -51,7 +51,8 @@ was obtained using Arnis 3.4.0's OSM tile archive (built 2026-10-25). The ZIP in
 ## Checks
 
 The ZIP was checked for corruption, the intended 24 region files and the absence of a player
-profile. It was opened in Java 26.2 on 2026-11-18, which upgraded the save without errors; a full
+profile. It was opened in Java 26.2 on 2026-11-18, which upgraded the save without errors (26.3 upgrades
+it the same way); a full
 visual review of this version was not done, since the newer version replaces its edits.
 
 See [the parent README](../README.md) and [`data/hetch_hetchy`](../../../data/hetch_hetchy) for the

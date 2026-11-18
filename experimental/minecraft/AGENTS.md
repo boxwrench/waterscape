@@ -49,6 +49,6 @@ instructions and the user's request.
    `prototype/world_columns.py` for new edits and check results offline (sections, water edges,
    renders) before anyone opens the world.
 
-For client mods and distance-rendering starting points, use the README's install guide (pinned to
-Java 26.2) and confirm compatibility and dependencies on each project's page before installing.
+For client mods and distance-rendering starting points, use the README's install guide (Java 26.3,
+the current release) and confirm compatibility and dependencies on each project's page before installing.
 Planned work is [track MC](../../docs/roadmap/README.md#track-mc--playable-minecraft-maps).

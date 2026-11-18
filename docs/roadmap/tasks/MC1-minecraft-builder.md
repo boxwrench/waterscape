@@ -4,7 +4,7 @@
 
 ## Goal
 
-One command writes a new, playable Minecraft Java 26.2 world for a water body from its
+One command writes a new, playable Minecraft Java 26.3 world for a water body from its
 Waterscape bundle, with no hand edits and no Arnis base world:
 
 ```text
@@ -38,7 +38,7 @@ drifted from the browser. A single builder makes that the only path.
 
 ## Scope
 
-1. **Empty template world.** Add a minimal Java 26.2 template (`level.dat`, no regions, no
+1. **Empty template world.** Add a minimal Java 26.3 template (`level.dat`, no regions, no
    player data) under `experimental/minecraft/template/`, or generate `level.dat` in code.
    Record its `DataVersion`. Write every chunk from scratch (full NBT skeleton: `DataVersion`,
    `xPos`/`zPos`/`yPos`, `Status` full, sections with biomes and block states, heightmaps,
@@ -79,7 +79,7 @@ new mods, changing the browser renderer.
 - `build.py hetch_hetchy` creates a new world in a few minutes on this machine, from a clean
   checkout plus the Python packages already listed (`numpy`, `scipy`, `Pillow`, `pyproj`,
   `nbtlib`).
-- It opens in Minecraft Java 26.2 with no upgrade prompt and no errors in `latest.log`; a human
+- It opens in Minecraft Java 26.3 with no upgrade prompt and no errors in `latest.log`; a human
   confirms the dam, canyon, river, lake and buildings in game from the README viewpoints.
 - The offline checks above pass and their output is recorded in the task Result.
 - No Hetch Hetchy constant remains in builder code; it is all in the site file or the bundle.
