@@ -21,7 +21,7 @@ or go straight to the reference river:
 [Hacienda Bridge](https://boxwrench.github.io/waterscape/river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/index.html) and
 [Jenner Estuary](https://boxwrench.github.io/waterscape/river-pulse/rivers/russian_river/scenes/end/jenner/index.html).
 
-![Jenner authored coastal preview: estuary, sand spit and Pacific surf](previews/jenner-estuary.png)
+![Jenner Estuary lookout: the Russian River estuary, sand spit and Pacific surf, with the live USGS water level at Highway 1](previews/jenner-estuary.png)
 
 ![Calaveras Reservoir from North ridge in live 3D](previews/calaveras-overlook.png)
 
