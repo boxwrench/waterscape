@@ -65,8 +65,11 @@ drifted from the browser. A single builder makes that the only path.
    the blocks; wall/fence connection states; chunk NBT round-trips through `nbtlib`. Make
    overhead and isometric renders at fixed places (the dam, the canyon, the south-shore
    buildings) and compare them with the MC0 world and the browser's top-down view.
-7. **Docs.** Update the experiment README (builder usage, site settings, stages); move the old
-   one-shot prototypes to `experimental/minecraft/archive/` with a note. Keep the install guide.
+7. **Docs.** Update the experiment README (builder usage, site settings, stages; replace its
+   "Build or update a world" section). The superseded one-shot edits are already in
+   `prototype/archive/`; move `build_waterscape_biome.py`, `inspect_hetch.py` and the upgrade
+   scripts there too once the builder covers them, and update the archive README. Keep the
+   install guide and its anchors (the main README links to it).
 
 Out of scope: other reservoirs (MC2), the make-a-waterscape guide (MC3), servers (MC4), rivers,
 new mods, changing the browser renderer.

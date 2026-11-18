@@ -1,6 +1,6 @@
 """Graded roads, a dam-crest walkway and simple buildings from the cropped OSM extract.
 
-Replaces add_osm_features.py's flat road lines and box shells. Dry run unless --apply; edit only
+Replaces archive/add_osm_features.py's flat road lines and box shells. Dry run unless --apply; edit only
 a disposable world copy with Minecraft closed.
 
 What is mapped and what is illustrative:
