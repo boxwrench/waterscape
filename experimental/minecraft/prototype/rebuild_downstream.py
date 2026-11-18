@@ -61,6 +61,9 @@ def main():
     p.add_argument('--face-drop', type=float, default=None,
                    help='blocks the downstream face drops per block outward (default: the browser profile, '
                         'about 0.67; 1.5 looks like the real dam at the 4 m vertical scale)')
+    p.add_argument('--close-gap', choices=['pool', 'shift'], default='pool',
+                   help='with --face-drop: fill the freed band with a plunge pool, or slide the canyon '
+                        'upstream into it (warp.py), stretching it gently over the next 180 blocks')
     p.add_argument('--apply', action='store_true')
     a = p.parse_args()
     w = a.world.resolve()
@@ -82,25 +85,38 @@ def main():
     W, H = x1 - x0, z1 - z0
     # Block centres -> lon/lat (the world's linear geographic mapping) -> UTM -> terrain grid.
     X, Z = np.meshgrid(np.arange(x0, x1) + .5, np.arange(z0, z1) + .5)
-    lon = meta['minGeoLon'] + X / meta['maxMcX'] * (meta['maxGeoLon'] - meta['minGeoLon'])
-    lat = meta['maxGeoLat'] - Z / meta['maxMcZ'] * (meta['maxGeoLat'] - meta['minGeoLat'])
-    east, north = Transformer.from_crs(4326, 32611, always_xy=True).transform(lon, lat)
+    shifting = bool(a.face_drop) and a.close_gap == 'shift'
+    if shifting:
+        import warp
+        wp = warp.load(w, a.data / 'structures.json', a.face_drop)
+        XS, ZS = wp.source(X, Z)          # where each column's land comes from
+    else:
+        XS, ZS = X, Z
+
+    def grid(XX, ZZ):
+        lon = meta['minGeoLon'] + XX / meta['maxMcX'] * (meta['maxGeoLon'] - meta['minGeoLon'])
+        lat = meta['maxGeoLat'] - ZZ / meta['maxMcZ'] * (meta['maxGeoLat'] - meta['minGeoLat'])
+        east, north = Transformer.from_crs(4326, 32611, always_xy=True).transform(lon, lat)
+        return (un - north - oz) / cell, (east - ue - ox) / cell
     cell = tmeta['cell'][0]; ox, oz = tmeta['gridOrigin']; ue, un = tmeta['originUTM']
-    rows = (un - north - oz) / cell; gcols = (east - ue - ox) / cell
+    rows, gcols = grid(XS, ZS)
+    rows0, gcols0 = grid(X, Z) if shifting else (rows, gcols)
     raw = np.frombuffer(gzip.decompress((a.data / 'terrain.bin.gz').read_bytes()), '<u2')
     nch = raw.size // (tmeta['width'] * tmeta['height'])
     raw = raw.reshape(nch, tmeta['height'], tmeta['width'])
 
-    def channel(i, name, order):
+    def channel(i, name, order, at=None):
         g = (np.cumsum(raw[i].astype(np.uint64), axis=0) % 65536).astype(np.float32)
         g = g * tmeta['channels'][name]['scale'] + tmeta['channels'][name]['offset']
-        return map_coordinates(g, [rows, gcols], order=order)
+        return map_coordinates(g, list(at) if at is not None else [rows, gcols], order=order)
 
     h = channel(0, 'height', 3)          # metres relative to the lake surface (1151.7 m)
     shore = channel(1, 'shoreDistance', 1)
     valley = channel(2, 'valley', 1)
     lake = shore < 0
     ground = np.rint(80 + h / 4).astype(np.int32)
+    # The dam is placed and tested against the unmoved lidar, whatever happens to the land below.
+    ground0 = np.rint(80 + channel(0, 'height', 3, (rows0, gcols0)) / 4).astype(np.int32) if shifting else ground
 
     # Dam and river in block space.
     to_ll = Transformer.from_crs(32611, 4326, always_xy=True)
@@ -110,13 +126,14 @@ def main():
         return np.array([(lo - meta['minGeoLon']) / (meta['maxGeoLon'] - meta['minGeoLon']) * meta['maxMcX'],
                          (meta['maxGeoLat'] - la) / (meta['maxGeoLat'] - meta['minGeoLat']) * meta['maxMcZ']])
 
-    def seg_dist(pts):
+    def seg_dist(pts, XX=None, ZZ=None):
         """Distance (blocks) to a polyline, and parameter along it (segment index + t)."""
+        XX = X if XX is None else XX; ZZ = Z if ZZ is None else ZZ
         best = np.full(X.shape, 1e9); par = np.zeros(X.shape)
         for i in range(len(pts) - 1):
             A, B = pts[i], pts[i + 1]; v = B - A
-            t = np.clip(((X - A[0]) * v[0] + (Z - A[1]) * v[1]) / (v @ v), 0, 1)
-            d = np.hypot(X - (A[0] + t * v[0]), Z - (A[1] + t * v[1]))
+            t = np.clip(((XX - A[0]) * v[0] + (ZZ - A[1]) * v[1]) / (v @ v), 0, 1)
+            d = np.hypot(XX - (A[0] + t * v[0]), ZZ - (A[1] + t * v[1]))
             m = d < best; best[m] = d[m]; par[m] = i + t[m]
         return best, par
 
@@ -124,7 +141,7 @@ def main():
     damdist, _ = seg_dist(crest)
     r = st['rivers'][0]
     rpts = [mc(q) for q in r['centreUTM']]
-    rdist, rpar = seg_dist(rpts)
+    rdist, rpar = seg_dist(rpts, XS, ZS)      # the river moves with the land
     i = np.clip(rpar.astype(int), 0, len(rpts) - 2); f = rpar - i
     widths = np.array(r['width']); surf = np.array(r['surface'])
     half = (widths[i] * (1 - f) + widths[i + 1] * f) / 2 / 2      # metres -> blocks (2 m), half width
@@ -294,11 +311,20 @@ def main():
     # is the abutment rock and stays natural.
     # Near the toe the ground is real ground, not the dam: never cut it down to the profile there.
     toe_y = int(round(80 + (surf[0] - tmeta['waterLevel']) / 4))
-    lidar_dam = old_footprint & change & ~river & (((g <= old_dam_y + 3) & (old_dam_y >= toe_y + 3)) | (g <= old_dam_y))
-    dam_here = footprint & change & ~river & ((((g <= dam_y + 3) & (dam_y >= toe_y + 3)) | (g <= dam_y)) | lidar_dam)
+    gd = ground0 if shifting else g
+    lidar_dam = old_footprint & change & ~river & (((gd <= old_dam_y + 3) & (old_dam_y >= toe_y + 3)) | (gd <= old_dam_y))
+    dam_here = footprint & change & ~river & ((((gd <= dam_y + 3) & (dam_y >= toe_y + 3)) | (gd <= dam_y)) | lidar_dam)
     g_dam_floor = np.minimum(g, dam_y)
     # The freed band: a pool at river level with a rocky bed, rising as rock against natural ground.
     freed = lidar_dam & ~footprint & ~river
+    if shifting:
+        freed[:] = False                  # the moved canyon already fills it
+        stats['canyon moved upstream at the dam (blocks)'] = round(wp.shift, 1)
+        # No pit at the toe: dry ground within 10 blocks of the face is at least river level
+        # (the lidar floor dips below the traced river level in places; the shift brings those here).
+        toe_band = (distance_transform_edt(~footprint) <= 10) & ~footprint & ~river & ~lake & change & downstream
+        stats['toe columns raised to river level'] = int((toe_band & (g < river_y)).sum())
+        g = np.where(toe_band, np.maximum(g, river_y), g)
     if freed.any():
         natural = change & ~freed & ~dam_here & ~river & ~lake & ~footprint
         dnat = distance_transform_edt(~natural)
@@ -317,7 +343,7 @@ def main():
     # Tree list (procedural stands, not surveyed trees).
     rng = np.random.default_rng(611)
     trees = []
-    no_tree = river | bank | protect | footprint | old_footprint | (old_road >= 0)
+    no_tree = river | bank | protect | footprint | (old_footprint if not shifting else footprint) | (old_road >= 0)
     no_tree = distance_transform_edt(~no_tree) < 3
     for zz in range(4, H - 4, 8):
         for xx in range(4, W - 4, 8):

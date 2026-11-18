@@ -38,6 +38,9 @@ def main():
     p.add_argument('--world', required=True, type=pathlib.Path)
     p.add_argument('--osm', required=True, type=pathlib.Path)
     p.add_argument('--structures', required=True, type=pathlib.Path)
+    p.add_argument('--shift-face-drop', type=float, default=None,
+                   help='if the canyon was moved upstream (rebuild_downstream.py --close-gap shift), '
+                        'the same --face-drop, so mapped roads and buildings move with it')
     p.add_argument('--apply', action='store_true')
     a = p.parse_args()
     marker = a.world / 'waterscape-osm-structures.txt'
@@ -53,6 +56,12 @@ def main():
                 (meta['maxGeoLat'] - lat) / (meta['maxGeoLat'] - meta['minGeoLat']) * meta['maxMcZ'])
 
     nodes = {e['id']: mc(e['lon'], e['lat']) for e in elements if e['type'] == 'node'}
+    if a.shift_face_drop:
+        import warp
+        wp = warp.load(a.world, a.structures, a.shift_face_drop)
+        ids = list(nodes); moved = wp.move_points(np.array([nodes[i] for i in ids]))
+        stats['mapped points moved with the canyon'] = int((np.hypot(*(moved - np.array([nodes[i] for i in ids])).T) > .5).sum())
+        nodes = {i: tuple(q) for i, q in zip(ids, moved)}
     ways = []
     for e in elements:
         if e['type'] != 'way':

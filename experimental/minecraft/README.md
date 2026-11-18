@@ -240,13 +240,18 @@ Run in this order on a copy of the base world (the demo works):
    half and the buildings.
    ```text
    python rebuild_downstream.py --world "<copy>" --data ../../../data/hetch_hetchy \
-     --biome ../../../data/biomes/sierra-granite/biome.json --face-drop 1.5 [--apply]
+     --biome ../../../data/biomes/sierra-granite/biome.json --face-drop 1.5 --close-gap shift [--apply]
    ```
    `--face-drop` steepens the downstream face, in blocks dropped per block outward. Without it the
    face follows the browser's gravity profile (0.75 m out per metre down), which at 2 m across and
-   4 m up per block shows as a gentle 34°; 1.5 looks like the real dam. The band the steeper face
-   frees becomes a plunge pool at river level that rises as rock into the canyon, never a ledge
-   (the lidar there records the dam itself, not ground). Hetch Hetchy's world uses 1.5.
+   4 m up per block shows as a gentle 34°; 1.5 looks like the real dam. The steeper face frees a
+   band where the lidar recorded only the dam. `--close-gap shift` slides the canyon below
+   upstream into it ([`warp.py`](prototype/warp.py)): the full gap (about 19 blocks) at the dam,
+   fading to nothing 180 blocks downstream, in one direction square to the crest, so the canyon is
+   stretched by about 10% with no seam. Dry ground within 10 blocks of the face that sits below
+   river level is raised to it, so there is no pit at the toe. `--close-gap pool` instead fills
+   the band with a plunge pool. Hetch Hetchy's world uses 1.5 with `shift`; run
+   `osm_structures.py` with `--shift-face-drop 1.5` so mapped roads and buildings move with it.
 2. **Roads, dam crest and buildings** — [`osm_structures.py`](prototype/osm_structures.py) removes
    the demo's flat road lines and box shells and replaces them. Roads are graded along their length
    with widths by class and lanes, half-slabs, cuts, fill with stone guard walls, and tunnels or
@@ -254,7 +259,7 @@ Run in this order on a copy of the base world (the demo works):
    windows, a door toward the nearest road and hip roofs.
    ```text
    python osm_structures.py --world "<copy>" --osm ../demo/hetch-osm-features.json \
-     --structures ../../../data/hetch_hetchy/structures.json [--apply]
+     --structures ../../../data/hetch_hetchy/structures.json --shift-face-drop 1.5 [--apply]
    ```
 
 3. **Fishing extras (gameplay, not data)** — [`add_fishing.py`](prototype/add_fishing.py) adds
@@ -301,6 +306,7 @@ viewpoints above and report what you see: an overhead render is not a screenshot
 | [`prototype/osm_structures.py`](prototype/osm_structures.py) | Upgrade 2: graded roads, dam parapets, buildings |
 | [`prototype/add_fishing.py`](prototype/add_fishing.py) | Upgrade 3: fishing docks, boats, rods and fish (gameplay extras) |
 | [`prototype/add_ramp.py`](prototype/add_ramp.py), [`add_tunnel.py`](prototype/add_tunnel.py) | Upgrade 4: a boat ramp and a walking tunnel, placed from photos and a map |
+| [`prototype/warp.py`](prototype/warp.py) | The gentle canyon stretch that fills the gap a steeper dam face leaves |
 | [`prototype/world_columns.py`](prototype/world_columns.py) | Shared world read/write for edits (full columns, palettes, heightmaps, entities, chests) |
 | [`prototype/region_edit.py`](prototype/region_edit.py) | Low-level region and chunk read/write helpers |
 | [`prototype/build_waterscape_biome.py`](prototype/build_waterscape_biome.py), [`inspect_hetch.py`](prototype/inspect_hetch.py) | How the base world was made (reference; not portable) |
