@@ -127,6 +127,23 @@ versioned long-lived asset caching or a different host.
 | W4 | [Add both to the Hetch Hetchy tour](tasks/W4-tour.md) | small | W2, W3 | done 2026-09-29 |
 | H1 | Hetch Hetchy: Sierra granite + conifer biome, then the bundle ([brief](capable-agent-briefs.md#h1-hetch-hetchy)) | capable | L1, L2 | done 2026-10-03, with O'Shaughnessy Dam; fifth tour stop |
 
+## Track MC — playable Minecraft maps
+
+Make a Minecraft Java map of any water body from its `data/<id>/` bundle, as an optional
+companion to the browser version. Read [experimental/minecraft/README.md](../../experimental/minecraft/README.md)
+and its [AGENTS.md](../../experimental/minecraft/AGENTS.md) first. The bundle and the browser's
+rules are the only source; worlds are built, never hand-edited. Pinned to Minecraft Java 26.2.
+
+| ID | Task | Who | Needs | Status |
+|---|---|---|---|---|
+| MC0 | Canyon below the dam rebuilt from Waterscape inputs; graded OSM roads, dam parapets, buildings (`rebuild_downstream.py`, `osm_structures.py`) | capable | — | done on `task/minecraft-accuracy`; checked offline, awaiting in-game acceptance |
+| MC0b | In-game acceptance of the Hetch Hetchy test worlds (`Downstream test`, `Structures test`), then refresh the curated demo zip and the server copy | human | MC0 | open |
+| MC1 | [One builder: a fresh world from `data/<id>/`](tasks/MC1-minecraft-builder.md) | capable | MC0 merged | open |
+| MC2 | A second SFPUC reservoir (Calaveras or Crystal Springs): biome palette, embankment dam profile, site settings | capable | MC1; that reservoir's dam in `structures.json` | open |
+| MC3 | "Make a playable map" section in `docs/make-a-waterscape.md`; link from the README | capable | MC1 | open |
+| MC4 | Sharing: a private, whitelisted Fabric server for a few players (setup notes from the Hetch Hetchy server) | small | MC1 | open |
+| MC5 | Rivers: a River Pulse place as a map; its data differs from reservoir bundles | capable | MC2 | later |
+
 ## Track T — water level and timeline
 
 | ID | Task | Who | Needs | Status |
