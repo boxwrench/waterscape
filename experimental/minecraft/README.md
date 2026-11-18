@@ -118,6 +118,8 @@ Viewpoints, matching the browser version's cameras where they exist:
 | Dam crest walkway | `/tp @s 560 86 1330 -60 10` |
 | South-shore buildings | `/tp @s 830 102 1480 0 35` |
 | Ranger station and parking | `/tp @s 650 100 1600 0 35` |
+| South-shore fishing dock (after upgrade 3) | `/tp @s 733 82 1390 180 15` |
+| North-shore fishing dock by the dam (after upgrade 3) | `/tp @s 509 83 1228 -90 15` |
 
 ## How a world is made
 
@@ -199,7 +201,17 @@ Run in this order on a copy of the base world (the demo works):
      --structures ../../../data/hetch_hetchy/structures.json [--apply]
    ```
 
-Both use [`world_columns.py`](prototype/world_columns.py), which loads chunks as full block columns,
+3. **Fishing extras (gameplay, not data)** — [`add_fishing.py`](prototype/add_fishing.py) adds
+   docks with a moored spruce boat, a chest of four fishing rods, a bench and a lantern at gentle
+   shore spots, and schools of fish in the lake. Minecraft has no trout, so the fish are salmon
+   (trout are in the salmon family), marked as bucket-caught so they do not despawn. Fishing
+   with a rod works anywhere on the water. The real reservoir allows fishing from the shore only,
+   with no boats; the boats are a game liberty.
+   ```text
+   python add_fishing.py --world "<copy>" --spot 731,1386 --spot 513,1228 --fish 150 [--apply]
+   ```
+
+All three use [`world_columns.py`](prototype/world_columns.py), which loads chunks as full block columns,
 keeps every block state, recomputes heightmaps and leaves lighting for the game to redo on load
 (expect a short pause the first time each area loads).
 
@@ -217,7 +229,8 @@ viewpoints above and report what you see: an overhead render is not a screenshot
 | [`demo/`](demo/README.md) | The Hetch Hetchy demo world (zip), its OSM extract and notes |
 | [`prototype/rebuild_downstream.py`](prototype/rebuild_downstream.py) | Upgrade 1: canyon, dam face and river below the dam |
 | [`prototype/osm_structures.py`](prototype/osm_structures.py) | Upgrade 2: graded roads, dam parapets, buildings |
-| [`prototype/world_columns.py`](prototype/world_columns.py) | Shared world read/write for edits (full columns, palettes, heightmaps) |
+| [`prototype/add_fishing.py`](prototype/add_fishing.py) | Upgrade 3: fishing docks, boats, rods and fish (gameplay extras) |
+| [`prototype/world_columns.py`](prototype/world_columns.py) | Shared world read/write for edits (full columns, palettes, heightmaps, entities, chests) |
 | [`prototype/region_edit.py`](prototype/region_edit.py) | Low-level region and chunk read/write helpers |
 | [`prototype/build_waterscape_biome.py`](prototype/build_waterscape_biome.py), [`inspect_hetch.py`](prototype/inspect_hetch.py) | How the base world was made (reference; not portable) |
 | [`prototype/archive/`](prototype/archive/README.md) | Superseded one-shot edits; do not run on current worlds |

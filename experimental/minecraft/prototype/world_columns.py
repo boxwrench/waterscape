@@ -40,7 +40,20 @@ class World:
         self.names, self.index = [], {}
         self.cols, self.chunk, self.where, self.regions = {}, {}, {}, {}
         self.dirty = set()
+        self.new_entities = collections.defaultdict(list)       # (cx, cz) -> [entity compounds]
+        self.new_block_entities = collections.defaultdict(list)
         self.AIR = self.gid(state('air'))
+
+    def add_entity(self, nbt):
+        """Queue a mob or boat (needs Pos); written to the entities region files on save."""
+        x, z = float(nbt['Pos'][0]), float(nbt['Pos'][2])
+        self.new_entities[(int(np.floor(x)) >> 4, int(np.floor(z)) >> 4)].append(nbt)
+
+    def add_block_entity(self, nbt):
+        """Queue a block entity such as a chest's contents (needs x, y, z and id)."""
+        key = (int(nbt['x']) >> 4, int(nbt['z']) >> 4)
+        self.new_block_entities[key].append(nbt)
+        self.dirty.add(key)
 
     def gid(self, c):
         if isinstance(c, str):
@@ -139,6 +152,11 @@ class World:
             for k in ('block_ticks', 'fluid_ticks'):
                 if k in c:
                     c[k] = List[Compound]([])
+            if self.new_block_entities.get(key):
+                keep = [be for be in c.get('block_entities', [])
+                        if (int(be['x']), int(be['y']), int(be['z'])) not in
+                        {(int(n['x']), int(n['y']), int(n['z'])) for n in self.new_block_entities[key]}]
+                c['block_entities'] = List[Compound](keep + self.new_block_entities[key])
             R.mark_relight(c)
             path, k = self.where[key]
             self.regions[path][0][k] = R.encode_chunk(c)
@@ -147,4 +165,33 @@ class World:
             for path in touched:
                 chunks, times = self.regions[path]
                 R.write_region(path, chunks, times)
+            self._save_entities()
         return sum(len(v) for v in touched.values())
+
+    def _save_entities(self):
+        """Append queued entities to dimensions/.../entities/r.X.Z.mca, creating chunks as needed."""
+        if not self.new_entities:
+            return
+        edir = self.region_dir.parent / 'entities'
+        edir.mkdir(exist_ok=True)
+        version = next(iter(self.chunk.values()))['DataVersion'] if self.chunk else None
+        by_region = collections.defaultdict(list)
+        for (cx, cz), ents in self.new_entities.items():
+            by_region[(cx >> 5, cz >> 5)].append(((cx, cz), ents))
+        for (rx, rz), items in by_region.items():
+            path = edir / f'r.{rx}.{rz}.mca'
+            if path.exists() and path.stat().st_size >= 8192:
+                chunks, times = R.read_region(path)
+            else:
+                chunks, times = {}, bytes(4096)
+            for (cx, cz), ents in items:
+                k = (cx & 31) + (cz & 31) * 32
+                if k in chunks:
+                    c = R.decode_chunk(chunks[k])
+                    c['Entities'] = List[Compound](list(c.get('Entities', [])) + ents)
+                else:
+                    from nbtlib import File, IntArray, Int
+                    c = File({'DataVersion': Int(int(version)), 'Position': IntArray([cx, cz]),
+                              'Entities': List[Compound](ents)})
+                chunks[k] = R.encode_chunk(c)
+            R.write_region(path, chunks, times)
