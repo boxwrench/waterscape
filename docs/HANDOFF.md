@@ -6,10 +6,11 @@ few screens, move older entries to `docs/archive/`. History through RP30 is in [
 ## Experimental Minecraft workflow (2026-11-18)
 
 Added an [experimental Minecraft Java workflow](../experimental/minecraft/README.md), agent
-instructions and archived Hetch Hetchy prototype scripts. The scripts are machine-specific,
-modify their configured output world in place, and are not a portable exporter. The no-ESA
-comparison world has not been verified in-game by the generating agent. Generated worlds and
-mods remain outside the repository.
+instructions and Hetch Hetchy prototype scripts. The [dam demo](../experimental/minecraft/demo/README.md)
+is a curated archive with a downstream granite treatment and the visually identified slope
+removed; block transitions and heightmaps were verified offline, but the edited demo still needs
+an in-game review. The scripts are not a portable exporter; the slope cut is one-shot and must
+only be applied to an offline copy. Other generated worlds and mod files remain outside the repo.
 
 ## East Fork, the river map and Jenner / Hacienda upgrades: RP32 (2026-10-05)
 

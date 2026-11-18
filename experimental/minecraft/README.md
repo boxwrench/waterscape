@@ -1,10 +1,10 @@
 # Experimental Minecraft Java landscapes
 
-This experiment translates Waterscape reservoir data into playable Minecraft Java worlds made
+This experiment translates Waterscape reservoir data into Minecraft Java worlds made
 of ordinary blocks. The aim is a recognizable landscape and long views from real landmarks,
 without reshaping the geography merely to fit Minecraft's render distance. It is a prototype,
-not an automatic exporter: the Hetch Hetchy conversion has been made as a local experiment, and
-the archived scripts here need adaptation before someone else can run them.
+not an automatic exporter: a [Hetch Hetchy demo world](demo/README.md) is included, and the
+archived scripts here need adaptation before someone else can run them.
 
 For an agent implementing or continuing the work, start with [AGENTS.md](AGENTS.md). The parent
 repository instructions still apply. See [the prototype notes](#prototype-code) before running
@@ -53,10 +53,10 @@ the synthetic lake floor is generally 8–32 blocks below the surface with low-f
 variation. The downstream river has a separate shallower channel. The result is a 3D terrain
 test, not a measured lake-bottom survey or a full recreation of the reservoir.
 
-A local `Hetch Hetchy - Granite Test` copy applies a localized granite-like surface treatment
-below the dam. The requested removal of a separate slope beyond a gap remains unresolved pending
-a clear view of the structure. The test has been checked offline but not yet visually verified
-in Minecraft, and it is not a finished distributable demo.
+The included `Hetch Hetchy - Dam Demo` adds granite-like rock in the downstream canyon and
+removes the separate slope identified in the user's screenshot. The cut preserves the dam and
+water; it is an interpretive edit rather than a survey. Its blocks and archive have been checked
+offline, but the changed world has not yet been visually verified in Minecraft.
 
 The Waterscape settings describe a Sierra granite setting with ponderosa pine and California
 black oak. The prototype approximates these with diorite/andesite and spruce/dark-oak blocks; it
@@ -144,7 +144,10 @@ The [`prototype`](prototype) folder preserves the local experiment's scripts for
 - `region_edit.py` contains shared offline Java region/NBT helpers.
 - `granite_canyon.py` is a localized Hetch Hetchy soil-to-stone edit, with a dry run by default.
   It needs explicit world and structures paths; `--apply` writes to the supplied **offline copy**.
-  It does not remove the separate slope or change the dam geometry.
+- `remove_dam_slope.py` removes the identified downstream slope from a world copy, with a dry run
+  by default. It preserves dam and water blocks and updates heightmaps and lighting. It is tied
+  to this crop and needs the same explicit paths. The cut is a one-shot edit: do not rerun it on
+  an edited world, because its blended edges would be cut further.
 
 **These snapshots are not a portable pipeline.** They assume a specific sibling-directory
 layout, external Python packages (`numpy`, `scipy`, `Pillow`, `pyproj`, `nbtlib`), a prepared

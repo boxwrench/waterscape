@@ -29,8 +29,9 @@ instructions and the user's request.
 6. **Handle the prototype cautiously.** The archived scripts are machine-specific snapshots,
    not a supported CLI. They assume hardcoded filenames, external files and Hetch Hetchy
    parameters and edit their output world in place. Adapt and test explicit paths before execution;
-   never point them at a user's only save. Do not commit generated worlds, game files, mod JARs,
-   caches, private location data or credentials.
+   never point them at a user's only save. Generated worlds belong in the repository only when
+   explicitly requested as curated, reviewed demos; do not commit player data, mod JARs, caches,
+   private location data or credentials.
 7. **Verify and report.** Check decoded values, geography, world bounds, chunk/NBT integrity,
    palette, water and heightmaps. Open a copy in the target version when feasible; capture fixed
    in-game viewpoints, test travel and performance, and report what was actually observed.
