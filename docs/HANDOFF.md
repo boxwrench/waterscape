@@ -3,6 +3,16 @@
 The current state of the project and where to pick up. Add a short entry at the top for each pass; when this grows past a
 few screens, move older entries to `docs/archive/`. History through RP30 is in [`archive/HANDOFF-through-RP30.md`](./archive/HANDOFF-through-RP30.md).
 
+## Experimental Minecraft workflow (2026-11-18)
+
+Added an [experimental Minecraft Java workflow](../experimental/minecraft/README.md), agent
+instructions and Hetch Hetchy prototype scripts. The [dam demo](../experimental/minecraft/demo/README.md)
+is a curated archive with a downstream granite treatment, the visually identified slope removed,
+an illustrative plunge pool and mapped OSM roads and building shells. Block transitions, pool
+connectivity and heightmaps were verified offline, but the edited demo still needs an in-game
+review. The scripts are not a portable exporter; edits are one-shot and must only be applied to
+an offline copy. Other generated worlds and mod files remain outside the repo.
+
 ## East Fork, the river map and Jenner / Hacienda upgrades: RP32 (2026-10-05)
 
 Branch `task/RP32` (on `task/RP31`). The East Fork work had been built locally against the old layout and was pushed as
