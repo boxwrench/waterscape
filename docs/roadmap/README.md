@@ -137,7 +137,8 @@ rules are the only source; worlds are built, never hand-edited. Minecraft Java 2
 | ID | Task | Who | Needs | Status |
 |---|---|---|---|---|
 | MC0 | Canyon below the dam rebuilt from Waterscape inputs; graded OSM roads, dam parapets, buildings (`rebuild_downstream.py`, `osm_structures.py`) | capable | — | done on `task/minecraft-accuracy`; checked offline, awaiting in-game acceptance |
-| MC0b | In-game acceptance of the Hetch Hetchy test worlds (`Downstream test`, `Structures test`), then refresh the curated demo zip and the server copy | human | MC0 | open |
+| MC0b | In-game acceptance of the Hetch Hetchy world, then refresh the curated demo zip | human | MC0 | accepted in game 2026-11-18 ("really good"); server runs it (26.3, public via playit); demo zip refresh open |
+| MC0c | Photo-informed detail for Hetch Hetchy: dam outlets and spillway, the south-shore buildings, rock colour, from the maintainer's photos | capable | MC0b | open |
 | MC1 | [One builder: a fresh world from `data/<id>/`](tasks/MC1-minecraft-builder.md) | capable | MC0 merged | open |
 | MC2 | A second SFPUC reservoir (Calaveras or Crystal Springs): biome palette, embankment dam profile, site settings | capable | MC1; that reservoir's dam in `structures.json` | open |
 | MC3 | "Make a playable map" section in `docs/make-a-waterscape.md`; link from the README | capable | MC1 | open |

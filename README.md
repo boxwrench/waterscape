@@ -102,6 +102,11 @@ mapped roads and buildings from OpenStreetMap, all in ordinary blocks. Hetch Het
 one: a [demo world](experimental/minecraft/demo/README.md) of O'Shaughnessy Dam, the canyon below
 it and Kolana Rock.
 
+**Play it on the server:** in Minecraft Java 26.3 choose Multiplayer → Add Server and enter
+`dedication-care.tun.ply.gg`. The server is whitelisted: try to join once, then ask the maintainer
+to approve your username. A plain 26.3 game is enough; Bedrock (consoles, phones, the Microsoft
+Store edition) cannot join.
+
 - **Version:** Minecraft Java **26.3**, the current release, with Fabric Loader 0.20.1 for the
   optional mods. Opening a world in a newer release upgrades that copy one way, so keep a copy
   before trying one. Mods are optional; Distant Horizons gives the long views. The

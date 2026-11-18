@@ -134,8 +134,10 @@ The Hetch Hetchy world can also be played together on a small private server.
 1. Use **Minecraft Java Edition 26.3** on Windows, macOS or Linux (the launcher's default release).
    Bedrock (Microsoft Store, Xbox, phones) cannot join. Mods are optional; a plain 26.3 game is
    enough, and Fabric with Distant Horizons adds the long views.
-2. Ask the host for access: they add your Minecraft username to the whitelist.
-3. In Minecraft choose **Multiplayer → Add Server** and enter the address the host gives you.
+2. Access is by whitelist; see the next step for how to ask.
+3. In Minecraft choose **Multiplayer → Add Server** and enter the address. The Hetch Hetchy server
+   is `dedication-care.tun.ply.gg` (no port needed). The whitelist is the request: try to join once
+   (you will be turned away), then ask the maintainer to approve you; the host sees who tried.
 
 ## Host a server
 
@@ -149,6 +151,13 @@ What the Hetch Hetchy server uses, for anyone setting up their own:
   pre-generation.
 - **Settings:** `online-mode=true`, `white-list=true`, `enforce-whitelist=true`, creative,
   peaceful, no PvP, `view-distance=12`, `simulation-distance=6`, a handful of players.
+- **Upgrade the world fully.** Distant Horizons reads saved chunks directly and only understands
+  the current format, so chunks still in an older format give wrong or missing far terrain (its
+  log says "Unable to deserialize blocks"). After copying in a world, start once with
+  `--forceUpgrade`, then force-load and save any chunks it skipped (it skipped every chunk the
+  scripts had rewritten): `forceload add` over the area in blocks of at most 256 chunks,
+  `save-all flush`, `forceload remove all`. Delete Distant Horizons' database afterwards if it was
+  already built.
 - **The world:** copy a finished world folder in as `world` with the server stopped. Edit copies,
   never the server's world; to update it, stop the server, back up `world`, copy the new one in and
   start again.

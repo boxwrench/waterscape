@@ -60,12 +60,17 @@ drifted from the browser. A single builder makes that the only path.
 5. **Provenance.** Write `waterscape-build.json` into each world: bundle id and commit, site
    settings, Minecraft and DataVersion, stages run, source links (3DEP, NID, OSM with ODbL
    attribution) and what is illustrative.
-6. **Checks (offline, scripted).** Water edges with no lower dry neighbour; dam crest
+6. **Format.** Write chunks in the target version's own format and `DataVersion` (26.3 stores a
+   default block state as a plain string and others as `{id, properties}`). Today's scripts write
+   26.2-format chunks; 26.3's `--forceUpgrade` silently skipped every chunk they had rewritten
+   (cause unknown; force-loading and saving them worked), and Distant Horizons cannot read
+   old-format chunks. Find out why, and make the builder's output need no upgrade.
+7. **Checks (offline, scripted).** Water edges with no lower dry neighbour; dam crest
    continuous at the crest height; river surface at `structures.json` levels; heightmaps match
    the blocks; wall/fence connection states; chunk NBT round-trips through `nbtlib`. Make
    overhead and isometric renders at fixed places (the dam, the canyon, the south-shore
    buildings) and compare them with the MC0 world and the browser's top-down view.
-7. **Docs.** Update the experiment README (builder usage, site settings, stages; replace its
+8. **Docs.** Update the experiment README (builder usage, site settings, stages; replace its
    "Build or update a world" section). The superseded one-shot edits are already in
    `prototype/archive/`; move `build_waterscape_biome.py`, `inspect_hetch.py` and the upgrade
    scripts there too once the builder covers them, and update the archive README. Keep the
