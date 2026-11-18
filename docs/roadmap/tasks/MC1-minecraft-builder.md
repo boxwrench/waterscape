@@ -62,8 +62,8 @@ drifted from the browser. A single builder makes that the only path.
    attribution) and what is illustrative.
 6. **Format.** Write chunks in the target version's own format and `DataVersion` (26.3 stores a
    default block state as a plain string and others as `{id, properties}`). Today's scripts write
-   26.2-format chunks; 26.3's `--forceUpgrade` silently skipped every chunk they had rewritten
-   (cause unknown; force-loading and saving them worked), and Distant Horizons cannot read
+   26.2-format chunks; 26.3's `--forceUpgrade` once silently skipped every chunk they had
+   rewritten (cause unknown; a second run on a fresh copy did not; force-loading and saving them worked), and Distant Horizons cannot read
    old-format chunks. Find out why, and make the builder's output need no upgrade.
 7. **Checks (offline, scripted).** Water edges with no lower dry neighbour; dam crest
    continuous at the crest height; river surface at `structures.json` levels; heightmaps match

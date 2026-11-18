@@ -124,8 +124,9 @@ Viewpoints, matching the browser version's cameras where they exist:
 | Dam crest walkway | `/tp @s 560 86 1330 -60 10` |
 | South-shore buildings | `/tp @s 830 102 1480 0 35` |
 | Ranger station and parking | `/tp @s 650 100 1600 0 35` |
-| South-shore fishing dock (after upgrade 3) | `/tp @s 733 82 1390 180 15` |
-| North-shore fishing dock by the dam (after upgrade 3) | `/tp @s 509 83 1228 -90 15` |
+| Boat ramp and fishing dock | `/tp @s 738 83 1382 180 15` |
+| Tunnel from the dam's north end | `/tp @s 527 85 1316 154 5` |
+| Tunnel exit onto the trail | `/tp @s 493 85 1198 -6 5` |
 
 ## Join the server
 
@@ -154,9 +155,9 @@ What the Hetch Hetchy server uses, for anyone setting up their own:
 - **Upgrade the world fully.** Distant Horizons reads saved chunks directly and only understands
   the current format, so chunks still in an older format give wrong or missing far terrain (its
   log says "Unable to deserialize blocks"). After copying in a world, start once with
-  `--forceUpgrade`, then force-load and save any chunks it skipped (it skipped every chunk the
-  scripts had rewritten): `forceload add` over the area in blocks of at most 256 chunks,
-  `save-all flush`, `forceload remove all`. Delete Distant Horizons' database afterwards if it was
+  `--forceUpgrade`, then check every chunk's `DataVersion`. Once (of two runs) it silently skipped
+  the chunks the scripts had rewritten; force-loading and saving those fixed it: `forceload add`
+  over the area in blocks of at most 256 chunks, `save-all flush`, `forceload remove all`. Delete Distant Horizons' database afterwards if it was
   already built.
 - **The world:** copy a finished world folder in as `world` with the server stopped. Edit copies,
   never the server's world; to update it, stop the server, back up `world`, copy the new one in and
@@ -258,10 +259,24 @@ Run in this order on a copy of the base world (the demo works):
    with a rod works anywhere on the water. The real reservoir allows fishing from the shore only,
    with no boats; the boats are a game liberty.
    ```text
-   python add_fishing.py --world "<copy>" --spot 731,1386 --spot 513,1228 --fish 150 [--apply]
+   python add_fishing.py --world "<copy>" --spot 738,1376 --fish 150 [--apply]
+   ```
+4. **Places from photos** — two scripts for features the maintainer marked on a map and
+   photographed, placed by hand rather than from data:
+   [`add_ramp.py`](prototype/add_ramp.py) lays a concrete boat ramp from a road into the lake
+   (graded, with half-slabs, continuing under water), and
+   [`add_tunnel.py`](prototype/add_tunnel.py) cuts a walking tunnel along a route: rough rock
+   walls, a gravel floor, lanterns hanging from the ceiling on one side, concrete portals, and a
+   trail mapped over the rock turned back to rock. At the world's vertical scale the hill above
+   is thin near the trail end, so the script adds rock over the tunnel with sloped sides.
+   Hetch Hetchy's are the ramp at the south-shore cove (the fishing dock sits beside it) and the
+   tunnel from the dam's north end to the Wapama Falls trail:
+   ```text
+   python add_ramp.py --world "<copy>" --from 713,1392 --to 729,1384 [--apply]
+   python add_tunnel.py --world "<copy>" --from 524,1310 --via 501,1263 --to 495,1206 [--apply]
    ```
 
-All three use [`world_columns.py`](prototype/world_columns.py), which loads chunks as full block columns,
+All of these use [`world_columns.py`](prototype/world_columns.py), which loads chunks as full block columns,
 keeps every block state, recomputes heightmaps and leaves lighting for the game to redo on load
 (expect a short pause the first time each area loads).
 
@@ -280,6 +295,7 @@ viewpoints above and report what you see: an overhead render is not a screenshot
 | [`prototype/rebuild_downstream.py`](prototype/rebuild_downstream.py) | Upgrade 1: canyon, dam face and river below the dam |
 | [`prototype/osm_structures.py`](prototype/osm_structures.py) | Upgrade 2: graded roads, dam parapets, buildings |
 | [`prototype/add_fishing.py`](prototype/add_fishing.py) | Upgrade 3: fishing docks, boats, rods and fish (gameplay extras) |
+| [`prototype/add_ramp.py`](prototype/add_ramp.py), [`add_tunnel.py`](prototype/add_tunnel.py) | Upgrade 4: a boat ramp and a walking tunnel, placed from photos and a map |
 | [`prototype/world_columns.py`](prototype/world_columns.py) | Shared world read/write for edits (full columns, palettes, heightmaps, entities, chests) |
 | [`prototype/region_edit.py`](prototype/region_edit.py) | Low-level region and chunk read/write helpers |
 | [`prototype/build_waterscape_biome.py`](prototype/build_waterscape_biome.py), [`inspect_hetch.py`](prototype/inspect_hetch.py) | How the base world was made (reference; not portable) |
