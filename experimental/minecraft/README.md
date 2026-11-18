@@ -53,10 +53,12 @@ the synthetic lake floor is generally 8–32 blocks below the surface with low-f
 variation. The downstream river has a separate shallower channel. The result is a 3D terrain
 test, not a measured lake-bottom survey or a full recreation of the reservoir.
 
-The included `Hetch Hetchy - Dam Demo` adds granite-like rock in the downstream canyon and
-removes the separate slope identified in the user's screenshot. The cut preserves the dam and
-water; it is an interpretive edit rather than a survey. Its blocks and archive have been checked
-offline, but the changed world has not yet been visually verified in Minecraft.
+The included `Hetch Hetchy - Pool and Roads` demo adds granite-like rock, an illustrative
+plunge pool and the mapped downstream river; it also removes the separate slope identified in
+the user's screenshot. Mapped OSM roads and approximate building shells are added separately;
+they were not in the terrain-only Arnis base. The cut preserves dam concrete and existing water;
+it is interpretive rather than surveyed. Its blocks and archive have been checked offline, but
+the changed world has not yet been visually verified in Minecraft.
 
 The Waterscape settings describe a Sierra granite setting with ponderosa pine and California
 black oak. The prototype approximates these with diorite/andesite and spruce/dark-oak blocks; it
@@ -148,6 +150,10 @@ The [`prototype`](prototype) folder preserves the local experiment's scripts for
   by default. It preserves dam and water blocks and updates heightmaps and lighting. It is tied
   to this crop and needs the same explicit paths. The cut is a one-shot edit: do not rerun it on
   an edited world, because its blended edges would be cut further.
+- `add_dam_pool.py` adds the illustrative pool and rocky rim; `add_osm_features.py` translates a
+  cropped OSM extract into mapped road/trail blocks and generic building shells. Both default to
+  a dry run and require an explicit offline world copy. The source extract and OSM attribution
+  are documented with the [demo](demo/README.md).
 
 **These snapshots are not a portable pipeline.** They assume a specific sibling-directory
 layout, external Python packages (`numpy`, `scipy`, `Pillow`, `pyproj`, `nbtlib`), a prepared
