@@ -12,7 +12,7 @@ reservoir and OSM building shells are preserved; OSM road surfaces are re-laid o
 """
 import argparse, collections, gzip, json, math, pathlib, sys
 import numpy as np
-from scipy.ndimage import map_coordinates, zoom, distance_transform_edt
+from scipy.ndimage import map_coordinates, zoom, distance_transform_edt, binary_dilation
 from pyproj import Transformer
 from nbtlib import Compound, String, List, LongArray, Byte
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
@@ -58,6 +58,9 @@ def main():
     p.add_argument('--world', required=True, type=pathlib.Path)
     p.add_argument('--data', required=True, type=pathlib.Path, help='data/hetch_hetchy')
     p.add_argument('--biome', required=True, type=pathlib.Path, help='data/biomes/sierra-granite/biome.json')
+    p.add_argument('--face-drop', type=float, default=None,
+                   help='blocks the downstream face drops per block outward (default: the browser profile, '
+                        'about 0.67; 1.5 looks like the real dam at the 4 m vertical scale)')
     p.add_argument('--apply', action='store_true')
     a = p.parse_args()
     w = a.world.resolve()
@@ -148,6 +151,16 @@ def main():
     crest_y = int(round(80 + (dam['crestElevation'] - tmeta['waterLevel']) / 4))
     dam_y = np.where(u_m <= 7.5, crest_y, crest_y - np.rint((6 + (u_m - 7.5) / 0.75) / 4)).astype(np.int32)
     footprint = downstream & inside & (u_m <= 7.5 + 0.75 * (base_m - 6)) & ~lake
+    # The browser's profile is where the lidar records the dam's face; a steeper face (--face-drop,
+    # an exaggeration for the vertical scale) stops at river level, and the band it frees below
+    # becomes a plunge pool rather than a ledge of old-face ground.
+    old_dam_y, old_footprint = dam_y.copy(), footprint.copy()
+    river_y = int(round(80 + (surf[0] - tmeta['waterLevel']) / 4))
+    if a.face_drop:
+        u_b = u_m / 2
+        raw = crest_y - np.where(u_b <= 3.75, 0, 1.5 + (u_b - 3.75) * a.face_drop)
+        dam_y = np.maximum(np.rint(raw), river_y).astype(np.int32)
+        footprint = downstream & inside & (raw >= river_y - .5) & ~lake
     # At the toe, the face meets the river: no concrete step below the water beside it.
     dam_y = np.where(footprint & (rdist <= half + 2), np.maximum(dam_y, wy), dam_y)
     river = (rdist <= half) & ~lake & ~(footprint & (dam_y > wy))
@@ -281,8 +294,22 @@ def main():
     # is the abutment rock and stays natural.
     # Near the toe the ground is real ground, not the dam: never cut it down to the profile there.
     toe_y = int(round(80 + (surf[0] - tmeta['waterLevel']) / 4))
-    dam_here = footprint & change & ~river & (((g <= dam_y + 3) & (dam_y >= toe_y + 3)) | (g <= dam_y))
+    lidar_dam = old_footprint & change & ~river & (((g <= old_dam_y + 3) & (old_dam_y >= toe_y + 3)) | (g <= old_dam_y))
+    dam_here = footprint & change & ~river & ((((g <= dam_y + 3) & (dam_y >= toe_y + 3)) | (g <= dam_y)) | lidar_dam)
     g_dam_floor = np.minimum(g, dam_y)
+    # The freed band: a pool at river level with a rocky bed, rising as rock against natural ground.
+    freed = lidar_dam & ~footprint & ~river
+    if freed.any():
+        natural = change & ~freed & ~dam_here & ~river & ~lake & ~footprint
+        dnat = distance_transform_edt(~natural)
+        pool_bed = river_y - 2 - (v7 > .6).astype(np.int32)
+        rim = np.clip(river_y + (3 - np.ceil(dnat)).astype(np.int32), river_y, river_y + 2)
+        g = np.where(freed, np.where(dnat > 3, pool_bed, rim), g)
+        # Watertight: any dry neighbour of the pool lower than the water is raised to it.
+        poolw = freed & (g < river_y)
+        edge_lo = binary_dilation(poolw) & ~poolw & ~river & ~lake & change & (g < river_y) & ~dam_here
+        g = np.where(edge_lo, river_y, g)
+        stats['plunge pool columns'] = int(poolw.sum())
     stats['dam face columns'] = int(dam_here.sum())
     stats['rebuilt columns'] = int(change.sum())
     stats['river columns'] = int((river & change).sum())
@@ -290,7 +317,7 @@ def main():
     # Tree list (procedural stands, not surveyed trees).
     rng = np.random.default_rng(611)
     trees = []
-    no_tree = river | bank | protect | footprint | (old_road >= 0)
+    no_tree = river | bank | protect | footprint | old_footprint | (old_road >= 0)
     no_tree = distance_transform_edt(~no_tree) < 3
     for zz in range(4, H - 4, 8):
         for xx in range(4, W - 4, 8):
@@ -331,6 +358,14 @@ def main():
                     col[1:lo] = B['stone']
                     col[lo:hi + 1] = B['concrete']
                     col[hi + 1:] = B['air']
+                    continue
+                if a.face_drop and freed[zz, xx]:
+                    v = v3[zz, xx]
+                    col[gy_] = B['gravel'] if v < .3 else B['cobblestone'] if v < .55 else B['andesite'] if v < .8 else B['mossy_cobblestone']
+                    if gy_ + Y0 < river_y:
+                        col[gy_ + 1:river_y - Y0 + 1] = B['water']
+                        if v7[zz, xx] > .85 and gy_ + 1 + Y0 < river_y:
+                            col[gy_ + 1] = B['mossy_cobblestone']     # a boulder in the pool
                     continue
                 if river[zz, xx]:
                     v = v3[zz, xx]

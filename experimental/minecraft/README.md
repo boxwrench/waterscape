@@ -240,8 +240,13 @@ Run in this order on a copy of the base world (the demo works):
    half and the buildings.
    ```text
    python rebuild_downstream.py --world "<copy>" --data ../../../data/hetch_hetchy \
-     --biome ../../../data/biomes/sierra-granite/biome.json [--apply]
+     --biome ../../../data/biomes/sierra-granite/biome.json --face-drop 1.5 [--apply]
    ```
+   `--face-drop` steepens the downstream face, in blocks dropped per block outward. Without it the
+   face follows the browser's gravity profile (0.75 m out per metre down), which at 2 m across and
+   4 m up per block shows as a gentle 34°; 1.5 looks like the real dam. The band the steeper face
+   frees becomes a plunge pool at river level that rises as rock into the canyon, never a ledge
+   (the lidar there records the dam itself, not ground). Hetch Hetchy's world uses 1.5.
 2. **Roads, dam crest and buildings** — [`osm_structures.py`](prototype/osm_structures.py) removes
    the demo's flat road lines and box shells and replaces them. Roads are graded along their length
    with widths by class and lanes, half-slabs, cuts, fill with stone guard walls, and tunnels or
