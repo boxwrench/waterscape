@@ -221,6 +221,43 @@ The [`prototype`](prototype) folder preserves the local experiment's scripts for
   a dry run and require an explicit offline world copy. The source extract and OSM attribution
   are documented with the [demo](demo/README.md).
 
+## Optional upgrades
+
+Two later scripts bring a world closer to the browser version. Both are dry runs unless
+`--apply` is given, write only to the world you name (make a copy first, with Minecraft closed),
+refuse to run twice on the same world, and print what they changed. They use the same Python
+packages as the prototypes and the shared [`world_columns.py`](prototype/world_columns.py), which
+keeps every block state and recomputes heightmaps; Minecraft relights changed chunks on load.
+
+1. **Canyon below the dam** — [`rebuild_downstream.py`](prototype/rebuild_downstream.py)
+   rebuilds the area below O'Shaughnessy Dam from the inputs the browser uses: the bundle's
+   unmodified terrain, the traced river (`structures.json` centre line, widths and surface), the
+   dam's downstream face from the renderer's gravity profile (`renderer/land/structures.js`),
+   and `ground.js`'s granite rules for rock and canyon stone. It replaces the earlier slope cut,
+   canyon stone and plunge pool, keeps the reservoir watertight, and keeps the dam's upstream
+   half and OSM buildings.
+   ```text
+   python rebuild_downstream.py --world "<copy>" --data ../../../data/hetch_hetchy \
+     --biome ../../../data/biomes/sierra-granite/biome.json [--apply]
+   ```
+2. **Roads, dam crest and buildings** — [`osm_structures.py`](prototype/osm_structures.py)
+   replaces `add_osm_features.py`'s flat lines and box shells. Roads are graded along their
+   length with class widths, half-slabs, cuts, fill with stone guard walls, and tunnels or bridge
+   decks where needed; the dam crest gets parapets on both edges; buildings become axis-aligned
+   rectangles (minimum rotated rectangle of the OSM footprint, same centre, size and long axis)
+   with foundations, windows, a door toward the nearest road and hip roofs. Run it after step 1.
+   ```text
+   python osm_structures.py --world "<copy>" --osm ../demo/hetch-osm-features.json \
+     --structures ../../../data/hetch_hetchy/structures.json [--apply]
+   ```
+
+What is mapped and what is not: terrain, river line, dam crest and height, road lines and
+classes, building footprints and storeys come from the bundle and OpenStreetMap. Block
+choices, river bed, boulders, trees, dam cross-section, road cuts and walls, and building
+materials and roofs are illustrative. Buildings use playable height (3 blocks a storey), not the
+world's 4 m vertical scale. Both scripts have been checked offline (block sections, water
+edges, wall connections, isometric renders); report what you see in game.
+
 **These snapshots are not a portable pipeline.** They assume a specific sibling-directory
 layout, external Python packages (`numpy`, `scipy`, `Pillow`, `pyproj`, `nbtlib`), a prepared
 Arnis base world and copied source files. The builders edit the world at their configured path

@@ -40,6 +40,11 @@ instructions and the user's request.
    in this experiment rather than copying Hetch Hetchy constants. Record dependencies and
    versions; retain the source links and settings used for each output. Update the README when
    capabilities or limitations change.
+9. **Follow the browser, not hand edits.** When the world and the browser disagree, rebuild the
+   area from the browser's own inputs and rules (bundle terrain, `structures.json`,
+   `renderer/land/*.js`) rather than sculpting a fix; see the README's optional upgrades. Use
+   `prototype/world_columns.py` for new edits and check results offline (sections, water edges,
+   renders) before anyone opens the world.
 
 For client mods and distance-rendering starting points, use the README's linked project pages
 and confirm the current Minecraft/Fabric compatibility and mod dependencies before installing.
