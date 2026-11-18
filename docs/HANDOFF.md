@@ -3,6 +3,14 @@
 The current state of the project and where to pick up. Add a short entry at the top for each pass; when this grows past a
 few screens, move older entries to `docs/archive/`. History through RP30 is in [`archive/HANDOFF-through-RP30.md`](./archive/HANDOFF-through-RP30.md).
 
+## Experimental Minecraft workflow (2026-11-18)
+
+Added an [experimental Minecraft Java workflow](../experimental/minecraft/README.md), agent
+instructions and archived Hetch Hetchy prototype scripts. The scripts are machine-specific,
+modify their configured output world in place, and are not a portable exporter. The no-ESA
+comparison world has not been verified in-game by the generating agent. Generated worlds and
+mods remain outside the repository.
+
 ## East Fork, the river map and Jenner / Hacienda upgrades: RP32 (2026-10-05)
 
 Branch `task/RP32` (on `task/RP31`). The East Fork work had been built locally against the old layout and was pushed as

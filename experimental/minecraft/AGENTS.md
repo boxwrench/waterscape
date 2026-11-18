@@ -1,0 +1,44 @@
+# Minecraft experiment: agent workflow
+
+Read the repository root [AGENTS.md](../../AGENTS.md),
+[Making Water Visible](../../docs/making-water-visible.md), and this folder's
+[README](README.md) before changing the experiment. These instructions supplement the root
+instructions and the user's request.
+
+1. **Inspect inputs first.** Identify the reservoir, requested landmarks and bounding box.
+   Read `data/<id>/terrain.json`, `source.json`, `land.json`, biome metadata and any structure
+   metadata. Distinguish measured terrain from authored or procedural setting. Do not assume
+   every reservoir includes Hetch Hetchy's dam, biome, drawdown or detail tiles.
+2. **Preserve geography.** Record map projection, coordinate conventions, horizontal and vertical
+   scales, world height range, clipping, water level and known landmark coordinates. Compare real
+   and block distances. Improve distant visibility through appropriate rendering settings before
+   distorting horizontal geography, unless the user explicitly wants a stylized scale.
+3. **Use Waterscape first.** Decode the terrain channels using the current repository's
+   `pipeline/dem.py` and `renderer/terrain.js`; the fourth drawdown channel is optional despite
+   some metadata descriptions saying three channels. Translate biome and tree rules into an
+   explicitly approximate block palette. ESA WorldCover or imagery can be an optional comparison,
+   not a mandatory dependency or an exact record of every tree or surface.
+4. **Keep assumptions visible.** The lidar terrain does not establish underwater bathymetry.
+   Label synthetic lake bottoms, dam cross-sections, tree models and artistic materials. Do not
+   claim the web renderer's 1 m normal/relief textures are a complete high-resolution elevation
+   grid. Keep real source data and illustrative details distinguishable.
+5. **Protect worlds.** Generate into a new staging directory; never edit a live or open world.
+   Back up any existing world before an explicitly requested edit. Verify target paths and game
+   version, preserve the original save, and only install a separate copy after validating output.
+   Follow the environment's filesystem permissions; a user request does not bypass a sandbox.
+6. **Handle the prototype cautiously.** The archived scripts are machine-specific snapshots,
+   not a supported CLI. They assume hardcoded filenames, external files and Hetch Hetchy
+   parameters and edit their output world in place. Adapt and test explicit paths before execution;
+   never point them at a user's only save. Do not commit generated worlds, game files, mod JARs,
+   caches, private location data or credentials.
+7. **Verify and report.** Check decoded values, geography, world bounds, chunk/NBT integrity,
+   palette, water and heightmaps. Open a copy in the target version when feasible; capture fixed
+   in-game viewpoints, test travel and performance, and report what was actually observed.
+   An overhead raster is not a Minecraft screenshot. Label any untested step or compatibility.
+8. **Make the workflow reusable.** Put portable code, tests and reservoir-specific configuration
+   in this experiment rather than copying Hetch Hetchy constants. Record dependencies and
+   versions; retain the source links and settings used for each output. Update the README when
+   capabilities or limitations change.
+
+For client mods and distance-rendering starting points, use the README's linked project pages
+and confirm the current Minecraft/Fabric compatibility and mod dependencies before installing.

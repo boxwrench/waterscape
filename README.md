@@ -8,6 +8,9 @@ A curated [Waterscape resource library](resources/README.md) tracks useful web g
 simulation, rendering and visual-development references, including the upstream licence
 status for each resource.
 
+An [experimental Minecraft Java workflow](experimental/minecraft/README.md) explores converting
+Waterscape terrain and reservoir settings into playable block landscapes.
+
 | Experience | What it shows | Status |
 |---|---|---|
 | [Reservoirs](https://boxwrench.github.io/waterscape/) | Calaveras, San Antonio, Crystal Springs, San Andreas and Hetch Hetchy (with O'Shaughnessy Dam): lidar landscapes, sourced context, modeled water optics and aerial maps | Live journey and WebGPU explorer |
