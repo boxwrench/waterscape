@@ -53,6 +53,11 @@ the synthetic lake floor is generally 8–32 blocks below the surface with low-f
 variation. The downstream river has a separate shallower channel. The result is a 3D terrain
 test, not a measured lake-bottom survey or a full recreation of the reservoir.
 
+A local `Hetch Hetchy - Granite Test` copy applies a localized granite-like surface treatment
+below the dam. The requested removal of a separate slope beyond a gap remains unresolved pending
+a clear view of the structure. The test has been checked offline but not yet visually verified
+in Minecraft, and it is not a finished distributable demo.
+
 The Waterscape settings describe a Sierra granite setting with ponderosa pine and California
 black oak. The prototype approximates these with diorite/andesite and spruce/dark-oak blocks; it
 uses calcite for a pale shoreline band. It uses a coarser tree spacing than the web renderer and
@@ -137,6 +142,9 @@ The [`prototype`](prototype) folder preserves the local experiment's scripts for
 - `build_waterscape_biome.py` is the Waterscape-inspired conversion; `build_east.py` is the
   ESA-guided comparison.
 - `region_edit.py` contains shared offline Java region/NBT helpers.
+- `granite_canyon.py` is a localized Hetch Hetchy soil-to-stone edit, with a dry run by default.
+  It needs explicit world and structures paths; `--apply` writes to the supplied **offline copy**.
+  It does not remove the separate slope or change the dam geometry.
 
 **These snapshots are not a portable pipeline.** They assume a specific sibling-directory
 layout, external Python packages (`numpy`, `scipy`, `Pillow`, `pyproj`, `nbtlib`), a prepared
