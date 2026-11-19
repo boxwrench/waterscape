@@ -2,7 +2,7 @@
 # Render a Waterscape Minecraft world as a BlueMap web map (static files you can host anywhere
 # that can send gzip headers; see README.md).
 #
-#   render_map.sh --world DIR --server DIR --chunky JAR --bluemap JAR [--pack ZIP] [--work DIR] [--serve]
+#   render_map.sh --world DIR --server DIR --chunky JAR --bluemap JAR [--site FILE] [--pack ZIP] [--work DIR] [--serve]
 #
 #   --world    the world to map (it is copied; the original is never touched)
 #   --server   a spare Fabric server folder for the same Minecraft version, NOT the live server:
@@ -10,22 +10,25 @@
 #              (our builders leave lighting to the game, and BlueMap skips unlit chunks)
 #   --chunky   Chunky (Fabric) jar for that version
 #   --bluemap  BlueMap CLI jar (bluemap-<version>-cli.jar)
+#   --site     sites/<id>.json: which reservoir (data/<id>/story.json supplies the panel text) and
+#              its viewpoints (default: sites/hetch_hetchy.json)
 #   --pack     resource pack zip to draw with (default: ../pack/build/waterscape-hetch-pack.zip)
 #   --work     work folder (default: build/); the finished site is <work>/run/web
 #   --serve    afterwards, serve the map on http://127.0.0.1:8100 until Ctrl+C
 set -euo pipefail
 here=$(cd "$(dirname "$0")" && pwd)
-world= server= chunky= bluemap= pack="$here/../pack/build/waterscape-hetch-pack.zip" work="$here/build" serve=0
+world= server= chunky= bluemap= site="$here/sites/hetch_hetchy.json" pack="$here/../pack/build/waterscape-hetch-pack.zip" work="$here/build" serve=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --world) world=$2; shift 2 ;; --server) server=$2; shift 2 ;; --chunky) chunky=$2; shift 2 ;;
-    --bluemap) bluemap=$2; shift 2 ;; --pack) pack=$2; shift 2 ;; --work) work=$2; shift 2 ;;
+    --bluemap) bluemap=$2; shift 2 ;; --site) site=$2; shift 2 ;; --pack) pack=$2; shift 2 ;; --work) work=$2; shift 2 ;;
     --serve) serve=1; shift ;; *) echo "unknown option $1" >&2; exit 2 ;;
   esac
 done
 for v in world server chunky bluemap; do [ -n "${!v}" ] || { echo "--$v is required" >&2; exit 2; }; done
 world=$(realpath "$world"); server=$(realpath "$server"); chunky=$(realpath "$chunky")
-bluemap=$(realpath "$bluemap"); mkdir -p "$work"; work=$(realpath "$work")
+bluemap=$(realpath "$bluemap"); site=$(realpath "$site"); mkdir -p "$work"; work=$(realpath "$work")
+id=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["id"])' "$site")
 [ -f "$world/level.dat" ] || { echo "$world has no level.dat" >&2; exit 1; }
 [ -f "$server/fabric-server-launch.jar" ] && [ -f "$server/server.properties" ] || { echo "$server is not a Fabric server folder" >&2; exit 1; }
 session=waterscape-relight
@@ -62,11 +65,12 @@ rm -rf "$work/relight"; mv "$server/$level" "$work/relight"
 
 # 2. Render with BlueMap.
 rm -rf "$work/run/config"; mkdir -p "$work/run/config/packs" "$work/run/web"
-cp -r "$here/bluemap/." "$work/run/config/"
-sed -i "s#@WORLD@#$work/relight#" "$work/run/config/maps/hetch_hetchy.conf"
+cp -r "$here/bluemap/." "$work/run/config/"; rm "$work/run/config/map.conf.template"
+python3 "$here/make_site.py" --site "$site" --world "$world" --relit "$work/relight" \
+  --conf-out "$work/run/config/maps/$id.conf" --json-out "$work/run/web/waterscape-site.json"
 [ -f "$pack" ] && cp "$pack" "$work/run/config/packs/" || echo "no resource pack at $pack: vanilla textures" >&2
 cp "$here/waterscape.js" "$work/run/web/"
-rm -rf "$work/run/web/maps/hetch_hetchy"
+rm -rf "$work/run/web/maps/$id"
 (cd "$work/run" && java -Xmx8G -jar "$bluemap" -r)
 echo "Map site: $work/run/web ($(du -sh "$work/run/web" | cut -f1))"
 [ "$serve" = 1 ] && { cd "$work/run" && exec java -jar "$bluemap" -w; }

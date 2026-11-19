@@ -16,6 +16,7 @@ not something these scripts do yet.
 | Know what is real and what is approximate | [How a world is made](#how-a-world-is-made) |
 | Rebuild or improve the Hetch Hetchy world | [Build or update a world](#build-or-update-a-world) |
 | Play together on the server | [Join the server](#join-the-server); hosts see [Host a server](#host-a-server) |
+| Show the map to people without Minecraft (3D in a browser, with a first-person view) | [Web map](map/README.md) |
 | Work on this as an agent | [AGENTS.md](AGENTS.md), plus the repository [AGENTS.md](../../AGENTS.md) |
 
 ## Status
@@ -348,7 +349,7 @@ viewpoints above and report what you see: an overhead render is not a screenshot
 | [`prototype/add_ramp.py`](prototype/add_ramp.py), [`add_tunnel.py`](prototype/add_tunnel.py) | Upgrade 4: a boat ramp and a walking tunnel, placed from photos and a map |
 | [`prototype/plan_animals.py`](prototype/plan_animals.py) | Upgrade 5: area-appropriate wildlife and hikers, summoned through the server |
 | [`pack/`](pack/README.md) | Upgrade 6: biome colours (datapack) and the animals-and-hikers resource pack, built from code |
-| [`map/`](map/README.md) | A 3D web map of the world (BlueMap) that anyone can explore in a browser, and how to host it |
+| [`map/`](map/README.md) | The web map workflow: any built world as a 3D browser map (overview and first person), and how to host it |
 | [`prototype/warp.py`](prototype/warp.py) | The gentle canyon stretch that fills the gap a steeper dam face leaves |
 | [`prototype/world_columns.py`](prototype/world_columns.py) | Shared world read/write for edits (full columns, palettes, heightmaps, entities, chests) |
 | [`prototype/region_edit.py`](prototype/region_edit.py) | Low-level region and chunk read/write helpers |

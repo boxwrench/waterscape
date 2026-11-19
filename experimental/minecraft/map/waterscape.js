@@ -1,13 +1,29 @@
-// Waterscape panel for the BlueMap web map (loaded through webapp.conf "scripts"):
+// Waterscape panel for a BlueMap web map (loaded through webapp.conf "scripts"):
 // a short description, a button into first-person (BlueMap's free-flight view) with how-to,
 // and the credits line (OpenStreetMap's licence, ODbL, asks for visible attribution).
-// Facts come from data/hetch_hetchy/story.json, with the sources listed there.
+// The text and viewpoints come from waterscape-site.json, which make_site.py writes from the
+// reservoir's data/<id>/story.json (where every fact's source is recorded) and sites/<id>.json.
 (function () {
-  var FIRST_PERSON = "#hetch_hetchy:580:92:1350:0:1.57:1.45:0:0:free";  // dam crest, looking up the reservoir
-  var OVERVIEW = "#hetch_hetchy:1296:0:1000:1700:0:0.7:0:0:perspective";
+  // BlueMap rewrites the address with its default view before this runs, so remember how the
+  // page was opened: a plain link should land on the angled overview.
+  var opened = "";
+  try { opened = performance.getEntriesByType("navigation")[0].name; } catch (e) { opened = ""; }
+  var plainLink = opened.indexOf("#") < 0 || opened.slice(opened.indexOf("#")).length < 2;
   var touch = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
 
-  var css = document.createElement("style");
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text) e.textContent = text;
+    return e;
+  }
+  function link(href, text) {
+    var a = el("a", "", text);
+    a.href = href; a.target = "_blank"; a.rel = "noopener";
+    return a;
+  }
+
+  var css = el("style");
   css.textContent = [
     // Leaves room on the right for BlueMap's zoom buttons on narrow screens.
     "#ws-panel{position:fixed;left:8px;bottom:8px;width:min(380px,calc(100vw - 76px));box-sizing:border-box;",
@@ -33,67 +49,63 @@
   ].join("");
   document.head.appendChild(css);
 
-  var panel = document.createElement("div");
-  panel.id = "ws-panel";
-  panel.innerHTML =
-    "<button class=\"ws-hide\" title=\"Hide or show\" aria-label=\"Hide or show\">&minus;</button>" +
-    "<div class=\"ws-title\" role=\"heading\" aria-level=\"1\">Hetch Hetchy Reservoir</div>" +
-    "<div class=\"ws-body\">" +
-    "<p>O'Shaughnessy Dam holds the Tuolumne River in Yosemite's Hetch Hetchy Valley, where the Bay " +
-    "Area's water begins. This is the valley rebuilt in Minecraft from public elevation and map data.</p>" +
-    "<p class=\"ws-facts\">Dam: 312 ft tall, completed 1923. Listed capacity: 360,000 acre-feet " +
-    "(<a href=\"https://github.com/boxwrench/waterscape/blob/main/data/hetch_hetchy/story.json\" target=\"_blank\" rel=\"noopener\">sources</a>).</p>" +
-    "</div>" +
-    "<button class=\"ws-go\"></button>" +
-    "<p class=\"ws-how\"></p>" +
-    "<p class=\"ws-credits\">Built by <a href=\"https://github.com/boxwrench/waterscape\" target=\"_blank\" rel=\"noopener\">Waterscape</a>. " +
-    "Elevation: USGS 3DEP. Roads and buildings: &copy; <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\" rel=\"noopener\">OpenStreetMap</a> " +
-    "contributors (ODbL). Lake bed, trees, boat ramp and dock are illustrative. " +
-    "Viewer: <a href=\"https://bluemap.bluecolored.de/\" target=\"_blank\" rel=\"noopener\">BlueMap</a>. " +
-    "Not an official Minecraft product; not approved by or associated with Mojang or Microsoft.</p>" +
-    "<p class=\"ws-osm\">&copy; <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\" rel=\"noopener\">OpenStreetMap</a> contributors</p>";
-  document.body.appendChild(panel);
+  fetch("waterscape-site.json").then(function (r) { return r.json(); }).then(build, function () {});
 
-  var go = panel.querySelector(".ws-go"), how = panel.querySelector(".ws-how");
-  var HOW_OVERVIEW = touch
-    ? "Or drag to look around the valley; pinch to zoom."
-    : "Or drag to look around the valley; scroll to zoom.";
-  var HOW_FREE = touch
-    ? "Drag to look. Use the on-screen arrows to move forward and to climb or drop."
-    : "Click once to steer with the mouse (Esc to stop). W A S D to move, Space and Shift to go up and down, mouse wheel to change speed.";
+  function build(site) {
+    var FIRST_PERSON = "#" + site.id + ":" + site.first_person;
+    var OVERVIEW = "#" + site.id + ":" + site.overview;
 
-  function mode() {
-    try { return window.bluemap.appState.controls.state; } catch (e) { return ""; }
-  }
-  function refresh() {
-    var free = mode() === "free";
-    go.textContent = free ? "Back to the overview" : "Walk around in first person";
-    how.textContent = free ? HOW_FREE : HOW_OVERVIEW;
-  }
-  go.addEventListener("click", function () {
-    // The address positions the first-person camera; going back uses BlueMap's own switch,
-    // because in free flight BlueMap keeps rewriting the address with the camera position.
-    if (mode() === "free") {
-      try { window.bluemap.setPerspectiveView(800, 400); } catch (e) { location.hash = OVERVIEW; }
-    } else {
-      location.hash = FIRST_PERSON;
+    var panel = el("div"); panel.id = "ws-panel";
+    var hide = el("button", "ws-hide"); hide.title = "Hide or show"; hide.setAttribute("aria-label", "Hide or show");
+    hide.innerHTML = "&minus;";
+    var title = el("div", "ws-title", site.name); title.setAttribute("role", "heading"); title.setAttribute("aria-level", "1");
+    var body = el("div", "ws-body");
+    body.appendChild(el("p", "", site.headline + " Here it is rebuilt in Minecraft from public elevation and map data."));
+    var facts = el("p", "ws-facts", site.facts.join(". ") + ". (");
+    facts.appendChild(link(site.sources, "sources")); facts.appendChild(document.createTextNode(")"));
+    body.appendChild(facts);
+    var go = el("button", "ws-go"), how = el("p", "ws-how");
+    var credits = el("p", "ws-credits", "Built by ");
+    credits.appendChild(link("https://github.com/boxwrench/waterscape", "Waterscape"));
+    credits.appendChild(document.createTextNode(". Elevation: USGS 3DEP. Roads and buildings: © "));
+    credits.appendChild(link("https://www.openstreetmap.org/copyright", "OpenStreetMap"));
+    credits.appendChild(document.createTextNode(" contributors (ODbL). " + (site.illustrative ? site.illustrative + " " : "") + "Viewer: "));
+    credits.appendChild(link("https://bluemap.bluecolored.de/", "BlueMap"));
+    credits.appendChild(document.createTextNode(". Not an official Minecraft product; not approved by or associated with Mojang or Microsoft."));
+    var osm = el("p", "ws-osm", "© ");
+    osm.appendChild(link("https://www.openstreetmap.org/copyright", "OpenStreetMap")); osm.appendChild(document.createTextNode(" contributors"));
+    [hide, title, body, go, how, credits, osm].forEach(function (c) { panel.appendChild(c); });
+    document.body.appendChild(panel);
+
+    var HOW_OVERVIEW = touch ? "Or drag to look around; pinch to zoom." : "Or drag to look around; scroll to zoom.";
+    var HOW_FREE = touch
+      ? "Drag to look. Use the on-screen arrows to move forward and to climb or drop."
+      : "Click once to steer with the mouse (Esc to stop). W A S D to move, Space and Shift to go up and down, mouse wheel to change speed.";
+    function mode() {
+      try { return window.bluemap.appState.controls.state; } catch (e) { return ""; }
     }
-    setTimeout(refresh, 300);
-  });
-  panel.querySelector(".ws-hide").addEventListener("click", function () {
-    var min = panel.classList.toggle("ws-min");
-    this.innerHTML = min ? "+" : "&minus;";
-  });
-  if (window.innerWidth < 600) { panel.classList.add("ws-min"); panel.querySelector(".ws-hide").innerHTML = "+"; }
-  refresh();
-  setInterval(refresh, 500);
-  // A plain link opens on the angled overview of the whole valley rather than BlueMap's flat start.
-  // BlueMap has already written its default address (straight down from 1500 blocks) by now,
-  // so check the address the page was opened with.
-  var opened = "";
-  try { opened = performance.getEntriesByType("navigation")[0].name; } catch (e) { opened = ""; }
-  var openedHash = opened.indexOf("#") >= 0 ? opened.slice(opened.indexOf("#")) : "";
-  if (openedHash.length < 2) {
-    location.hash = OVERVIEW;
+    function refresh() {
+      var free = mode() === "free";
+      go.textContent = free ? "Back to the overview" : "Walk around in first person";
+      how.textContent = free ? HOW_FREE : HOW_OVERVIEW;
+    }
+    go.addEventListener("click", function () {
+      // The address positions the first-person camera; going back uses BlueMap's own switch,
+      // because in free flight BlueMap keeps rewriting the address with the camera position.
+      if (mode() === "free") {
+        try { window.bluemap.setPerspectiveView(800, 400); } catch (e) { location.hash = OVERVIEW; }
+      } else {
+        location.hash = FIRST_PERSON;
+      }
+      setTimeout(refresh, 300);
+    });
+    hide.addEventListener("click", function () {
+      var min = panel.classList.toggle("ws-min");
+      hide.innerHTML = min ? "+" : "&minus;";
+    });
+    if (window.innerWidth < 600) { panel.classList.add("ws-min"); hide.innerHTML = "+"; }
+    refresh();
+    setInterval(refresh, 500);
+    if (plainLink) location.hash = OVERVIEW;
   }
 })();

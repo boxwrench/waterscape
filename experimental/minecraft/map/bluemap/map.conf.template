@@ -1,11 +1,11 @@
-# The Hetch Hetchy map. render_map.sh replaces @WORLD@ with the relit world copy.
+# Map template: make_site.py fills the @...@ values for one reservoir (render_map.sh runs it).
 world: "@WORLD@"
 dimension: "minecraft:overworld"
-name: "Hetch Hetchy"
+name: "@NAME@"
 sorting: 0
-# Opens over O'Shaughnessy Dam.
-start-pos: { x: 577, z: 1355 }
-# Sky from pack/biome_colours.json; the same colour past the map edge instead of black.
+# From sites/<id>.json (default: the middle of the map).
+start-pos: { x: @START_X@, z: @START_Z@ }
+# Sky from pack/biome_colours.json (the Sierra datapack); the same colour past the map edge instead of black.
 sky-color: "#6c9ee6"
 void-color: "#6c9ee6"
 sky-light: 1
@@ -14,14 +14,14 @@ remove-caves-below-y: 55
 cave-detection-ocean-floor: -5
 cave-detection-uses-block-light: false
 min-inhabited-time: 0
-# Only the built area (chunks 0..161 x 0..118). Lighting the edge makes the game start
+# Only the chunks the original world holds. Lighting the edge makes the game start
 # generating chunks just outside it; those are not part of the map.
 render-mask: [
   {
-    min-x: 0
-    max-x: 2591
-    min-z: 0
-    max-z: 1903
+    min-x: @MIN_X@
+    max-x: @MAX_X@
+    min-z: @MIN_Z@
+    max-z: @MAX_Z@
   }
 ]
 render-edges: true
