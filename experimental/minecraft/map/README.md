@@ -7,8 +7,8 @@ with our resource pack, into a folder of static files.
 | File | What it is |
 |---|---|
 | `render_map.sh` | Lights a copy of the world, then renders it into `build/run/web` |
-| `bluemap/` | BlueMap settings: Hetch Hetchy map, place pins, sky colour, no usage reports |
-| `waterscape.js` | Credits line on the map (OpenStreetMap's licence asks for visible attribution) |
+| `bluemap/` | BlueMap settings: Hetch Hetchy map, sky colour, no usage reports |
+| `waterscape.js` | On-map panel: description, a first-person button with how-to, and credits (OpenStreetMap's licence asks for visible attribution) |
 | `Caddyfile.example` | Caddy site that serves the folder correctly |
 
 ## Render
