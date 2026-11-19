@@ -65,6 +65,11 @@ Also available for 26.3 and useful here:
 - **Extras:** [Controlify](https://modrinth.com/mod/controlify) 3.5.3 for controllers (needs
   [YACL](https://modrinth.com/mod/yacl) 3.9.7) and [Iris](https://modrinth.com/mod/iris) 1.11.7
   for shaders (pick a pack that supports Distant Horizons; try without shaders first).
+  Iris needs OpenGL. On a Linux Wayland desktop, 26.3 can fail to start OpenGL through XWayland
+  and fall back to Vulkan; with Iris installed the game then aborts at start-up (exit code 6,
+  `No context is current` in `launcher_log.txt`). Start the launcher with native Wayland instead:
+  `SDL_VIDEO_DRIVER=wayland minecraft-launcher`, or put `env SDL_VIDEO_DRIVER=wayland` in front of
+  `minecraft-launcher` on the `Exec=` line of a copy of its menu entry in `~/.local/share/applications/`.
 
 ### 1. Install the launcher
 
