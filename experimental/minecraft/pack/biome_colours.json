@@ -1,0 +1,21 @@
+{
+  "note": "Colours the datapack gives the world's biome (minecraft:forest). Chosen to match the browser scene's look: deep blue-green reservoir water, dry summer grass, olive oak leaves, a deeper high-elevation sky. Spruce and birch leaves keep fixed colours in Minecraft.",
+  "effects": {
+    "water_color": "#2e6b86",
+    "grass_color": "#9a9a5c",
+    "foliage_color": "#5f7d3e"
+  },
+  "attributes": {
+    "minecraft:visual/sky_color": "#6c9ee6",
+    "minecraft:visual/fog_color": "#c9d7e6",
+    "minecraft:visual/water_fog_color": "#173f52"
+  },
+  "compare": {
+    "water": ["#2e6b86", "#3f76e4"],
+    "grass": ["#9a9a5c", "#79c05a"],
+    "oak leaves": ["#5f7d3e", "#59ae30"],
+    "sky": ["#6c9ee6", "#79a6ff"],
+    "fog": ["#c9d7e6", "#c0d8ff"],
+    "under water": ["#173f52", "#050533"]
+  }
+}

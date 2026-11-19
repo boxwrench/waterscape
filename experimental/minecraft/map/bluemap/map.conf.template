@@ -1,0 +1,39 @@
+# Map template: make_site.py fills the @...@ values for one reservoir (render_map.sh runs it).
+world: "@WORLD@"
+dimension: "minecraft:overworld"
+name: "@NAME@"
+sorting: 0
+# From sites/<id>.json (default: the middle of the map).
+start-pos: { x: @START_X@, z: @START_Z@ }
+# Sky from pack/biome_colours.json (the Sierra datapack); the same colour past the map edge instead of black.
+sky-color: "#6c9ee6"
+void-color: "#6c9ee6"
+sky-light: 1
+ambient-light: 0.1
+remove-caves-below-y: 55
+cave-detection-ocean-floor: -5
+cave-detection-uses-block-light: false
+min-inhabited-time: 0
+# Only the chunks the original world holds. Lighting the edge makes the game start
+# generating chunks just outside it; those are not part of the map.
+render-mask: [
+  {
+    min-x: @MIN_X@
+    max-x: @MAX_X@
+    min-z: @MIN_Z@
+    max-z: @MAX_Z@
+  }
+]
+render-edges: true
+edge-light-strength: 8
+enable-perspective-view: true
+enable-flat-view: true
+enable-free-flight-view: true
+enable-hires: true
+storage: "file"
+# Chunks without light data are skipped; render_map.sh lights them all first.
+ignore-missing-light-data: false
+
+# No place pins: the description panel (waterscape.js) explains the map instead.
+marker-sets: {
+}

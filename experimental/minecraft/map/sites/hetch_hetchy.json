@@ -1,0 +1,10 @@
+{
+  "id": "hetch_hetchy",
+  "start": [577, 1355],
+  "facts": ["O'Shaughnessy Dam", "Listed capacity"],
+  "illustrative": "Lake bed, trees, boat ramp and dock are illustrative.",
+  "viewpoints": {
+    "overview": "1296:0:1000:1700:0:0.7:0:0:perspective",
+    "first_person": "580:92:1350:0:1.57:1.45:0:0:free"
+  }
+}
