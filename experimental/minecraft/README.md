@@ -139,6 +139,9 @@ The Hetch Hetchy world can also be played together on a small private server.
 3. In Minecraft choose **Multiplayer → Add Server** and enter the address. The Hetch Hetchy server
    is `dedication-care.tun.ply.gg` (no port needed). The whitelist is the request: try to join once
    (you will be turned away), then ask the maintainer to approve you; the host sees who tried.
+4. When you join, the server offers the **Waterscape resource pack** (about 44 KB): choose Yes. It
+   turns the stand-in animals into black bears, mountain lions and rainbow trout and dresses the
+   hikers. It is used only on this server.
 
 ## Host a server
 
@@ -174,6 +177,12 @@ What the Hetch Hetchy server uses, for anyone setting up their own:
   full reset; [Ledger](https://modrinth.com/mod/ledger), a server-only logging mod (it needs
   Fabric Language Kotlin), records who changed each block and can roll back one player's changes
   in an area without touching anyone else's.
+- **Look:** put the datapack in `world/datapacks/` (restart to apply) and set `resource-pack`,
+  `resource-pack-sha1`, `require-resource-pack` and `resource-pack-prompt` in `server.properties`
+  to offer the resource pack; see [`pack/`](pack/README.md).
+- **Animals and hikers:** summoned entities can be killed or moved by players in creative. Keep
+  the summon list; removing everything tagged `waterscape_wildlife` and summoning the list again
+  restores them.
 - **The EULA:** running a server means accepting the [Minecraft EULA](https://aka.ms/MinecraftEULA)
   (`eula=true`); do that yourself.
 
@@ -291,17 +300,29 @@ Run in this order on a copy of the base world (the demo works):
    python add_tunnel.py --world "<copy>" --from 524,1310 --via 501,1263 --to 495,1206 [--apply]
    ```
 
-5. **Wildlife (gameplay, area-appropriate)** — [`plan_animals.py`](prototype/plan_animals.py)
+5. **Wildlife and hikers (gameplay, area-appropriate)** — [`plan_animals.py`](prototype/plan_animals.py)
    reads a world and prints server commands that summon persistent animals in fitting places, so
-   the game writes them in its own format. Hetch Hetchy's lower montane animals that Minecraft
-   lacks (mule deer, black bears, mountain lions, bobcats, squirrels, rattlesnakes) are left out
-   rather than faked, and Sierra bighorn live far higher, so no goats. The stand-ins: brush rabbit
-   → brown rabbit (brushy gentle slopes), gray fox → fox (near trees), coyote → chestnut wolf (in
-   pairs), Pacific chorus frog → temperate frog (lake shore and riverbank), bats roosting in the
-   tunnel, and pack mules and horses beside the stable; rainbow trout are the salmon from step 3.
+   the game writes them in its own format. Minecraft has no Sierra animals, so these are the
+   closest models: brush rabbit → brown rabbit (brushy gentle slopes), gray fox → fox (near trees),
+   coyote → chestnut wolf (in pairs), Pacific chorus frog → temperate frog (lake shore and
+   riverbank), black bear → polar bear (forest, smaller), mountain lion → ocelot (rocky
+   backcountry, summoned 1.6 times larger), bats roosting in the tunnel, and pack mules and horses
+   beside the stable; rainbow trout are the salmon from step 3. Bears and lions keep 70 blocks from
+   the dam, roads, dock and trail. Hikers: standing figures (mannequins, which have no AI and cost
+   almost nothing) at the dam, tunnel, trail, ramp and dock, and four walking hikers (silent
+   villagers with no trades) near the stable. Mule deer, bobcats, squirrels and rattlesnakes have
+   no fitting model and are left out; Sierra bighorn live far higher, so no goats. Without the
+   resource pack (step 6) everything still works but looks like the vanilla animals.
    ```text
    python plan_animals.py --world "<world>" > animals.txt   # then send the lines to the console
+   python plan_animals.py --world "<world>" --only "black bear,mountain lion,hikers"   # just those
    ```
+6. **Look and names (datapack and resource pack)** — [`pack/`](pack/README.md). A server-side
+   datapack gives the world's biome Sierra colours (blue-green water, dry summer grass, olive
+   leaves, deeper sky); players need nothing for it. A small resource pack (about 44 KB, all
+   textures painted from code) repaints the polar bear as a black bear, the ocelot as a mountain
+   lion and the salmon as a rainbow trout, dresses the hikers, and renames them in game. The server
+   offers it when players join.
 
 All of these use [`world_columns.py`](prototype/world_columns.py), which loads chunks as full block columns,
 keeps every block state, recomputes heightmaps and leaves lighting for the game to redo on load
@@ -323,7 +344,8 @@ viewpoints above and report what you see: an overhead render is not a screenshot
 | [`prototype/osm_structures.py`](prototype/osm_structures.py) | Upgrade 2: graded roads, dam parapets, buildings |
 | [`prototype/add_fishing.py`](prototype/add_fishing.py) | Upgrade 3: fishing docks, boats, rods and fish (gameplay extras) |
 | [`prototype/add_ramp.py`](prototype/add_ramp.py), [`add_tunnel.py`](prototype/add_tunnel.py) | Upgrade 4: a boat ramp and a walking tunnel, placed from photos and a map |
-| [`prototype/plan_animals.py`](prototype/plan_animals.py) | Upgrade 5: area-appropriate wildlife, summoned through the server |
+| [`prototype/plan_animals.py`](prototype/plan_animals.py) | Upgrade 5: area-appropriate wildlife and hikers, summoned through the server |
+| [`pack/`](pack/README.md) | Upgrade 6: biome colours (datapack) and the animals-and-hikers resource pack, built from code |
 | [`prototype/warp.py`](prototype/warp.py) | The gentle canyon stretch that fills the gap a steeper dam face leaves |
 | [`prototype/world_columns.py`](prototype/world_columns.py) | Shared world read/write for edits (full columns, palettes, heightmaps, entities, chests) |
 | [`prototype/region_edit.py`](prototype/region_edit.py) | Low-level region and chunk read/write helpers |
