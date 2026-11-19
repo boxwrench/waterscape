@@ -9,6 +9,10 @@ is painted from code, box by box (paint.py), so the pack holds no Mojang art and
   rainbow trout  <- salmon
   coyote         <- wolf (the chestnut wolf already looks right; renamed only)
   hikers         <- villagers (walking; four outfits by villager type) and mannequins (standing)
+  Sierra granite <- diorite, andesite (with water stains), calcite, stone
+  granite soil   <- coarse dirt
+  ponderosa pine <- spruce log and needles (needles drawn without Minecraft's blue-green tint)
+  black oak      <- dark oak log (leaves keep the biome tint, set by the datapack)
 
   python build_pack.py [--out DIR]     -> DIR/waterscape-hetch-pack.zip and its sha1
 """
@@ -280,6 +284,140 @@ LANG = {
 }
 
 
+# ---------------------------------------------------------------- blocks (16 x 16, tileable)
+# The world's rock is diorite, andesite, calcite and stone, its trees spruce and dark oak, its soil
+# coarse dirt (stand-ins chosen when the world was built). Repainted as what they stand for.
+BLOCK_TEX = 'assets/minecraft/textures/block/'
+
+
+def field(seed, blur=2, size=16):
+    """Tileable smooth noise in 0..1."""
+    import numpy as np
+    r = np.random.default_rng(seed).random((size, size))
+    for _ in range(blur):
+        r = (r + np.roll(r, 1, 0) + np.roll(r, -1, 0) + np.roll(r, 1, 1) + np.roll(r, -1, 1)) / 5
+    return (r - r.min()) / (r.max() - r.min() + 1e-9)
+
+
+def granite(seed, base, flecks=.035, felspar=.03, streaks=0):
+    """Sierra granite: warm grey, mottled, with black biotite flecks and white feldspar. Optional
+    dark vertical streaks (the water-stain 'varnish' on Hetch Hetchy's cliffs)."""
+    t = Tex(16, 16, seed=seed)
+    m = field(seed, 3)
+    stain = field(seed + 1, 1)[0] if streaks else None
+    for y in range(16):
+        for x in range(16):
+            k = .86 + .26 * m[y, x]
+            if streaks and stain[x] > 1 - streaks:
+                k *= .82
+            t.dot(x, y, tuple(int(c * k) for c in base), .035)
+            r = t.rng.random()
+            if r < flecks:                                 # biotite: dark but not black
+                t.dot(x, y, tuple(int(c * .55) for c in base), .08)
+            elif r < flecks + felspar:
+                t.dot(x, y, tuple(min(255, int(c * 1.12)) for c in base), .02)
+    return t
+
+
+def soil():
+    """Decomposed granite (grus): tan-grey grit with pale quartz grains and small dark bits."""
+    t = Tex(16, 16, seed=51)
+    m = field(51, 2)
+    for y in range(16):
+        for x in range(16):
+            k = .88 + .24 * m[y, x]
+            t.dot(x, y, tuple(int(c * k) for c in (150, 128, 100)), .05)
+            r = t.rng.random()
+            if r < .08:
+                t.dot(x, y, '#d8cfbf', .04)
+            elif r < .14:
+                t.dot(x, y, '#5a4a3a', .08)
+    return t
+
+
+def bark(seed, plate, furrow, plates=True):
+    """Bark side. Ponderosa: cinnamon plates in a jigsaw, dark furrows between; black oak: dark
+    grey-brown with narrow vertical fissures."""
+    t = Tex(16, 16, seed=seed)
+    t.rect(0, 0, 16, 16, plate, .07)
+    if plates:
+        # Long vertical plates of uneven width; each furrow wanders a little and breaks now and then.
+        x = 0
+        while x < 16:
+            w = t.rng.choice((3, 4, 4, 5))
+            fx = x
+            for y in range(16):
+                if t.rng.random() < .25:
+                    fx += t.rng.choice((-1, 1))
+                    fx = max(x - 1, min(x + 1, fx))
+                if t.rng.random() > .1:
+                    t.dot(fx % 16, y, furrow, .12)
+            for _ in range(2):                            # short cross-cracks between plates
+                cy = t.rng.randrange(16)
+                for j in range(w):
+                    t.dot((x + j) % 16, cy, furrow, .12)
+            x += w
+        for _ in range(26):                               # lighter flakes on the plates
+            t.dot(t.rng.randrange(16), t.rng.randrange(16), '#c48655', .08)
+    else:
+        for x in (1, 5, 8, 12, 14):
+            y = t.rng.randrange(16)
+            for j in range(t.rng.randrange(8, 16)):
+                t.dot((x + (j // 6)) % 16, (y + j) % 16, furrow, .1)
+        for _ in range(14):
+            t.dot(t.rng.randrange(16), t.rng.randrange(16), '#6a5c50', .08)
+    return t
+
+
+def log_top(seed, wood, ring, edge):
+    t = Tex(16, 16, seed=seed)
+    for y in range(16):
+        for x in range(16):
+            d = max(abs(x - 7.5), abs(y - 7.5))
+            if d > 6.5:
+                t.dot(x, y, edge, .08)
+            else:
+                t.dot(x, y, ring if int(d) % 2 else wood, .04)
+    return t
+
+
+def pine_needles():
+    """Ponderosa: long yellow-green needles in tufts, gaps between (drawn untinted; see build)."""
+    t = Tex(16, 16, seed=61)
+    greens = ('#5d7a33', '#6f8c3c', '#86a04a', '#4a6328')
+    for _ in range(22):
+        cx, cy = t.rng.randrange(16), t.rng.randrange(16)
+        for k in range(t.rng.randrange(3, 6)):
+            dx, dy = t.rng.choice(((1, 1), (1, -1), (-1, 1), (-1, -1), (0, 1), (1, 0)))
+            for j in range(t.rng.randrange(2, 5)):
+                t.dot((cx + dx * j) % 16, (cy + dy * j) % 16, t.rng.choice(greens), .05)
+    return t
+
+
+def blocks():
+    return {
+        BLOCK_TEX + 'diorite.png': granite(71, (178, 166, 148)),
+        BLOCK_TEX + 'andesite.png': granite(72, (150, 141, 128), flecks=.1, felspar=.04, streaks=.25),
+        BLOCK_TEX + 'calcite.png': granite(73, (200, 191, 176), flecks=.06, felspar=.08),
+        BLOCK_TEX + 'stone.png': granite(74, (160, 150, 137), flecks=.08, felspar=.05),
+        BLOCK_TEX + 'coarse_dirt.png': soil(),
+        BLOCK_TEX + 'spruce_log.png': bark(81, '#a3653b', '#4a2c1a'),
+        BLOCK_TEX + 'spruce_log_top.png': log_top(82, '#c9a274', '#a9845a', '#8a5532'),
+        BLOCK_TEX + 'dark_oak_log.png': bark(83, '#4d4239', '#241c17', plates=False),
+        BLOCK_TEX + 'dark_oak_log_top.png': log_top(84, '#a7865c', '#8a6c48', '#3f362e'),
+        BLOCK_TEX + 'spruce_leaves.png': pine_needles(),
+    }
+
+
+BLOCK_TEXTS = {
+    # Spruce needles keep a fixed blue-green tint in Minecraft; drawing this model without the tint
+    # lets the pine texture's own yellow-green show.
+    'assets/minecraft/models/block/spruce_leaves.json':
+        {'parent': 'minecraft:block/cube_all', 'textures': {'all': 'minecraft:block/spruce_leaves'}},
+    BLOCK_TEX + 'spruce_leaves.png.mcmeta': {'texture': {'mipmap_strategy': 'dark_cutout'}},
+}
+
+
 def icon():
     """Pack icon: a granite dome over blue water under a deep sky."""
     t = Tex(64, 64, seed=41)
@@ -309,9 +447,11 @@ def build(out):
         files[TEX + f'villager/type/{typ}.png'] = villager_outfit(seed, skin, hair, jacket, hat)
     for name, kw in MANNEQUINS.items():
         files[f'assets/waterscape/textures/entity/{name}.png'] = player_hiker(**kw)
-    texts = {
+    files.update(blocks())
+    texts = {k: json.dumps(v, indent=2) for k, v in BLOCK_TEXTS.items()}
+    texts |= {
         'pack.mcmeta': json.dumps({'pack': {
-            'description': 'Waterscape: Hetch Hetchy animals and hikers',
+            'description': 'Waterscape: Hetch Hetchy animals, hikers, granite and pines',
             'min_format': RESOURCE_FORMAT, 'max_format': RESOURCE_FORMAT}}, indent=2),
         'assets/minecraft/lang/en_us.json': json.dumps(LANG, indent=2, ensure_ascii=False),
         'LICENSE.txt': 'Waterscape Hetch Hetchy resource pack. Textures painted from code by '

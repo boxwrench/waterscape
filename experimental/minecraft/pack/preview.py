@@ -118,6 +118,7 @@ def main():
     p.add_argument('--pack', type=pathlib.Path, default=HERE / 'build' / 'waterscape-hetch-pack')
     p.add_argument('--colours', type=pathlib.Path, default=HERE / 'biome_colours.json')
     p.add_argument('--out', type=pathlib.Path, default=HERE / 'build' / 'preview.png')
+    p.add_argument('--vanilla', type=pathlib.Path, help='client jar, to show the vanilla block beside each (preview only)')
     a = p.parse_args()
     T = a.pack / 'assets/minecraft/textures/entity'
     vb = Image.open(T / 'villager/villager.png').convert('RGBA')
@@ -140,7 +141,10 @@ def main():
     ch = max(max(f.height, b.height) for _, f, b in cells) + 34
     cols = 3
     nrows = math.ceil(len(cells) / cols)
-    sheet = Image.new('RGBA', (cw * cols, ch * nrows + 120), '#d9d6cf')
+    blocks = ['diorite', 'andesite', 'calcite', 'stone', 'coarse_dirt', 'spruce_log', 'spruce_log_top',
+              'dark_oak_log', 'dark_oak_log_top', 'spruce_leaves']
+    bh = 2 * (3 * 16 * 4 + 60)
+    sheet = Image.new('RGBA', (cw * cols, ch * nrows + 120 + bh), '#d9d6cf')
     d = ImageDraw.Draw(sheet)
     for i, (label, f, b) in enumerate(cells):
         x, y = (i % cols) * cw, (i // cols) * ch
@@ -155,6 +159,26 @@ def main():
         d.rectangle((x, y + 32, x + 120, y + 92), fill=new)
         d.rectangle((x + 124, y + 32, x + 160, y + 92), fill=old)
         d.text((x, y + 94), k, fill='#222', font=ImageFont.load_default(size=14))
+    y += 130
+    d.text((12, y), 'Blocks: new, tiled 3 x 3   [vanilla]', fill='#222', font=font)
+    import zipfile
+    jar = zipfile.ZipFile(a.vanilla) if a.vanilla else None
+    for i, b in enumerate(blocks):
+        x = 12 + (i % 5) * 390; yy = y + 30 + (i // 5) * (3 * 64 + 60)
+        im = Image.open(a.pack / f'assets/minecraft/textures/block/{b}.png').convert('RGBA')
+        tile = Image.new('RGBA', (48, 48), '#8a9a7a' if 'leaves' in b else (0, 0, 0, 0))
+        for k in range(9):
+            tile.alpha_composite(im, ((k % 3) * 16, (k // 3) * 16))
+        sheet.alpha_composite(tile.resize((192, 192), Image.NEAREST), (x, yy))
+        if jar:
+            import io
+            v = Image.open(io.BytesIO(jar.read(f'assets/minecraft/textures/block/{b}.png'))).convert('RGBA')
+            if b == 'spruce_leaves':        # vanilla tint
+                px = np.asarray(v).astype(float); px[..., :3] *= np.array([0x61, 0x99, 0x61]) / 255
+                v = Image.fromarray(px.astype(np.uint8))
+            bg = Image.new('RGBA', (16, 16), '#8a9a7a' if 'leaves' in b else (0, 0, 0, 0)); bg.alpha_composite(v)
+            sheet.alpha_composite(bg.resize((64, 64), Image.NEAREST), (x + 200, yy))
+        d.text((x, yy + 196), b, fill='#222', font=ImageFont.load_default(size=14))
     a.out.parent.mkdir(parents=True, exist_ok=True)
     sheet.convert('RGB').save(a.out)
     print(a.out, sheet.size)

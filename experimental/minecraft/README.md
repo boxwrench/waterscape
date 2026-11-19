@@ -139,9 +139,10 @@ The Hetch Hetchy world can also be played together on a small private server.
 3. In Minecraft choose **Multiplayer → Add Server** and enter the address. The Hetch Hetchy server
    is `dedication-care.tun.ply.gg` (no port needed). The whitelist is the request: try to join once
    (you will be turned away), then ask the maintainer to approve you; the host sees who tried.
-4. When you join, the server offers the **Waterscape resource pack** (about 44 KB): choose Yes. It
-   turns the stand-in animals into black bears, mountain lions and rainbow trout and dresses the
-   hikers. It is used only on this server.
+4. When you join, the server offers the **Waterscape resource pack** (about 54 KB): choose Yes. It
+   turns the stand-in animals into black bears, mountain lions and rainbow trout, dresses the
+   hikers, and makes the rock and trees look like Sierra granite and pines. It is used only on this
+   server.
 
 ## Host a server
 
@@ -319,10 +320,11 @@ Run in this order on a copy of the base world (the demo works):
    ```
 6. **Look and names (datapack and resource pack)** — [`pack/`](pack/README.md). A server-side
    datapack gives the world's biome Sierra colours (blue-green water, dry summer grass, olive
-   leaves, deeper sky); players need nothing for it. A small resource pack (about 44 KB, all
+   leaves, deeper sky); players need nothing for it. A small resource pack (about 54 KB, all
    textures painted from code) repaints the polar bear as a black bear, the ocelot as a mountain
-   lion and the salmon as a rainbow trout, dresses the hikers, and renames them in game. The server
-   offers it when players join.
+   lion and the salmon as a rainbow trout, dresses the hikers and renames them in game, and turns
+   the stand-in rock, soil and trees into Sierra granite, decomposed-granite soil, ponderosa pine
+   and black oak. The server offers it when players join.
 
 All of these use [`world_columns.py`](prototype/world_columns.py), which loads chunks as full block columns,
 keeps every block state, recomputes heightmaps and leaves lighting for the game to redo on load

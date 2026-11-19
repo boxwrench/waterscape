@@ -1,12 +1,12 @@
 # Look and names: datapack and resource pack
 
 Optional upgrade 6 for a Waterscape Minecraft world. Both are built from code here; neither
-changes the world's blocks.
+changes the world's blocks, only how they look.
 
 | | What it does | Who needs it |
 |---|---|---|
 | **Datapack** `waterscape-sierra` | Redefines the world's biome (`minecraft:forest`, the only one in the Hetch Hetchy world) with Sierra colours from [`biome_colours.json`](biome_colours.json): blue-green water, dry summer grass, olive oak leaves, a deeper sky, clearer fog and darker water underneath. Spruce and birch leaves have fixed colours in Minecraft and do not change. | The server only. Players receive the colours when they join. Restart the server to apply (biomes are not reloaded by `/reload`). |
-| **Resource pack** `waterscape-hetch-pack.zip` | Repaints models Minecraft has into Sierra animals and hikers, and renames them (English): polar bear → **black bear** (brown, as most Sierra black bears are), ocelot → **mountain lion**, salmon → **rainbow trout**, wolf → **coyote** (name only), villager → **hiker** (four outfits by villager type), mannequin → **hiker** (three skins under `waterscape:entity/hiker_a…c`). | Each player, once: the server offers it on joining. About 44 KB. |
+| **Resource pack** `waterscape-hetch-pack.zip` | Repaints models Minecraft has into Sierra animals and hikers, and renames them (English): polar bear → **black bear** (brown, as most Sierra black bears are), ocelot → **mountain lion**, salmon → **rainbow trout**, wolf → **coyote** (name only), villager → **hiker** (four outfits by villager type), mannequin → **hiker** (three skins under `waterscape:entity/hiker_a…c`). Blocks: the world's stand-in rock (diorite, andesite, calcite, stone) becomes warm Sierra granite, andesite with dark water stains; coarse dirt becomes decomposed-granite soil; spruce becomes **ponderosa pine** (cinnamon plated bark, yellow-green needles drawn without Minecraft's fixed spruce tint); dark oak logs become **black oak** bark. These apply wherever the blocks appear, which is fine for a server that only runs this world. | Each player, once: the server offers it on joining. About 54 KB. |
 
 The animals and hikers themselves are summoned by [`../prototype/plan_animals.py`](../prototype/plan_animals.py)
 (upgrade 5). Without the pack they still work but look like the vanilla animals, and the standing
@@ -35,7 +35,7 @@ for a new version. The zip is written with fixed dates, so the same code gives t
   resource-pack=<URL of the zip>
   resource-pack-sha1=<contents of build/waterscape-hetch-pack.sha1>
   require-resource-pack=true
-  resource-pack-prompt={"text":"Waterscape: Sierra animals and hikers (44 KB)"}
+  resource-pack-prompt={"text":"Waterscape: Sierra granite, pines, animals and hikers (54 KB)"}
   ```
   Restart. A required pack means a player who declines is disconnected; set it to `false` to make
   it optional.
