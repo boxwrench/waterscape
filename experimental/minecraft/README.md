@@ -1,163 +1,317 @@
-# Experimental Minecraft Java landscapes
+# Minecraft maps (experimental)
 
-This experiment translates Waterscape reservoir data into Minecraft Java worlds made
-of ordinary blocks. The aim is a recognizable landscape and long views from real landmarks,
-without reshaping the geography merely to fit Minecraft's render distance. It is a prototype,
-not an automatic exporter: a [Hetch Hetchy demo world](demo/README.md) is included, and the
-archived scripts here need adaptation before someone else can run them.
+Waterscape's water-body data can also become a world you walk and fly through in **Minecraft Java
+Edition**: the lidar terrain, shoreline, dam and river, the biome's rock and trees, and mapped roads
+and buildings from OpenStreetMap, all in ordinary blocks. The aim is a recognisable landscape with
+long views from real landmarks, without reshaping the geography to fit Minecraft.
 
-For an agent implementing or continuing the work, start with [AGENTS.md](AGENTS.md). The parent
-repository instructions still apply. See [the prototype notes](#prototype-code) before running
-any script.
+Hetch Hetchy is the first and only map so far. The long-term goal is that anyone who can
+[make a waterscape](../../docs/make-a-waterscape.md) can make the matching map from the same
+`data/<id>/` bundle. That is planned work ([track MC](../../docs/roadmap/README.md#track-mc--playable-minecraft-maps)),
+not something these scripts do yet.
 
-## What comes from Waterscape
-
-Use the reservoir's own `data/<id>/` bundle as the primary input:
-
-- `terrain.json` and `terrain.bin.gz`: elevation, shoreline distance and valley fields; some
-  bundles add a drawdown field. Metadata describes the coordinate system, grid and quantization.
-  See [the terrain decoder](../../renderer/terrain.js) and [data packer](../../pipeline/dem.py).
-- `source.json` and `land.json`: location, biome, season, vegetation, shoreline treatment and
-  other settings. Biome assets live under [`data/biomes`](../../data/biomes).
-- `structures.json`, where present: mapped or authored structures, such as O'Shaughnessy Dam.
-  Not every reservoir has this file.
-- `aerial.json` and `detail.json`, where present: imagery provenance and local detail. Hetch
-  Hetchy's detail images encode normals and local relief for rendering, not a complete 1 m
-  elevation grid. Their metadata links to the underlying elevation sources.
-
-Waterscape's [ground material](../../renderer/land/ground.js) and
-[tree placement](../../renderer/land/oak-placement.js) use terrain and procedural rules. The
-prototype approximates these in blocks; it does not reproduce the web shader or tree meshes.
-Satellite land cover such as ESA WorldCover is an **optional alternative** for mapping broad
-land-cover classes. It is not needed for the Waterscape-driven version.
-
-Terrain and shoreline originate in mapped data, but Minecraft applies horizontal resampling,
-vertical compression and block choices. Tree placement and species-shaped trees are procedural;
-the dam cross-section and lake bottom are approximations. Land-cover classes are not a survey of
-individual trees or rock types. Do not describe the modelled lake floor as measured bathymetry.
-Record sources, scales and assumptions with every new world.
-
-## Hetch Hetchy comparison
-
-The two local experiments cover the same area, including the dam and Kolana Rock:
-
-| World | Surface approach |
+| I want to… | Go to |
 |---|---|
-| `Hetch Hetchy - Granite Valley` | ESA-guided land cover plus slope; spruce-like trees. |
-| `Hetch Hetchy - Waterscape Biome` | Waterscape-inspired slope, valley, shoreline and procedural vegetation; pale drawdown band and pine-like / oak-like trees. |
+| Play the Hetch Hetchy map | [Install guide](#install-guide-linux-and-windows), then the [demo](demo/README.md) |
+| Know what is real and what is approximate | [How a world is made](#how-a-world-is-made) |
+| Rebuild or improve the Hetch Hetchy world | [Build or update a world](#build-or-update-a-world) |
+| Play together on the server | [Join the server](#join-the-server); hosts see [Host a server](#host-a-server) |
+| Work on this as an agent | [AGENTS.md](AGENTS.md), plus the repository [AGENTS.md](../../AGENTS.md) |
 
-Both use the same terrain, water, dam and bounds: latitude 37.938–37.972 and longitude
-−119.801–−119.742. One horizontal block represents approximately 2 m; a vertical block
-represents approximately 4 m, so the mountains are vertically compressed. Water is at y=80;
-the synthetic lake floor is generally 8–32 blocks below the surface with low-frequency
-variation. The downstream river has a separate shallower channel. The result is a 3D terrain
-test, not a measured lake-bottom survey or a full recreation of the reservoir.
+## Status
 
-The included `Hetch Hetchy - Pool and Roads` demo adds granite-like rock, an illustrative
-plunge pool and the mapped downstream river; it also removes the separate slope identified in
-the user's screenshot. Mapped OSM roads and approximate building shells are added separately;
-they were not in the terrain-only Arnis base. The cut preserves dam concrete and existing water;
-it is interpretive rather than surveyed. Its blocks and archive have been checked offline, but
-the changed world has not yet been visually verified in Minecraft.
+As of 2026-11-18:
 
-The Waterscape settings describe a Sierra granite setting with ponderosa pine and California
-black oak. The prototype approximates these with diorite/andesite and spruce/dark-oak blocks; it
-uses calcite for a pale shoreline band. It uses a coarser tree spacing than the web renderer and
-does not match the web scene tree for tree. The old Minecraft Java `granite` block is notably
-pink, so its name alone does not make it the closest visual match.
+- **Demo download** — [`demo/Hetch-Hetchy-Dam-Demo.zip`](demo/README.md) is the earlier version
+  ("Pool and Roads"): flat road lines, box buildings and a hand-cut canyon below the dam.
+- **Improved version** — the [optional upgrades](#2-optional-upgrades) rebuild the canyon, dam face
+  and river from the browser's own inputs and add graded roads, dam-crest parapets, proper
+  buildings and fishing spots. Checked offline (block sections, water edges, wall connections,
+  renders); an in-game check comes next, then the demo zip is refreshed with it.
+- **Not yet a builder** — making a world still starts from a prepared base world and
+  Hetch Hetchy-specific scripts. A one-command builder for any bundle is task
+  [MC1](../../docs/roadmap/tasks/MC1-minecraft-builder.md).
+- **Version** — Minecraft Java **26.3** (the current release) with Fabric Loader 0.20.1. Worlds
+  saved by 26.2 open in 26.3 and are upgraded on first open; the scripts read and write both the
+  26.2 and the 26.3 chunk formats.
 
-For comparison, enable creative flight and use the same camera in each world:
+## Install guide (Linux and Windows)
 
-```text
-/tp @s 1534 110 778 -42 10
-```
+Checked on 2026-11-18 against Minecraft Java **26.3**, the launcher's current release. Versions
+below came from the Fabric and Modrinth APIs on that date; when a newer Minecraft release comes
+out, use the matching version of each mod (or stay on 26.3 with a pinned installation). Mods are
+optional: the world is ordinary blocks and opens in plain 26.3. Opening a world in a newer release
+upgrades that copy one way, so keep a copy before trying one.
 
-This location is over the water; enable flight first. It looks toward the Kolana area. The
-prototype outputs a material-plan image as well, but a plan is not an in-game screenshot. Both
-worlds need in-game visual and performance review; the no-ESA version has not yet been verified
-in-game by the agent that generated it.
+| Piece | Version for 26.3 | What it is for |
+|---|---|---|
+| Fabric Loader | 0.20.1 (installer 1.1.2) | all mods |
+| [Fabric API](https://modrinth.com/mod/fabric-api) | 0.166.2+26.3 | all mods |
+| [Sodium](https://modrinth.com/mod/sodium) | 0.9.2 | performance |
+| [Distant Horizons](https://modrinth.com/mod/distanthorizons) | 3.3.4 | long views of the canyon walls |
+| [Creative Fly](https://modrinth.com/mod/creative-fly) | 2.0.0 | faster flight |
+| [Cloth Config](https://modrinth.com/mod/cloth-config) | 26.3.159 | needed by Creative Fly |
+| [Mod Menu](https://modrinth.com/mod/modmenu) | 21.0.1 | Creative Fly settings without a mouse wheel |
+| [Placeholder API](https://modrinth.com/mod/placeholder-api) | 3.2.0+26.3 | needed by Mod Menu |
 
-## Suggested conversion workflow
+Also available for 26.3 and useful here:
 
-1. Pick a reservoir, the landmark and a bounded area. Review its `source.json`, terrain metadata,
-   `land.json`, biome assets and any structure data; check geographic coverage before generation.
-2. Choose the horizontal and vertical scales deliberately. Convert between the bundle's local
-   east/south coordinates, its projected coordinates, geographic coordinates and the Java
-   world's block coordinates; check known landmarks and source-grid bounds. Preserve a record
-   of the transform and any height clipping.
-3. Create a **new, disposable base Java world** for that bounding box. A terrain-only
-   [Arnis](https://github.com/louis-e/arnis) world supplied the base-world structure and
-   geographic metadata for the prototypes. The conversion replaces the base terrain; it does
-   not need Arnis land cover for the Waterscape-driven surface.
-4. Decode and sample Waterscape's elevation, shoreline and optional channels. Build block
-   columns, water, estimated lake bed and any sourced structures. Translate the selected biome
-   settings into a block palette and plausible procedural trees. Keep actual map data separate
-   from artistic rules and synthetic underwater terrain.
-5. Generate to a new world directory while Minecraft is closed for that world. Never write over
-   an existing save. Update chunk palettes, heightmaps and lighting information as needed for
-   the target Java version; inspect sample chunks and check paths and coordinates.
-6. Open a **copy** in the matching Minecraft Java profile. Verify landmarks, shore, water,
-   cliffs, tree density, chunk boundaries, lighting and whether the player can navigate. Take
-   comparable in-game screenshots from fixed positions, and report any unverified behavior.
-7. Test view distance and frame rate before increasing detail. Document the game, loader and mod
-   versions, hardware, settings, generation time and provenance; keep large generated worlds,
-   downloads, caches and credentials out of the repository.
+- **Exploring and editing:** [Xaero's World Map](https://modrinth.com/mod/xaeros-world-map)
+  fabric-26.3-1.47.2 (a full map with coordinates, for finding places and reporting them),
+  [Chunky](https://modrinth.com/mod/chunky) 1.5.66 (pre-generates chunks so Distant Horizons has
+  the whole map; single-player only, see [hosting](#host-a-server)) and
+  [WorldEdit](https://modrinth.com/mod/worldedit) 7.4.6 (hand edits in game).
+- **Extras:** [Controlify](https://modrinth.com/mod/controlify) 3.5.3 for controllers (needs
+  [YACL](https://modrinth.com/mod/yacl) 3.9.7) and [Iris](https://modrinth.com/mod/iris) 1.11.7
+  for shaders (pick a pack that supports Distant Horizons; try without shaders first).
 
-The current Hetch Hetchy converter does not yet support other reservoirs automatically.
-Calaveras and San Antonio specify a Diablo oak setting with golden summer grass, while Crystal
-Springs specifies an oak/fir setting. Reuse the workflow, but implement and verify each biome,
-dam and crop from its own bundle rather than reusing Hetch Hetchy constants.
+### 1. Install the launcher
 
-## Recommended client setup
+- **Linux (Debian/Ubuntu):** download the official `Minecraft.deb` from minecraft.net, then
+  `sudo apt install ./Minecraft.deb` (run it from the folder holding the file; a warning about the
+  `_apt` user is harmless). Start `minecraft-launcher`, sign in and click Play once so
+  `~/.minecraft` exists.
+- **Windows:** install the Minecraft Launcher from minecraft.net, sign in and click Play once.
+  The game folder is `%appdata%\.minecraft`. Make sure it is **Java Edition**: "Minecraft for
+  Windows" from the Microsoft Store is Bedrock, which cannot open these worlds or join the server.
 
-This is a Java Edition workflow. Select versions for **the exact Minecraft version and Fabric
-loader** in use, and install dependencies listed on each mod's version page. Do not assume a
-version compatible with one release works on the next. The local experiment used Minecraft
-26.2 and Fabric; the world-generation and in-game compatibility of other versions need testing.
+### 2. Install Fabric for 26.3 (only if you want mods)
 
-| Tool | Why use it |
+Download the installer jar from <https://fabricmc.net/use/installer/>. Close the launcher, then:
+
+- **Any system with Java 17 or newer:**
+  ```text
+  java -jar fabric-installer-1.1.2.jar client -mcversion 26.3 -loader 0.20.1
+  ```
+  Add `-dir <game folder>` for a non-default folder.
+- **Windows, graphical:** double-click the `.jar` (or the `.exe` build), choose Minecraft 26.3 and
+  loader 0.20.1, keep "Create profile" ticked and click Install.
+
+Start the launcher: a `fabric-loader-26.3` profile appears under Installations. Play it once
+without mods so the game downloads, then close it.
+
+### 3. Add the mods
+
+Download the jars (Modrinth's Versions tab, filter by Fabric and 26.3) and put them in the `mods`
+folder: `~/.minecraft/mods` on Linux, `%appdata%\.minecraft\mods` on Windows. Check each
+download's sha512 against Modrinth's page. The folder is shared by all installations, so move out
+any jar built for another Minecraft version.
+
+### 4. Add the world
+
+Extract [the demo world](demo/Hetch-Hetchy-Dam-Demo.zip) so the folder `Hetch Hetchy - Pool and
+Roads` sits inside `saves` (`~/.minecraft/saves` or `%appdata%\.minecraft\saves`). Keep the zip
+as the pristine copy; work on the extracted folder, and copy it before big edits. To play on the
+shared server instead, see [Join the server](#join-the-server).
+
+### 5. Play and check
+
+Launch the `fabric-loader-26.3` profile (or plain 26.3), open Singleplayer and choose the world.
+It is creative with commands on; double-tap jump to fly. In Video Settings start with about 12–16
+render chunks, and set the Distant Horizons render distance to about 96 chunks (the dam-to-Kolana
+distance is about 1,265 blocks, or 79 chunks). These are starting settings, not measured
+guarantees. If the game fails to start, remove mods one at a time, newest first, and read
+`logs/latest.log` in the game folder.
+
+Viewpoints, matching the browser version's cameras where they exist:
+
+| Place | Command |
 |---|---|
-| [Fabric Loader](https://fabricmc.net/use/installer/) and [Fabric API](https://modrinth.com/mod/fabric-api) | Loader and shared API for the Fabric mod setup. |
-| [Sodium](https://modrinth.com/mod/sodium) | Rendering performance. |
-| [Distant Horizons](https://modrinth.com/mod/distanthorizons) | Simplified distant terrain, useful for seeing cliffs without fully rendering every intervening chunk. |
-| [Controlify](https://modrinth.com/mod/controlify) | Controller support, if desired. |
-| [Creative Fly](https://modrinth.com/mod/creative-fly) | Faster creative flight; its [Mod Menu](https://modrinth.com/mod/modmenu) configuration is useful without a mouse wheel. |
-| [Iris](https://modrinth.com/mod/iris) | Optional shader loader. Use a shader pack explicitly compatible with Distant Horizons if combining them. |
+| Over the lake, toward Kolana Rock | `/tp @s 1534 110 778 -42 10` |
+| Below the dam, looking up at it (browser "Below the dam") | `/tp @s 493 61 1401 -113 -14` |
+| Dam overlook (browser "O'Shaughnessy Dam") | `/tp @s 471 101 1305 -62 21` |
+| High over the dam, down the canyon | `/tp @s 680 168 1262 45 26` |
+| Dam crest walkway | `/tp @s 560 86 1330 -60 10` |
+| South-shore buildings | `/tp @s 830 102 1480 0 35` |
+| Ranger station and parking | `/tp @s 650 100 1600 0 35` |
+| Boat ramp and fishing dock | `/tp @s 738 83 1382 180 15` |
+| Tunnel from the dam's north end | `/tp @s 527 85 1316 154 5` |
+| Tunnel exit onto the trail | `/tp @s 493 85 1198 -6 5` |
 
-Dependencies vary by version: for example, the local Creative Fly 26.2 version requires
-[Cloth Config API](https://modrinth.com/mod/cloth-config), and Controlify may require
-[YetAnotherConfigLib](https://modrinth.com/mod/yacl). Confirm the version page instead of
-assuming this list is exhaustive. Mods are optional for the generated blocks themselves.
+## Join the server
 
-For the Hetch Hetchy crop, the dam-to-Kolana summit distance is approximately 1,265 Minecraft
-blocks, or 79 chunks, at the prototype's horizontal scale. A useful starting experiment is
-12–16 normal render chunks and 96 Distant Horizons chunks, increasing the latter modestly if
-needed. These are **starting settings, not measured performance guarantees**. Distant Horizons
-may need time to build its cache or prior exploration; shader support depends on the pack. Test
-with shaders off first and adjust to the machine.
+The Hetch Hetchy world can also be played together on a small private server.
 
-## Prototype code
+1. Use **Minecraft Java Edition 26.3** on Windows, macOS or Linux (the launcher's default release).
+   Bedrock (Microsoft Store, Xbox, phones) cannot join. Mods are optional; a plain 26.3 game is
+   enough, and Fabric with Distant Horizons adds the long views.
+2. Access is by whitelist; see the next step for how to ask.
+3. In Minecraft choose **Multiplayer → Add Server** and enter the address. The Hetch Hetchy server
+   is `dedication-care.tun.ply.gg` (no port needed). The whitelist is the request: try to join once
+   (you will be turned away), then ask the maintainer to approve you; the host sees who tried.
 
-The [`prototype`](prototype) folder preserves the local experiment's scripts for reference:
+## Host a server
 
-- `inspect_hetch.py` decodes the Hetch Hetchy terrain into a NumPy archive and draws an overview.
-- `build_waterscape_biome.py` is the Waterscape-inspired conversion; `build_east.py` is the
-  ESA-guided comparison.
-- `region_edit.py` contains shared offline Java region/NBT helpers.
-- `granite_canyon.py` is a localized Hetch Hetchy soil-to-stone edit, with a dry run by default.
-  It needs explicit world and structures paths; `--apply` writes to the supplied **offline copy**.
-- `remove_dam_slope.py` removes the identified downstream slope from a world copy, with a dry run
-  by default. It preserves dam and water blocks and updates heightmaps and lighting. It is tied
-  to this crop and needs the same explicit paths. The cut is a one-shot edit: do not rerun it on
-  an edited world, because its blended edges would be cut further.
-- `add_dam_pool.py` adds the illustrative pool and rocky rim; `add_osm_features.py` translates a
-  cropped OSM extract into mapped road/trail blocks and generic building shells. Both default to
-  a dry run and require an explicit offline world copy. The source extract and OSM attribution
-  are documented with the [demo](demo/README.md).
+What the Hetch Hetchy server uses, for anyone setting up their own:
 
-**These snapshots are not a portable pipeline.** They assume a specific sibling-directory
-layout, external Python packages (`numpy`, `scipy`, `Pillow`, `pyproj`, `nbtlib`), a prepared
-Arnis base world and copied source files. The builders edit the world at their configured path
-in place. They also contain Hetch Hetchy-specific bounds, water level, dam and tree logic.
-They must be reviewed and adapted to explicit input/output paths before reuse. No generated
-world, ESA imagery, downloaded mod JAR or Python environment is included here.
+- **Server:** Fabric server 26.3 (loader 0.20.1, `fabric-server-launch.jar` from
+  `https://meta.fabricmc.net/v2/versions/loader/26.3/0.20.1/1.1.2/server/jar`) on Java 25, 2–4 GB
+  of memory, with Fabric API and Distant Horizons (server-side level-of-detail for players who
+  have it) and WorldEdit. Leave **Chunky off the server**: with Distant Horizons 3.3.4 its hook can
+  crash the server when chunks load right after a start, and a finished world needs no
+  pre-generation.
+- **Settings:** `online-mode=true`, `white-list=true`, `enforce-whitelist=true`, creative,
+  peaceful, no PvP, `view-distance=12`, `simulation-distance=6`, a handful of players.
+- **Upgrade the world fully.** Distant Horizons reads saved chunks directly and only understands
+  the current format, so chunks still in an older format give wrong or missing far terrain (its
+  log says "Unable to deserialize blocks"). After copying in a world, start once with
+  `--forceUpgrade`, then check every chunk's `DataVersion`. Once (of two runs) it silently skipped
+  the chunks the scripts had rewritten; force-loading and saving those fixed it: `forceload add`
+  over the area in blocks of at most 256 chunks, `save-all flush`, `forceload remove all`. Delete Distant Horizons' database afterwards if it was
+  already built.
+- **The world:** copy a finished world folder in as `world` with the server stopped. Edit copies,
+  never the server's world; to update it, stop the server, back up `world`, copy the new one in and
+  start again.
+- **Running it:** start it in a detached `tmux` session so console commands can be sent
+  (`tmux send-keys -t mc "whitelist add NAME" Enter`), and stop it with the `stop` command so it
+  saves.
+- **Reaching it from outside:** a tunnel such as [playit.gg](https://playit.gg) gives an address
+  without opening a router port or showing your home IP (Tailscale Funnel does not carry Minecraft
+  traffic). For a few known players, a private network such as Tailscale also works. If you
+  forward port 25565 on a router instead, keep the whitelist and online mode on.
+- **The EULA:** running a server means accepting the [Minecraft EULA](https://aka.ms/MinecraftEULA)
+  (`eula=true`); do that yourself.
+
+## How a world is made
+
+**Inputs, all from Waterscape** (`data/<id>/` and the browser's rules):
+
+- `terrain.json` and `terrain.bin.gz`: the 3DEP elevation grid (about 10 m), shoreline distance,
+  valley field and drawdown field. Decoded as in [`renderer/terrain.js`](../../renderer/terrain.js)
+  and [`pipeline/dem.py`](../../pipeline/dem.py).
+- `source.json`, `land.json` and the biome under [`data/biomes`](../../data/biomes): the look —
+  rock share, drawdown band, tree species mix. The block choices follow the browser's
+  [ground](../../renderer/land/ground.js) and [tree](../../renderer/land/oak-placement.js) rules.
+- `structures.json`, where present: dams (crest line, crest elevation, height, type) and traced
+  rivers (centre line, widths, surface). The dam's cross-section is the browser's generic gravity
+  profile ([`structures.js`](../../renderer/land/structures.js)). Only Hetch Hetchy has this file
+  so far.
+- Optionally an OpenStreetMap extract for roads and buildings (© OpenStreetMap contributors,
+  ODbL; the Hetch Hetchy extract is [`demo/hetch-osm-features.json`](demo/hetch-osm-features.json)).
+
+**Scale and coordinates (Hetch Hetchy):** about 2 m per block horizontally and 4 m per block
+vertically, so mountains are vertically compressed and the canyon looks about half as deep as in
+the browser. The lake surface (1151.7 m) is at y = 80. The world covers latitude 37.938–37.972 and
+longitude −119.801 to −119.742 (2,587 × 1,891 blocks), mapped linearly from longitude and latitude.
+
+**Real and approximate.** From data: terrain shape, shoreline, lake level, river line and level,
+dam crest and height, road lines and classes, building footprints and storeys. Approximate or
+illustrative: block choices, the lake bed (the lidar cannot see under water; it is synthetic, not
+bathymetry), the river bed and boulders, trees (procedural stands of pine-like and oak-like trees,
+not surveyed trees), the dam cross-section, road cuts and guard walls, and building materials and
+roofs. Buildings use playable height (3 blocks per storey); at the world's vertical scale a cabin
+would be one block tall. Building footprints are laid square to the block grid.
+
+**One rule:** when the world and the browser disagree, rebuild that area from the browser's inputs
+and rules. Every hand-sculpted fix in this world's history drifted; every rebuild from the bundle
+came out right.
+
+## Build or update a world
+
+Always work on a **copy** of a world, with Minecraft closed for that copy. Every script is a dry run
+unless `--apply` is given, prints what it would change, and the newer ones refuse to run twice on
+the same world. Python 3 with `numpy`, `scipy`, `Pillow`, `pyproj` and `nbtlib` (a virtual
+environment is easiest). Run the scripts from [`prototype/`](prototype).
+
+### 1. The base world (Hetch Hetchy only, not yet portable)
+
+The base world was made in two steps, kept for reference until MC1 replaces them:
+
+1. A terrain-only [Arnis](https://github.com/louis-e/arnis) world for the bounding box supplied the
+   world structure and geographic metadata (`metadata.json`).
+2. [`inspect_hetch.py`](prototype/inspect_hetch.py) decoded the bundle's terrain, and
+   [`build_waterscape_biome.py`](prototype/build_waterscape_biome.py) rewrote every chunk from it:
+   terrain, synthetic lake bed, water, a simple dam wall, river, biome ground, drawdown band and
+   trees.
+
+Both expect the original local folder layout (a `source/` folder with copied bundle files, a named
+world folder beside the script) and Hetch Hetchy constants. To get a base world today, start from
+the demo zip instead.
+
+### 2. Optional upgrades
+
+Run in this order on a copy of the base world (the demo works):
+
+1. **Canyon below the dam** — [`rebuild_downstream.py`](prototype/rebuild_downstream.py) rebuilds
+   the area below O'Shaughnessy Dam from the browser's inputs: unmodified terrain, the traced river
+   (`structures.json` centre line, widths and surface), the dam's downstream face from the gravity
+   profile, and the granite ground rules for rock and canyon stone. It replaces the demo's slope
+   cut, canyon stone and plunge pool, keeps the reservoir watertight, and keeps the dam's upstream
+   half and the buildings.
+   ```text
+   python rebuild_downstream.py --world "<copy>" --data ../../../data/hetch_hetchy \
+     --biome ../../../data/biomes/sierra-granite/biome.json --face-drop 1.5 --close-gap shift [--apply]
+   ```
+   `--face-drop` steepens the downstream face, in blocks dropped per block outward. Without it the
+   face follows the browser's gravity profile (0.75 m out per metre down), which at 2 m across and
+   4 m up per block shows as a gentle 34°; 1.5 looks like the real dam. The steeper face frees a
+   band where the lidar recorded only the dam. `--close-gap shift` slides the canyon below
+   upstream into it ([`warp.py`](prototype/warp.py)): the full gap (about 19 blocks) at the dam,
+   fading to nothing 180 blocks downstream, in one direction square to the crest, so the canyon is
+   stretched by about 10% with no seam. Dry ground within 10 blocks of the face that sits below
+   river level is raised to it, so there is no pit at the toe. `--close-gap pool` instead fills
+   the band with a plunge pool. Hetch Hetchy's world uses 1.5 with `shift`; run
+   `osm_structures.py` with `--shift-face-drop 1.5` so mapped roads and buildings move with it.
+2. **Roads, dam crest and buildings** — [`osm_structures.py`](prototype/osm_structures.py) removes
+   the demo's flat road lines and box shells and replaces them. Roads are graded along their length
+   with widths by class and lanes, half-slabs, cuts, fill with stone guard walls, and tunnels or
+   bridge decks where needed. The dam crest gets parapets on both edges. Buildings get foundations,
+   windows, a door toward the nearest road and hip roofs.
+   ```text
+   python osm_structures.py --world "<copy>" --osm ../demo/hetch-osm-features.json \
+     --structures ../../../data/hetch_hetchy/structures.json --shift-face-drop 1.5 [--apply]
+   ```
+
+3. **Fishing extras (gameplay, not data)** — [`add_fishing.py`](prototype/add_fishing.py) adds
+   docks with a moored spruce boat, a chest of four fishing rods, a bench and a lantern at gentle
+   shore spots, and schools of fish in the lake. Minecraft has no trout, so the fish are salmon
+   (trout are in the salmon family), marked as bucket-caught so they do not despawn. Fishing
+   with a rod works anywhere on the water. The real reservoir allows fishing from the shore only,
+   with no boats; the boats are a game liberty.
+   ```text
+   python add_fishing.py --world "<copy>" --spot 738,1376 --fish 150 [--apply]
+   ```
+4. **Places from photos** — two scripts for features the maintainer marked on a map and
+   photographed, placed by hand rather than from data:
+   [`add_ramp.py`](prototype/add_ramp.py) lays a concrete boat ramp from a road into the lake
+   (graded, with half-slabs, continuing under water), and
+   [`add_tunnel.py`](prototype/add_tunnel.py) cuts a walking tunnel along a route: rough rock
+   walls, a gravel floor, lanterns hanging from the ceiling on one side, concrete portals, and a
+   trail mapped over the rock turned back to rock. At the world's vertical scale the hill above
+   is thin near the trail end, so the script adds rock over the tunnel with sloped sides.
+   Hetch Hetchy's are the ramp at the south-shore cove (the fishing dock sits beside it) and the
+   tunnel from the dam's north end to the Wapama Falls trail:
+   ```text
+   python add_ramp.py --world "<copy>" --from 713,1392 --to 729,1384 [--apply]
+   python add_tunnel.py --world "<copy>" --from 524,1310 --via 501,1263 --to 495,1206 [--apply]
+   ```
+
+All of these use [`world_columns.py`](prototype/world_columns.py), which loads chunks as full block columns,
+keeps every block state, recomputes heightmaps and leaves lighting for the game to redo on load
+(expect a short pause the first time each area loads).
+
+### 3. Check it
+
+Before opening a world, check it offline: no water next to lower dry ground, the dam crest
+continuous at its height, walls joined. Then open the copy in 26.3, visit the
+viewpoints above and report what you see: an overhead render is not a screenshot.
+
+## Files
+
+| Path | What it is |
+|---|---|
+| [`AGENTS.md`](AGENTS.md) | Rules for agents working on this experiment |
+| [`demo/`](demo/README.md) | The Hetch Hetchy demo world (zip), its OSM extract and notes |
+| [`prototype/rebuild_downstream.py`](prototype/rebuild_downstream.py) | Upgrade 1: canyon, dam face and river below the dam |
+| [`prototype/osm_structures.py`](prototype/osm_structures.py) | Upgrade 2: graded roads, dam parapets, buildings |
+| [`prototype/add_fishing.py`](prototype/add_fishing.py) | Upgrade 3: fishing docks, boats, rods and fish (gameplay extras) |
+| [`prototype/add_ramp.py`](prototype/add_ramp.py), [`add_tunnel.py`](prototype/add_tunnel.py) | Upgrade 4: a boat ramp and a walking tunnel, placed from photos and a map |
+| [`prototype/warp.py`](prototype/warp.py) | The gentle canyon stretch that fills the gap a steeper dam face leaves |
+| [`prototype/world_columns.py`](prototype/world_columns.py) | Shared world read/write for edits (full columns, palettes, heightmaps, entities, chests) |
+| [`prototype/region_edit.py`](prototype/region_edit.py) | Low-level region and chunk read/write helpers |
+| [`prototype/build_waterscape_biome.py`](prototype/build_waterscape_biome.py), [`inspect_hetch.py`](prototype/inspect_hetch.py) | How the base world was made (reference; not portable) |
+| [`prototype/archive/`](prototype/archive/README.md) | Superseded one-shot edits; do not run on current worlds |
+
+No generated worlds (other than the curated demo), mod JARs, game files or Python environments are
+kept here. Not an official Minecraft product; not approved by or associated with Mojang or
+Microsoft.

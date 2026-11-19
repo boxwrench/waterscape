@@ -21,7 +21,7 @@ or go straight to the reference river:
 [Hacienda Bridge](https://boxwrench.github.io/waterscape/river-pulse/rivers/russian_river/scenes/middle/hacienda_bridge/index.html) and
 [Jenner Estuary](https://boxwrench.github.io/waterscape/river-pulse/rivers/russian_river/scenes/end/jenner/index.html).
 
-![Jenner authored coastal preview: estuary, sand spit and Pacific surf](previews/jenner-estuary.png)
+![Jenner Estuary lookout: the Russian River estuary, sand spit and Pacific surf, with the live USGS water level at Highway 1](previews/jenner-estuary.png)
 
 ![Calaveras Reservoir from North ridge in live 3D](previews/calaveras-overlook.png)
 
@@ -94,6 +94,32 @@ Any US lake, reservoir or pond with 3DEP lidar coverage can become a stop:
 The full guide, with field references and examples, is
 [docs/make-a-waterscape.md](docs/make-a-waterscape.md).
 
+## Playable Minecraft maps (experimental)
+
+The same water-body data can also become a world you walk and fly through in **Minecraft Java
+Edition**: the lidar terrain, shoreline, dam and river, the biome's rock and trees, and optionally
+mapped roads and buildings from OpenStreetMap, all in ordinary blocks. Hetch Hetchy is the first
+one: a [demo world](experimental/minecraft/demo/README.md) of O'Shaughnessy Dam, the canyon below
+it and Kolana Rock.
+
+**Play it on the server:** in Minecraft Java 26.3 choose Multiplayer → Add Server and enter
+`dedication-care.tun.ply.gg`. The server is whitelisted: try to join once, then ask the maintainer
+to approve your username. A plain 26.3 game is enough; Bedrock (consoles, phones, the Microsoft
+Store edition) cannot join.
+
+- **Version:** Minecraft Java **26.3**, the current release, with Fabric Loader 0.20.1 for the
+  optional mods. Opening a world in a newer release upgrades that copy one way, so keep a copy
+  before trying one. Mods are optional; Distant Horizons gives the long views. The
+  [install guide](experimental/minecraft/README.md#install-guide-linux-and-windows) covers Linux
+  and Windows, mod versions and a first run.
+- **Scale:** about 2 m per block across and 4 m per block up, so mountains are vertically
+  compressed; buildings use playable height. Terrain, water, dam and mapped features come from
+  the data; block choices, trees, the lake bed and building looks are illustrative.
+- **Status:** a working prototype, not yet a one-command builder for any water body. The plan to
+  get there — a builder that writes a fresh world from `data/<id>/`, then a second SFPUC
+  reservoir and a guide — is [track MC](docs/roadmap/README.md#track-mc--playable-minecraft-maps).
+  Start with the [experiment's README](experimental/minecraft/README.md).
+
 ## Run locally
 
 Requires Node.js 20+ and Chrome or Edge. On Windows, double-click **`START.bat`**; otherwise:
@@ -139,6 +165,7 @@ URL options: `?reservoir=<id>`, `?preset=morning|midday|golden`, `?quality=low|m
 | `pipeline/` | Builds and checks water bodies: `build.py`, `render-flyover.mjs`, `validate-bundles.mjs` |
 | `vendor/` | cuda-webshader and three.js, vendored (the site loads nothing from CDNs) |
 | `Native/` | Optional native Windows CUDA host (developer tool) |
+| `experimental/minecraft/` | Playable Minecraft Java maps from water-body data: install guide, scripts, Hetch Hetchy demo |
 | `docs/` | [Architecture](docs/architecture.md), [make a waterscape](docs/make-a-waterscape.md), design history; see also the [roadmap](ROADMAP.md) |
 
 ## Tests
@@ -183,6 +210,9 @@ state and visual bindings under the same umbrella without a speculative shared f
 - [cuda-webshader](https://github.com/SamG-Coder/cuda-webshader) (MIT) and
   [three.js](https://github.com/mrdoob/three.js) r186 (MIT), vendored under `vendor/`.
 - Terrain: USGS 3D Elevation Program, public domain. Facts: public records cited per fact.
+- Minecraft maps: roads and buildings © [OpenStreetMap contributors](https://www.openstreetmap.org/copyright)
+  (ODbL), credited inside each world. Not an official Minecraft product; not approved by or
+  associated with Mojang or Microsoft. No game files or mod JARs are distributed here.
 - References: Tessendorf (FFT water), Evan Wallace (caustics), Preetham et al. (sky),
   Inigo Quilez (texture repetition), Olano & Baker (LEAN mapping).
 

@@ -3,6 +3,18 @@
 The current state of the project and where to pick up. Add a short entry at the top for each pass; when this grows past a
 few screens, move older entries to `docs/archive/`. History through RP30 is in [`archive/HANDOFF-through-RP30.md`](./archive/HANDOFF-through-RP30.md).
 
+## Minecraft maps: MC0 and track MC (2026-11-18, `task/minecraft-accuracy`)
+
+The Minecraft experiment is now a roadmap track ([track MC](./roadmap/README.md#track-mc--playable-minecraft-maps)):
+playable Java maps (now 26.3) of any water body from its bundle, Hetch Hetchy first. MC0 added two
+upgrades that rebuild from the browser's own inputs: `rebuild_downstream.py` (canyon, gravity dam
+face, traced river, granite ground rules) and `osm_structures.py` (graded roads, dam parapets,
+axis-aligned buildings), on a shared `world_columns.py`. Superseded one-shot edits moved to
+`prototype/archive/`. The [experiment README](../experimental/minecraft/README.md) was rewritten
+around play, provenance and building, with a pinned install guide; the main README has a
+Minecraft section. Checked offline only. Next: in-game acceptance (MC0b), refresh the demo zip,
+then the one-command builder (MC1). The demo zip is still the earlier version.
+
 ## Experimental Minecraft workflow (2026-11-18)
 
 Added an [experimental Minecraft Java workflow](../experimental/minecraft/README.md), agent
