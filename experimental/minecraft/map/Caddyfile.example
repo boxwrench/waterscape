@@ -1,0 +1,23 @@
+# Caddy site for the static Waterscape map, following BlueMap's official example
+# (https://bluemap.bluecolored.de/wiki/webserver/ExternalWebserversFile.html, Caddy section),
+# without the optional live-player proxy (a static map has no live players).
+# Replace the domain and the folder; Caddy fetches the HTTPS certificate itself once DNS points here.
+map.example.org {
+	# The contents of build/run/web (index.html at the top).
+	root * /srv/waterscape-map
+	file_server
+
+	# BlueMap stores textures.json and the .prbm tiles gzip-compressed: serve the .gz file
+	# (204 if none) and label it so the browser unpacks it.
+	@gz path /maps/*/textures.json *.prbm
+	handle @gz {
+		try_files {path}.gz =204
+		header Content-Encoding gzip
+	}
+
+	# Missing tiles (past the map edge) answer 204 instead of 404.
+	@204 path */tiles/*
+	handle @204 {
+		try_files {path} =204
+	}
+}
