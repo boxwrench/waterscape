@@ -147,7 +147,7 @@ What the Hetch Hetchy server uses, for anyone setting up their own:
 - **Server:** Fabric server 26.3 (loader 0.20.1, `fabric-server-launch.jar` from
   `https://meta.fabricmc.net/v2/versions/loader/26.3/0.20.1/1.1.2/server/jar`) on Java 25, 2–4 GB
   of memory, with Fabric API and Distant Horizons (server-side level-of-detail for players who
-  have it) and WorldEdit. Leave **Chunky off the server**: with Distant Horizons 3.3.4 its hook can
+  have it), WorldEdit and Ledger. Leave **Chunky off the server**: with Distant Horizons 3.3.4 its hook can
   crash the server when chunks load right after a start, and a finished world needs no
   pre-generation.
 - **Settings:** `online-mode=true`, `white-list=true`, `enforce-whitelist=true`, creative,
@@ -169,6 +169,11 @@ What the Hetch Hetchy server uses, for anyone setting up their own:
   without opening a router port or showing your home IP (Tailscale Funnel does not carry Minecraft
   traffic). For a few known players, a private network such as Tailscale also works. If you
   forward port 25565 on a router instead, keep the whitelist and online mode on.
+- **Building and undo:** players in creative can build anywhere, so keep a way back. A pristine
+  copy of the published world plus nightly compressed snapshots (about 32 MB each here) give a
+  full reset; [Ledger](https://modrinth.com/mod/ledger), a server-only logging mod (it needs
+  Fabric Language Kotlin), records who changed each block and can roll back one player's changes
+  in an area without touching anyone else's.
 - **The EULA:** running a server means accepting the [Minecraft EULA](https://aka.ms/MinecraftEULA)
   (`eula=true`); do that yourself.
 
@@ -286,6 +291,18 @@ Run in this order on a copy of the base world (the demo works):
    python add_tunnel.py --world "<copy>" --from 524,1310 --via 501,1263 --to 495,1206 [--apply]
    ```
 
+5. **Wildlife (gameplay, area-appropriate)** — [`plan_animals.py`](prototype/plan_animals.py)
+   reads a world and prints server commands that summon persistent animals in fitting places, so
+   the game writes them in its own format. Hetch Hetchy's lower montane animals that Minecraft
+   lacks (mule deer, black bears, mountain lions, bobcats, squirrels, rattlesnakes) are left out
+   rather than faked, and Sierra bighorn live far higher, so no goats. The stand-ins: brush rabbit
+   → brown rabbit (brushy gentle slopes), gray fox → fox (near trees), coyote → chestnut wolf (in
+   pairs), Pacific chorus frog → temperate frog (lake shore and riverbank), bats roosting in the
+   tunnel, and pack mules and horses beside the stable; rainbow trout are the salmon from step 3.
+   ```text
+   python plan_animals.py --world "<world>" > animals.txt   # then send the lines to the console
+   ```
+
 All of these use [`world_columns.py`](prototype/world_columns.py), which loads chunks as full block columns,
 keeps every block state, recomputes heightmaps and leaves lighting for the game to redo on load
 (expect a short pause the first time each area loads).
@@ -306,6 +323,7 @@ viewpoints above and report what you see: an overhead render is not a screenshot
 | [`prototype/osm_structures.py`](prototype/osm_structures.py) | Upgrade 2: graded roads, dam parapets, buildings |
 | [`prototype/add_fishing.py`](prototype/add_fishing.py) | Upgrade 3: fishing docks, boats, rods and fish (gameplay extras) |
 | [`prototype/add_ramp.py`](prototype/add_ramp.py), [`add_tunnel.py`](prototype/add_tunnel.py) | Upgrade 4: a boat ramp and a walking tunnel, placed from photos and a map |
+| [`prototype/plan_animals.py`](prototype/plan_animals.py) | Upgrade 5: area-appropriate wildlife, summoned through the server |
 | [`prototype/warp.py`](prototype/warp.py) | The gentle canyon stretch that fills the gap a steeper dam face leaves |
 | [`prototype/world_columns.py`](prototype/world_columns.py) | Shared world read/write for edits (full columns, palettes, heightmaps, entities, chests) |
 | [`prototype/region_edit.py`](prototype/region_edit.py) | Low-level region and chunk read/write helpers |
