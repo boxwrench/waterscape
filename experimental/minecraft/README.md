@@ -302,21 +302,24 @@ Run in this order on a copy of the base world (the demo works):
    trail mapped over the rock turned back to rock. At the world's vertical scale the hill above
    is thin near the trail end, so the script adds rock over the tunnel with sloped sides.
    [`add_spillway.py`](prototype/add_spillway.py) builds a gated spillway beside a dam: drum
-   gates between round-nosed piers with railings, a stepped spill face, a dry rock channel that
-   narrows towards the far end to stay clear of the road, a bridge deck where the dam road
-   crosses it, and a chute down the dam's downstream face. Lake water cut off behind the gates
-   becomes ground, and the script refuses to write if the lake would leak. The gates are drawn
-   closed and the channel dry.
+   gates between round-nosed piers with railings, a stepped spill face, and a dry rock channel
+   that narrows towards the far end to stay clear of the road. The channel passes under the dam
+   road through an arched opening in a concrete headwall and runs out down the rock in a gully
+   that drops in ledges. Where the dam's downstream face reaches past the real face's edge (the
+   generic gravity profile runs the full traced crest), the script turns that part into a granite
+   slope rising to the ground beyond. Lake water cut off behind the gates becomes ground, and the
+   script refuses to write if the lake would leak. The gates are drawn closed and the spillway dry.
    Hetch Hetchy's are the ramp at the south-shore cove (the fishing dock sits beside it), the
    tunnel from the dam's north end to the Wapama Falls trail, and O'Shaughnessy Dam's spillway
-   with its three drum gates at the road end of the dam (the line traced from the
+   with its three drum gates at the road end of the dam (the gate line and the dam face's edge traced from the
    [USGS NAIP image](https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer/exportImage?bbox=254900,4203450,255150,4203650&bboxSR=32611&imageSR=32611&size=1000,800&format=jpg&bandIds=0,1,2&f=image);
    sizes and heights are illustrative):
    ```text
    python add_ramp.py --world "<copy>" --from 713,1392 --to 729,1384 [--apply]
    python add_tunnel.py --world "<copy>" --from 524,1310 --via 501,1263 --to 495,1206 [--apply]
    python add_spillway.py --world "<copy>" --gates-from 594,1401.5 --gates-to 626,1389.5 \
-       --chute 588,1407 --chute 570,1405 [--apply]
+       --portal 587.5,1409 --face-edge 587,1403 --face-edge 565,1373.5 \
+       --falls 578,1406 --falls 567,1399 [--apply]
    ```
 
 5. **Wildlife and hikers (gameplay, area-appropriate)** — [`plan_animals.py`](prototype/plan_animals.py)
