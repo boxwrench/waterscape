@@ -133,6 +133,7 @@ Viewpoints, matching the browser version's cameras where they exist:
 | Boat ramp and fishing dock | `/tp @s 738 83 1382 180 15` |
 | Tunnel from the dam's north end | `/tp @s 527 85 1316 154 5` |
 | Tunnel exit onto the trail | `/tp @s 493 85 1198 -6 5` |
+| Spillway drum gates, from the road bridge | `/tp @s 591 84 1405 -125 12` |
 
 ## Join the server
 
@@ -292,7 +293,7 @@ Run in this order on a copy of the base world (the demo works):
    ```text
    python add_fishing.py --world "<copy>" --spot 738,1376 --fish 150 [--apply]
    ```
-4. **Places from photos** — two scripts for features the maintainer marked on a map and
+4. **Places from photos** — three scripts for features the maintainer marked on a map and
    photographed, placed by hand rather than from data:
    [`add_ramp.py`](prototype/add_ramp.py) lays a concrete boat ramp from a road into the lake
    (graded, with half-slabs, continuing under water), and
@@ -300,11 +301,22 @@ Run in this order on a copy of the base world (the demo works):
    walls, a gravel floor, lanterns hanging from the ceiling on one side, concrete portals, and a
    trail mapped over the rock turned back to rock. At the world's vertical scale the hill above
    is thin near the trail end, so the script adds rock over the tunnel with sloped sides.
-   Hetch Hetchy's are the ramp at the south-shore cove (the fishing dock sits beside it) and the
-   tunnel from the dam's north end to the Wapama Falls trail:
+   [`add_spillway.py`](prototype/add_spillway.py) builds a gated spillway beside a dam: drum
+   gates between round-nosed piers with railings, a stepped spill face, a dry rock channel that
+   narrows towards the far end to stay clear of the road, a bridge deck where the dam road
+   crosses it, and a chute down the dam's downstream face. Lake water cut off behind the gates
+   becomes ground, and the script refuses to write if the lake would leak. The gates are drawn
+   closed and the channel dry.
+   Hetch Hetchy's are the ramp at the south-shore cove (the fishing dock sits beside it), the
+   tunnel from the dam's north end to the Wapama Falls trail, and O'Shaughnessy Dam's spillway
+   with its three drum gates at the road end of the dam (the line traced from the
+   [USGS NAIP image](https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer/exportImage?bbox=254900,4203450,255150,4203650&bboxSR=32611&imageSR=32611&size=1000,800&format=jpg&bandIds=0,1,2&f=image);
+   sizes and heights are illustrative):
    ```text
    python add_ramp.py --world "<copy>" --from 713,1392 --to 729,1384 [--apply]
    python add_tunnel.py --world "<copy>" --from 524,1310 --via 501,1263 --to 495,1206 [--apply]
+   python add_spillway.py --world "<copy>" --gates-from 594,1401.5 --gates-to 626,1389.5 \
+       --chute 588,1407 --chute 570,1405 [--apply]
    ```
 
 5. **Wildlife and hikers (gameplay, area-appropriate)** — [`plan_animals.py`](prototype/plan_animals.py)
@@ -351,7 +363,7 @@ viewpoints above and report what you see: an overhead render is not a screenshot
 | [`prototype/rebuild_downstream.py`](prototype/rebuild_downstream.py) | Upgrade 1: canyon, dam face and river below the dam |
 | [`prototype/osm_structures.py`](prototype/osm_structures.py) | Upgrade 2: graded roads, dam parapets, buildings |
 | [`prototype/add_fishing.py`](prototype/add_fishing.py) | Upgrade 3: fishing docks, boats, rods and fish (gameplay extras) |
-| [`prototype/add_ramp.py`](prototype/add_ramp.py), [`add_tunnel.py`](prototype/add_tunnel.py) | Upgrade 4: a boat ramp and a walking tunnel, placed from photos and a map |
+| [`prototype/add_ramp.py`](prototype/add_ramp.py), [`add_tunnel.py`](prototype/add_tunnel.py), [`add_spillway.py`](prototype/add_spillway.py) | Upgrade 4: a boat ramp, a walking tunnel and the dam's gated spillway, placed from photos, a map and an aerial image |
 | [`prototype/plan_animals.py`](prototype/plan_animals.py) | Upgrade 5: area-appropriate wildlife and hikers, summoned through the server |
 | [`pack/`](pack/README.md) | Upgrade 6: biome colours (datapack) and the animals-and-hikers resource pack, built from code |
 | [`map/`](map/README.md) | The web map workflow: any built world as a 3D browser map (overview and first person), and how to host it |
