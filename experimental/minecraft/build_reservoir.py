@@ -692,8 +692,8 @@ def preview(path, ground, surface, wet, trees, extras):
             'light_blue_terracotta': (113, 108, 137), 'azalea_leaves': (90, 117, 44), 'pale_oak_log': (88, 77, 71),
             'polished_andesite': (132, 134, 133), 'terracotta': (152, 94, 67), 'allium': (165, 110, 200),
             'stone_brick_slab[type=bottom]': (122, 121, 122), 'polished_andesite_slab[type=bottom]': (132, 134, 133),
-            'smooth_quartz_slab[type=bottom]': (236, 230, 223)}
-    lut = np.array([tint.get(n, colours.get(i, (200, 0, 200))) for i, n in enumerate(NAMES)], np.float32)
+            'smooth_quartz_slab[type=bottom]': (236, 230, 223), 'quartz_stairs': (236, 230, 223), 'iron_trapdoor': (200, 200, 200)}
+    lut = np.array([tint.get(n, tint.get(n.split('[')[0], colours.get(i, (200, 0, 200)))) for i, n in enumerate(NAMES)], np.float32)
     rgb = lut[surface].copy()
     top = ground.astype(np.float32).copy()
     for layer in (extras, trees):

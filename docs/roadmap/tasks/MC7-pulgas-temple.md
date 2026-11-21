@@ -14,9 +14,11 @@ never hand-placed.
 ## Scale (maintainer's choice, 2026-11-21)
 
 The world is 4 m per block, which would make the temple a 3-block ring. The maintainer chose a
-**landmark at 1 m per block**: the temple, pool, cypress rows and forecourt are four times the
-land around them. The complex is centred on its real middle and slid back along its axis to stay inside the
-bundle (which ends just east of the pool), so the temple sits about 104 m (26 blocks)
+**landmark at 1 m per block**: the pool, cypress rows and forecourt are four times the
+land around them. After seeing it, the maintainer asked for the temple itself at a finer scale for
+detail, accepting that it is then out of proportion: **0.5 m per block** (eight times the land,
+twice its setting), with the setting moved out along the axis to make room. The complex is centred on its real middle and slid back along its axis to stay inside the
+bundle (which ends just east of the pool), so the temple sits about 139 m (35 blocks)
 west-southwest of its true spot, on its true axis, and the canal, which runs along
 the same axis, is shorter than the real 240 m. Everything else in the world stays at 4 m per block.
 
@@ -47,21 +49,24 @@ An overhead beside the NAIP image, isometric renders of the temple and pool, the
 
 ## Result
 - Status: done offline; in-game acceptance by the maintainer pending.
-- Commit: a746f8b (landmark, builder, docs, map places); this Result in the next commit.
+- Commits: a746f8b (landmark at 1 m per block), then the temple at 0.5 m per block with this
+  Result.
 - Checks:
-  - Crystal Springs: `15762 chunks, 170 decoded and compared, 590254 trees`; lake leaks 0; the
+  - Crystal Springs: `15762 chunks, 170 decoded and compared, 589975 trees`; lake leaks 0; the
     landmark's own check (every pool, well and canal water cell held in) passed;
   - Calaveras rebuilt with the changed builder: all 12 region files byte-identical;
   - loaded on a Fabric 26.3 server (`map/render_map.sh` lighting pass): no errors; web map
-    re-rendered (457 MB) and checked in the browser (overview, pool, front path, canal);
+    re-rendered (457 MB) and checked in the browser (temple close up, front path, down the pool);
   - `node scripts/check-doc-links.mjs` → `Documentation links valid (143 Markdown files).`
 - Notes:
-  - Temple centre block (1710, 2105); lawn terrace y 67, landing y 68, cornice top y 77; ten
-    columns; pool 494 cells; 24 cypress; canal 89 blocks, water at y 66 then 65.
-  - The bundle ends just east of the pool, so the complex is slid 6.5 m back along its axis:
-    the temple stands about 104 m from its true spot.
+  - Temple centre (1702, 2107), on a block corner; lawn terrace y 67, landing y 69, crest top
+    y 87. Ten 2×2 columns (moulded base, quartz-pillar shaft, capital flaring to its abacus),
+    architrave with a meander face, plain drum, cornice with its moulding and a crest of 40
+    ornaments; four half-block step courses with the terracotta ring; the well under an iron
+    grate. Pool 492 cells; 24 cypress; canal 74 blocks, water at y 66 then 65.
+  - The bundle ends just east of the pool, so the complex is slid 14.5 blocks back along its
+    axis: the temple stands about 139 m from its true spot.
   - The bundle's shoreline lies about 50 blocks west of the real canal mouth (its 10 m data has
-    flat land at lake level there), so the canal follows the traced line to the real mouth, then
-    turns to the nearest lake water.
-  - At 1 m per block the 7.6 m drum is a rough octagon; a finer temple would need its own,
-    larger scale.
+    flat land at lake level there), so the canal turns from the traced line to the nearest lake
+    water.
+  - The isometric checker draws slabs and stairs as full blocks; judge the detail on the web map.

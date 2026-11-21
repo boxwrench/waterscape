@@ -24,15 +24,16 @@ The builder is the same one as Calaveras ([`build_reservoir.py`](build_reservoir
   as dark oak crowns, Douglas-fir as spruce cones), the lake bed (synthetic), the dam's crest
   width and stepped face (0.75 horizontal to 1 vertical), and the spillway, drawn as the part of
   the face above the stilling basin.
-- **Pulgas Water Temple** ([MC7](../../docs/roadmap/tasks/MC7-pulgas-temple.md)): built at
-  **1 m per block**, four times the land around it (the maintainer's choice: at 4 m per block the
-  temple would be a 3-block ring). The temple centre, the pool (38 × 13 m, its axis through the
+- **Pulgas Water Temple** ([MC7](../../docs/roadmap/tasks/MC7-pulgas-temple.md)): the temple at
+  **0.5 m per block** and its pool, cypress and forecourt at **1 m per block**, eight and four times
+  the land around them (the maintainer's choice: at 4 m per block the temple would be a 3-block
+  ring; the finer temple scale is for its detail, and the setting moves out to make room). The temple centre, the pool (38 × 13 m, its axis through the
   temple), the cypress spacing (3.3 m) and the canal line are measured on NAIP; heights and radii
   come from the maintainer's [Blender model](https://github.com/boxwrench/water_temple), one
   model unit being 13.2 m (the landing's terracotta ring, 4.8 m in radius on NAIP); the setting
   (turquoise pool, white coping, lavender either side of the front steps, cypress taller than the
   temple) follows photographs. The complex is centred on its real middle, and slid back along its axis to
-  stay inside the bundle, which ends just east of the pool, so the temple stands about 104 m
+  stay inside the bundle, which ends just east of the pool, so the temple stands about 139 m
   west-southwest of its true spot; the canal follows the traced line to its real mouth,
   then crosses the bundle's flat shore to the lake, with water (the temple's own flow was
   diverted in 2004). Blocks are illustrative.
@@ -65,9 +66,9 @@ Open the world in Java 26.3 as a creative world. It starts at the northwest ridg
 | Shoreline | `/tp @s 407 67 810 -145 24.1` |
 | Dam face, above the creek below it | `/tp @s 768 72 838 90 15` |
 | Along the dam crest | `/tp @s 724 69 822 -27 10` |
-| Pulgas Water Temple from the end of the reflecting pool | `/tp @s 1766 68 2090 74 6` |
-| The temple from its front path, between the lavender | `/tp @s 1724 68 2102 74 -12` |
-| The canal behind the temple | `/tp @s 1689 69 2112 -106 12` |
+| Pulgas Water Temple from the end of the reflecting pool | `/tp @s 1764 68 2090 74 4` |
+| The temple from its front path, between the lavender | `/tp @s 1727 68 2100 74 -18` |
+| The canal behind the temple | `/tp @s 1675 69 2115 -106 8` |
 
 ## Result
 
