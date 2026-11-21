@@ -229,10 +229,12 @@ came out right.
 
 ## Build or update a world
 
-Always work on a **copy** of a world, with Minecraft closed for that copy. Every script is a dry run
-unless `--apply` is given, prints what it would change, and the newer ones refuse to run twice on
-the same world. Python 3 with `numpy`, `scipy`, `Pillow`, `pyproj` and `nbtlib` (a virtual
-environment is easiest). Run the scripts from [`prototype/`](prototype).
+For Calaveras Reservoir, see the [Calaveras build and review notes](calaveras.md). Its prototype
+builds a fresh Java 26.3 save from the Calaveras data bundle using the shared world I/O code.
+
+When applying an upgrade, work on a **copy** of the world and close Minecraft first. The upgrade
+scripts run a dry run unless you pass `--apply`. Use Python 3 with `numpy`, `scipy`, `Pillow`,
+`pyproj` and `nbtlib`. Run the upgrades from [`prototype/`](prototype).
 
 ### 1. The base world (Hetch Hetchy only, not yet portable)
 
