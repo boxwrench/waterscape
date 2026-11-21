@@ -13,6 +13,8 @@ in a few lines taken from its own data bundle. [BlueMap](https://bluemap.bluecol
 | `sites/<id>.json` | Per reservoir: viewpoints, which facts to show, what is illustrative |
 | `bluemap/` | BlueMap settings and the map template (sky colour, render area, no usage reports) |
 | `waterscape.js` | On-map panel: description, the first-person button with how-to, credits |
+| `make_front.py`, `voxel_art.py` | The front page (HetchyCraft): a card per reservoir with a voxel model drawn from its elevation data, linking to each map |
+| `front.example.json` | Personal links for the front page (blog, site address); copy to `front.local.json`, which is not committed |
 | `Caddyfile.example` | Caddy site that serves the folder correctly |
 
 ## Render
@@ -69,6 +71,25 @@ The map shows blocks only: no animals, hikers or players, and simpler lighting t
    copy their addresses (the part after `#<id>:`) into `viewpoints`. `start` is optional.
 4. Render again and host.
 
+## Front page: several reservoirs on one site
+
+`make_front.py` builds a title page that links to each rendered map, with the maps in subfolders
+(`/hetch_hetchy/`, `/calaveras/`):
+
+```
+python make_front.py --out build-site --map hetch_hetchy=build/run/web \
+  --map calaveras=build-calaveras/run/web --serve 8200
+```
+
+Each card shows the reservoir's name, place, headline and the facts its `sites/<id>.json` lists
+(from `story.json`, with sources), and a voxel model drawn from `data/<id>/terrain.*` by
+`voxel_art.py`. The model's crop, size, height stretch and view turn are the site file's `"art"`.
+The first `--map` is drawn large at the top. Your blog link and the site's address come from
+`front.local.json` (copy `front.example.json`), so they stay out of the repository. Old links to
+a single-map site (`/#hetch_hetchy:...`) are sent on to that map's folder. `--serve` previews the
+folder with the same gzip rules as the host. To add a reservoir: render its map, add a `--map`,
+build again and upload.
+
 ## Host
 
 The tiles are stored gzip-compressed, so the web server has to send `*.prbm.gz` and
@@ -79,7 +100,8 @@ and so can Cloudflare R2 with rewrite rules ([guide](https://bluemap.bluecolored
 
 With Caddy:
 
-1. Copy the site: `rsync -a --delete build/run/web/ HOST:/srv/waterscape-map/`
+1. Copy the site: `rsync -aL --delete build-site/ HOST:/srv/waterscape-map/` for the front page
+   (`-L` copies the linked map folders), or `build/run/web/` for a single map.
 2. Add the block from `Caddyfile.example` (your domain and folder), then
    `caddy validate --config /etc/caddy/Caddyfile` and reload Caddy.
 3. Point the domain at that machine (a DNS A or CNAME record).
