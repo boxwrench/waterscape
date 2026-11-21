@@ -17,7 +17,23 @@ not something these scripts do yet.
 | Rebuild or improve the Hetch Hetchy world | [Build or update a world](#build-or-update-a-world) |
 | Play together on the server | [Join the server](#join-the-server); hosts see [Host a server](#host-a-server) |
 | Show the map to people without Minecraft (3D in a browser, with a first-person view) | [Web map](map/README.md) |
-| Work on this as an agent | [AGENTS.md](AGENTS.md), plus the repository [AGENTS.md](../../AGENTS.md) |
+| Work on this as an agent | [Agents: start here](#agents-start-here), then [AGENTS.md](AGENTS.md) |
+
+## Agents: start here
+
+1. **Find your task file** in [`docs/roadmap/tasks/`](../../docs/roadmap/tasks/) (`MC*`). Its
+   **Needs** line lists what must exist first. If there is no task file for what you were asked,
+   or a need is missing, stop and report. Do not work around it. A world shipped without its dam
+   because no file described the dam is the mistake to avoid.
+2. **Read** this folder's [AGENTS.md](AGENTS.md) and the repository [AGENTS.md](../../AGENTS.md).
+3. **Look at the targets before writing code:** the bundle's `aerial.jpg` (the real ground) and
+   `poster.jpg` (the browser scene). The world must resemble both.
+4. **Translate the browser's rules, do not invent new ones.** Ground: `renderer/land/ground.js`.
+   Trees: `renderer/land/oak-placement.js`, in metres, then converted to blocks. Blocks: the
+   site's palette file in [`palettes/`](palettes). Constants: the site file in [`sites/`](sites).
+5. **Prove it with pictures.** An overhead render beside the aerial crop, an isometric render of
+   the dam, and in-game screenshots from the bundle's viewpoints when you can open the game. A
+   structural check (NBT, heightmaps) says the file is valid, not that it looks right.
 
 ## Status
 
@@ -229,12 +245,13 @@ came out right.
 
 ## Build or update a world
 
-For Calaveras Reservoir, see the [Calaveras build and review notes](calaveras.md). Its prototype
-builds a fresh Java 26.3 save from the Calaveras data bundle using the shared world I/O code.
+Always work on a **copy** of a world, with Minecraft closed for that copy. Every script is a dry run
+unless `--apply` is given, prints what it would change, and the newer ones refuse to run twice on
+the same world. Python 3 with `numpy`, `scipy`, `Pillow`, `pyproj` and `nbtlib` (a virtual
+environment is easiest). Run the scripts from [`prototype/`](prototype).
 
-When applying an upgrade, work on a **copy** of the world and close Minecraft first. The upgrade
-scripts run a dry run unless you pass `--apply`. Use Python 3 with `numpy`, `scipy`, `Pillow`,
-`pyproj` and `nbtlib`. Run the upgrades from [`prototype/`](prototype).
+**Calaveras Reservoir** is built fresh in one step instead (no base world). See the
+[Calaveras notes](calaveras.md) and task [MC2](../../docs/roadmap/tasks/MC2-calaveras.md).
 
 ### 1. The base world (Hetch Hetchy only, not yet portable)
 
@@ -357,6 +374,8 @@ viewpoints above and report what you see: an overhead render is not a screenshot
 | [`prototype/plan_animals.py`](prototype/plan_animals.py) | Upgrade 5: area-appropriate wildlife and hikers, summoned through the server |
 | [`pack/`](pack/README.md) | Upgrade 6: biome colours (datapack) and the animals-and-hikers resource pack, built from code |
 | [`map/`](map/README.md) | The web map workflow: any built world as a 3D browser map (overview and first person), and how to host it |
+| [`build_calaveras.py`](build_calaveras.py), [`calaveras.md`](calaveras.md) | Calaveras Reservoir: a fresh world in one step from its bundle (task [MC2](../../docs/roadmap/tasks/MC2-calaveras.md)) |
+| [`sites/`](sites), [`palettes/`](palettes) | Per-site settings (crop, scale, water level, traced dam with sources) and per-biome block palettes |
 | [`prototype/warp.py`](prototype/warp.py) | The gentle canyon stretch that fills the gap a steeper dam face leaves |
 | [`prototype/world_columns.py`](prototype/world_columns.py) | Shared world read/write for edits (full columns, palettes, heightmaps, entities, chests) |
 | [`prototype/region_edit.py`](prototype/region_edit.py) | Low-level region and chunk read/write helpers |
