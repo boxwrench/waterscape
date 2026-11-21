@@ -28,6 +28,9 @@ generate beyond the crop.
 
 ## Review
 
+The [Java 26.3 world ZIP](demo/Calaveras-Reservoir-Waterscape-Java-26.3.zip) contains the
+generated save. Extract its world folder into your Minecraft Java `saves` folder.
+
 Open **Calaveras Reservoir - Waterscape** in Java 26.3 as a singleplayer creative world. It
 starts at the north ridge. Use the following positions to review the same parts of the landscape
 as the browser scene.
