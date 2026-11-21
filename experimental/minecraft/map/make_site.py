@@ -57,6 +57,7 @@ def panel(site, story):
         'osm': site.get('osm', False),
         'overview': site['viewpoints']['overview'],
         'first_person': site['viewpoints']['first_person'],
+        'places': site.get('places', []),
     }
 
 

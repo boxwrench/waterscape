@@ -65,6 +65,18 @@
     var facts = el("p", "ws-facts", site.facts.join(". ") + ". (");
     facts.appendChild(link(site.sources, "sources")); facts.appendChild(document.createTextNode(")"));
     body.appendChild(facts);
+    // Places worth a visit (site file "places"): each link moves the camera there.
+    if (site.places && site.places.length) {
+      var places = el("p", "ws-facts", "See: ");
+      site.places.forEach(function (pl, i) {
+        var a = link("#" + site.id + ":" + pl.view, pl.label);
+        a.removeAttribute("target");
+        a.addEventListener("click", function (e) { e.preventDefault(); location.hash = "#" + site.id + ":" + pl.view; setTimeout(refresh, 300); });
+        if (i) places.appendChild(document.createTextNode(", "));
+        places.appendChild(a);
+      });
+      body.appendChild(places);
+    }
     var go = el("button", "ws-go"), how = el("p", "ws-how");
     var credits = el("p", "ws-credits", "Built by ");
     credits.appendChild(link("https://github.com/boxwrench/waterscape", "Waterscape"));

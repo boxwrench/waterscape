@@ -253,7 +253,8 @@ environment is easiest). Run the scripts from [`prototype/`](prototype).
 **Calaveras** and **Crystal Springs** are built fresh in one step instead (no base world), by
 [`build_reservoir.py`](build_reservoir.py) with the site's file from [`sites/`](sites). See the
 [Calaveras notes](calaveras.md) (task [MC2](../../docs/roadmap/tasks/MC2-calaveras.md)) and the
-[Crystal Springs notes](crystal_springs.md) (task [MC6](../../docs/roadmap/tasks/MC6-crystal-springs.md)).
+[Crystal Springs notes](crystal_springs.md) (task [MC6](../../docs/roadmap/tasks/MC6-crystal-springs.md);
+the Pulgas Water Temple, task [MC7](../../docs/roadmap/tasks/MC7-pulgas-temple.md)).
 
 ### 1. The base world (Hetch Hetchy only, not yet portable)
 
@@ -378,6 +379,7 @@ viewpoints above and report what you see: an overhead render is not a screenshot
 | [`map/`](map/README.md) | The web map workflow: any built world as a 3D browser map (overview and first person), and how to host it |
 | [`build_reservoir.py`](build_reservoir.py) | A fresh world in one step from a site file and its bundle: [Calaveras](calaveras.md) (task [MC2](../../docs/roadmap/tasks/MC2-calaveras.md)), [Crystal Springs](crystal_springs.md) (task [MC6](../../docs/roadmap/tasks/MC6-crystal-springs.md)) |
 | [`sites/`](sites), [`palettes/`](palettes) | Per-site settings (crop, scale, water level, traced dam with sources) and per-biome block palettes |
+| [`landmarks.py`](landmarks.py) | Landmarks from a site file's `landmarks` list, at their own scale: the Pulgas Water Temple with its pool, cypress and canal (task [MC7](../../docs/roadmap/tasks/MC7-pulgas-temple.md)) |
 | [`prototype/warp.py`](prototype/warp.py) | The gentle canyon stretch that fills the gap a steeper dam face leaves |
 | [`prototype/world_columns.py`](prototype/world_columns.py) | Shared world read/write for edits (full columns, palettes, heightmaps, entities, chests) |
 | [`prototype/region_edit.py`](prototype/region_edit.py) | Low-level region and chunk read/write helpers |

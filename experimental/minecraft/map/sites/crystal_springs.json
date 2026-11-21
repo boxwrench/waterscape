@@ -4,10 +4,14 @@
   "sky": "#86b4e4",
   "facts": ["Dam", "Listed capacity"],
   "data": "Dam traced on USGS NAIP imagery and 3DEP elevation; its facts from the National Inventory of Dams.",
-  "illustrative": "Lake bed, tree shapes, the dam's stepped face and the stilling basin are illustrative.",
+  "illustrative": "Lake bed, tree shapes, the dam's stepped face and the stilling basin are illustrative. The Pulgas Water Temple, its pool and cypress are built at 1 m per block, four times the land around them.",
   "art": {"columns": 76, "maxExaggeration": 3.0, "margin": 0.12},
   "viewpoints": {
     "overview": "870:65:1100:1700:0:0.8:0:0:perspective",
     "first_person": "768:72:838:0:-1.57:1.3:0:0:free"
-  }
+  },
+  "places": [
+    {"label": "Pulgas Water Temple", "view": "1735:68:2098:75:-0.28:0.95:0:0:perspective"},
+    {"label": "Lower Crystal Springs Dam", "view": "768:72:838:0:-1.57:1.3:0:0:free"}
+  ]
 }

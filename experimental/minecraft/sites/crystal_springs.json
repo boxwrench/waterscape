@@ -27,6 +27,59 @@
       "note": "The bundle's 10 m grid and water outline run the two lakes together; the 1 m 3DEP surface has the causeway at 91.2 to 91.5 m, about 18 m wide above 88 m. Traced on the NAIP image; drawn as a road on a fill, illustrative."
     }
   ],
+  "landmarks": [
+    {
+      "type": "pulgas-temple",
+      "name": "Pulgas Water Temple",
+      "metresPerBlock": 1,
+      "scaleNote": "The maintainer's choice (task MC7): at the world's 4 m per block the temple would be a 3-block ring, so the temple, forecourt, pool and cypress are built at 1 m per block, four times the land around them. The complex is centred on its real middle, then slid back along its axis until it fits inside the crop (the bundle ends just east of the pool); the temple therefore stands about 26 blocks (104 m) west-southwest of its true spot, on its true axis, and the canal behind it is shorter than the real one.",
+      "templeUTM": [560369.1, 4148711.1],
+      "templeGround": 94.2,
+      "axis": [0.9616, 0.2745],
+      "pool": {"centreAlong": 38.1, "length": 38, "width": 13},
+      "cypress": {"rowOffset": 8.5, "spacing": 3.3, "height": [13, 16], "clearTrunk": 3},
+      "forecourt": {"plazaRadius": 8.5, "width": 15, "bedInner": 1.5, "bedOuter": 6.5, "bedFrom": 7.5, "bedTo": 17},
+      "canal": {"water": 3, "wall": 1, "centreUTM": [[560341.0, 4148700.0], [560221.0, 4148665.0], [560154.0, 4148648.0], [560116.0, 4148635.0]]},
+      "model": {
+        "unitMetres": 13.2,
+        "steps": {"radii": [0.50, 0.46, 0.42, 0.38], "z": [-0.378, -0.352, -0.329, -0.309, -0.293]},
+        "inlayRadius": 0.3635,
+        "columns": {"count": 10, "radius": 0.2525, "capital": [0.092, 0.174]},
+        "entablature": {"z": [0.174, 0.395], "radii": [0.202, 0.290]},
+        "well": {"radii": [0.087, 0.118], "top": -0.212}
+      },
+      "blocks": {
+        "step": "polished_andesite",
+        "stepSlab": "polished_andesite_slab[type=bottom]",
+        "inlay": "terracotta",
+        "columnBase": "quartz_block",
+        "shaft": "quartz_pillar",
+        "capital": "chiseled_quartz_block",
+        "architrave": "smooth_quartz",
+        "drum": "smooth_quartz",
+        "cornice": "chiseled_quartz_block",
+        "wellWall": "quartz_bricks",
+        "wellCap": "smooth_quartz_slab[type=bottom]",
+        "paving": "smooth_stone",
+        "coping": "smooth_quartz",
+        "poolFloor": "light_blue_terracotta",
+        "bedEdge": "stone_brick_slab[type=bottom]",
+        "lavender": "allium",
+        "cypressTrunk": "pale_oak_log",
+        "cypressLeaves": "azalea_leaves",
+        "canalWall": "stone_bricks",
+        "canalFloor": "stone_bricks"
+      },
+      "sources": {
+        "temple centre, pool, cypress spacing, canal line, landing ring": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer/exportImage?bbox=560071,4148460,560571,4148960&bboxSR=32610&imageSR=32610&size=1000,1000&format=jpg&bandIds=0,1,2&f=image",
+        "ground elevations": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?bbox=560071,4148460,560571,4148960&bboxSR=32610&imageSR=32610&size=500,500&format=tiff&pixelType=F32&interpolation=RSP_BilinearInterpolation&f=image",
+        "location, ten Corinthian columns, reflecting pool lined with cypress, 800 ft canal to the reservoir": "https://en.wikipedia.org/wiki/Pulgas_Water_Temple",
+        "proportions": "https://github.com/boxwrench/water_temple (assets/temple.glb, the maintainer's Blender reconstruction; heights and radii in model units)",
+        "setting (rows of cypress, long reflecting pool; the story's photograph: turquoise pool, white coping, cypress taller than the temple with bare grey trunks, lavender either side of the front steps)":"https://www.sfpuc.gov/about-us/news/first-drop-lasting-legacy-pulgas-water-temple-honored-water-landmark"
+      },
+      "note": "Temple centre from the NAIP image (2 m from Wikipedia's coordinates). Pool: the turquoise area on NAIP, 38 by 13 m, its long axis (axis, east and north components) passing through the temple, its centre 38.1 m from the temple's. Cypress: rows about 2 m outside the pool's long sides, about 3.3 m apart (the period of the crowns on NAIP); heights illustrative. One model unit is 13.2 m: the landing's terracotta ring (model radius 0.3635) measures 4.8 m in radius on NAIP. The canal is traced on NAIP from behind the temple to its mouth (it runs within 2 degrees of the pool axis), then carried on to the nearest lake water of the world, whose shoreline (from the bundle) lies about 50 blocks west of the real mouth; it is drawn with water, although the temple's own flow was diverted in 2004. Blocks are illustrative."
+    }
+  ],
   "dam": {
     "name": "Lower Crystal Springs Dam",
     "nid": "CA00127",

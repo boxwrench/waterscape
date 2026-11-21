@@ -15,8 +15,9 @@ ground; soil on the bank and in patches; rock on steep ground) and renderer/land
 (oakSite and standPick, ported exactly, so each tree stands where the browser draws one, with the
 browser's species). Dams: an earth embankment (crest, riprap, grassed face, spillway chute) or a
 gravity dam (crest, stepped face, spillway over the face into a stilling basin), from the site
-file's "type". Sites: Calaveras (task MC2), Crystal Springs (task MC6). MC1 will make this the
-builder for every bundle.
+file's "type". Landmarks from the site file's "landmarks" list are built by landmarks.py at their
+own scale (the Pulgas Water Temple, task MC7). Sites: Calaveras (task MC2), Crystal Springs
+(task MC6). MC1 will make this the builder for every bundle.
 """
 
 import argparse
@@ -29,6 +30,7 @@ import sys
 import time
 from collections import defaultdict
 from pathlib import Path
+from types import SimpleNamespace
 
 import nbtlib
 import numpy as np
@@ -43,6 +45,7 @@ sys.path.insert(0, str(HERE / 'pack'))
 import region_edit as region
 from build_datapack import make_datapack
 from world_columns import World, longpack, state
+import landmarks
 
 VERSION = 5023
 # The site is needed before the block table below is built, so --site is read first.
@@ -84,14 +87,30 @@ SPILL, SPILL_WALL = _add(D['spillway']), _add(D['spillwayWall'])
 # Causeways (roads on fill across the water), only for sites that list them.
 CW = PAL.get('causeway', {})
 ROAD, ROAD_EDGE = (_add(CW['road']), _add(CW['edge'])) if SITE.get('causeways') else (None, None)
+# Landmarks (site file "landmarks", landmarks.py): their blocks, which may carry block-state
+# properties as name[key=value,...].
+LANDMARKS = SITE.get('landmarks', [])
+for _n in sorted({n for lm in LANDMARKS for n in lm['blocks'].values()}):
+    _add(_n)
 AIR, BEDROCK, STONE, WATER = 0, 1, 2, 3
 # A gravity dam is masonry all the way down (its stepped face would otherwise show the dirt under
-# each step); an earth dam keeps soil under its surface.
+# each step); an earth dam keeps soil under its surface. So are a landmark's paving and walls.
 MASONRY = [CREST, CREST_EDGE, FACE, SPILL, SPILL_WALL] if SITE['dam']['type'].lower() == 'gravity' else []
-BLOCKS = [state(n, persistent=True, distance=7, waterlogged=False) if n.endswith('_leaves') else state(n)
-          for n in NAMES]
+MASONRY += [NAMES.index(lm['blocks'][k]) for lm in LANDMARKS for k in landmarks.FILL_KEYS]
+
+
+def block_state(n):
+    name, _, props = n.partition('[')
+    props = dict(p.split('=') for p in props.rstrip(']').split(',')) if props else {}
+    if name.endswith('_leaves'):
+        props.update(persistent=True, distance=7, waterlogged=False)
+    return state(name, **props)
+
+
+BLOCKS = [block_state(n) for n in NAMES]
 IS_LEAVES = np.array([n.endswith('_leaves') for n in NAMES])
-IS_PLANT = np.isin(np.arange(len(NAMES)), PLANTS)
+IS_PLANT = np.isin(np.arange(len(NAMES)), PLANTS + [NAMES.index(lm['blocks'][k]) for lm in LANDMARKS
+                                                     for k in landmarks.PLANT_KEYS])
 IS_AIR = np.arange(len(NAMES)) == AIR
 IS_FLUID = np.arange(len(NAMES)) == WATER
 
@@ -639,18 +658,21 @@ def audit(path, chunks, blocks_by_key):
     if saved.keys() != chunks.keys():
         raise ValueError(f'Chunk index mismatch in {path}')
     selected = list(saved)[::97]
-    names = [str(b['Name']) for b in BLOCKS]
-    for key in selected:
-        chunk = region.decode_chunk(saved[key])
+    def key(c):
+        props = c.get('Properties', {})
+        return str(c['Name']), tuple(sorted((str(a), str(b)) for a, b in props.items()))
+    names = [key(b) for b in BLOCKS]
+    for key_ in selected:
+        chunk = region.decode_chunk(saved[key_])
         assert int(chunk['DataVersion']) == VERSION and str(chunk['Status']) == 'minecraft:full'
         assert len(chunk['sections']) == 24 and all(len(h) == 37 for h in chunk['Heightmaps'].values())
         full = np.empty((384, 16, 16), dtype=np.uint8)
         for section in chunk['sections']:
-            palette = [str(World.normalise(entry)['Name']) for entry in section['block_states']['palette']]
+            palette = [key(World.normalise(entry)) for entry in section['block_states']['palette']]
             ids = [names.index(name) for name in palette]
             sy = int(section['Y']) + 4
             full[sy * 16:(sy + 1) * 16] = np.array(ids)[region.unpack(section).reshape(16, 16, 16)]
-        assert np.array_equal(full, blocks_by_key[key])
+        assert np.array_equal(full, blocks_by_key[key_])
         ws = [int(v) & ((1 << 64) - 1) for v in chunk['Heightmaps']['WORLD_SURFACE']]
         recorded = [(ws[i // 7] >> ((i % 7) * 9)) & 511 for i in range(256)]
         assert np.array_equal(recorded, heightmap(full, ~IS_AIR).ravel())
@@ -665,7 +687,12 @@ def preview(path, ground, surface, wet, trees, extras):
             'gravel': (131, 127, 126), 'mud': (60, 57, 60), 'stone': (125, 125, 125), 'andesite': (136, 136, 136),
             'tuff': (108, 109, 102), 'cobblestone': (120, 120, 120), 'smooth_stone': (180, 180, 180),
             'light_gray_concrete': (150, 150, 145), 'dark_oak_leaves': (60, 72, 34), 'oak_leaves': (78, 92, 44),
-            'pale_oak_leaves': (110, 116, 98)}
+            'pale_oak_leaves': (110, 116, 98), 'smooth_quartz': (236, 230, 223), 'quartz_block': (236, 230, 223),
+            'quartz_pillar': (235, 229, 222), 'chiseled_quartz_block': (231, 226, 218), 'quartz_bricks': (234, 229, 221),
+            'light_blue_terracotta': (113, 108, 137), 'azalea_leaves': (90, 117, 44), 'pale_oak_log': (88, 77, 71),
+            'polished_andesite': (132, 134, 133), 'terracotta': (152, 94, 67), 'allium': (165, 110, 200),
+            'stone_brick_slab[type=bottom]': (122, 121, 122), 'polished_andesite_slab[type=bottom]': (132, 134, 133),
+            'smooth_quartz_slab[type=bottom]': (236, 230, 223)}
     lut = np.array([tint.get(n, colours.get(i, (200, 0, 200))) for i, n in enumerate(NAMES)], np.float32)
     rgb = lut[surface].copy()
     top = ground.astype(np.float32).copy()
@@ -699,6 +726,13 @@ def main():
     surface, rock = ground_cover(X, Z, h, shore, valley, wet, macro)
     clear, extras, dam_counts = build_dam(meta, ground, surface, wet, rng)
     clear |= build_causeways(meta, ground, surface, wet)
+    ctx = SimpleNamespace(ground=ground, surface=surface, wet=wet, extras=extras, block=NAMES.index,
+                          grass=GRASS[0], water=WATER, water_y=WATER_Y, water_level=meta['waterLevel'],
+                          scale=SCALE, to_blocks=lambda utm: to_blocks(meta, utm), polyline=polyline_frame)
+    landmark_clear, landmark_info = landmarks.build(SITE, ctx)
+    clear |= landmark_clear
+    if landmark_info:
+        print('landmarks:', landmark_info, flush=True)
     leaks = leak_check(ground, wet)
     print('dam:', dam_counts, '| lake leaks (must be 0):', leaks, flush=True)
     if leaks:
@@ -755,8 +789,10 @@ def main():
             'interpretation': ['Ground from renderer/land/ground.js: grass (coloured by the datapack), soil on the bank and in patches, rock on steep ground.',
                                'Trees at the browser\'s own sites and species (oak-placement.js oakSite, standPick); block crowns are approximate.',
                                'Synthetic reservoir bottom using Waterscape bank slope and depth cap.',
-                               f'{SITE["dam"]["type"]} dam: crest, faces and spillway dressed onto the surveyed dam from the traced site file; illustrative.'],
-            'dam': dam_counts, 'tree_counts': dict(zip(SPECIES, counts)),
+                               f'{SITE["dam"]["type"]} dam: crest, faces and spillway dressed onto the surveyed dam from the traced site file; illustrative.']
+                              + [f'{lm["name"]}: built at {lm["metresPerBlock"]} m per block (the land is {SCALE} m), centred on its real middle; illustrative.'
+                                 for lm in LANDMARKS],
+            'dam': dam_counts, 'landmarks': landmark_info, 'tree_counts': dict(zip(SPECIES, counts)),
             'viewpoints_xyz_yaw_pitch': views, 'verified_chunks': checked, 'written_chunks': written}
     (args.out / 'waterscape-build.json').write_text(json.dumps(info, indent=2) + '\n', encoding='utf-8')
     print(f'{written} chunks, {checked} decoded and compared, {sum(counts)} trees; spawn {views["overlook"]}', flush=True)
