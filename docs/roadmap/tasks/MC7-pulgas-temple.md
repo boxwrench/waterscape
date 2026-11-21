@@ -44,3 +44,24 @@ source URL in the site file; no worlds or zips in the repository.
 
 An overhead beside the NAIP image, isometric renders of the temple and pool, the offline checks
 (chunks compared, leaks 0), a clean load on a 26.3 server, and the maintainer's look in game.
+
+## Result
+- Status: done offline; in-game acceptance by the maintainer pending.
+- Commit: a746f8b (landmark, builder, docs, map places); this Result in the next commit.
+- Checks:
+  - Crystal Springs: `15762 chunks, 170 decoded and compared, 590254 trees`; lake leaks 0; the
+    landmark's own check (every pool, well and canal water cell held in) passed;
+  - Calaveras rebuilt with the changed builder: all 12 region files byte-identical;
+  - loaded on a Fabric 26.3 server (`map/render_map.sh` lighting pass): no errors; web map
+    re-rendered (457 MB) and checked in the browser (overview, pool, front path, canal);
+  - `node scripts/check-doc-links.mjs` → `Documentation links valid (143 Markdown files).`
+- Notes:
+  - Temple centre block (1710, 2105); lawn terrace y 67, landing y 68, cornice top y 77; ten
+    columns; pool 494 cells; 24 cypress; canal 89 blocks, water at y 66 then 65.
+  - The bundle ends just east of the pool, so the complex is slid 6.5 m back along its axis:
+    the temple stands about 104 m from its true spot.
+  - The bundle's shoreline lies about 50 blocks west of the real canal mouth (its 10 m data has
+    flat land at lake level there), so the canal follows the traced line to the real mouth, then
+    turns to the nearest lake water.
+  - At 1 m per block the 7.6 m drum is a rough octagon; a finer temple would need its own,
+    larger scale.
