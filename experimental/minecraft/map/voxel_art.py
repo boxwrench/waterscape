@@ -1,4 +1,4 @@
-"""Voxel dioramas and the block-letter logo for the HetchyCraft front page (make_front.py).
+"""Voxel dioramas for the HetchyCraft front page (make_front.py): pictures, and data for the live models.
 
 Each diorama is drawn from the reservoir's own bundle (data/<id>/terrain.json + terrain.bin.gz):
 the real hills, canyon and shoreline, shrunk to a few dozen columns, with the vertical exaggerated
@@ -236,55 +236,24 @@ def render(cols, width=640, path=None, scale=2):
     return out
 
 
-# --- Block-letter logo -------------------------------------------------------------------------
+def export(cols):
+    """The columns as compact JSON for the page's live models (front/front.js)."""
+    k = cols['k']
+    code = {'grass': 'g', 'water': 'w', 'rock': 'r', 'dam': 'd'}
+    pal = cols['pal']
 
-GLYPHS = {
-    'H': ['X...X', 'X...X', 'X...X', 'XXXXX', 'X...X', 'X...X', 'X...X'],
-    'E': ['XXXXX', 'X....', 'X....', 'XXXX.', 'X....', 'X....', 'XXXXX'],
-    'T': ['XXXXX', '..X..', '..X..', '..X..', '..X..', '..X..', '..X..'],
-    'C': ['.XXXX', 'X....', 'X....', 'X....', 'X....', 'X....', '.XXXX'],
-    'Y': ['X...X', 'X...X', '.X.X.', '..X..', '..X..', '..X..', '..X..'],
-    'R': ['XXXX.', 'X...X', 'X...X', 'XXXX.', 'X.X..', 'X..X.', 'X...X'],
-    'A': ['.XXX.', 'X...X', 'X...X', 'XXXXX', 'X...X', 'X...X', 'X...X'],
-    'F': ['XXXXX', 'X....', 'X....', 'XXXX.', 'X....', 'X....', 'X....'],
-}
-
-
-def logo_svg(text='HETCHYCRAFT', unit=10, depth=0.55, title='HetchyCraft'):
-    """Chunky extruded block letters as inline SVG: grass-gold top rows, stone below, dark sides."""
-    pixels = []
-    x = 0
-    for ch in text:
-        g = GLYPHS[ch]
-        for r, row in enumerate(g):
-            for c, v in enumerate(row):
-                if v == 'X':
-                    pixels.append((x + c, r))
-        x += len(g[0]) + 1
-    w = (x - 1) * unit
-    hgt = 7 * unit
-    dx, dy = depth * unit, depth * unit
-    gold = hexrgb('#e2c070')
-    stone = hexrgb('#9c968c')
-    parts = []
-    # Extrusion: each block swept down and right as one dark shape, drawn under the faces.
-    sweep = []
-    for px, py in pixels:
-        x0, y0 = px * unit, py * unit
-        sweep.append(f'M{x0} {y0}h{unit}l{dx:.1f} {dy:.1f}v{unit}h{-unit}l{-dx:.1f} {-dy:.1f}z')
-    parts.append(f'<path d="{"".join(sweep)}" fill="#2e271f"/>')
-    for px, py in pixels:
-        base = gold if py < 2 else stone
-        jit = 0.9 + 0.2 * float(hash2(px, py, 5))
-        c = tuple(int(v) for v in np.clip(base * jit, 0, 255))
-        parts.append(f'<rect x="{px * unit}" y="{py * unit}" width="{unit}" height="{unit}" fill="rgb{c}"/>')
-        # A lighter top-left edge on each block, like a bevel.
-        hi = tuple(int(v) for v in np.clip(base * jit * 1.18, 0, 255))
-        parts.append(f'<rect x="{px * unit}" y="{py * unit}" width="{unit}" height="{unit * 0.18:.1f}" fill="rgb{hi}"/>')
-    vw, vh = w + dx + 1, hgt + dy + 1
-    return (f'<svg class="logo" viewBox="0 0 {vw:.0f} {vh:.0f}" role="img" aria-label="{title}" '
-            f'shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg"><title>{title}</title>'
-            + ''.join(parts) + '</svg>')
+    def hx(c):
+        return '#%02x%02x%02x' % tuple(int(v) for v in np.clip(c, 0, 255))
+    return {
+        'nr': int(k.shape[0]), 'nc': int(k.shape[1]), 'rotation': int(cols['rotation']),
+        'base': int(min(k.min() - 3, -3)), 'top': int(k.max() + cols['trees'].max() + 1),
+        'k': [int(v) for v in k.ravel()],
+        'kind': ''.join(code[v] for v in cols['kind'].ravel()),
+        'trees': ''.join(str(int(v)) for v in cols['trees'].ravel()),
+        'species': ''.join(str(int(v) % 10) for v in cols['species'].ravel()),
+        'pal': {name: hx(pal[name]) for name in ('grass', 'water', 'rock', 'dirt', 'stone', 'dam')}
+        | {'leaves': [hx(c) for c in pal['leaves']]},
+    }
 
 
 if __name__ == '__main__':

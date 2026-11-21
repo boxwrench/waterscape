@@ -14,6 +14,7 @@ in a few lines taken from its own data bundle. [BlueMap](https://bluemap.bluecol
 | `bluemap/` | BlueMap settings and the map template (sky colour, render area, no usage reports) |
 | `waterscape.js` | On-map panel: description, the first-person button with how-to, credits |
 | `make_front.py`, `voxel_art.py` | The front page (HetchyCraft): a card per reservoir with a voxel model drawn from its elevation data, linking to each map |
+| `front/` | The front page's logo (the maintainer's HetchyCraft artwork), styles and effects script |
 | `front.example.json` | Personal links for the front page (blog, site address); copy to `front.local.json`, which is not committed |
 | `Caddyfile.example` | Caddy site that serves the folder correctly |
 
@@ -84,7 +85,12 @@ python make_front.py --out build-site --map hetch_hetchy=build/run/web \
 Each card shows the reservoir's name, place, headline and the facts its `sites/<id>.json` lists
 (from `story.json`, with sources), and a voxel model drawn from `data/<id>/terrain.*` by
 `voxel_art.py`. The model's crop, size, height stretch and view turn are the site file's `"art"`.
-The first `--map` is drawn large at the top. Your blog link and the site's address come from
+The first `--map` is drawn large at the top. With JavaScript the models build up block by block
+when they scroll into view, turn in quarter steps (drag or the arrow buttons), lose a block when
+clicked (it grows back after 20 s), and their water shimmers; the sky button cycles day, sunset
+and night (`?sky=night` links straight to one). Each model is drawn twice and then only
+cross-faded, animations pause off screen, and visitors who ask for reduced motion get still
+pictures. Without JavaScript the page shows WebP pictures of the same models. Your blog link and the site's address come from
 `front.local.json` (copy `front.example.json`), so they stay out of the repository. Old links to
 a single-map site (`/#hetch_hetchy:...`) are sent on to that map's folder. `--serve` previews the
 folder with the same gzip rules as the host. To add a reservoir: render its map, add a `--map`,

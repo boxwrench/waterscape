@@ -3,7 +3,8 @@
     python make_front.py --out build-site --map hetch_hetchy=build/run/web --map calaveras=build-calaveras/run/web
     python make_front.py ... --serve 8200     # preview locally, with the gzip rules a host needs
 
-Writes <out>/index.html and <out>/front/*.png, and links each map folder in as <out>/<id>/
+Writes <out>/index.html and <out>/front/ (pictures, model data, and the logo, styles and script
+from front/), and links each map folder in as <out>/<id>/
 (symlinks; copy with rsync -L when hosting). For each reservoir it reads:
 
 - data/<id>/story.json: name, place, headline and facts (each with its source recorded there);
@@ -34,17 +35,20 @@ def esc(s):
     return html.escape(str(s), quote=True)
 
 
-def card(rid, site, story, img):
+def card(rid, site, story):
     facts = {f['label']: f['value'] for f in story.get('facts', [])}
     wanted = site.get('facts') or [f['label'] for f in story.get('facts', []) if f.get('featured')]
     chips = ''.join(f'<li><span>{esc(w)}</span> {esc(facts[w])}</li>' for w in wanted if w in facts)
+    name = esc(story['name'])
     return f'''
       <article class="card">
-        <a class="art" href="./{rid}/" aria-label="Explore {esc(story['name'])}">
-          <img src="front/{img}" alt="Voxel model of {esc(story['name'])} drawn from its elevation data" loading="lazy">
-        </a>
+        <div class="art">
+          <div class="model" data-src="front/{rid}.json">
+            <img src="front/{rid}.webp" alt="Voxel model of {name} drawn from its elevation data" loading="lazy">
+          </div>
+        </div>
         <div class="card-body">
-          <h3>{esc(story['name'])}</h3>
+          <h3><a href="./{rid}/">{name}</a></h3>
           <p class="place">{esc(story.get('place', ''))}</p>
           <p>{esc(story['headline'])}</p>
           <ul class="facts">{chips}</ul>
@@ -54,15 +58,23 @@ def card(rid, site, story, img):
       </article>'''
 
 
-def page(cards, ids, hero, logo, local):
+BIRD = ('<svg class="bird" viewBox="0 0 9 5" aria-hidden="true" shape-rendering="crispEdges">'
+        '<g class="up" fill="#22303d"><rect x="0" y="0" width="1" height="1"/><rect x="1" y="1" width="2" height="1"/>'
+        '<rect x="3" y="2" width="3" height="1"/><rect x="6" y="1" width="2" height="1"/><rect x="8" y="0" width="1" height="1"/></g>'
+        '<g class="down" fill="#22303d"><rect x="3" y="2" width="3" height="1"/><rect x="1" y="3" width="2" height="1"/>'
+        '<rect x="0" y="4" width="1" height="1"/><rect x="6" y="3" width="2" height="1"/><rect x="8" y="4" width="1" height="1"/></g></svg>')
+
+
+def page(cards, ids, hero_id, hero_name, splash, local):
     blog = local.get('blog')
     blog_name = local.get('blogName', 'Blog')
     blog_link = f' · <a href="{esc(blog)}">{esc(blog_name)}</a>' if blog else ''
     site_url = local.get('siteUrl')
-    og = (f'<meta property="og:image" content="{esc(site_url.rstrip("/"))}/front/{hero}">'
-          f'<meta property="og:url" content="{esc(site_url)}">') if site_url else ''
+    og = (f'<meta property="og:image" content="{esc(site_url.rstrip("/"))}/front/share.jpg">\n'
+          f'<meta property="og:url" content="{esc(site_url)}">\n') if site_url else ''
+    leaves = ''.join(f'<i class="leaf l{n}"></i>' for n in range(1, 7))
     return f'''<!doctype html>
-<html lang="en">
+<html lang="en" data-time="day">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -70,124 +82,51 @@ def page(cards, ids, hero, logo, local):
 <meta name="description" content="Real reservoirs rebuilt block by block in Minecraft from public elevation and water data. Explore them in your browser.">
 <meta property="og:title" content="HetchyCraft">
 <meta property="og:description" content="Real reservoirs, rebuilt block by block from public data.">
-{og}
-<link rel="icon" href="front/icon.png">
+{og}<link rel="icon" href="front/icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="{FONT}">
+<link rel="stylesheet" href="front/front.css">
 <script>
-  // Links to the old single-map site (/#hetch_hetchy:...) go on to that map's folder.
+  // Before the first paint: the sky this visitor chose last time, and links to the old
+  // single-map site (/#hetch_hetchy:...) sent on to that map's folder.
   (function () {{
+    var d = document.documentElement, t = null;
+    d.className = "js";
+    try {{ t = localStorage.getItem("hc-time"); }} catch (e) {{}}
+    var q = /[?&]sky=(day|sunset|night)/.exec(location.search);
+    if (q) t = q[1];
+    if (t === "sunset" || t === "night") d.setAttribute("data-time", t);
     var m = /^#([a-z0-9_]+):/.exec(location.hash);
     if (m && {json.dumps(ids)}.indexOf(m[1]) >= 0) location.replace("./" + m[1] + "/" + location.hash);
   }})();
 </script>
-<style>
-:root {{
-  --sky-top: #5d93e0; --sky-low: #a9cdf2; --gold: #d8b765; --gold-dark: #9c7d36;
-  --soil: #2a231c; --soil-2: #362d24; --panel: #3d3329; --edge: #17120d; --text: #f1e9d8;
-  --muted: #c9bda6; --water: #3b7f95; --link: #9fd3ff;
-}}
-* {{ box-sizing: border-box; }}
-html {{ scroll-behavior: smooth; }}
-body {{ margin: 0; background: var(--soil); color: var(--text);
-  font: 17px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }}
-h1, h2, h3, .btn, .tag {{ font-family: "Pixelify Sans", "Courier New", monospace; letter-spacing: .02em; }}
-a {{ color: var(--link); }}
-img {{ image-rendering: auto; }}
-
-/* Sky and hero */
-.hero {{ position: relative; overflow: hidden; text-align: center; padding: 56px 16px 0;
-  background: linear-gradient(var(--sky-top), var(--sky-low) 78%, #cfe3f5); }}
-.logo {{ display: block; width: min(860px, 92vw); height: auto; margin: 0 auto;
-  filter: drop-shadow(0 6px 0 rgba(0,0,0,.18)); }}
-h1 {{ position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }}
-.tagline {{ margin: 18px auto 0; max-width: 640px; font: 600 clamp(18px, 2.6vw, 24px)/1.35 "Pixelify Sans", monospace;
-  color: #14304f; }}
-.actions {{ margin: 22px 0 8px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }}
-.diorama {{ display: block; width: min(980px, 100%); height: auto; margin: 10px auto -6px;
-  position: relative; z-index: 1; animation: bob 6s ease-in-out infinite; }}
-@keyframes bob {{ 50% {{ transform: translateY(-8px); }} }}
-.hero > :not(.cloud) {{ position: relative; z-index: 1; }}
-.cloud {{ position: absolute; z-index: 0; height: 22px; background: #fff; opacity: .92;
-  box-shadow: 22px -22px 0 #fff, 44px 0 0 #fff, 66px -22px 0 #fff, 88px 0 0 #fff;
-  animation: drift linear infinite; }}
-.cloud.a {{ width: 66px; top: 300px; left: -200px; animation-duration: 95s; }}
-.cloud.b {{ width: 44px; top: 380px; left: -200px; animation-duration: 140s; animation-delay: -60s; transform: scale(.7); }}
-.cloud.c {{ width: 88px; top: 460px; left: -200px; animation-duration: 120s; animation-delay: -30s; opacity: .8; }}
-@keyframes drift {{ to {{ left: 110%; }} }}
-.grass-edge {{ height: 18px; background:
-  repeating-linear-gradient(90deg, var(--gold) 0 18px, var(--gold-dark) 18px 36px, #c9a854 36px 54px);
-  box-shadow: inset 0 -6px 0 rgba(0,0,0,.25); }}
-
-/* Buttons, Minecraft-style bevel */
-.btn {{ display: inline-block; padding: 10px 20px; font-size: 18px; color: #1f1a12; text-decoration: none;
-  background: var(--gold); border: 3px solid var(--edge);
-  box-shadow: inset 3px 3px 0 rgba(255,255,255,.45), inset -3px -3px 0 rgba(0,0,0,.28); }}
-.btn:hover, .btn:focus-visible {{ background: #e7c879; }}
-.btn.ghost {{ background: #d9e4ee; }}
-.btn.ghost:hover {{ background: #eef4f9; }}
-
-/* Sections */
-main {{ max-width: 1120px; margin: 0 auto; padding: 0 16px; }}
-section {{ padding: 56px 0 8px; }}
-h2 {{ font-size: clamp(26px, 4vw, 36px); margin: 0 0 18px; color: var(--gold); }}
-.lead {{ max-width: 760px; color: var(--text); }}
-.grid {{ display: grid; gap: 28px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr)); }}
-.card {{ background: var(--panel); border: 4px solid var(--edge); display: flex; flex-direction: column;
-  box-shadow: inset 4px 4px 0 rgba(255,255,255,.06), inset -4px -4px 0 rgba(0,0,0,.3), 0 8px 0 rgba(0,0,0,.25); }}
-.card .art {{ display: block; padding: 18px 18px 0;
-  background: linear-gradient(#7fb0e8, #c5def4); border-bottom: 4px solid var(--edge); }}
-.card .art img {{ display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: contain;
-  object-position: center bottom; transition: transform .25s ease; }}
-.card .art:hover img {{ transform: translateY(-6px); }}
-.card-body {{ padding: 18px 20px 22px; display: flex; flex-direction: column; flex: 1; }}
-.card h3 {{ margin: 0; font-size: 26px; }}
-.place {{ margin: 2px 0 10px; color: var(--muted); font-size: 15px; }}
-.card p {{ margin: 0 0 10px; }}
-.facts {{ list-style: none; padding: 0; margin: 4px 0 6px; display: grid; gap: 6px; }}
-.facts li {{ background: var(--soil-2); border-left: 4px solid var(--water); padding: 6px 10px; font-size: 15px; }}
-.facts span {{ color: var(--gold); font-weight: 600; }}
-.src {{ font-size: 14px; color: var(--muted); }}
-.card .btn {{ align-self: flex-start; margin-top: auto; }}
-
-.how {{ display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); margin: 22px 0; }}
-.how div {{ background: var(--soil-2); border: 3px solid var(--edge); padding: 14px 16px; }}
-.how .tag {{ display: inline-block; font-size: 15px; padding: 2px 8px; margin-bottom: 6px; color: #1f1a12; }}
-.how p {{ margin: 0; font-size: 15.5px; color: var(--muted); }}
-.t1 {{ background: #a9a39a; }} .t2 {{ background: #6fb0c6; }} .t3 {{ background: var(--gold); }}
-.note {{ color: var(--muted); max-width: 760px; }}
-.play {{ background: var(--panel); border: 4px solid var(--edge); padding: 22px 24px; margin-top: 8px;
-  box-shadow: inset 4px 4px 0 rgba(255,255,255,.06), inset -4px -4px 0 rgba(0,0,0,.3); }}
-.play h2 {{ margin-bottom: 8px; }}
-.play p {{ max-width: 760px; }}
-
-footer {{ margin-top: 64px; padding: 28px 16px 40px; background: #1d1813; border-top: 6px solid #120e0a;
-  color: var(--muted); font-size: 14px; text-align: center; }}
-footer .links {{ font-size: 16px; margin-bottom: 10px; }}
-footer p {{ max-width: 860px; margin: 6px auto; }}
-
-@media (max-width: 560px) {{
-  .hero {{ padding-top: 36px; }}
-  section {{ padding-top: 40px; }}
-}}
-@media (prefers-reduced-motion: reduce) {{
-  .diorama, .cloud {{ animation: none; }}
-  .card .art img {{ transition: none; }}
-}}
-</style>
+<script src="front/front.js" defer></script>
 </head>
 <body>
 <header class="hero">
-  <div class="cloud a"></div><div class="cloud b"></div><div class="cloud c"></div>
-  <h1>HetchyCraft</h1>
-  {logo}
-  <p class="tagline">Real reservoirs, rebuilt block by block from public data.</p>
-  <div class="actions">
-    <a class="btn" href="#maps">Explore the maps</a>
-    <a class="btn ghost" href="#about">How it's made</a>
+  <div class="sky" aria-hidden="true">
+    <div class="stars"></div><div class="sun"></div><div class="moon"></div>
+    <div class="cloud a"></div><div class="cloud b"></div><div class="cloud c"></div>
+    {BIRD}{leaves}
   </div>
-  <img class="diorama" src="front/{hero}" alt="Voxel model of Hetch Hetchy's granite canyon and reservoir, drawn from USGS elevation data">
+  <button class="time" type="button" aria-label="Change the sky to sunset"><i></i><span>Sunset</span></button>
+  <div class="content">
+    <h1>HetchyCraft</h1>
+    <div class="title">
+      <img class="logo" src="front/logo.svg" alt="HetchyCraft" width="2118" height="386">
+      <span class="splash" aria-hidden="true" data-lines="{esc(json.dumps(splash))}">{esc(splash[0])}</span>
+    </div>
+    <p class="tagline">Real reservoirs, rebuilt block by block from public data.</p>
+    <div class="actions">
+      <a class="btn" href="#maps">Explore the maps</a>
+      <a class="btn ghost" href="#about">How it's made</a>
+    </div>
+    <div class="model" data-src="front/{hero_id}.json">
+      <img src="front/hero.webp" alt="Voxel model of {esc(hero_name)}, drawn from USGS elevation data">
+    </div>
+    <p class="hint">Drag the model to turn it. Click a block to break it; it grows back.</p>
+  </div>
 </header>
 <div class="grass-edge"></div>
 <main>
@@ -307,27 +246,37 @@ def main():
             raise SystemExit(f'{web} is not the rendered map for {rid} (no matching waterscape-site.json)')
         maps.append((rid, web))
 
-    cards = []
+    cards, names = [], {}
     for rid, web in maps:
         site = json.loads((HERE / 'sites' / f'{rid}.json').read_text())
         story = json.loads((REPO / 'data' / rid / 'story.json').read_text())
-        art = site.get('art', {})
-        voxel_art.render(voxel_art.from_site(rid, art), 620, out / 'front' / f'{rid}.png')
-        cards.append(card(rid, site, story, f'{rid}.png'))
+        cols = voxel_art.from_site(rid, site.get('art', {}))
+        voxel_art.render(cols, 620).save(out / 'front' / f'{rid}.webp', quality=88, method=6)
+        (out / 'front' / f'{rid}.json').write_text(json.dumps(voxel_art.export(cols), separators=(',', ':')))
+        cards.append(card(rid, site, story))
+        names[rid] = story['name']
         link = out / rid
         if link.is_symlink() or link.is_file():
             link.unlink()
         elif link.is_dir():
             shutil.rmtree(link)
         link.symlink_to(web, target_is_directory=True)
-        print(f'{story["name"]}: card, diorama, ./{rid}/ -> {web}')
+        print(f'{story["name"]}: card, model, ./{rid}/ -> {web}')
 
     hero_id = a.hero or maps[0][0]
     hero_site = json.loads((HERE / 'sites' / f'{hero_id}.json').read_text())
-    voxel_art.render(voxel_art.from_site(hero_id, hero_site.get('art', {})), 1000, out / 'front' / 'hero.png')
+    hero = voxel_art.render(voxel_art.from_site(hero_id, hero_site.get('art', {})), 1000)
+    hero.save(out / 'front' / 'hero.webp', quality=88, method=6)
+    hero.convert('RGB').save(out / 'front' / 'share.jpg', quality=85)  # link previews
     icon(out / 'front' / 'icon.png')
+    for asset in ('logo.svg', 'front.css', 'front.js'):
+        shutil.copyfile(HERE / 'front' / asset, out / 'front' / asset)
+    newest = names[maps[-1][0]].replace(' Reservoir', '')
+    splash = [f'Now with {newest}!', 'Every block from real data!', 'No Minecraft needed!',
+              'Built by a script, not by hand!', 'Water at its real level!', 'Try breaking a block!',
+              'Drag a model to turn it!']
     ids = [rid for rid, _ in maps]
-    (out / 'index.html').write_text(page(cards, ids, 'hero.png', voxel_art.logo_svg(), local))
+    (out / 'index.html').write_text(page(cards, ids, hero_id, names[hero_id], splash, local))
     print(f'Front page: {out / "index.html"}')
     if a.serve:
         serve(out, a.serve)
