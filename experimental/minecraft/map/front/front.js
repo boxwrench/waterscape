@@ -191,13 +191,15 @@
   Model.prototype.build = function () {
     var self = this, d = this.d;
     if (reduce) { this.draw(); return; }
-    var start = performance.now(), dur = 1500;
+    // About 4.5 s, a steady layer at a time; it repaints only when a new layer appears (a few dozen paints).
+    var start = performance.now(), dur = 4500, shown = null;
     this.b.style.visibility = "hidden";
     this.el.classList.add("drawn");
     function step(now) {
       var f = Math.min(1, (now - start) / dur);
-      var e = 1 - Math.pow(1 - f, 2);
-      self.paint(self.a, Math.floor(d.base + e * (d.top - d.base + 1)), 0);
+      var e = f < 0.5 ? 2 * f * f : 1 - Math.pow(-2 * f + 2, 2) / 2;
+      var level = Math.floor(d.base + e * (d.top - d.base + 1));
+      if (level !== shown) { self.paint(self.a, level, 0); shown = level; }
       if (f < 1) requestAnimationFrame(step);
       else { self.b.style.visibility = ""; self.draw(); }
     }
