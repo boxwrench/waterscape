@@ -8,8 +8,8 @@
 - The render area is the rectangle of chunks the original world holds (read from the region
   file headers). Lighting the edge chunks on a server makes the game start generating chunks
   just outside; the mask keeps those off the map.
-- The site file (sites/<id>.json) only holds what cannot be derived: viewpoints and what is
-  illustrative.
+- The site file (sites/<id>.json) only holds what cannot be derived: viewpoints, what is
+  illustrative and, optionally, the sky colour ("sky", from the world's biome datapack).
 """
 import argparse
 import json
@@ -53,6 +53,8 @@ def panel(site, story):
         'facts': [f'{w}: {facts[w]}' for w in wanted],
         'sources': f"{REPO_URL}/blob/main/data/{site['id']}/story.json",
         'illustrative': site.get('illustrative', ''),
+        'data': site.get('data', ''),
+        'osm': site.get('osm', False),
         'overview': site['viewpoints']['overview'],
         'first_person': site['viewpoints']['first_person'],
     }
@@ -72,7 +74,8 @@ def main():
     x0, x1, z0, z1 = chunk_extent(a.world)
     sx, sz = site.get('start', [(x0 + x1) // 2, (z0 + z1) // 2])
     conf = (HERE / 'bluemap' / 'map.conf.template').read_text()
-    for key, value in {'WORLD': str(a.relit.resolve()), 'NAME': story['name'], 'START_X': sx, 'START_Z': sz,
+    sky = site.get('sky', '#6c9ee6')
+    for key, value in {'WORLD': str(a.relit.resolve()), 'NAME': story['name'], 'SKY': sky, 'START_X': sx, 'START_Z': sz,
                        'MIN_X': x0, 'MAX_X': x1, 'MIN_Z': z0, 'MAX_Z': z1}.items():
         conf = conf.replace(f'@{key}@', str(value))
     a.conf_out.parent.mkdir(parents=True, exist_ok=True)

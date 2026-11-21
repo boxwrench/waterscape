@@ -1,6 +1,7 @@
 // Waterscape panel for a BlueMap web map (loaded through webapp.conf "scripts"):
 // a short description, a button into first-person (BlueMap's free-flight view) with how-to,
-// and the credits line (OpenStreetMap's licence, ODbL, asks for visible attribution).
+// and the credits line (OpenStreetMap's licence, ODbL, asks for visible attribution when a world
+// uses its roads and buildings: "osm" in sites/<id>.json).
 // The text and viewpoints come from waterscape-site.json, which make_site.py writes from the
 // reservoir's data/<id>/story.json (where every fact's source is recorded) and sites/<id>.json.
 (function () {
@@ -67,14 +68,22 @@
     var go = el("button", "ws-go"), how = el("p", "ws-how");
     var credits = el("p", "ws-credits", "Built by ");
     credits.appendChild(link("https://github.com/boxwrench/waterscape", "Waterscape"));
-    credits.appendChild(document.createTextNode(". Elevation: USGS 3DEP. Roads and buildings: © "));
-    credits.appendChild(link("https://www.openstreetmap.org/copyright", "OpenStreetMap"));
-    credits.appendChild(document.createTextNode(" contributors (ODbL). " + (site.illustrative ? site.illustrative + " " : "") + "Viewer: "));
+    credits.appendChild(document.createTextNode(". Elevation: USGS 3DEP. " + (site.data ? site.data + " " : "")));
+    if (site.osm) {
+      credits.appendChild(document.createTextNode("Roads and buildings: © "));
+      credits.appendChild(link("https://www.openstreetmap.org/copyright", "OpenStreetMap"));
+      credits.appendChild(document.createTextNode(" contributors (ODbL). "));
+    }
+    credits.appendChild(document.createTextNode((site.illustrative ? site.illustrative + " " : "") + "Viewer: "));
     credits.appendChild(link("https://bluemap.bluecolored.de/", "BlueMap"));
     credits.appendChild(document.createTextNode(". Not an official Minecraft product; not approved by or associated with Mojang or Microsoft."));
-    var osm = el("p", "ws-osm", "© ");
-    osm.appendChild(link("https://www.openstreetmap.org/copyright", "OpenStreetMap")); osm.appendChild(document.createTextNode(" contributors"));
-    [hide, title, body, go, how, credits, osm].forEach(function (c) { panel.appendChild(c); });
+    var parts = [hide, title, body, go, how, credits];
+    if (site.osm) {
+      var osm = el("p", "ws-osm", "© ");
+      osm.appendChild(link("https://www.openstreetmap.org/copyright", "OpenStreetMap")); osm.appendChild(document.createTextNode(" contributors"));
+      parts.push(osm);
+    }
+    parts.forEach(function (c) { panel.appendChild(c); });
     document.body.appendChild(panel);
 
     var HOW_OVERVIEW = touch ? "Or drag to look around; pinch to zoom." : "Or drag to look around; scroll to zoom.";

@@ -29,6 +29,16 @@ for Fabric.
 
 Then open http://127.0.0.1:8100. Hetch Hetchy takes about 3 minutes and makes about 160 MB.
 
+Give each reservoir its own `--work` folder so one render does not replace another, and pass a
+pack only when the world was drawn for it (`--pack none` keeps vanilla textures; the Hetch pack
+repaints oaks and granite for the Sierra). Calaveras:
+
+```
+./render_map.sh --world ~/.minecraft/saves/"Calaveras Reservoir - Waterscape" --site sites/calaveras.json \
+  --work build-calaveras --pack none \
+  --server ~/spare-server --chunky Chunky-Fabric-1.5.66.jar --bluemap bluemap-5.29-cli.jar --serve
+```
+
 What it does:
 
 1. **Lights the world.** Our builders leave lighting to the game (it lights a chunk the first
@@ -53,7 +63,8 @@ The map shows blocks only: no animals, hikers or players, and simpler lighting t
 1. Build its world (see the [Minecraft README](../README.md)).
 2. Copy `sites/hetch_hetchy.json` to `sites/<id>.json`, where `<id>` is its `data/` folder.
    `facts` lists `story.json` fact labels to show (leave it out for the featured ones);
-   `illustrative` says what is authored rather than measured.
+   `illustrative` says what is authored rather than measured. `sky` is the sky colour from the
+   world's biome datapack (its palette's `minecraft:visual/sky_color`); the default is the Sierra's.
 3. Render once with `--serve`, find a good overview and a good eye-level spot in the browser, and
    copy their addresses (the part after `#<id>:`) into `viewpoints`. `start` is optional.
 4. Render again and host.

@@ -5,9 +5,10 @@ name: "@NAME@"
 sorting: 0
 # From sites/<id>.json (default: the middle of the map).
 start-pos: { x: @START_X@, z: @START_Z@ }
-# Sky from pack/biome_colours.json (the Sierra datapack); the same colour past the map edge instead of black.
-sky-color: "#6c9ee6"
-void-color: "#6c9ee6"
+# Sky from sites/<id>.json "sky" (default: the Sierra datapack's, pack/biome_colours.json); the same
+# colour past the map edge instead of black.
+sky-color: "@SKY@"
+void-color: "@SKY@"
 sky-light: 1
 ambient-light: 0.1
 remove-caves-below-y: 55
