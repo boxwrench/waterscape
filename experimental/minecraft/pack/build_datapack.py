@@ -8,7 +8,7 @@ server restart to take effect (biomes are not reloaded by /reload).
   python build_datapack.py --server-jar ~/mc-server/versions/26.3/server-26.3.jar [--out DIR]
     -> DIR/waterscape-sierra/ (copy into <world>/datapacks/)
 
-Other sites pass their own colours and name, e.g. Calaveras (build_calaveras.py does this itself):
+Other sites pass their own colours and name, e.g. Calaveras (build_reservoir.py does this itself):
   --colours ../palettes/diablo-oak.json --biome savanna --name waterscape-diablo
 """
 import argparse, json, pathlib, zipfile

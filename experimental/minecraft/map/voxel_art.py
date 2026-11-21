@@ -62,6 +62,13 @@ def palette(rid, meta):
                 'leaves': [hexrgb('#3f5226'), hexrgb('#8d9a7c'), hexrgb(fx['foliage_color'])],
                 'rock': hexrgb('#8f8a80'), 'dirt': hexrgb('#8a6745'), 'stone': hexrgb('#6f6c68'),
                 'log': hexrgb('#4a3826'), 'dam': hexrgb('#a39d92'), 'trees': 0.42, 'steep': 0.55}
+    if biome.startswith('peninsula'):
+        pal = json.loads((MC / 'palettes' / 'peninsula-oak-fir.json').read_text())
+        fx = pal['biomeColours']['effects']
+        return {'grass': hexrgb(fx['grass_color']) * 0.8, 'water': hexrgb(fx['water_color']) * 1.1,
+                'leaves': [hexrgb(fx['foliage_color']), hexrgb('#2e4630'), hexrgb(fx['foliage_color']) * 0.85],
+                'rock': hexrgb('#8f8a80'), 'dirt': hexrgb('#7a5a3e'), 'stone': hexrgb('#6f6c68'),
+                'log': hexrgb('#4a3826'), 'dam': hexrgb('#a8a49c'), 'trees': 0.5, 'steep': 0.55}
     bc = json.loads((MC / 'pack' / 'biome_colours.json').read_text())
     fx = bc.get('effects', bc)
     grass = fx.get('grass_color', '#7f8a4a')

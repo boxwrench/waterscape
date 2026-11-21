@@ -1,18 +1,22 @@
-"""Build the Calaveras Reservoir world from its Waterscape bundle, site file and palette.
+"""Build a reservoir world from its Waterscape bundle, site file and palette.
 
-  python experimental/minecraft/build_calaveras.py --template "<Java 26.3 save>" --out "<new folder>"
-      [--server-jar ~/mc-server/versions/26.3/server-26.3.jar]
+  python experimental/minecraft/build_reservoir.py --site experimental/minecraft/sites/<id>.json \
+      --template "<Java 26.3 save>" --out "<new folder>" [--server-jar ~/mc-server/versions/26.3/server-26.3.jar]
 
-Inputs: data/calaveras/ (terrain, land.json, cameras.json), sites/calaveras.json (crop, scale,
-water level, the dam traced from NAIP with its sources) and palettes/diablo-oak.json (blocks and
-biome colours). The template save only supplies level.dat's version keys and generator settings.
-With --server-jar the world gets a datapack (built from that jar's own biome) that colours the
-grass summer gold; without it the grass keeps vanilla savanna colours.
+Inputs: the site file (crop, scale, water level, the dam traced from NAIP with its sources), its
+bundle data/<id>/ (terrain, land.json, cameras.json), the bundle's biome (data/biomes/<biome>/
+biome.json: the tree species) and the site's palette (palettes/<palette>.json: blocks and biome
+colours). The template save only supplies level.dat's version keys and generator settings. With
+--server-jar the world gets a datapack (built from that jar's own biome) with the palette's
+colours; without it the biome keeps vanilla colours.
 
 The ground and trees translate the browser's rules: renderer/land/ground.js (grass is the
 ground; soil on the bank and in patches; rock on steep ground) and renderer/land/oak-placement.js
-(oakSite, ported exactly, so each oak stands where the browser draws one). Task:
-docs/roadmap/tasks/MC2-calaveras.md.
+(oakSite and standPick, ported exactly, so each tree stands where the browser draws one, with the
+browser's species). Dams: an earth embankment (crest, riprap, grassed face, spillway chute) or a
+gravity dam (crest, stepped face, spillway over the face into a stilling basin), from the site
+file's "type". Sites: Calaveras (task MC2), Crystal Springs (task MC6). MC1 will make this the
+builder for every bundle.
 """
 
 import argparse
@@ -41,7 +45,13 @@ from build_datapack import make_datapack
 from world_columns import World, longpack, state
 
 VERSION = 5023
-SITE = json.loads((HERE / 'sites/calaveras.json').read_text())
+# The site is needed before the block table below is built, so --site is read first.
+_pre = argparse.ArgumentParser(add_help=False)
+_pre.add_argument('--site', type=Path, default=HERE / 'sites/calaveras.json')
+SITE_PATH = _pre.parse_known_args()[0].site
+SITE = json.loads(SITE_PATH.read_text())
+LAND = json.loads((REPO / SITE['bundle'] / 'land.json').read_text())
+BIOME = json.loads((REPO / 'data/biomes' / LAND['biome'] / 'biome.json').read_text())
 PAL = json.loads((HERE / f'palettes/{SITE["palette"]}.json').read_text())
 SCALE = SITE['metresPerBlock']
 WATER_Y = SITE['waterY']
@@ -63,14 +73,21 @@ ROCK = [_add(n) for n in G['rock']]
 BED = [_add(n) for n in G['bed']]
 UNDER = _add(G['under'])
 PLANTS = [_add(n) for n in PAL['plants']['blocks']]
-SPECIES = ['coast-live', 'blue', 'valley']  # biome.json variant order, as the browser uses it
+# The biome's species in biome.json variant order, as the browser's speciesThresholds uses them.
+SPECIES = list(dict.fromkeys(v['species'] for v in BIOME['trees']['variants']))
 LOGS = [_add(PAL['trees'][s]['log']) for s in SPECIES]
 LEAVES = [_add(PAL['trees'][s]['leaves']) for s in SPECIES]
 D = PAL['dam']
 CREST, CREST_EDGE, FACE = _add(D['crest']), _add(D['crestEdge']), _add(D['face'])
 RIPRAP = [_add(n) for n in D['riprap']]
 SPILL, SPILL_WALL = _add(D['spillway']), _add(D['spillwayWall'])
+# Causeways (roads on fill across the water), only for sites that list them.
+CW = PAL.get('causeway', {})
+ROAD, ROAD_EDGE = (_add(CW['road']), _add(CW['edge'])) if SITE.get('causeways') else (None, None)
 AIR, BEDROCK, STONE, WATER = 0, 1, 2, 3
+# A gravity dam is masonry all the way down (its stepped face would otherwise show the dirt under
+# each step); an earth dam keeps soil under its surface.
+MASONRY = [CREST, CREST_EDGE, FACE, SPILL, SPILL_WALL] if SITE['dam']['type'].lower() == 'gravity' else []
 BLOCKS = [state(n, persistent=True, distance=7, waterlogged=False) if n.endswith('_leaves') else state(n)
           for n in NAMES]
 IS_LEAVES = np.array([n.endswith('_leaves') for n in NAMES])
@@ -227,6 +244,94 @@ def polyline_frame(pts, shape):
 
 
 def build_dam(meta, ground, surface, wet, rng):
+    """The site's dam: an earth embankment or a gravity dam, by its NID type."""
+    if SITE['dam']['type'].lower() == 'gravity':
+        return build_gravity_dam(meta, ground, surface, wet, rng)
+    return build_earth_dam(meta, ground, surface, wet, rng)
+
+
+def contained_pool(cells, ground, wet, floor):
+    """Cells of a pool one block deep at floor + 1 whose every neighbour is pool or solid at that
+    level, so none of the water can run out."""
+    pool = cells.copy()
+    while True:
+        ok = np.ones_like(pool)
+        for dz, dx in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            ok &= np.roll(pool, (dz, dx), (0, 1)) | (np.roll(ground, (dz, dx), (0, 1)) >= floor + 1) \
+                & ~np.roll(wet, (dz, dx), (0, 1))
+        keep = pool & ok
+        if keep.sum() == pool.sum():
+            return pool
+        pool = keep
+
+
+def build_gravity_dam(meta, ground, surface, wet, rng):
+    """A masonry or concrete gravity dam: a level crest straight up from the lake, a stepped
+    downstream face (the site's slope, horizontal per vertical) down to the creek, the spillway
+    as the part of the face above the stilling basin, and the basin with a little water.
+    Returns a mask of cells to keep free of trees and plants, extra blocks by chunk and counts."""
+    dam = SITE['dam']
+    extras = defaultdict(dict)
+    crest_y = WATER_Y + int(round((dam['crestElevation'] - meta['waterLevel']) / SCALE))
+    crest = to_blocks(meta, dam['crestUTM'])
+    d, along, side, t, length = polyline_frame(crest, ground.shape)
+    near = d < 12
+    up = 1 if (side[wet & near] > 0).sum() >= (side[wet & near] < 0).sum() else -1
+    within = (t >= -0.02) & (t <= 1.02)
+    interior = (t >= 0.08) & (t <= 0.92)
+    half = dam['crestWidth'] / 2 / SCALE
+    slope = dam['downstreamSlope']
+    body = within & (d <= half + 0.25)
+    down = within & (side == -up) & (d > half + 0.25)
+    # The creek floor below the dam: the lowest ground in the first stretch downstream.
+    toe = int(ground[down & (d < half + 30)].min())
+    reach = half + slope * (crest_y - toe)
+    face_y = np.floor(crest_y - (d - half) / slope + .5).astype(np.int16)
+    ground[body] = crest_y
+    wet[body] = False
+    surface[body] = CREST
+    # Interior of the face: cut or fill the surveyed (10 m, smoothed) dam to the stepped profile.
+    cut = down & interior & ~wet & (d <= reach + 1)
+    ground[cut] = np.maximum(face_y[cut], toe)
+    # At the abutments only fill, so the canyon walls stay.
+    fill = down & ~interior & ~wet & (face_y > ground) & (d <= reach)
+    ground[fill] = face_y[fill]
+    face = (cut & (face_y >= toe)) | fill
+    surface[face] = FACE
+    # The stilling basin at the toe, from the site file.
+    b = dam['basin']
+    line = to_blocks(meta, b['centreUTM'])
+    db, b_along, _, b_t, b_len = polyline_frame(line, ground.shape)
+    b_half = b['width'] / 2 / SCALE
+    in_basin = (db <= b_half) & (b_t >= 0) & (b_t <= 1) & ~wet & ~body
+    basin_floor = toe - 1
+    # The spillway: the stretch of face whose place along the crest lies opposite the basin.
+    a_lo, a_hi = along[in_basin].min(), along[in_basin].max()
+    spill = face & (along >= a_lo) & (along <= a_hi)
+    surface[spill] = SPILL
+    surface[body & (along >= a_lo) & (along <= a_hi)] = SPILL
+    wall = (db > b_half) & (db <= b_half + 1) & (b_t >= -0.05) & (b_t <= 1.05) & ~wet & ~body & ~face
+    wall |= in_basin & (b_along > b_len - 1)
+    for z, x in zip(*np.nonzero(wall)):
+        top = basin_floor + 2
+        for y in range(min(int(ground[z, x]), top) - 2, top):
+            extras[x // 16, z // 16][y, z % 16, x % 16] = SPILL_WALL
+        ground[z, x] = max(int(ground[z, x]), top)
+        surface[z, x] = SPILL_WALL
+    basin_in = in_basin & ~wall
+    ground[basin_in] = basin_floor
+    surface[basin_in] = SPILL
+    pool = contained_pool(basin_in, ground, wet, basin_floor)
+    for z, x in zip(*np.nonzero(pool)):
+        extras[x // 16, z // 16][basin_floor + 1, z % 16, x % 16] = WATER
+    clear = body | face | (down & (d <= reach + 3)) | (db <= b_half + 3)
+    counts = dict(crest_y=crest_y, crest_cells=int(body.sum()), face_cells=int(face.sum()),
+                  spillway_cells=int(spill.sum()), toe_y=toe, basin_cells=int(basin_in.sum()),
+                  basin_water=int(pool.sum()), basin_floor_y=basin_floor, dam_height_blocks=crest_y - toe)
+    return clear, extras, counts
+
+
+def build_earth_dam(meta, ground, surface, wet, rng):
     """Level the crest, armour the upstream face, grass the downstream face, cut the spillway.
     Returns a mask of cells to keep free of trees and plants, and extra blocks by chunk."""
     dam = SITE['dam']
@@ -307,16 +412,7 @@ def build_dam(meta, ground, surface, wet, rng):
     surface[basin_in] = SPILL
     # A little water in the basin, one block deep below the chute's last step. Keep only cells
     # whose every neighbour is basin water or solid at that level, so none of it can run out.
-    pool = basin_in.copy()
-    while True:
-        ok = np.ones_like(pool)
-        for dz, dx in ((1, 0), (-1, 0), (0, 1), (0, -1)):
-            ok &= np.roll(pool, (dz, dx), (0, 1)) | (np.roll(ground, (dz, dx), (0, 1)) >= basin_floor + 1) \
-                & ~np.roll(wet, (dz, dx), (0, 1))
-        keep = pool & ok
-        if keep.sum() == pool.sum():
-            break
-        pool = keep
+    pool = contained_pool(basin_in, ground, wet, basin_floor)
     for z, x in zip(*np.nonzero(pool)):
         extras[x // 16, z // 16][basin_floor + 1, z % 16, x % 16] = WATER
     clear |= ds <= s_half + 3
@@ -324,6 +420,23 @@ def build_dam(meta, ground, surface, wet, rng):
     counts.update(spillway_cells=int(in_chute.sum()), spillway_walls=int((wall | wall_basin).sum()),
                   basin_cells=int(basin_in.sum()), basin_water=int(pool.sum()), basin_floor_y=basin_floor)
     return clear, extras, counts
+
+
+def build_causeways(meta, ground, surface, wet):
+    """Roads on fill across the water, from the site file: the cells within half the width of
+    the traced centre line become dry land at the surveyed top. Returns the cells (no trees)."""
+    clear = np.zeros(ground.shape, bool)
+    for cw in SITE.get('causeways', []):
+        top = WATER_Y + max(1, int(round((cw['topElevation'] - meta['waterLevel']) / SCALE)))
+        d, *_ = polyline_frame(to_blocks(meta, cw['centreUTM']), ground.shape)
+        half = cw['width'] / 2 / SCALE
+        fill = d <= half + 0.25
+        raise_ = fill & (wet | (ground < top))
+        ground[raise_] = top
+        wet[fill] = False
+        surface[raise_] = np.where(d[raise_] <= half - 0.5, ROAD, ROAD_EDGE)
+        clear |= d <= half + 1
+    return clear
 
 
 def leak_check(ground, wet):
@@ -371,7 +484,11 @@ def oak_sites(tr, look):
     radius = 3.4 + 3.2 * bhash(cx + 11, cz + 5)
     pick = bhash(cx + 5, cz + 91)
     turn = bhash(cx - 7, cz + 3)
-    weights = [v.get('species', {}).get(s, 0) for s in SPECIES]
+    stands = v.get('stands', 0)
+    if stands > 0:  # standPick: the rarer species grows in groups
+        pick = np.clip(pick + stands * 2 * (bnoise(x * .012 + 41, z * .012 - 7) - .5), 0, 1)
+    species_weights = v.get('species')
+    weights = [species_weights.get(s, 0) if species_weights else 1 for s in SPECIES]
     thresholds = np.cumsum(weights) / (sum(weights) or 1)
     thresholds[-1] = 1
     species = np.searchsorted(thresholds, pick, side='right').clip(0, len(SPECIES) - 1)
@@ -383,20 +500,40 @@ def place_trees(sites, ground, wet, clear, viewpoints):
     bx = np.floor((x - WEST) / SCALE).astype(int)
     bz = np.floor((z - NORTH) / SCALE).astype(int)
     patches = defaultdict(dict)
-    counts = [0, 0, 0]
+    counts = [0] * len(SPECIES)
     views = [(vx, vz) for vx, _, vz, _, _ in viewpoints.values()]
     for xi, zi, r_m, kind, tu in zip(bx, bz, radius, species, turn):
         if not (2 <= xi < WIDTH - 2 and 2 <= zi < LENGTH - 2) or wet[zi, xi] or clear[zi, xi]:
             continue
         if any((xi - vx) ** 2 + (zi - vz) ** 2 < 64 for vx, vz in views):
             continue
-        lo, hi = PAL['trees'][SPECIES[kind]]['height']
+        spec = PAL['trees'][SPECIES[kind]]
+        lo, hi = spec['height']
         height = max(3, int(round((lo + (hi - lo) * tu) / SCALE)))
         r = r_m / SCALE
-        layers = 3 if height >= 4 else 2
         g = int(ground[zi, xi])
         top = g + height
         leaves, log = LEAVES[kind], LOGS[kind]
+        if spec.get('shape') == 'cone':
+            # A conifer: trunk to just below the tip, needles from a quarter of the way up, the
+            # widest ring at the bottom (the crown radius plus a block) narrowing to the tip.
+            base = g + max(2, int(round(height * 0.25)))
+            for y in range(base, top + 1):
+                rr = (r + 0.9) * (top - y) / max(1, top - base)
+                span = int(math.floor(rr))
+                for oz in range(-span, span + 1):
+                    for ox in range(-span, span + 1):
+                        if ox * ox + oz * oz > rr * rr + 0.3:
+                            continue
+                        zz, xx = zi + oz, xi + ox
+                        if y <= ground[zz, xx] or wet[zz, xx]:
+                            continue
+                        patches[xx // 16, zz // 16].setdefault((y, zz % 16, xx % 16), leaves)
+            for y in range(g + 1, top):
+                patches[xi // 16, zi // 16][y, zi % 16, xi % 16] = log
+            counts[kind] += 1
+            continue
+        layers = 3 if height >= 4 else 2
         for i, y in enumerate(range(top - layers + 1, top + 1)):
             # Widest layer at the crown's own radius, so a block crown covers about the area of
             # the browser's (3.4 to 6.6 m radius, 1 to 9 blocks at 4 m); the top layer smaller.
@@ -466,6 +603,8 @@ def new_chunk(cx, cz, ground, wet, surface, plants, extra):
     block = np.where(y == ground, surface, np.where(y >= ground - 3, np.where(surface == STONE, STONE, UNDER), STONE))
     rocky = np.isin(surface, ROCK)
     block = np.where((y < ground) & rocky, STONE, block)
+    if MASONRY:
+        block = np.where((y < ground) & np.isin(surface, MASONRY), surface, block)
     block = np.where(y <= ground, block, np.where(wet & (y <= WATER_Y), WATER, AIR)).astype(np.uint8)
     block = np.where((y == ground + 1) & (plants > 0), plants, block).astype(np.uint8)
     block[0] = BEDROCK
@@ -520,7 +659,9 @@ def audit(path, chunks, blocks_by_key):
 
 def preview(path, ground, surface, wet, trees, extras):
     colours = {AIR: (0, 0, 0), WATER: (45, 90, 120)}
-    tint = {'grass_block': (196, 168, 98), 'coarse_dirt': (119, 85, 59), 'packed_mud': (142, 107, 80),
+    grass = tuple(int(int(PAL['biomeColours']['effects']['grass_color'][i:i + 2], 16) * .85) for i in (1, 3, 5))
+    tint = {'grass_block': grass, 'rooted_dirt': (144, 104, 76), 'stone_bricks': (122, 121, 122),
+            'spruce_leaves': (46, 66, 44), 'coarse_dirt': (119, 85, 59), 'packed_mud': (142, 107, 80),
             'gravel': (131, 127, 126), 'mud': (60, 57, 60), 'stone': (125, 125, 125), 'andesite': (136, 136, 136),
             'tuff': (108, 109, 102), 'cobblestone': (120, 120, 120), 'smooth_stone': (180, 180, 180),
             'light_gray_concrete': (150, 150, 145), 'dark_oak_leaves': (60, 72, 34), 'oak_leaves': (78, 92, 44),
@@ -542,6 +683,7 @@ def preview(path, ground, surface, wet, trees, extras):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    p.add_argument('--site', type=Path, default=SITE_PATH, help='sites/<id>.json (default: Calaveras)')
     p.add_argument('--template', required=True, type=Path, help='Existing Java 26.3 save used only for header schema')
     p.add_argument('--out', required=True, type=Path, help='A new folder for the generated world')
     p.add_argument('--server-jar', type=Path, help='Minecraft 26.3 server jar: adds the biome-colour datapack')
@@ -556,6 +698,7 @@ def main():
     X, Z, h, shore, valley, wet, ground, macro = terrain(tr, look, rng)
     surface, rock = ground_cover(X, Z, h, shore, valley, wet, macro)
     clear, extras, dam_counts = build_dam(meta, ground, surface, wet, rng)
+    clear |= build_causeways(meta, ground, surface, wet)
     leaks = leak_check(ground, wet)
     print('dam:', dam_counts, '| lake leaks (must be 0):', leaks, flush=True)
     if leaks:
@@ -563,7 +706,7 @@ def main():
     views = cameras(folder, ground, wet)
     sites = oak_sites(tr, look)
     tree, counts = place_trees(sites, ground, wet, clear, views)
-    print(f'oak sites {len(sites[0])}, placed {sum(counts)} ({dict(zip(SPECIES, counts))})', flush=True)
+    print(f'tree sites {len(sites[0])}, placed {sum(counts)} ({dict(zip(SPECIES, counts))})', flush=True)
     grassy = np.isin(surface, GRASS) & ~wet & ~clear
     share = PAL['plants']['share']
     roll = rng.random(surface.shape)
@@ -600,22 +743,23 @@ def main():
             checked += audit(path, chunks, blocks)
             written += len(chunks)
             print(f'{path.name}: {written} chunks written', flush=True)
-    preview(args.out.parent / 'calaveras-overview.png', ground, surface, wet, tree, extras)
-    Image.open(args.out.parent / 'calaveras-overview.png').resize((64, 64), Image.Resampling.LANCZOS).save(args.out / 'icon.png')
+    overview = args.out.parent / f'{SITE["id"]}-overview.png'
+    preview(overview, ground, surface, wet, tree, extras)
+    Image.open(overview).resize((64, 64), Image.Resampling.LANCZOS).save(args.out / 'icon.png')
     commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=REPO, text=True).strip()
     info = {'bundle': SITE['id'], 'bundle_commit': commit, 'minecraft': 'Java 26.3', 'data_version': VERSION,
             'site': SITE, 'palette': SITE['palette'], 'datapack': datapack,
             'source': meta['service'], 'crs': meta['crs'], 'vertical_datum': meta['verticalDatum'],
             'origin_utm': meta['originUTM'], 'source_grid_spacing_m': meta['cell'],
             'survey_water_level_m': meta['waterLevel'],
-            'interpretation': ['Ground from renderer/land/ground.js: grass (summer gold via the datapack), soil on the bank and in patches, rock on steep ground.',
-                               'Oaks at the browser\'s own sites (oak-placement.js oakSite); block crowns are approximate.',
+            'interpretation': ['Ground from renderer/land/ground.js: grass (coloured by the datapack), soil on the bank and in patches, rock on steep ground.',
+                               'Trees at the browser\'s own sites and species (oak-placement.js oakSite, standPick); block crowns are approximate.',
                                'Synthetic reservoir bottom using Waterscape bank slope and depth cap.',
-                               'Dam crest, faces and spillway dressed onto the surveyed embankment from the traced site file; illustrative.'],
+                               f'{SITE["dam"]["type"]} dam: crest, faces and spillway dressed onto the surveyed dam from the traced site file; illustrative.'],
             'dam': dam_counts, 'tree_counts': dict(zip(SPECIES, counts)),
             'viewpoints_xyz_yaw_pitch': views, 'verified_chunks': checked, 'written_chunks': written}
     (args.out / 'waterscape-build.json').write_text(json.dumps(info, indent=2) + '\n', encoding='utf-8')
-    print(f'{written} chunks, {checked} decoded and compared, {sum(counts)} oaks; spawn {views["overlook"]}', flush=True)
+    print(f'{written} chunks, {checked} decoded and compared, {sum(counts)} trees; spawn {views["overlook"]}', flush=True)
 
 
 if __name__ == '__main__':

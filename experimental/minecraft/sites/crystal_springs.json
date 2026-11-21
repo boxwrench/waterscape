@@ -1,0 +1,53 @@
+{
+  "id": "crystal_springs",
+  "name": "Crystal Springs Reservoir - Waterscape",
+  "bundle": "data/crystal_springs",
+  "palette": "peninsula-oak-fir",
+  "crop": {
+    "note": "Scene metres from terrain.json's UTM origin (x east, z south) for the north-west corner, and the size in blocks. Covers both lakes (Lower and Upper Crystal Springs), the dam and the three browser viewpoints.",
+    "west": -3776,
+    "north": -5184,
+    "width": 1776,
+    "length": 2272
+  },
+  "metresPerBlock": 4,
+  "metresPerBlockNote": "4 m on all three axes keeps true proportions, as for Calaveras. See docs/roadmap/tasks/MC6-crystal-springs.md.",
+  "waterY": 65,
+  "seed": 88127,
+  "causeways": [
+    {
+      "name": "Highway causeway between the upper and lower lakes",
+      "centreUTM": [[557407.0, 4151754.0], [557377.0, 4151702.0], [557327.0, 4151629.0], [557287.0, 4151584.0], [557241.0, 4151536.0], [557222.0, 4151514.0]],
+      "width": 18,
+      "topElevation": 91.3,
+      "sources": {
+        "centre line, width": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer/exportImage?bbox=556767,4151084,557767,4152084&bboxSR=32610&imageSR=32610&size=1000,1000&format=jpg&bandIds=0,1,2&f=image",
+        "top elevation, width": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?bbox=556767,4151084,557767,4152084&bboxSR=32610&imageSR=32610&size=500,500&format=tiff&pixelType=F32&interpolation=RSP_BilinearInterpolation&f=image"
+      },
+      "note": "The bundle's 10 m grid and water outline run the two lakes together; the 1 m 3DEP surface has the causeway at 91.2 to 91.5 m, about 18 m wide above 88 m. Traced on the NAIP image; drawn as a road on a fill, illustrative."
+    }
+  ],
+  "dam": {
+    "name": "Lower Crystal Springs Dam",
+    "nid": "CA00127",
+    "type": "Gravity",
+    "heightFt": 149,
+    "lengthFt": 600,
+    "completed": 1888,
+    "crestUTM": [[556322.0, 4153815.0], [556328.0, 4153778.0], [556348.0, 4153728.0], [556377.0, 4153688.0], [556406.0, 4153658.0]],
+    "utmZone": 10,
+    "crestElevation": 95.6,
+    "crestWidth": 12,
+    "downstreamSlope": 0.75,
+    "basin": {
+      "centreUTM": [[556383.0, 4153745.5], [556410.0, 4153759.5]],
+      "width": 43
+    },
+    "sources": {
+      "type, height, length, completed": "https://geospatial.sec.usace.army.mil/dls/rest/services/NID/National_Inventory_of_Dams_Public_Service/FeatureServer/0/query?where=NIDID%3D%27CA00127%27&outFields=*&f=json",
+      "crest line, stilling basin": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer/exportImage?bbox=555907,4153172,556907,4154172&bboxSR=32610&imageSR=32610&size=1000,1000&format=jpg&bandIds=0,1,2&f=image",
+      "crest elevation, crest position": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?bbox=555907,4153172,556907,4154172&bboxSR=32610&imageSR=32610&size=500,500&format=tiff&pixelType=F32&interpolation=RSP_BilinearInterpolation&f=image"
+    },
+    "note": "Crest traced on the 1 m NAIP image, then moved onto the 3DEP ridge (the photo shows the crest about 10 m east of the lidar ridge, as tall structures lean in an orthophoto): 182 m against NID's 600 ft; crest elevation is the 3DEP maximum along it (95.2 to 95.7 m). The creek below the dam is at about 48 m in 3DEP, so the dam stands about 47 m against NID's 149 ft. The stilling basin at the toe is traced on the same image. Crest width and the downstream slope (0.75 horizontal to 1 vertical, a typical masonry gravity profile) are estimates; the spillway is drawn as the part of the stepped face above the basin. Illustrative, not as-built drawings."
+  }
+}

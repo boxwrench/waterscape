@@ -10,10 +10,11 @@ golden grass hills, dark oak woodland in the ravines and on north-facing slopes,
 Calaveras Dam with its crest, rock-armoured upstream face and spillway. It is built from the
 bundle and the browser's own rules, never hand-sculpted.
 
-MC1 (one builder for every bundle) is still open. Until it lands, Calaveras has its own builder,
-[`experimental/minecraft/build_calaveras.py`](../../../experimental/minecraft/build_calaveras.py),
-which reads its constants from a site file and a palette file so MC1 can absorb it. Do not copy
-it for another reservoir; that is MC1's job.
+MC1 (one builder for every bundle) is still open. Until it lands, Calaveras is built by
+[`experimental/minecraft/build_reservoir.py`](../../../experimental/minecraft/build_reservoir.py)
+(first written as `build_calaveras.py`), which reads its constants from a site file and a palette
+file so MC1 can absorb it. Do not copy it for another reservoir: give it a site file
+(`--site`), as [MC6](MC6-crystal-springs.md) does for Crystal Springs.
 
 ## Stop rules (read before you write code)
 

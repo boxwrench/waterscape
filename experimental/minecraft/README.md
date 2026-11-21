@@ -250,8 +250,10 @@ unless `--apply` is given, prints what it would change, and the newer ones refus
 the same world. Python 3 with `numpy`, `scipy`, `Pillow`, `pyproj` and `nbtlib` (a virtual
 environment is easiest). Run the scripts from [`prototype/`](prototype).
 
-**Calaveras Reservoir** is built fresh in one step instead (no base world). See the
-[Calaveras notes](calaveras.md) and task [MC2](../../docs/roadmap/tasks/MC2-calaveras.md).
+**Calaveras** and **Crystal Springs** are built fresh in one step instead (no base world), by
+[`build_reservoir.py`](build_reservoir.py) with the site's file from [`sites/`](sites). See the
+[Calaveras notes](calaveras.md) (task [MC2](../../docs/roadmap/tasks/MC2-calaveras.md)) and the
+[Crystal Springs notes](crystal_springs.md) (task [MC6](../../docs/roadmap/tasks/MC6-crystal-springs.md)).
 
 ### 1. The base world (Hetch Hetchy only, not yet portable)
 
@@ -374,7 +376,7 @@ viewpoints above and report what you see: an overhead render is not a screenshot
 | [`prototype/plan_animals.py`](prototype/plan_animals.py) | Upgrade 5: area-appropriate wildlife and hikers, summoned through the server |
 | [`pack/`](pack/README.md) | Upgrade 6: biome colours (datapack) and the animals-and-hikers resource pack, built from code |
 | [`map/`](map/README.md) | The web map workflow: any built world as a 3D browser map (overview and first person), and how to host it |
-| [`build_calaveras.py`](build_calaveras.py), [`calaveras.md`](calaveras.md) | Calaveras Reservoir: a fresh world in one step from its bundle (task [MC2](../../docs/roadmap/tasks/MC2-calaveras.md)) |
+| [`build_reservoir.py`](build_reservoir.py) | A fresh world in one step from a site file and its bundle: [Calaveras](calaveras.md) (task [MC2](../../docs/roadmap/tasks/MC2-calaveras.md)), [Crystal Springs](crystal_springs.md) (task [MC6](../../docs/roadmap/tasks/MC6-crystal-springs.md)) |
 | [`sites/`](sites), [`palettes/`](palettes) | Per-site settings (crop, scale, water level, traced dam with sources) and per-biome block palettes |
 | [`prototype/warp.py`](prototype/warp.py) | The gentle canyon stretch that fills the gap a steeper dam face leaves |
 | [`prototype/world_columns.py`](prototype/world_columns.py) | Shared world read/write for edits (full columns, palettes, heightmaps, entities, chests) |

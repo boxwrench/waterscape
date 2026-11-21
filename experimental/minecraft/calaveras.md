@@ -32,8 +32,8 @@ the header template and a new output folder. `--server-jar` (the 26.3 server jar
 that colours the grass summer gold; without it the grass keeps vanilla savanna colours.
 
 ```text
-python experimental/minecraft/build_calaveras.py --template "<Java 26.3 save>" --out "<new save folder>" \
-    --server-jar ~/mc-server/versions/26.3/server-26.3.jar
+python experimental/minecraft/build_reservoir.py --site experimental/minecraft/sites/calaveras.json \
+    --template "<Java 26.3 save>" --out "<new save folder>" --server-jar ~/mc-server/versions/26.3/server-26.3.jar
 ```
 
 It takes about half a minute. It writes fresh 26.3 chunks (no upgrade needed), checks that no lake
