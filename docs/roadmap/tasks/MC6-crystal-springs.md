@@ -67,3 +67,20 @@ stepped face, spillway and basin), offline checks with their final lines, and a 
 26.3 server.
 
 ## Result
+- Status: done offline; in-game acceptance by the maintainer pending.
+- Commit: 7c584d1 (world, builder, docs); this Result in the next commit.
+- Checks:
+  - Calaveras rebuilt with `build_reservoir.py`: all 12 region files byte-identical to MC2's build;
+  - Crystal Springs: `15762 chunks, 170 decoded and compared, 591025 trees`; lake leaks 0;
+  - loaded on a Fabric 26.3 server (`map/render_map.sh` lighting pass): no errors, datapack
+    `file/waterscape-peninsula` enabled;
+  - `node scripts/check-doc-links.mjs` → `Documentation links valid (142 Markdown files).`
+- Notes:
+  - Dam: crest y 67 (95.6 m), toe y 55, stepped face 564 cells, spillway 116, stilling basin 72
+    cells with water. A gravity dam's columns are masonry all the way down.
+  - The causeway between the lakes was missing from the bundle; the maintainer spotted it on the
+    first web map. It is now traced into the site file. The browser scene still lacks it (a
+    bundle task).
+  - Douglas-fir is about a quarter of the trees: the browser's `standPick` with `stands` 1 pushes
+    picks past the 0.9 threshold. Faithful to the browser; adjust `land.json` if that is wrong.
+  - Web map: 457 MB (more trees than Calaveras).
