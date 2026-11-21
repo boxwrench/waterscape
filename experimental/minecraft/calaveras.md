@@ -1,47 +1,64 @@
-# Calaveras Reservoir Minecraft prototype
+# Calaveras Reservoir Minecraft world
 
-The build uses the Calaveras [terrain](../../data/calaveras/terrain.json),
-[summer land settings](../../data/calaveras/land.json) and [camera positions](../../data/calaveras/cameras.json).
-It covers the full source shoreline and enough of the surrounding Diablo Range to include all
-three browser viewpoints. The crop spans 6.016 km east to west and 6.656 km north to south, at
-four metres per block along each axis. The source grid is spaced about 10.46 metres apart.
+Task: [MC2](../../docs/roadmap/tasks/MC2-calaveras.md). A fresh Java 26.3 world built in one step
+from the Calaveras [terrain](../../data/calaveras/terrain.json),
+[land settings](../../data/calaveras/land.json) and [camera positions](../../data/calaveras/cameras.json),
+with constants in the [site file](sites/calaveras.json) and blocks in the
+[Diablo oak palette](palettes/diablo-oak.json).
 
-Terrain and shoreline come from the bundle. The dam uses the embankment present in that terrain.
-The source bundle has no separate dam, road or building geometry for this site. The golden ground
-palette and the three oak variants follow the browser's summer look and tree placement rules.
-The lake bottom uses the bundle's modeled bank slope and depth cap with small variations.
+## What is real and what is approximate
+
+- **From data:** terrain and shoreline (USGS 3DEP via the bundle, about 10 m cells), the lake
+  level, the dam's crest line, crest elevation and spillway (traced on a 1 m USGS NAIP image and
+  3DEP, with the URLs in the site file), its type, height and length (National Inventory of Dams).
+- **From the browser's rules:** where grass, soil and rock go (`renderer/land/ground.js`) and
+  where every oak stands (`renderer/land/oak-placement.js`, ported exactly: the same 9 m lattice,
+  hash and density). Species follow `land.json` (coast live 50 %, blue 30 %, valley 20 %).
+- **Approximate or illustrative:** block choices and the summer-gold grass colour, the block
+  shape of each oak, the lake bed (synthetic, from the bank slope and depth cap), the dam's
+  faces (generic 3:1 upstream, 2.7:1 downstream slopes over the surveyed embankment), the crest
+  width, and the spillway's walls and stilling basin. The spillway is dry, with a little still
+  water in the basin.
+- **One departure from the browser:** its bare-soil bank (up to 3 to 6 m above the water) is kept
+  within 80 m of the shore; the browser would also colour the creek canyon below the dam as soil.
+
+Scale: 4 m per block on every axis (true proportions); the crop is 6.0 × 6.7 km
+(1,504 × 1,664 blocks). Water is at y = 65; the dam crest at y = 68.
 
 ## Build
 
-From the repository root, with `numpy`, `scipy`, `Pillow` and `nbtlib` installed, pass a Java
-26.3 save as the header template and choose a new output directory.
+From the repository root, with `numpy`, `scipy`, `Pillow` and `nbtlib`, pass any Java 26.3 save as
+the header template and a new output folder. `--server-jar` (the 26.3 server jar) adds the datapack
+that colours the grass summer gold; without it the grass keeps vanilla savanna colours.
 
 ```text
-python experimental/minecraft/build_calaveras.py --template "<Java 26.3 save>" --out "<new save folder>"
+python experimental/minecraft/build_calaveras.py --template "<Java 26.3 save>" --out "<new save folder>" \
+    --server-jar ~/mc-server/versions/26.3/server-26.3.jar
 ```
 
-The builder takes version keys and dimension generator settings from the template. It writes
-fresh chunks in the 26.3 format, with a new seed and no template player data. The result includes
-`waterscape-build.json` with the input commit, projection, scale, seed, assumptions and viewpoint
-coordinates. The generated save and overhead map are local outputs. Normal Minecraft terrain can
-generate beyond the crop.
+It takes about half a minute. It writes fresh 26.3 chunks (no upgrade needed), checks that no lake
+water has a lower dry neighbour (refusing to write if any does), decodes a sample of chunks back
+and compares them block for block, and writes `waterscape-build.json` (inputs, commit, scale,
+dam, tree counts, viewpoints) into the world and an overhead preview beside it. Normal Minecraft
+terrain can generate beyond the crop.
 
 ## Review
 
-Open **Calaveras Reservoir - Waterscape** in Java 26.3 as a singleplayer creative world. It
-starts at the north ridge. Use the following positions to review the same parts of the landscape
-as the browser scene.
+Open the world in Java 26.3 as a creative world. It starts at the north ridge.
 
 | View | Command |
 |---|---|
 | North ridge | `/tp @s 217 101 194 -25.9 6.9` |
 | West ridge | `/tp @s 192 129 1169 -106.1 8.6` |
 | Shoreline | `/tp @s 394 67 1011 -90 24.1` |
+| Dam and spillway, from the stilling basin | `/tp @s 600 62 245 45 -5` |
+| Along the dam crest | `/tp @s 497 70 304 -90 10` |
 
 ## Result
 
-Built 9,776 chunks from Waterscape `3f89424`. The builder reopened all 12 region indexes and
-decoded 92 sampled chunks to verify their version, section count, bedrock, water level and
-surface heightmap. Minecraft Java 26.3's own save reader parsed the creative world header and
-900 sampled chunks from the installed copy. The overhead preview was compared with the bundle's
-aerial image. Visual review in Minecraft is pending.
+2026-11-20: rebuilt after the first attempt's review (see the task file). Offline: 9,776 chunks,
+105 decoded and compared block for block, lake leaks 0; 250,420 oaks (coast live 124,891, blue
+75,164, valley 50,365); dam crest y 68, spillway 520 cells, basin floor y 51. Loaded on a Fabric
+26.3 server with no errors in its log and the `file/waterscape-diablo` datapack enabled.
+Overhead and isometric renders were compared with the NAIP aerial. In-game review by the
+maintainer is pending.

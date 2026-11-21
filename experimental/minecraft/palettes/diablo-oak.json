@@ -1,0 +1,45 @@
+{
+  "id": "diablo-oak",
+  "note": "Blocks for the browser's Diablo Range materials (renderer/land/ground.js, renderer/engine/look.js 'gold'). Grass is the ground; soil only on the bank and in patches; rock only where the slope rule puts it. Approximate and illustrative.",
+  "biome": "minecraft:savanna",
+  "biomeColours": {
+    "note": "The datapack redefines the world's biome with these colours. Grass and oak leaves take the tint; the grass texture darkens it, so the grass colour is brighter than the browser's summer ground (#957f4d to #bca36c in sRGB).",
+    "effects": {
+      "grass_color": "#d2b06a",
+      "foliage_color": "#55652f",
+      "dry_foliage_color": "#a08850",
+      "water_color": "#3b6e78"
+    },
+    "attributes": {
+      "minecraft:visual/sky_color": "#78a8e8",
+      "minecraft:visual/fog_color": "#d8dde0",
+      "minecraft:visual/water_fog_color": "#1c4650"
+    }
+  },
+  "ground": {
+    "grass": ["grass_block"],
+    "soil": ["coarse_dirt", "packed_mud"],
+    "rock": ["stone", "andesite", "tuff", "stone", "andesite"],
+    "bed": ["gravel", "coarse_dirt", "mud"],
+    "under": "dirt"
+  },
+  "plants": {
+    "note": "Cured annual grass on top of grass blocks.",
+    "share": 0.35,
+    "blocks": ["short_dry_grass", "short_dry_grass", "short_dry_grass", "tall_dry_grass"]
+  },
+  "trees": {
+    "note": "Species order and weights follow land.json and biome.json (coast-live, blue, valley). Heights in metres; crowns use oakSite's radius.",
+    "coast-live": {"log": "dark_oak_log", "leaves": "dark_oak_leaves", "height": [8, 12]},
+    "blue": {"log": "oak_log", "leaves": "pale_oak_leaves", "height": [6, 10]},
+    "valley": {"log": "oak_log", "leaves": "oak_leaves", "height": [10, 16]}
+  },
+  "dam": {
+    "crest": "gravel",
+    "crestEdge": "andesite",
+    "riprap": ["cobblestone", "andesite", "stone", "cobblestone", "tuff"],
+    "face": "grass_block",
+    "spillway": "smooth_stone",
+    "spillwayWall": "light_gray_concrete"
+  }
+}

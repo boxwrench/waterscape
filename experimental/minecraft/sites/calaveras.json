@@ -1,0 +1,41 @@
+{
+  "id": "calaveras",
+  "name": "Calaveras Reservoir - Waterscape",
+  "bundle": "data/calaveras",
+  "palette": "diablo-oak",
+  "crop": {
+    "note": "Scene metres from terrain.json's UTM origin (x east, z south) for the north-west corner, and the size in blocks. Covers the whole shoreline and the three browser viewpoints.",
+    "west": -2368,
+    "north": -3776,
+    "width": 1504,
+    "length": 1664
+  },
+  "metresPerBlock": 4,
+  "metresPerBlockNote": "4 m on all three axes keeps true proportions (Hetch Hetchy uses 2 m horizontally, 4 m vertically). A maintainer decision; see docs/roadmap/tasks/MC2-calaveras.md.",
+  "waterY": 65,
+  "seed": 26463,
+  "dam": {
+    "name": "Calaveras Dam",
+    "nid": "CA01546",
+    "type": "Earth",
+    "heightFt": 210,
+    "lengthFt": 1210,
+    "completed": 2018,
+    "crestUTM": [[604113.4, 4150518.1], [604483.4, 4150482.1]],
+    "utmZone": 10,
+    "crestElevation": 237.4,
+    "crestWidth": 9,
+    "spillway": {
+      "centreUTM": [[604121.4, 4150420.1], [604121.4, 4150510.1], [604143.4, 4150540.1], [604253.4, 4150617.1], [604355.4, 4150687.1]],
+      "width": 22,
+      "basinUTM": [[604355.4, 4150687.1], [604418.4, 4150715.1]],
+      "basinWidth": 28
+    },
+    "sources": {
+      "type, height, length, completed": "https://geospatial.sec.usace.army.mil/dls/rest/services/NID/National_Inventory_of_Dams_Public_Service/FeatureServer/0/query?where=NIDID%3D%27CA01546%27&outFields=*&f=json",
+      "crest line, spillway, basin": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer/exportImage?bbox=604003.4,4149965.1,605003.4,4150965.1&bboxSR=32610&imageSR=32610&size=1000,1000&format=jpg&bandIds=0,1,2&f=image",
+      "crest elevation": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?bbox=604003.4,4149965.1,605003.4,4150965.1&bboxSR=32610&imageSR=32610&size=500,500&format=tiff&pixelType=F32&interpolation=RSP_BilinearInterpolation&f=image"
+    },
+    "note": "Crest line traced by hand on the 1 m NAIP image (372 m against NID's 1,210 ft); crest elevation is the 3DEP maximum along it (flat at 237.4 m over most of its length). The 10 m bundle grid already holds the embankment as a smooth hill; the builder levels the crest and dresses the faces. Spillway centre line, chute width (about 22 m) and stilling basin traced on the same image; the spillway is drawn dry. Crest width is an estimate. Illustrative, not as-built drawings."
+  }
+}
