@@ -100,8 +100,9 @@ exact files and checks; "capable" needs design and visual judgment; "human" and 
 |---|---|---|---|---|
 | D1 | [Put reservoir context around the water experience](tasks/D1-reservoir-context.md) | capable | P1 | complete on task/D1; awaiting review |
 | D2 | [Pulgas Water Temple in the Crystal Springs scene](tasks/D2-pulgas-temple.md): the maintainer's model at its true place and scale, reflecting pool, cypress, canal | capable | W2 | merged (PR #10) |
-| D4 | [Crystal Springs opens at midday; a glass-still reflecting pool](tasks/D4-crystal-midday-pool.md) | capable | D2 | built on `task/D4-crystal-midday-pool`; awaiting the maintainer's look |
-| D5 | [The explorer opens at full quality; the visitor lowers it](tasks/D5-full-quality.md) | capable | — | built on `task/D5-full-quality` (on D4); awaiting the maintainer's look |
+| D3 | [O'Shaughnessy Dam's drum-gate spillway in the Hetch Hetchy scene](tasks/D3-hetch-spillway.md): three drum gates, channel, arch under the road, run-out down the rock | capable | — | merged |
+| D4 | [Crystal Springs opens at midday; a glass-still reflecting pool](tasks/D4-crystal-midday-pool.md) | capable | D2 | merged (PR #11) |
+| D5 | [The explorer opens at full quality; the visitor lowers it](tasks/D5-full-quality.md) | capable | — | merged (PR #12) |
 
 ## Track B — water at the bank
 

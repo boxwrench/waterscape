@@ -92,6 +92,27 @@ export async function validateBundle(dir) {
       if (!sources.length || sources.some((u) => !/^https:\/\//.test(u)))
         errors.push(`${where}: sources must be https URLs`);
     }
+    // A dam's gated spillway (spillway.js): the traced lines, gate sizes that fit the gate
+    // line, and https sources.
+    for (const dam of structures?.dams ?? []) {
+      const sp = dam.spillway;
+      if (!sp) continue;
+      const where = `${id}: ${dam.name} spillway`,
+        pair = (v) => Array.isArray(v) && v.length === 2 && v.every(Number.isFinite),
+        line = (v, n) => Array.isArray(v) && v.length >= n && v.every(pair);
+      if (!line(sp.gatesUTM, 2) || sp.gatesUTM.length !== 2) errors.push(`${where}: gatesUTM must be two [east, north] points`);
+      if (!pair(sp.portalUTM)) errors.push(`${where}: portalUTM must be [east, north]`);
+      if (!line(sp.runoutUTM, 1)) errors.push(`${where}: runoutUTM needs at least one [east, north] point`);
+      if (!line(sp.faceEdgeUTM, 2) || sp.faceEdgeUTM.length !== 2) errors.push(`${where}: faceEdgeUTM must be two [east, north] points`);
+      for (const key of ["gateWidth", "gateTopBelowCrest", "gateHeight", "channelWidth"])
+        if (!(sp[key] > 0)) errors.push(`${where}: ${key} must be a positive number`);
+      if (!Number.isInteger(sp.gates) || sp.gates < 1) errors.push(`${where}: gates must be a whole number`);
+      else if (line(sp.gatesUTM, 2) && sp.gates * sp.gateWidth >= Math.hypot(sp.gatesUTM[1][0] - sp.gatesUTM[0][0], sp.gatesUTM[1][1] - sp.gatesUTM[0][1]))
+        errors.push(`${where}: ${sp.gates} gates of ${sp.gateWidth} m do not fit the gate line`);
+      const sources = Object.values(sp.sources ?? {});
+      if (!sources.length || sources.some((u) => !/^https:\/\//.test(u)))
+        errors.push(`${where}: sources must be https URLs`);
+    }
   }
   const biomeFile = path.join(path.dirname(dir), "biomes", source.biome ?? "", "biome.json");
   await stat(biomeFile).catch(() =>

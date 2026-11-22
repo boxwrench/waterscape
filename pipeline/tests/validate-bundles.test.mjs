@@ -159,6 +159,32 @@ test("a landmark's missing mesh, bad axis and plain source are reported", async 
   await rm(path.dirname(dir), { recursive: true });
 });
 
+const spillway = {
+  gatesUTM: [[0, 0], [70, 0]], gates: 3, gateWidth: 19.8, gateTopBelowCrest: 1.83, gateHeight: 3, channelWidth: 9,
+  portalUTM: [-10, -10], runoutUTM: [[-20, -10]], faceEdgeUTM: [[-5, -5], [-40, 40]],
+  sources: { gates: "https://example.gov/" },
+};
+
+test("a dam's spillway with its lines, sizes and sources has no errors", async () => {
+  const dir = await bundle({ "land.json": { structures: true } });
+  await writeFile(path.join(dir, "structures.json"), JSON.stringify({ dams: [{ name: "Dam", spillway }] }));
+  assert.deepEqual(await validateBundle(dir), []);
+  await rm(path.dirname(dir), { recursive: true });
+});
+
+test("a spillway whose gates overrun the gate line, without a run-out or https sources, is reported", async () => {
+  const dir = await bundle({ "land.json": { structures: true } });
+  await writeFile(path.join(dir, "structures.json"), JSON.stringify({
+    dams: [{ name: "Dam", spillway: { ...spillway, gateWidth: 25, runoutUTM: [], sources: { gates: "example.gov" } } }],
+  }));
+  assert.deepEqual(await validateBundle(dir), [
+    "test: Dam spillway: runoutUTM needs at least one [east, north] point",
+    "test: Dam spillway: 3 gates of 25 m do not fit the gate line",
+    "test: Dam spillway: sources must be https URLs",
+  ]);
+  await rm(path.dirname(dir), { recursive: true });
+});
+
 test("structures listed in land.json need structures.json", async () => {
   const dir = await bundle({ "land.json": { structures: true } });
   assert.deepEqual(await validateBundle(dir), ["test: land.json lists structures but structures.json is missing or not JSON"]);

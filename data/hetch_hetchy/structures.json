@@ -66,7 +66,62 @@
           "below": 30
         }
       ],
-      "outletsNote": "Two valve outlets on the downstream face, placed by eye from a visitor's photograph from the plunge pool (about 30 m below the crest, near mid-length, counted from the north end). Their jets are drawn running: an illustrative release, not a record of flow."
+      "outletsNote": "Two valve outlets on the downstream face, placed by eye from a visitor's photograph from the plunge pool (about 30 m below the crest, near mid-length, counted from the north end). Their jets are drawn running: an illustrative release, not a record of flow.",
+      "spillway": {
+        "gatesUTM": [
+          [
+            255068.0,
+            4203580.75
+          ],
+          [
+            255135.0,
+            4203602.0
+          ]
+        ],
+        "gates": 3,
+        "gateWidth": 19.8,
+        "gateTopBelowCrest": 1.83,
+        "gateHeight": 3,
+        "channelWidth": 9,
+        "portalUTM": [
+          255055.0,
+          4203569.5
+        ],
+        "runoutUTM": [
+          [
+            255045.0,
+            4203568.75
+          ],
+          [
+            255032.5,
+            4203570.5
+          ],
+          [
+            255020.0,
+            4203572.5
+          ],
+          [
+            255010.0,
+            4203569.5
+          ]
+        ],
+        "faceEdgeUTM": [
+          [
+            255053.75,
+            4203573.75
+          ],
+          [
+            255013.75,
+            4203635.0
+          ]
+        ],
+        "sources": {
+          "gate line, channel width, portal, run-out, edge of the dam face": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer/exportImage?bbox=254900,4203450,255150,4203650&bboxSR=32611&imageSR=32611&size=1000,800&format=jpg&bandIds=0,1,2&f=image",
+          "three drum gates, 65 ft (19.8 m) wide; unlined side spillway": "https://en.wikipedia.org/wiki/O%27Shaughnessy_Dam_(California)",
+          "top of spillway gates elevation 3806 ft (crest 3812 ft on Wikipedia)": "https://www.govinfo.gov/content/pkg/CFR-2024-title33-vol3/xml/CFR-2024-title33-vol3-sec208-82.xml"
+        },
+        "note": "Gate line (the gates' lake-side edge, from the dam), the channel between the gates and the road, the arch's mouth on the far side of the road and the run-out along the dark gully west of it traced by hand on the NAIP image, with the edge where the dam's downstream face meets the rock (the staircase along it, crest end first), as for the Minecraft spillway (experimental/minecraft/prototype/add_spillway.py). The gates' tops sit 6 ft (1.83 m) below the crest: 3806 ft in 33 CFR 208.82 against the 3812 ft crest, so the 3DEP crest sets the datum. Gate height (3 m), pier shape, the channel floor and bank, the arch size and the run-out's width are illustrative. The generic gravity profile (structures.js) runs the dam face along the whole traced crest; beyond the face edge, on the portal's side, a granite slope is laid over it, as in the Minecraft spillway. The gates are drawn raised and the spillway dry."
+      }
     }
   ],
   "rivers": [
