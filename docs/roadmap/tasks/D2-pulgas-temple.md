@@ -28,7 +28,8 @@ enlarged or moved.
    on NAIP, as in MC7).
 2. **Data:** `structures.json` with a `landmarks` entry: the temple centre, the pool axis and size,
    cypress rows, forecourt and the canal line traced on NAIP, with sources; `land.json`
-   `structures: true`; a "Pulgas Water Temple" viewpoint in `cameras.json`.
+   `structures: true`; a "Pulgas Water Temple" viewpoint in place of South ridge (the `ridge`
+   slot in `cameras.json` and `source.json`; the maintainer's choice).
 3. **Renderer:** `renderer/land/landmarks.js` draws the temple mesh (lit like the dams), the pool,
    the coping and paving, lavender beds, the cypress and the canal; `renderer/land/clearings.js`
    keeps oak meshes, impostors and grass out of the grounds.

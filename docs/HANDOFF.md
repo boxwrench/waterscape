@@ -13,7 +13,8 @@ reservoir, from a new `landmarks` entry in `data/crystal_springs/structures.json
 (`renderer/land/landmarks.js`). Oak meshes, impostors and grass keep off the grounds
 (`renderer/land/clearings.js`); the kernel's distant crowns beyond 1.5 km do not (clearing them
 needs the bundle rebuilt with the landmark's footprint, which would re-fetch the terrain). A
-"Pulgas Water Temple" viewpoint is in `cameras.json`. Next: the maintainer's look.
+"Pulgas Water Temple" viewpoint replaces South ridge as the second of the three views (the
+`ridge` slot in `cameras.json` and `source.json`). Next: the maintainer's look.
 
 ## Minecraft: Calaveras, Crystal Springs, the Pulgas Water Temple and HetchyCraft (2026-11-21, `task/MC7-pulgas-temple`)
 
