@@ -10,6 +10,7 @@ import { createTrees } from "./trees.js";
 import { createImpostors } from "./impostors.js";
 import { createStructures } from "./structures.js";
 import { createLandmarks, landmarkClearings } from "./landmarks.js";
+import { spillwayClearings } from "./spillway.js";
 
 const NEAR = 1,
   FAR = 40000,
@@ -34,8 +35,11 @@ export async function createLandPass(rt, terrain, { biome, biomeBase, look, stru
   const ground = createGroundMaterial(terrain, biomeBase, biome, look, detail),
     scene = new THREE.Scene();
   scene.add(new THREE.Mesh(geometry, ground.material));
-  // Landmarks keep their grounds free of oaks and grass (clearings.js).
-  const clearings = landmarkClearings(structures, terrain.meta, terrain);
+  // Landmarks and spillways keep their grounds free of trees and grass (clearings.js).
+  const clearings = landmarkClearings(structures, terrain.meta, terrain),
+    spill = spillwayClearings(structures, terrain);
+  clearings.trees.push(...spill.trees);
+  clearings.grass.push(...spill.grass);
   const grass = createGrass(terrain, ground.terrainTex, ground.lightTex, ground.uniforms, look, clearings.grass);
   scene.add(grass.mesh);
   let grassTier = -1;

@@ -8,6 +8,7 @@ import {
   texture, positionWorld, normalWorld, cameraPosition, vec3, float, max, min, dot, normalize, uv, mix,
   smoothstep, fract, abs, pow, reflect, mx_noise_float, time, Fn, If, Discard,
 } from "../../vendor/three/three.tsl.js";
+import { createSpillway, faceRockMask, graniteAlbedo, rockNormal } from "./spillway.js";
 
 // Cross-section across the dam in metres: u downstream from the upstream face, y below the
 // crest. Closed polygon, walked upstream face → crest (with parapets) → downstream face →
@@ -234,7 +235,7 @@ export async function createStructures(terrain, structures, ground, options = {}
   // so the bake would stamp the 10 m grid's shadows onto the concrete. A canyon's sky is
   // partly walled in: fill at 80%.
   // Below each outlet the face is dark and wet, and the opening itself is black.
-  const damMaterial = (wetFrames, top) => {
+  const damMaterial = (wetFrames, top, rock = null) => {
     const q = uv(),
       lift = smoothstep(0.9, 0.97, abs(fract(positionWorld.y.div(1.5)).sub(0.5)).mul(2)),
       joint = smoothstep(0.93, 0.99, abs(fract(q.x.mul(11 / 15)).sub(0.5)).mul(2)),
@@ -246,10 +247,13 @@ export async function createStructures(terrain, structures, ground, options = {}
         .mul(float(1).sub(lift.mul(0.3)).sub(joint.mul(0.2)))
         .mul(mix(float(1), float(0.55), stain))
         .mul(float(1).sub(wet.min(1).mul(0.6)).sub(wet.sub(1).max(0).mul(0.6))),
+      // Beside a spillway, the part of the generic face that is really rock (spillway.js).
+      surface = rock ? mix(albedo, graniteAlbedo(), rock) : albedo,
       // No blending: the 0.5 alpha is a tag for pack.js, and blending a face over another
       // (or over the ground) would change it and turn the dam into plain ground.
       m = new THREE.MeshBasicNodeMaterial({ side: THREE.DoubleSide, blending: THREE.NoBlending });
-    m.colorNode = albedo.mul(u.sunColor.mul(max(dot(n, u.sun), 0)).add(u.fill.mul(n.y.mul(0.3).add(0.55).mul(0.8))));
+    const nn = rock ? rockNormal(n, rock.mul(0.6)) : n;
+    m.colorNode = surface.mul(u.sunColor.mul(max(dot(nn, u.sun), 0)).add(u.fill.mul(nn.y.mul(0.3).add(0.55).mul(0.8))));
     m.opacityNode = float(options.packShadedTag === false ? 1 : 0.5);
     return m;
   };
@@ -266,9 +270,14 @@ export async function createStructures(terrain, structures, ground, options = {}
       side = terrain.shoreDistance(cx - (tz / l) * 40, cz + (tx / l) * 40) > terrain.shoreDistance(cx + (tz / l) * 40, cz - (tx / l) * 40) ? 1 : -1,
       outlets = dam.outlets ?? [],
       wetFrames = outlets.map((o) => ({ along: outletFrame(dam, terrain.meta, side, o).along, below: o.below })),
-      mesh = new THREE.Mesh(damGeometry(dam, terrain.meta, side), damMaterial(wetFrames, dam.crestElevation - terrain.meta.waterLevel));
+      top = dam.crestElevation - terrain.meta.waterLevel,
+      rock = options.spillways !== false && typeof terrain.ground === "function" ? faceRockMask(dam, terrain, side, top) : null,
+      mesh = new THREE.Mesh(damGeometry(dam, terrain.meta, side), damMaterial(wetFrames, top, rock));
     mesh.name = dam.name;
     group.add(mesh);
+    // The gated side spillway (spillway.js), where the terrain can be sampled for its footings.
+    if (dam.spillway && options.spillways !== false && typeof terrain.ground === "function")
+      group.add(createSpillway(dam, terrain, u, { ...options, downstream: side }));
     if (options.showOutletJets !== false) outlets.forEach((o, k) => {
       const jet = new THREE.Mesh(plumeGeometry(dam, terrain.meta, side, o), plumeMaterial(u, 13 + k * 5));
       jet.name = `${dam.name} outlet ${k + 1}`;

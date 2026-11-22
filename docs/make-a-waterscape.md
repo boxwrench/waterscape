@@ -150,6 +150,14 @@ profile along the crest. A river below a dam lists `centreUTM`, `width` and `sur
 point (traced from NAIP, surface from 3DEP); the build cuts its channel and clears trees
 within `clearTrees` metres. Concrete is `data/structures/`.
 
+A dam may list a gated side **`spillway`** (Hetch Hetchy's is the example): the `gatesUTM`
+line (the gates' lake-side edge, from the dam), the number of `gates` and their `gateWidth`,
+`gateTopBelowCrest` and `gateHeight`, the `channelWidth` behind them, the arch's mouth
+`portalUTM` on the far side of the road, the `runoutUTM` line down the rock and the
+`faceEdgeUTM` where the dam's downstream face really meets the rock (crest end first), with
+the URL behind each. The renderer builds it in `renderer/land/spillway.js`, gates raised and
+dry, and paints the generic face beyond that edge as granite.
+
 A **landmark** (Crystal Springs' Pulgas Water Temple is the example) lists its `centreUTM`, the
 `axis` its layout runs along (east and north components), a `mesh` file next to
 `structures.json`, its layout (`pool`, `cypress`, `forecourt`, `canal` with a traced

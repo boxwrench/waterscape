@@ -17,6 +17,17 @@ maintainer's look; `npm test` on a machine with Edge.
 sun shone down the pool axis and hid the temple from its viewpoint) and makes the reflecting pool
 glass-still: no ripple bends the mirror, the basin is dark through the water, and the sun reflects
 as a small disc. Next: the maintainer's look.
+## Hetch Hetchy: O'Shaughnessy Dam's spillway in the browser scene (2026-11-22, `task/D3-hetch-spillway`)
+
+[D3](./roadmap/tasks/D3-hetch-spillway.md) gives the browser's dam the gated side spillway the
+Minecraft world has (PR #8): three drum gates between piers on the lake shore at the dam's south
+end, the channel behind them back to the dam, the arch under the road and the run-out down the
+rock, from a `spillway` entry on the dam in `data/hetch_hetchy/structures.json` (traced on NAIP;
+three 65 ft gates from Wikipedia; gate tops 6 ft below the crest from 33 CFR 208.82). The generic
+gravity face is painted granite beyond the traced face edge, so the spill runs down rock, not
+down the dam (the maintainer's correction from the Minecraft review). `renderer/land/spillway.js`;
+River Pulse's Tuolumne scene, which reuses `createStructures`, is unchanged. Next: the
+maintainer's look.
 
 ## Crystal Springs: the Pulgas Water Temple in the browser scene (2026-11-21, `task/D2-pulgas-temple`)
 
