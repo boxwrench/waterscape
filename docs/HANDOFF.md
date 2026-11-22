@@ -3,6 +3,19 @@
 The current state of the project and where to pick up. Add a short entry at the top for each pass; when this grows past a
 few screens, move older entries to `docs/archive/`. History through RP30 is in [`archive/HANDOFF-through-RP30.md`](./archive/HANDOFF-through-RP30.md).
 
+## Minecraft: Sunol Valley, two reservoirs in one world (2026-11-22, `task/MC8-sunol-valley`)
+
+[MC8](./roadmap/tasks/MC8-sunol-valley.md) builds one world from the Sunol Water Temple east across
+the Sunol Valley to San Antonio and Calaveras, 4 m per block across and 3 m up (Calaveras 27 blocks
+above San Antonio). `make_valley_terrain.py` blends 1 m lidar at the lakes into 10 m 3DEP and finds
+both lakes at their own levels (Calaveras's north arm is flattened 2.2 m lower in another survey and
+is joined to it); `build_reservoir.py` now takes several lakes and dams, a vertical scale, creeks
+(Alameda, Calaveras and San Antonio creeks, cut a block deep and held in) and footprint
+placeholders (`landmarks.py`), while Calaveras and Crystal Springs still build byte for byte the
+same. Review save "Sunol Valley - Waterscape" installed. Next: the maintainer's in-game look; the
+chloramination facility once its location is confirmed; creek lines from USGS NHD instead of
+OpenStreetMap if wanted; hosting as a second world on the server.
+
 ## Explorer: full quality by default (2026-11-22, `task/D5-full-quality`)
 
 [D5](./roadmap/tasks/D5-full-quality.md): the explorer opens at Full (high tier at the window's

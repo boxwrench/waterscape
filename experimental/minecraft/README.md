@@ -257,6 +257,19 @@ environment is easiest). Run the scripts from [`prototype/`](prototype).
 [Crystal Springs notes](crystal_springs.md) (task [MC6](../../docs/roadmap/tasks/MC6-crystal-springs.md);
 the Pulgas Water Temple, task [MC7](../../docs/roadmap/tasks/MC7-pulgas-temple.md)).
 
+**Sunol Valley** (task [MC8](../../docs/roadmap/tasks/MC8-sunol-valley.md)) spans two reservoirs, so
+its terrain is made first by [`make_valley_terrain.py`](make_valley_terrain.py) (3DEP: 1 m lidar
+around each lake, 10 m elsewhere, both lakes at their own levels) and its creek lines by
+[`fetch_creeks.py`](fetch_creeks.py) (OpenStreetMap); then `build_reservoir.py` builds it as usual.
+It is 4 m per block across and 3 m up, so Calaveras stands 27 blocks above San Antonio:
+
+```
+python experimental/minecraft/make_valley_terrain.py --site experimental/minecraft/sites/sunol_valley.json
+python experimental/minecraft/fetch_creeks.py --site experimental/minecraft/sites/sunol_valley.json   # once; the result is kept
+python experimental/minecraft/build_reservoir.py --site experimental/minecraft/sites/sunol_valley.json \
+    --template "<Java 26.3 save>" --out "<new folder>" --server-jar ~/mc-server/versions/26.3/server-26.3.jar
+```
+
 ### 1. The base world (Hetch Hetchy only, not yet portable)
 
 The base world was made in two steps, kept for reference until MC1 replaces them:
@@ -392,9 +405,10 @@ viewpoints above and report what you see: an overhead render is not a screenshot
 | [`prototype/plan_animals.py`](prototype/plan_animals.py) | Upgrade 5: area-appropriate wildlife and hikers, summoned through the server |
 | [`pack/`](pack/README.md) | Upgrade 6: biome colours (datapack) and the animals-and-hikers resource pack, built from code |
 | [`map/`](map/README.md) | The web map workflow: any built world as a 3D browser map (overview and first person), and how to host it |
-| [`build_reservoir.py`](build_reservoir.py) | A fresh world in one step from a site file and its bundle: [Calaveras](calaveras.md) (task [MC2](../../docs/roadmap/tasks/MC2-calaveras.md)), [Crystal Springs](crystal_springs.md) (task [MC6](../../docs/roadmap/tasks/MC6-crystal-springs.md)) |
+| [`build_reservoir.py`](build_reservoir.py) | A fresh world in one step from a site file and its bundle: [Calaveras](calaveras.md) (task [MC2](../../docs/roadmap/tasks/MC2-calaveras.md)), [Crystal Springs](crystal_springs.md) (task [MC6](../../docs/roadmap/tasks/MC6-crystal-springs.md)), Sunol Valley (task [MC8](../../docs/roadmap/tasks/MC8-sunol-valley.md): several lakes and dams, a vertical scale, creeks) |
+| [`make_valley_terrain.py`](make_valley_terrain.py), [`fetch_creeks.py`](fetch_creeks.py) | Terrain for a world spanning several reservoirs (lidar at the lakes, blended into 10 m), and creek centre lines from OpenStreetMap (task [MC8](../../docs/roadmap/tasks/MC8-sunol-valley.md)) |
 | [`sites/`](sites), [`palettes/`](palettes) | Per-site settings (crop, scale, water level, traced dam with sources) and per-biome block palettes |
-| [`landmarks.py`](landmarks.py) | Landmarks from a site file's `landmarks` list, at their own scale: the Pulgas Water Temple with its pool, cypress and canal (task [MC7](../../docs/roadmap/tasks/MC7-pulgas-temple.md)) |
+| [`landmarks.py`](landmarks.py) | Landmarks from a site file's `landmarks` list, at their own scale: the Pulgas Water Temple with its pool, cypress and canal (task [MC7](../../docs/roadmap/tasks/MC7-pulgas-temple.md)); plain placeholders on real footprints (task [MC8](../../docs/roadmap/tasks/MC8-sunol-valley.md)) |
 | [`prototype/warp.py`](prototype/warp.py) | The gentle canyon stretch that fills the gap a steeper dam face leaves |
 | [`prototype/world_columns.py`](prototype/world_columns.py) | Shared world read/write for edits (full columns, palettes, heightmaps, entities, chests) |
 | [`prototype/region_edit.py`](prototype/region_edit.py) | Low-level region and chunk read/write helpers |

@@ -2,7 +2,8 @@
 
 Used by build_reservoir.py. Each landmark lists its blocks (registered in the builder's block
 table before the world is built), its measurements with their sources, and a type that picks the
-function here. Types: "pulgas-temple" (task MC7).
+function here. Types: "pulgas-temple" (task MC7) and "footprint" (a placeholder on a real
+footprint, task MC8).
 """
 
 import math
@@ -12,7 +13,7 @@ from scipy import ndimage
 
 # Landmark blocks laid as a surface that should be solid all the way down (no dirt under paving,
 # coping or a canal wall), and blocks that are plants (not motion-blocking).
-FILL_KEYS = ('paving', 'coping', 'poolFloor', 'canalWall', 'canalFloor')
+FILL_KEYS = ('paving', 'coping', 'poolFloor', 'canalWall', 'canalFloor', 'wall')
 PLANT_KEYS = ('lavender',)
 
 
@@ -22,9 +23,9 @@ def build(site, ctx):
     clear = np.zeros(ctx.ground.shape, bool)
     summary = {}
     for lm in site.get('landmarks', []):
-        if lm['type'] != 'pulgas-temple':
+        if lm['type'] not in ('pulgas-temple', 'footprint'):
             raise ValueError(f'Unknown landmark type {lm["type"]}')
-        cells, info = pulgas_temple(lm, ctx)
+        cells, info = (pulgas_temple if lm['type'] == 'pulgas-temple' else footprint)(lm, ctx)
         clear |= cells
         summary[lm['name']] = info
     return clear, summary
@@ -333,3 +334,38 @@ def contained(water, g, wet, ctx):
                 continue                              # a cascade down the canal or into the lake
             bad += 1
     return bad
+
+
+def footprint(lm, ctx):
+    """A placeholder on a real footprint: each part (a UTM polygon, or a circle with its centre and
+    radius) stands on a level pad at its footprint's median ground, solid "wall" blocks up to the
+    part's height (metres, illustrative) under a "roof" layer. Returns the cells to keep clear of
+    trees and plants (the footprints and a block round them) and a summary."""
+    from PIL import Image, ImageDraw
+    H, W = ctx.ground.shape
+    wall, roof = ctx.block(lm['blocks']['wall']), ctx.block(lm['blocks']['roof'])
+    clear = np.zeros((H, W), bool)
+    parts = []
+    for part in lm['parts']:
+        img = Image.new('1', (W, H), 0)
+        draw = ImageDraw.Draw(img)
+        if 'circleUTM' in part:
+            (cx, cz), = ctx.to_blocks([part['circleUTM']])
+            r = part['radiusMetres'] / ctx.scale
+            draw.ellipse([cx - r, cz - r, cx + r, cz + r], fill=1)
+        else:
+            draw.polygon([tuple(p) for p in ctx.to_blocks(part['polygonUTM'])], fill=1)
+        cells = np.array(img, bool) & ~ctx.wet
+        if not cells.any():
+            raise ValueError(f'{lm["name"]}: a part falls outside the world or on water')
+        pad = int(np.median(ctx.ground[cells]))
+        top = pad + max(1, round(part['heightMetres'] / ctx.vscale))
+        ctx.ground[cells] = pad
+        ctx.surface[cells] = wall
+        for z, x in zip(*np.nonzero(cells)):
+            for y in range(pad + 1, top):
+                put(ctx, int(x), int(z), y, wall)
+            put(ctx, int(x), int(z), top, roof)
+        clear |= ndimage.binary_dilation(cells, iterations=1)
+        parts.append(dict(name=part.get('name', ''), cells=int(cells.sum()), pad_y=pad, top_y=top))
+    return clear, parts

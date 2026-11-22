@@ -1,0 +1,378 @@
+{
+  "id": "sunol_valley",
+  "name": "Sunol Valley - Waterscape",
+  "bundle": "experimental/minecraft/build/sunol_valley",
+  "palette": "diablo-oak",
+  "crop": {
+    "note": "Blocks from the terrain grid's north-west corner (terrain.westUTM, northUTM): from the Sunol Water Temple (300 m margin) east past both reservoirs, from San Antonio's bundle north edge south past Calaveras.",
+    "west": 0,
+    "north": 0,
+    "width": 2672,
+    "length": 5296
+  },
+  "metresPerBlock": 4,
+  "metresPerBlockVertical": 3,
+  "metresPerBlockNote": "4 m across, 3 m up (hills 1.33x taller): the maintainer's choice (task MC8), so Calaveras stands 27 blocks above San Antonio.",
+  "waterY": 40,
+  "waterYNote": "San Antonio's surface; every other height follows from 3 m per block.",
+  "seed": 26498,
+  "spawnView": "san_antonio-overlook",
+  "terrain": {
+    "westUTM": 598100,
+    "northUTM": 4164800,
+    "coarseMetres": 10,
+    "fineMetres": 2,
+    "featherMetres": 400,
+    "note": "UTM zone 10N. The coarse grid covers the whole area; the fine 3DEP grids (1 m lidar here, fetched at 2 m and averaged to the 4 m blocks) cover each lake window."
+  },
+  "lakes": [
+    {
+      "id": "san_antonio",
+      "name": "San Antonio Reservoir",
+      "bundle": "data/san_antonio",
+      "window": [
+        662,
+        623,
+        1368,
+        1264
+      ],
+      "windowNote": "Block-grid west, north, width, length: the lake outline in its bundle plus 800 m."
+    },
+    {
+      "id": "calaveras",
+      "name": "Calaveras Reservoir",
+      "bundle": "data/calaveras",
+      "window": [
+        1089,
+        3385,
+        1417,
+        1519
+      ],
+      "windowNote": "Block-grid west, north, width, length: the lake outline in its bundle plus 800 m.",
+      "extraAnchorsUTM": [
+        [
+          604042,
+          4149630
+        ]
+      ],
+      "extraAnchorsNote": "The north arm below the dam is flattened at 221.5 m in 3DEP (another survey date than the 223.7 m lake); it joins the lake at its level."
+    }
+  ],
+  "dams": [
+    {
+      "name": "James H. Turner Dam",
+      "lake": "san_antonio",
+      "nid": "CA00132",
+      "type": "Earth",
+      "heightFt": 193,
+      "lengthFt": 2160,
+      "completed": 1964,
+      "crestUTM": [
+        [
+          601525.0,
+          4158855.0
+        ],
+        [
+          601880.0,
+          4159380.0
+        ]
+      ],
+      "utmZone": 10,
+      "crestElevation": 149.7,
+      "crestWidth": 9,
+      "spillway": {
+        "centreUTM": [
+          [
+            602012.0,
+            4159520.0
+          ],
+          [
+            601955.0,
+            4159582.0
+          ],
+          [
+            601905.0,
+            4159632.0
+          ]
+        ],
+        "width": 25,
+        "basinUTM": [
+          [
+            601905.0,
+            4159632.0
+          ],
+          [
+            601895.0,
+            4159652.0
+          ]
+        ],
+        "basinWidth": 30
+      },
+      "sources": {
+        "type, height, length, completed": "https://geospatial.sec.usace.army.mil/dls/rest/services/NID/National_Inventory_of_Dams_Public_Service/FeatureServer/0/query?where=NIDID%3D%27CA00132%27&outFields=NAME,NIDID,PRIMARY_DAM_TYPE,NID_HEIGHT,DAM_LENGTH,YEAR_COMPLETED&f=json",
+        "crest line, spillway, basin": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer/exportImage?bbox=601250,4158700,602250,4159800&bboxSR=32610&imageSR=32610&size=1000,1100&format=jpg&bandIds=0,1,2&f=image",
+        "crest elevation": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?bbox=601450,4158780,601950,4159450&bboxSR=32610&imageSR=32610&size=500,670&format=tiff&pixelType=F32&interpolation=RSP_BilinearInterpolation&f=image"
+      },
+      "note": "Crest line traced on the 1 m NAIP image (634 m against NID's 2,160 ft); crest elevation is the 3DEP 1 m lidar along it (149.2 to 149.7 m). Spillway chute and basin traced on the same image at the dam's north-east end; the basin is short and illustrative, the spillway drawn dry. Crest width is an estimate."
+    },
+    {
+      "name": "Calaveras Dam",
+      "lake": "calaveras",
+      "nid": "CA01546",
+      "type": "Earth",
+      "heightFt": 210,
+      "lengthFt": 1210,
+      "completed": 2018,
+      "crestUTM": [
+        [
+          604113.4,
+          4150518.1
+        ],
+        [
+          604483.4,
+          4150482.1
+        ]
+      ],
+      "utmZone": 10,
+      "crestElevation": 237.4,
+      "crestWidth": 9,
+      "spillway": {
+        "centreUTM": [
+          [
+            604121.4,
+            4150420.1
+          ],
+          [
+            604121.4,
+            4150510.1
+          ],
+          [
+            604143.4,
+            4150540.1
+          ],
+          [
+            604253.4,
+            4150617.1
+          ],
+          [
+            604355.4,
+            4150687.1
+          ]
+        ],
+        "width": 22,
+        "basinUTM": [
+          [
+            604355.4,
+            4150687.1
+          ],
+          [
+            604418.4,
+            4150715.1
+          ]
+        ],
+        "basinWidth": 28
+      },
+      "sources": {
+        "type, height, length, completed": "https://geospatial.sec.usace.army.mil/dls/rest/services/NID/National_Inventory_of_Dams_Public_Service/FeatureServer/0/query?where=NIDID%3D%27CA01546%27&outFields=*&f=json",
+        "crest line, spillway, basin": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer/exportImage?bbox=604003.4,4149965.1,605003.4,4150965.1&bboxSR=32610&imageSR=32610&size=1000,1000&format=jpg&bandIds=0,1,2&f=image",
+        "crest elevation": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?bbox=604003.4,4149965.1,605003.4,4150965.1&bboxSR=32610&imageSR=32610&size=500,500&format=tiff&pixelType=F32&interpolation=RSP_BilinearInterpolation&f=image"
+      },
+      "note": "Crest line traced by hand on the 1 m NAIP image (372 m against NID's 1,210 ft); crest elevation is the 3DEP maximum along it (flat at 237.4 m over most of its length). The 10 m bundle grid already holds the embankment as a smooth hill; the builder levels the crest and dresses the faces. Spillway centre line, chute width (about 22 m) and stilling basin traced on the same image; the spillway is drawn dry. Crest width is an estimate. Illustrative, not as-built drawings."
+    }
+  ],
+  "creeks": [
+    {
+      "name": "Alameda Creek",
+      "width": 8
+    },
+    {
+      "name": "Calaveras Creek",
+      "width": 4
+    },
+    {
+      "name": "San Antonio Creek",
+      "width": 4
+    }
+  ],
+  "creeksNote": "Widths are estimates (metres); centre lines in sunol_valley.creeks.json (fetch_creeks.py, OpenStreetMap).",
+  "landmarks": [
+    {
+      "type": "footprint",
+      "name": "Sunol Water Temple",
+      "blocks": {
+        "wall": "quartz_block",
+        "roof": "smooth_quartz"
+      },
+      "parts": [
+        {
+          "name": "temple",
+          "polygonUTM": [
+            [
+              598395.2,
+              4160407.7
+            ],
+            [
+              598395.5,
+              4160410.5
+            ],
+            [
+              598397.1,
+              4160412.9
+            ],
+            [
+              598399.6,
+              4160414.3
+            ],
+            [
+              598402.4,
+              4160414.4
+            ],
+            [
+              598405.0,
+              4160413.1
+            ],
+            [
+              598406.7,
+              4160410.8
+            ],
+            [
+              598407.1,
+              4160408.0
+            ],
+            [
+              598406.1,
+              4160405.3
+            ],
+            [
+              598404.1,
+              4160403.4
+            ],
+            [
+              598401.3,
+              4160402.6
+            ],
+            [
+              598398.5,
+              4160403.2
+            ],
+            [
+              598396.3,
+              4160405.1
+            ],
+            [
+              598395.2,
+              4160407.7
+            ]
+          ],
+          "heightMetres": 12
+        }
+      ],
+      "sources": {
+        "footprint": "https://www.openstreetmap.org/way/1002107868 ((c) OpenStreetMap contributors, ODbL)"
+      },
+      "note": "Placeholder: the OpenStreetMap footprint (about 12 m round, three blocks across). Height illustrative."
+    },
+    {
+      "type": "footprint",
+      "name": "Sunol Valley Water Treatment Plant",
+      "blocks": {
+        "wall": "light_gray_concrete",
+        "roof": "smooth_stone"
+      },
+      "parts": [
+        {
+          "name": "treated water reservoir",
+          "circleUTM": [
+            600892.0,
+            4155237.0
+          ],
+          "radiusMetres": 52,
+          "heightMetres": 8
+        },
+        {
+          "name": "buildings by the reservoir",
+          "polygonUTM": [
+            [
+              600918.0,
+              4155188.0
+            ],
+            [
+              600958.0,
+              4155218.0
+            ],
+            [
+              601012.0,
+              4155160.0
+            ],
+            [
+              600970.0,
+              4155128.0
+            ]
+          ],
+          "heightMetres": 8
+        },
+        {
+          "name": "treatment block",
+          "polygonUTM": [
+            [
+              600932.0,
+              4155020.0
+            ],
+            [
+              601000.0,
+              4155052.0
+            ],
+            [
+              601145.0,
+              4154902.0
+            ],
+            [
+              601045.0,
+              4154815.0
+            ],
+            [
+              600965.0,
+              4154890.0
+            ]
+          ],
+          "heightMetres": 6
+        },
+        {
+          "name": "clearwell block",
+          "polygonUTM": [
+            [
+              601125.0,
+              4154860.0
+            ],
+            [
+              601170.0,
+              4154875.0
+            ],
+            [
+              601188.0,
+              4154805.0
+            ],
+            [
+              601140.0,
+              4154795.0
+            ]
+          ],
+          "heightMetres": 4
+        }
+      ],
+      "sources": {
+        "location": "https://ceqanet.lci.ca.gov/2007082014/8",
+        "footprints": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer/exportImage?bbox=600700,4154400,601500,4155450&bboxSR=32610&imageSR=32610&size=800,1050&format=jpg&bandIds=0,1,2&f=image"
+      },
+      "note": "Placeholder: the main structures traced on the 1 m NAIP image (the washwater ponds to the south are left as ground). Heights illustrative."
+    }
+  ],
+  "pendingStructures": [
+    {
+      "name": "Sunol Valley Chloramination Facility",
+      "address": "5555 Calaveras Rd, Sunol",
+      "source": "https://webapps.sfpuc.org/bids/BidDetail.aspx?bidid=4464",
+      "note": "No footprint found; location to be confirmed by the maintainer."
+    }
+  ]
+}

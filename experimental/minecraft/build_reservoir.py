@@ -57,7 +57,13 @@ LAND = json.loads((REPO / SITE['bundle'] / 'land.json').read_text())
 BIOME = json.loads((REPO / 'data/biomes' / LAND['biome'] / 'biome.json').read_text())
 PAL = json.loads((HERE / f'palettes/{SITE["palette"]}.json').read_text())
 SCALE = SITE['metresPerBlock']
+# Vertical scale (metres per block up); a site may exaggerate relief (task MC8). K is the ratio
+# that turns a slope in metres into one in blocks.
+VSCALE = SITE.get('metresPerBlockVertical', SCALE)
+K = VSCALE / SCALE
 WATER_Y = SITE['waterY']
+# Dams: one ("dam") or several ("dams", each naming its "lake" when the site has several).
+DAMS = SITE.get('dams') or [SITE['dam']]
 WEST, NORTH = SITE['crop']['west'], SITE['crop']['north']
 WIDTH, LENGTH = SITE['crop']['width'], SITE['crop']['length']
 SEED = SITE['seed']
@@ -95,8 +101,8 @@ for _n in sorted({n for lm in LANDMARKS for n in lm['blocks'].values()}):
 AIR, BEDROCK, STONE, WATER = 0, 1, 2, 3
 # A gravity dam is masonry all the way down (its stepped face would otherwise show the dirt under
 # each step); an earth dam keeps soil under its surface. So are a landmark's paving and walls.
-MASONRY = [CREST, CREST_EDGE, FACE, SPILL, SPILL_WALL] if SITE['dam']['type'].lower() == 'gravity' else []
-MASONRY += [NAMES.index(lm['blocks'][k]) for lm in LANDMARKS for k in landmarks.FILL_KEYS]
+MASONRY = [CREST, CREST_EDGE, FACE, SPILL, SPILL_WALL] if any(d['type'].lower() == 'gravity' for d in DAMS) else []
+MASONRY += [NAMES.index(lm['blocks'][k]) for lm in LANDMARKS for k in landmarks.FILL_KEYS if k in lm['blocks']]
 
 
 def block_state(n):
@@ -110,7 +116,7 @@ def block_state(n):
 BLOCKS = [block_state(n) for n in NAMES]
 IS_LEAVES = np.array([n.endswith('_leaves') for n in NAMES])
 IS_PLANT = np.isin(np.arange(len(NAMES)), PLANTS + [NAMES.index(lm['blocks'][k]) for lm in LANDMARKS
-                                                     for k in landmarks.PLANT_KEYS])
+                                                     for k in landmarks.PLANT_KEYS if k in lm['blocks']])
 IS_AIR = np.arange(len(NAMES)) == AIR
 IS_FLUID = np.arange(len(NAMES)) == WATER
 
@@ -184,28 +190,73 @@ def block_centres():
     return np.meshgrid(x, z)
 
 
-def terrain(tr, look, rng):
+def find_lakes(meta, look, wet):
+    """The lakes: one (the bundle's) or the site's "lakes", each the connected water holding its
+    bundle's anchor, at its own level (terrain.json "lakes") and with its own bank slope and depth
+    cap (its bundle's land.json). Water joined from other flattened surveys (make_valley_terrain's
+    extra anchors) that does not touch its lake goes to the nearest lake. Returns the lakes, a
+    lake number per cell (0 dry) and the cells so joined."""
+    if not SITE.get('lakes'):
+        lake = SimpleNamespace(id=SITE['id'], name=SITE['name'], level=meta['waterLevel'], y=WATER_Y, water=look['water'])
+        return [lake], wet.astype(np.int8), np.zeros(wet.shape, bool)
+    sys.path.insert(0, str(REPO / 'pipeline'))
+    import geo
+    labels, _ = ndimage.label(wet)
+    number = np.zeros(wet.shape, np.int8)
+    levels = {lk['name']: lk['waterLevel'] for lk in meta['lakes']}
+    lakes = []
+    for i, lk in enumerate(SITE['lakes']):
+        anchor = json.loads((REPO / lk['bundle'] / 'source.json').read_text())['anchor']
+        (x, z), = to_blocks(meta, [geo.utm(*anchor, 10)]).astype(int)
+        if not labels[z, x]:
+            raise ValueError(f'{lk["name"]}: its anchor is not on the water')
+        number[labels == labels[z, x]] = i + 1
+        level = levels[lk['name']]
+        water = json.loads((REPO / lk['bundle'] / 'land.json').read_text())['water']
+        lakes.append(SimpleNamespace(id=lk['id'], name=lk['name'], level=level,
+                                     y=WATER_Y + int(round((level - meta['waterLevel']) / VSCALE)), water=water))
+    joined = wet & (number == 0)
+    if joined.any():
+        near = number[tuple(ndimage.distance_transform_edt(number == 0, return_distances=False, return_indices=True))]
+        number[joined] = near[joined]
+    return lakes, number, joined
+
+
+def terrain(tr, look, rng, meta):
     X, Z = block_centres()
     if X.min() < tr.x0 or Z.min() < tr.z0:
         raise ValueError('Crop extends outside the Waterscape bundle')
     h, shore, valley = (tr.sample(X, Z, c).astype(np.float32) for c in range(3))
     wet = shore < 0
+    lakes, number, joined = find_lakes(meta, look, wet)
     if any(edge.any() for edge in (wet[0], wet[-1], wet[:, 0], wet[:, -1])):
         raise ValueError('Crop cuts through the reservoir')
+    # Every cell's nearest lake: its water height where it is wet, and the level a dry cell's
+    # bank is measured from.
+    nearest = number[tuple(ndimage.distance_transform_edt(number == 0, return_distances=False, return_indices=True))]
+    water_y = np.array([WATER_Y] + [lk.y for lk in lakes], np.int16)[nearest]
     shore_ring = ndimage.binary_dilation(wet) & ~wet
-    ground = np.rint(WATER_Y + h / SCALE).astype(np.int16)
+    ground = np.rint(WATER_Y + h / VSCALE).astype(np.int16)
     # A lower dry neighbour would let source blocks flow outside the source shoreline.
-    ground[shore_ring] = np.maximum(ground[shore_ring], WATER_Y)
+    ground[shore_ring] = np.maximum(ground[shore_ring], water_y[shore_ring])
     # Synthetic lake bed (the lidar cannot see under water): bank slope and depth cap from land.json.
     macro = bnoise(X * 0.012 + 3.1, Z * 0.012 - 7.3)
-    depth_m = np.clip(-shore * look['water']['bankSlope'] + (macro - .5) * 8, SCALE, look['water']['maxDepth'])
-    ground[wet] = WATER_Y - np.maximum(1, np.rint(depth_m[wet] / SCALE)).astype(np.int16)
+    if len(lakes) == 1:
+        slope, cap = lakes[0].water['bankSlope'], lakes[0].water['maxDepth']
+    else:
+        slope = np.array([0] + [lk.water['bankSlope'] for lk in lakes])[nearest]
+        cap = np.array([SCALE] + [lk.water['maxDepth'] for lk in lakes])[nearest]
+    depth_m = np.clip(-shore * slope + (macro - .5) * 8, SCALE, cap)
+    ground[wet] = water_y[wet] - np.maximum(1, np.rint(depth_m[wet] / VSCALE)).astype(np.int16)
     if ground.min() < -60 or ground.max() > 305:
         raise ValueError('Terrain does not fit the Java build height')
-    return X, Z, h, shore, valley, wet, ground, macro
+    # Height above the nearest lake, for the bank rule in ground_cover().
+    bank_h = h if len(lakes) == 1 else h - np.array([0] + [lk.level - meta['waterLevel'] for lk in lakes], np.float32)[nearest]
+    lake_info = SimpleNamespace(lakes=lakes, number=number, water_y=water_y, bank_h=bank_h, joined=int(joined.sum()))
+    return X, Z, h, shore, valley, wet, ground, macro, lake_info
 
 
-def ground_cover(X, Z, h, shore, valley, wet, macro):
+def ground_cover(X, Z, h, shore, valley, wet, macro, bank_h=None):
     """renderer/land/ground.js, non-granite branch: grass, then soil (bank and patches), then rock.
     One departure: the bank (soil up to 3 to 6 m above the water) is kept to land within 80 m of
     the shore. The browser applies it to all land below that height, which would make the creek
@@ -213,7 +264,7 @@ def ground_cover(X, Z, h, shore, valley, wet, macro):
     dz, dx = np.gradient(h, float(SCALE))
     slope = 1 - 1 / np.sqrt(1 + dx * dx + dz * dz)
     rock_w = smooth(.34, .55, slope + (macro - .5) * .25) * (1 - valley * .6)
-    bank = (1 - smooth(3, 6, h)) * (1 - smooth(60, 80, shore))
+    bank = (1 - smooth(3, 6, h if bank_h is None else bank_h)) * (1 - smooth(60, 80, shore))
     patch = smooth(.72, .86, bnoise(X * 0.02 + 7.7, Z * 0.02 + 1.9))
     soil_w = np.maximum(bank, patch * .6)
     pick = bnoise(X * 0.4 + 11.3, Z * 0.4 - 5.1)                       # per-block variety
@@ -262,11 +313,24 @@ def polyline_frame(pts, shape):
     return best, along, side, t_end, run
 
 
-def build_dam(meta, ground, surface, wet, rng):
-    """The site's dam: an earth embankment or a gravity dam, by its NID type."""
-    if SITE['dam']['type'].lower() == 'gravity':
-        return build_gravity_dam(meta, ground, surface, wet, rng)
-    return build_earth_dam(meta, ground, surface, wet, rng)
+def build_dam(meta, ground, surface, wet, rng, lakes):
+    """The site's dams: each an earth embankment or a gravity dam, by its NID type, on its lake
+    ("lake" names it when the site has several). Returns the cells to keep clear, extra blocks
+    and counts (by dam name when there are several)."""
+    clear = np.zeros(ground.shape, bool)
+    extras = defaultdict(dict)
+    counts = {}
+    for dam in DAMS:
+        lake = next(lk for lk in lakes if lk.id == dam['lake']) if 'lake' in dam else lakes[0]
+        build = build_gravity_dam if dam['type'].lower() == 'gravity' else build_earth_dam
+        c, e, n = build(meta, dam, lake.y, ground, surface, wet, rng)
+        if len(DAMS) == 1:
+            return c, e, n
+        clear |= c
+        for key, blocks in e.items():
+            extras[key].update(blocks)
+        counts[dam['name']] = n
+    return clear, extras, counts
 
 
 def contained_pool(cells, ground, wet, floor):
@@ -284,14 +348,13 @@ def contained_pool(cells, ground, wet, floor):
         pool = keep
 
 
-def build_gravity_dam(meta, ground, surface, wet, rng):
+def build_gravity_dam(meta, dam, lake_y, ground, surface, wet, rng):
     """A masonry or concrete gravity dam: a level crest straight up from the lake, a stepped
     downstream face (the site's slope, horizontal per vertical) down to the creek, the spillway
     as the part of the face above the stilling basin, and the basin with a little water.
     Returns a mask of cells to keep free of trees and plants, extra blocks by chunk and counts."""
-    dam = SITE['dam']
     extras = defaultdict(dict)
-    crest_y = WATER_Y + int(round((dam['crestElevation'] - meta['waterLevel']) / SCALE))
+    crest_y = WATER_Y + int(round((dam['crestElevation'] - meta['waterLevel']) / VSCALE))
     crest = to_blocks(meta, dam['crestUTM'])
     d, along, side, t, length = polyline_frame(crest, ground.shape)
     near = d < 12
@@ -304,8 +367,8 @@ def build_gravity_dam(meta, ground, surface, wet, rng):
     down = within & (side == -up) & (d > half + 0.25)
     # The creek floor below the dam: the lowest ground in the first stretch downstream.
     toe = int(ground[down & (d < half + 30)].min())
-    reach = half + slope * (crest_y - toe)
-    face_y = np.floor(crest_y - (d - half) / slope + .5).astype(np.int16)
+    reach = half + slope * K * (crest_y - toe)
+    face_y = np.floor(crest_y - (d - half) / (slope * K) + .5).astype(np.int16)
     ground[body] = crest_y
     wet[body] = False
     surface[body] = CREST
@@ -350,12 +413,11 @@ def build_gravity_dam(meta, ground, surface, wet, rng):
     return clear, extras, counts
 
 
-def build_earth_dam(meta, ground, surface, wet, rng):
+def build_earth_dam(meta, dam, lake_y, ground, surface, wet, rng):
     """Level the crest, armour the upstream face, grass the downstream face, cut the spillway.
     Returns a mask of cells to keep free of trees and plants, and extra blocks by chunk."""
-    dam = SITE['dam']
     extras = defaultdict(dict)
-    crest_y = WATER_Y + int(round((dam['crestElevation'] - meta['waterLevel']) / SCALE))
+    crest_y = WATER_Y + int(round((dam['crestElevation'] - meta['waterLevel']) / VSCALE))
     crest = to_blocks(meta, dam['crestUTM'])
     d, _, side, t, _ = polyline_frame(crest, ground.shape)
     near = d < 12
@@ -368,27 +430,27 @@ def build_earth_dam(meta, ground, surface, wet, rng):
     # Upstream face about 3 horizontal to 1 vertical, downstream about 2.7:1 (both through the
     # crest edge); applied only where it is higher than the survey, which holds the embankment
     # smoothed by its 10 m cells.
-    up_y = np.floor(crest_y - (d - half) / 3 + .5).astype(np.int16)
-    down_y = np.floor(crest_y - (d - half) / 2.7 + .5).astype(np.int16)
+    up_y = np.floor(crest_y - (d - half) / (3 * K) + .5).astype(np.int16)
+    down_y = np.floor(crest_y - (d - half) / (2.7 * K) + .5).astype(np.int16)
     counts = {}
     ground[body] = crest_y
     wet[body] = False
     surface[body] = CREST
     edge = body & (d > half - 0.5)
     surface[edge] = CREST_EDGE
-    face_up = up_face & ~wet & (up_y >= WATER_Y) & (ground <= crest_y + 1)
-    ground[face_up] = np.maximum(ground[face_up], np.maximum(up_y[face_up], WATER_Y))
+    face_up = up_face & ~wet & (up_y >= lake_y) & (ground <= crest_y + 1)
+    ground[face_up] = np.maximum(ground[face_up], np.maximum(up_y[face_up], lake_y))
     pick = rng.random(ground.shape)
-    riprap = face_up | (up_face & ~wet & (ground <= WATER_Y + 1) & (d < half + 3 * (crest_y - WATER_Y) + 3))
+    riprap = face_up | (up_face & ~wet & (ground <= lake_y + 1) & (d < half + 3 * K * (crest_y - lake_y) + 3))
     surface[riprap] = np.array(RIPRAP, np.uint8)[(pick[riprap] * len(RIPRAP)).astype(int)]
     # Under the water the face continues down to meet the lake bed.
     under = up_face & wet
-    ground[under] = np.maximum(ground[under], np.minimum(up_y[under], WATER_Y - 1))
+    ground[under] = np.maximum(ground[under], np.minimum(up_y[under], lake_y - 1))
     face_dn = down_face & ~wet & (down_y > ground)
     ground[face_dn] = down_y[face_dn]
     surface[face_dn] = FACE
     # The whole downstream face is mown grass: no soil patches, no trees.
-    dn_zone = down_face & ~wet & (d < half + 2.7 * (crest_y - WATER_Y + 16))
+    dn_zone = down_face & ~wet & (d < half + 2.7 * K * (crest_y - lake_y + 16))
     surface[dn_zone & np.isin(surface, SOIL)] = FACE
     clear = body | face_up | riprap | face_dn | dn_zone
     counts.update(crest_y=crest_y, crest_cells=int(body.sum()), upstream_face=int(riprap.sum()),
@@ -410,8 +472,8 @@ def build_earth_dam(meta, ground, surface, wet, rng):
     fx, fz = np.interp(fine, cum, lx), np.interp(fine, cum, lz)
     s_cross = fine[int(np.argmin([d[int(z), int(x)] for x, z in zip(fx, fz)]))]
     chute_end_y = basin_floor + 2
-    floor = np.where(along <= s_cross, WATER_Y,
-                     np.rint(WATER_Y + (chute_end_y - WATER_Y) * np.clip((along - s_cross) / (length - s_cross), 0, 1)))
+    floor = np.where(along <= s_cross, lake_y,
+                     np.rint(lake_y + (chute_end_y - lake_y) * np.clip((along - s_cross) / (length - s_cross), 0, 1)))
     floor = floor.astype(np.int16)
     in_chute = (ds <= s_half) & (along >= 0) & (along <= length) & ~wet & ~in_basin
     wall = (ds > s_half) & (ds <= s_half + 1) & (along >= 0) & (along <= length + 1) & ~wet & ~in_basin
@@ -446,7 +508,7 @@ def build_causeways(meta, ground, surface, wet):
     the traced centre line become dry land at the surveyed top. Returns the cells (no trees)."""
     clear = np.zeros(ground.shape, bool)
     for cw in SITE.get('causeways', []):
-        top = WATER_Y + max(1, int(round((cw['topElevation'] - meta['waterLevel']) / SCALE)))
+        top = WATER_Y + max(1, int(round((cw['topElevation'] - meta['waterLevel']) / VSCALE)))
         d, *_ = polyline_frame(to_blocks(meta, cw['centreUTM']), ground.shape)
         half = cw['width'] / 2 / SCALE
         fill = d <= half + 0.25
@@ -458,12 +520,94 @@ def build_causeways(meta, ground, surface, wet):
     return clear
 
 
-def leak_check(ground, wet):
+def shifted(a, dz, dx, fill):
+    """a moved by (dz, dx) cells without wrapping round the edges (np.roll would)."""
+    out = np.full_like(a, fill)
+    H, W = a.shape
+    out[max(dz, 0):H + min(dz, 0), max(dx, 0):W + min(dx, 0)] = a[max(-dz, 0):H + min(-dz, 0), max(-dx, 0):W + min(-dx, 0)]
+    return out
+
+
+def build_creeks(meta, ground, surface, wet, avoid, extras):
+    """Creeks from the site's "creeks" list and its creeks file (fetch_creeks.py: OpenStreetMap
+    centre lines). Along each line, downstream, the water stays at the lowest ground met so far
+    (a line drawn uphill is turned round first), the channel is cut one block under it, and every
+    cell beside the channel is raised to at least a block above the water next to it, so no
+    water can spread out of the channel: a source on a higher step pours onto the next step and
+    spreads only just above that step's water. Creeks stop two blocks short of a lake and keep
+    off dams and landmarks (`avoid`). Returns the cells to keep clear and counts."""
+    clear = np.zeros(ground.shape, bool)
+    if not SITE.get('creeks'):
+        return clear, {}, None
+    lines = json.loads(SITE_PATH.with_name(f'{SITE["id"]}.creeks.json').read_text())['lines']
+    widths = {c['name']: c['width'] for c in SITE['creeks']}
+    H, W = ground.shape
+    ground0 = ground.copy()
+    keep_off = avoid | ndimage.binary_dilation(wet, iterations=2)
+    level = np.full(ground.shape, np.iinfo(np.int16).max, np.int16)
+    for line in lines:
+        if line['name'] not in widths:
+            continue
+        pts = to_blocks(meta, line['utm'])
+        cum = np.concatenate([[0], np.cumsum(np.hypot(*np.diff(pts, axis=0).T))])
+        s = np.arange(0, cum[-1], 0.25)
+        px, pz = np.interp(s, cum, pts[:, 0]), np.interp(s, cum, pts[:, 1])
+        inside = (px >= 1) & (px < W - 1) & (pz >= 1) & (pz < H - 1)
+        if inside.sum() < 2:
+            continue
+        g = ground0[pz[inside].astype(int), px[inside].astype(int)]
+        if g[0] < g[-1]:
+            px, pz = px[::-1], pz[::-1]
+        radius = max(1, round(widths[line['name']] / SCALE)) / 2 + 0.2
+        span = int(math.ceil(radius))
+        run = None
+        for x, z in zip(px, pz):
+            xi, zi = int(x), int(z)
+            if not (span <= xi < W - span and span <= zi < H - span) or keep_off[zi, xi]:
+                run = None
+                continue
+            run = int(ground0[zi, xi]) if run is None else min(run, int(ground0[zi, xi]))
+            for oz in range(-span, span + 1):
+                for ox in range(-span, span + 1):
+                    cx_, cz_ = xi + ox, zi + oz
+                    if (cx_ + .5 - x) ** 2 + (cz_ + .5 - z) ** 2 <= radius * radius and not keep_off[cz_, cx_]:
+                        level[cz_, cx_] = min(level[cz_, cx_], run)
+    channel = level < np.iinfo(np.int16).max
+    ground[channel] = level[channel] - 1
+    pick = bnoise(np.arange(W)[None, :] * 0.4 + 2.3, np.arange(H)[:, None] * 0.4 - 1.7)
+    surface[channel] = np.array(BED, np.uint8)[(pick[channel] * len(BED)).astype(int) % len(BED)]
+    for z, x in zip(*np.nonzero(channel)):
+        extras[x // 16, z // 16][int(level[z, x]), z % 16, x % 16] = WATER
+    # Banks: a block above the highest water beside them (four neighbours: water spreads no other way).
+    need = np.where(channel, level + 1, np.iinfo(np.int16).min).astype(np.int16)
+    beside = np.full(ground.shape, np.iinfo(np.int16).min, np.int16)
+    for dz, dx in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+        beside = np.maximum(beside, shifted(need, dz, dx, np.iinfo(np.int16).min))
+    bank = ~channel & ~wet & (ground < beside)
+    raised = (beside - ground)[bank]
+    ground[bank] = beside[bank]
+    clear |= ndimage.binary_dilation(channel, iterations=1)
+    cut = (ground0 - ground)[channel]
+    return clear, dict(channel_cells=int(channel.sum()), deepest_cut_blocks=int(cut.max()) if cut.size else 0,
+                       banks_raised=int(bank.sum()), highest_bank_raise=int(raised.max()) if raised.size else 0), (channel, level)
+
+
+def creek_leaks(ground, wet, channel, level):
+    """Creek cells with a dry, non-creek neighbour lower than a block above the water: must be none."""
+    need = np.where(channel, level + 1, np.iinfo(np.int16).min).astype(np.int16)
+    bad = 0
+    for dz, dx in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+        nb_need = shifted(need, dz, dx, np.iinfo(np.int16).min)
+        bad += int((~channel & ~wet & (ground < nb_need)).sum())
+    return bad
+
+
+def leak_check(ground, wet, water_y):
     """Cells of lake water whose dry neighbour is lower than the water: must be none."""
     bad = 0
     for dz, dx in ((1, 0), (-1, 0), (0, 1), (0, -1)):
         nb_dry = ~np.roll(wet, (dz, dx), (0, 1))
-        nb_low = np.roll(ground, (dz, dx), (0, 1)) < WATER_Y
+        nb_low = np.roll(ground, (dz, dx), (0, 1)) < water_y
         bad += int((wet & nb_dry & nb_low).sum())
     return bad
 
@@ -528,7 +672,7 @@ def place_trees(sites, ground, wet, clear, viewpoints):
             continue
         spec = PAL['trees'][SPECIES[kind]]
         lo, hi = spec['height']
-        height = max(3, int(round((lo + (hi - lo) * tu) / SCALE)))
+        height = max(3, int(round((lo + (hi - lo) * tu) / VSCALE)))
         r = r_m / SCALE
         g = int(ground[zi, xi])
         top = g + height
@@ -572,13 +716,13 @@ def place_trees(sites, ground, wet, clear, viewpoints):
     return patches, counts
 
 
-def cameras(folder, ground, wet):
+def cameras(folder, ground, wet, water_y):
     source = json.loads((folder / 'cameras.json').read_text())['viewpoints']
     views = {}
     for key, source_view in source.items():
         x = math.floor((source_view['x'] - WEST) / SCALE)
         z = math.floor((source_view['z'] - NORTH) / SCALE)
-        y = max(int(ground[z, x]), WATER_Y if wet[z, x] else -64) + 2
+        y = max(int(ground[z, x]), int(water_y[z, x]) if wet[z, x] else -64) + 2
         yaw = (180 + math.degrees(source_view['yaw']) + 180) % 360 - 180
         views[key] = (x, y, z, round(yaw, 1), round(-math.degrees(source_view['pitch']), 1))
     return views
@@ -617,14 +761,14 @@ def heightmap(block, flags):
     return np.where(hit.any(axis=0), top, 0)
 
 
-def new_chunk(cx, cz, ground, wet, surface, plants, extra):
+def new_chunk(cx, cz, ground, wet, surface, plants, extra, water_y):
     y = np.arange(-64, 320)[:, None, None]
     block = np.where(y == ground, surface, np.where(y >= ground - 3, np.where(surface == STONE, STONE, UNDER), STONE))
     rocky = np.isin(surface, ROCK)
     block = np.where((y < ground) & rocky, STONE, block)
     if MASONRY:
         block = np.where((y < ground) & np.isin(surface, MASONRY), surface, block)
-    block = np.where(y <= ground, block, np.where(wet & (y <= WATER_Y), WATER, AIR)).astype(np.uint8)
+    block = np.where(y <= ground, block, np.where(wet & (y <= water_y), WATER, AIR)).astype(np.uint8)
     block = np.where((y == ground + 1) & (plants > 0), plants, block).astype(np.uint8)
     block[0] = BEDROCK
     for (yy, oz, ox), kind in extra.items():
@@ -722,22 +866,32 @@ def main():
     tr = Terrain(meta, data)
     look = json.loads((folder / 'land.json').read_text())
     rng = np.random.default_rng(SEED)
-    X, Z, h, shore, valley, wet, ground, macro = terrain(tr, look, rng)
-    surface, rock = ground_cover(X, Z, h, shore, valley, wet, macro)
-    clear, extras, dam_counts = build_dam(meta, ground, surface, wet, rng)
+    X, Z, h, shore, valley, wet, ground, macro, lk = terrain(tr, look, rng, meta)
+    if len(lk.lakes) > 1:
+        print('lakes:', {l.name: dict(level=l.level, y=l.y, cells=int((lk.number == i + 1).sum()))
+                         for i, l in enumerate(lk.lakes)}, '| water joined to the nearest lake:', lk.joined, flush=True)
+    surface, rock = ground_cover(X, Z, h, shore, valley, wet, macro, None if len(lk.lakes) == 1 else lk.bank_h)
+    clear, extras, dam_counts = build_dam(meta, ground, surface, wet, rng, lk.lakes)
     clear |= build_causeways(meta, ground, surface, wet)
     ctx = SimpleNamespace(ground=ground, surface=surface, wet=wet, extras=extras, block=NAMES.index,
                           grass=GRASS[0], water=WATER, water_y=WATER_Y, water_level=meta['waterLevel'],
-                          scale=SCALE, to_blocks=lambda utm: to_blocks(meta, utm), polyline=polyline_frame)
+                          scale=SCALE, vscale=VSCALE, to_blocks=lambda utm: to_blocks(meta, utm), polyline=polyline_frame)
     landmark_clear, landmark_info = landmarks.build(SITE, ctx)
     clear |= landmark_clear
     if landmark_info:
         print('landmarks:', landmark_info, flush=True)
-    leaks = leak_check(ground, wet)
+    creek_clear, creek_info, creek_cells = build_creeks(meta, ground, surface, wet, clear, extras)
+    clear |= creek_clear
+    leaks = leak_check(ground, wet, lk.water_y)
     print('dam:', dam_counts, '| lake leaks (must be 0):', leaks, flush=True)
     if leaks:
         raise SystemExit('The lake would leak; nothing written.')
-    views = cameras(folder, ground, wet)
+    if creek_cells is not None:
+        spills = creek_leaks(ground, wet, *creek_cells)
+        print('creeks:', creek_info, '| creek spills (must be 0):', spills, flush=True)
+        if spills:
+            raise SystemExit('A creek would spill; nothing written.')
+    views = cameras(folder, ground, wet, lk.water_y)
     sites = oak_sites(tr, look)
     tree, counts = place_trees(sites, ground, wet, clear, views)
     print(f'tree sites {len(sites[0])}, placed {sum(counts)} ({dict(zip(SPECIES, counts))})', flush=True)
@@ -768,7 +922,7 @@ def main():
                     sl = np.s_[cz * 16:(cz + 1) * 16, cx * 16:(cx + 1) * 16]
                     extra = dict(tree.get((cx, cz), {}))
                     extra.update(extras.get((cx, cz), {}))
-                    chunk, block = new_chunk(cx, cz, ground[sl], wet[sl], surface[sl], plants[sl], extra)
+                    chunk, block = new_chunk(cx, cz, ground[sl], wet[sl], surface[sl], plants[sl], extra, lk.water_y[sl])
                     key = (cx & 31) + (cz & 31) * 32
                     chunks[key] = region.encode_chunk(chunk)
                     blocks[key] = block
@@ -789,10 +943,14 @@ def main():
             'interpretation': ['Ground from renderer/land/ground.js: grass (coloured by the datapack), soil on the bank and in patches, rock on steep ground.',
                                'Trees at the browser\'s own sites and species (oak-placement.js oakSite, standPick); block crowns are approximate.',
                                'Synthetic reservoir bottom using Waterscape bank slope and depth cap.',
-                               f'{SITE["dam"]["type"]} dam: crest, faces and spillway dressed onto the surveyed dam from the traced site file; illustrative.']
+                               ] + [(f'{d["type"]} dam' if len(DAMS) == 1 else f'{d["name"]} ({d["type"]} dam)') + ': crest, faces and spillway dressed onto the surveyed dam from the traced site file; illustrative.' for d in DAMS]
                               + [f'{lm["name"]}: built at {lm["metresPerBlock"]} m per block (the land is {SCALE} m), centred on its real middle; illustrative.'
-                                 for lm in LANDMARKS],
-            'dam': dam_counts, 'landmarks': landmark_info, 'tree_counts': dict(zip(SPECIES, counts)),
+                                 for lm in LANDMARKS if lm['type'] != 'footprint']
+                              + [f'{lm["name"]}: a placeholder on its footprint; heights illustrative.' for lm in LANDMARKS if lm['type'] == 'footprint']
+                              + (['Creeks from OpenStreetMap centre lines: water at the lowest ground met downstream, the channel cut a block under it, banks raised to hold it.']
+                                 if SITE.get('creeks') else []),
+            'dam': dam_counts, 'landmarks': landmark_info, **({'creeks': creek_info} if creek_info else {}),
+            **({'vertical_metres_per_block': VSCALE, 'lakes': {l.name: dict(level_m=l.level, water_y=l.y) for l in lk.lakes}} if SITE.get('lakes') else {}), 'tree_counts': dict(zip(SPECIES, counts)),
             'viewpoints_xyz_yaw_pitch': views, 'verified_chunks': checked, 'written_chunks': written}
     (args.out / 'waterscape-build.json').write_text(json.dumps(info, indent=2) + '\n', encoding='utf-8')
     print(f'{written} chunks, {checked} decoded and compared, {sum(counts)} trees; spawn {views["overlook"]}', flush=True)
