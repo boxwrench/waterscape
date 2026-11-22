@@ -7,7 +7,7 @@
 // shadows; alpha 0.5 tags the pixels as already shaded for the water kernel (pack.js).
 import * as THREE from "../../vendor/three/three.webgpu.js";
 import {
-  attribute, positionWorld, normalWorld, cameraPosition, vec2, vec3, float, max, dot, normalize, mix,
+  attribute, positionWorld, normalWorld, cameraPosition, vec3, float, max, dot, normalize, mix,
   smoothstep, step, fract, abs, pow, reflect, sqrt, mx_noise_float, time, reflector, Fn,
 } from "../../vendor/three/three.tsl.js";
 
@@ -185,23 +185,22 @@ function waterMaterial(u, body, flow = 0) {
 }
 
 // The reflecting pool: the scene mirrored in its surface (three.js's planar reflector, at full
-// resolution, barely rippled), blended with the painted turquoise basin by water's Fresnel
-// term (2% straight down, nearly all at grazing angles). Where the mirror sees no geometry it
-// shows a sky graded from the preset's fill colour; the kernel's own sky, haze and distant
-// crowns are not in it.
+// resolution), blended with the basin by water's Fresnel term (2% straight down, nearly all at
+// grazing angles). Sheltered water this shallow is glass-still: no ripple bends the mirror,
+// only a faint, slow swell in the surface normal lets the sky's sheen drift (as River Pulse's
+// authored water keeps its mirror offset small). Seen through the water the basin is dark, so
+// the reflection reads even looking down at it. Where the mirror sees no geometry it shows a
+// sky graded from the preset's fill colour; the kernel's own sky, haze and distant crowns are
+// not in it.
 function reflectingPool(u, at) {
   const mirror = reflector({ resolutionScale: 1, depth: true, bounces: false }),
     depth = mirror.getDepthNode();
   mirror.target.rotateX(-Math.PI / 2);
   mirror.target.position.copy(at);
   const p = positionWorld,
-    t = time.mul(0.3),
-    nx = mx_noise_float(vec3(p.x.mul(1.1), p.z.mul(1.1), t)).mul(0.035),
-    nz = mx_noise_float(vec3(p.x.mul(1.1), p.z.mul(1.1), t.add(7))).mul(0.035),
-    ripple = vec2(nx, nz).mul(0.06);
-  // Only the colour is rippled: depth cannot be filtered, so a rippled depth lookup would
-  // leave blocky edges where the mirror changes from geometry to sky.
-  mirror.uvNode = mirror.uvNode.add(ripple);
+    t = time.mul(0.05),
+    nx = mx_noise_float(vec3(p.x.mul(0.12), p.z.mul(0.12), t)).mul(0.006),
+    nz = mx_noise_float(vec3(p.x.mul(0.12), p.z.mul(0.12), t.add(7))).mul(0.006);
   const material = basic(
     Fn(() => {
       const n = normalize(vec3(nx, 1, nz)),
@@ -210,8 +209,8 @@ function reflectingPool(u, at) {
         up = reflect(v.negate(), n).y,
         sky = mix(u.fill.mul(1.25).add(vec3(0.16, 0.16, 0.17)), u.fill.mul(1.9), smoothstep(0, 0.6, up)),
         seen = mix(sky, mirror.rgb, step(depth.r, 0.99999)),
-        basin = vec3(0.06, 0.34, 0.33).mul(u.sunColor.mul(max(u.sun.y, 0)).mul(0.7).add(u.fill.mul(0.9))),
-        glint = pow(max(dot(reflect(v.negate(), n), u.sun), 0), 400).mul(6);
+        basin = vec3(0.012, 0.045, 0.04).mul(u.sunColor.mul(max(u.sun.y, 0)).mul(0.7).add(u.fill.mul(0.9))),
+        glint = pow(max(dot(reflect(v.negate(), n), u.sun), 0), 2000).mul(12);
       return mix(basin, seen, fres).add(u.sunColor.mul(glint));
     })(),
   );
