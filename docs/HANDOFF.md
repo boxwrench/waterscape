@@ -3,6 +3,25 @@
 The current state of the project and where to pick up. Add a short entry at the top for each pass; when this grows past a
 few screens, move older entries to `docs/archive/`. History through RP30 is in [`archive/HANDOFF-through-RP30.md`](./archive/HANDOFF-through-RP30.md).
 
+## Minecraft: Calaveras, Crystal Springs, the Pulgas Water Temple and HetchyCraft (2026-11-21, `task/MC7-pulgas-temple`)
+
+Two more reservoirs are playable Minecraft worlds, built in one step by
+[`build_reservoir.py`](../experimental/minecraft/build_reservoir.py) from a site file (crop, scale,
+traced dam with sources) and a palette: Calaveras ([MC2](./roadmap/tasks/MC2-calaveras.md), earth
+dam, Diablo oak) and Crystal Springs ([MC6](./roadmap/tasks/MC6-crystal-springs.md), 1888 gravity
+dam, Peninsula oak and Douglas-fir, the highway causeway the bundle lacks). Calaveras still builds
+byte for byte the same. [MC7](./roadmap/tasks/MC7-pulgas-temple.md) adds the Pulgas Water Temple to
+Crystal Springs through a site file `landmarks` list
+([`landmarks.py`](../experimental/minecraft/landmarks.py)): the temple from the maintainer's
+Blender model at 0.5 m per block, its pool, cypress and canal at 1 m per block, slid back along
+its axis to fit the bundle (about 139 m from its true spot). All three worlds are BlueMap web maps
+under a HetchyCraft front page with a voxel model per reservoir
+([`map/make_front.py`](../experimental/minecraft/map/README.md#front-page-several-reservoirs-on-one-site)),
+live on the maintainer's server. Branch `task/MC7-pulgas-temple` holds MC2, MC6 and MC7 (pushed, not
+merged). Next: the maintainer's in-game look at Calaveras and Crystal Springs; the causeway in the
+Crystal Springs bundle (the browser scene still runs the two lakes together); MC1 (one builder
+for every bundle without a hand-traced dam).
+
 ## Minecraft maps: MC0 and track MC (2026-11-18, `task/minecraft-accuracy`)
 
 The Minecraft experiment is now a roadmap track ([track MC](./roadmap/README.md#track-mc--playable-minecraft-maps)):

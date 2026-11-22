@@ -146,8 +146,8 @@ rules are the only source; worlds are built, never hand-edited. Minecraft Java 2
 | MC3 | "Make a playable map" section in `docs/make-a-waterscape.md`; link from the README | capable | MC1 | open |
 | MC4 | Sharing: a private, whitelisted Fabric server for a few players (setup notes from the Hetch Hetchy server) | small | MC1 | open |
 | MC5 | Rivers: a River Pulse place as a map; its data differs from reservoir bundles | capable | MC2 | later |
-| MC6 | [Crystal Springs Reservoir as a Minecraft world](tasks/MC6-crystal-springs.md): Peninsula oak and Douglas-fir palette, gravity dam from a site file, web map | capable | MC2; Crystal Springs bundle; dam traced into the site file | built on `task/MC6-crystal-springs`; in-game acceptance by the maintainer pending |
-| MC7 | [Pulgas Water Temple in the Crystal Springs world](tasks/MC7-pulgas-temple.md): temple from the maintainer's model at 1 m per block, reflecting pool, cypress, canal | capable | MC6 | built on `task/MC7-pulgas-temple`; in-game acceptance by the maintainer pending |
+| MC6 | [Crystal Springs Reservoir as a Minecraft world](tasks/MC6-crystal-springs.md): Peninsula oak and Douglas-fir palette, gravity dam from a site file, web map | capable | MC2; Crystal Springs bundle; dam traced into the site file | built on `task/MC6-crystal-springs`; web map live on the maintainer's server; in-game acceptance pending |
+| MC7 | [Pulgas Water Temple in the Crystal Springs world](tasks/MC7-pulgas-temple.md): temple from the maintainer's model at 0.5 m per block, reflecting pool, cypress and canal at 1 m per block | capable | MC6 | built on `task/MC7-pulgas-temple`; web map live on the maintainer's server; in-game acceptance pending |
 
 ## Track T — water level and timeline
 

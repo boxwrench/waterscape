@@ -70,16 +70,18 @@ The map shows blocks only: no animals, hikers or players, and simpler lighting t
    world's biome datapack (its palette's `minecraft:visual/sky_color`); the default is the Sierra's.
 3. Render once with `--serve`, find a good overview and a good eye-level spot in the browser, and
    copy their addresses (the part after `#<id>:`) into `viewpoints`. `start` is optional.
+   `places` (optional) lists landmarks as `{"label", "view"}`; the panel shows them as "See:"
+   links that move the camera there (Crystal Springs: the Pulgas Water Temple and the dam).
 4. Render again and host.
 
 ## Front page: several reservoirs on one site
 
 `make_front.py` builds a title page that links to each rendered map, with the maps in subfolders
-(`/hetch_hetchy/`, `/calaveras/`):
+(`/hetch_hetchy/`, `/calaveras/`, `/crystal_springs/`):
 
 ```
 python make_front.py --out build-site --map hetch_hetchy=build/run/web \
-  --map calaveras=build-calaveras/run/web --serve 8200
+  --map calaveras=build-calaveras/run/web --map crystal_springs=build-crystal_springs/run/web --serve 8200
 ```
 
 Each card shows the reservoir's name, place, headline and the facts its `sites/<id>.json` lists
