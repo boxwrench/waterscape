@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { LEVELS, QualityGovernor, forcedTier, startingLevel } from "../../renderer/engine/quality.js";
+import { CHOICES, LEVELS, QualityGovernor, SlowWatch, choiceWidth, forcedTier, startingLevel } from "../../renderer/engine/quality.js";
 
 // Feed frames of `ms` duration back to back from `start` until `until`; return level changes.
 function run(gov, ms, start, until) {
@@ -51,4 +51,28 @@ test("struggling only at the cheapest level above 60 ms", () => {
   const high = new QualityGovernor(3);
   run(high, 80, 0, 2900);
   assert.equal(high.struggling, false, "not at the cheapest level");
+});
+
+test("the explorer's Quality choices: full is high at the window's device pixels, up to 4K", () => {
+  assert.equal(CHOICES.full.tier, 2);
+  assert.equal(choiceWidth("full", 1280, 2), 2560);
+  assert.equal(choiceWidth("full", 3000, 2), 3840);
+  assert.equal(choiceWidth("full", 1440, 3), 2880, "pixel ratio capped at 2");
+  assert.equal(choiceWidth("full", 390, 3, true), 576, "touch screens capped at 1.5, in 64 px blocks");
+  assert.deepEqual([1536, 1152, 768].map((w) => [choiceWidth(String(w), 2560, 1), CHOICES[w].tier]), [[1536, 2], [1152, 1], [768, 0]]);
+  assert.equal(choiceWidth("1536", 900, 1), 896, "never wider than the screen");
+});
+
+test("slow watch: struggling after the settle and a full window over 60 ms, cleared by reset", () => {
+  const w = new SlowWatch();
+  let now = 0;
+  for (; now < 2900; now += 80) w.sample(80, now);
+  assert.equal(w.struggling, false, "not before 1 s settle + 2 s window");
+  for (; now < 4000; now += 80) w.sample(80, now);
+  assert.equal(w.struggling, true);
+  w.reset();
+  assert.equal(w.struggling, false);
+  const ok = new SlowWatch();
+  for (now = 0; now < 5000; now += 40) ok.sample(40, now);
+  assert.equal(ok.struggling, false, "slow but not struggling");
 });
