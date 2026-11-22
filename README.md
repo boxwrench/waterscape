@@ -100,9 +100,13 @@ The full guide, with field references and examples, is
 
 The same water-body data can also become a world you walk and fly through in **Minecraft Java
 Edition**: the lidar terrain, shoreline, dam and river, the biome's rock and trees, and optionally
-mapped roads and buildings from OpenStreetMap, all in ordinary blocks. Hetch Hetchy is the first
-one: a [demo world](experimental/minecraft/demo/README.md) of O'Shaughnessy Dam, the canyon below
-it and Kolana Rock.
+mapped roads and buildings from OpenStreetMap, all in ordinary blocks. Three are built so far:
+Hetch Hetchy (a [demo world](experimental/minecraft/demo/README.md) of O'Shaughnessy Dam, the
+canyon below it and Kolana Rock), Calaveras, and Crystal Springs with the Pulgas Water Temple. Each
+is also a 3D web map you can explore in a browser, gathered under the **HetchyCraft** front page
+([how it is made](experimental/minecraft/map/README.md)).
+
+![HetchyCraft: real reservoirs rebuilt block by block from public data, with a voxel model of Hetch Hetchy](previews/hetchycraft-front.png)
 
 **Play it on the server:** in Minecraft Java 26.3 choose Multiplayer → Add Server and enter
 `dedication-care.tun.ply.gg`. The server is whitelisted: try to join once, then ask the maintainer
@@ -114,12 +118,14 @@ Store edition) cannot join.
   before trying one. Mods are optional; Distant Horizons gives the long views. The
   [install guide](experimental/minecraft/README.md#install-guide-linux-and-windows) covers Linux
   and Windows, mod versions and a first run.
-- **Scale:** about 2 m per block across and 4 m per block up, so mountains are vertically
-  compressed; buildings use playable height. Terrain, water, dam and mapped features come from
+- **Scale:** Hetch Hetchy is about 2 m per block across and 4 m per block up, so its mountains
+  are vertically compressed and its buildings use playable height; Calaveras and Crystal Springs
+  are 4 m per block on every axis, with the Pulgas Water Temple enlarged for detail. Terrain, water, dam and mapped features come from
   the data; block choices, trees, the lake bed and building looks are illustrative.
-- **Status:** a working prototype, not yet a one-command builder for any water body. The plan to
-  get there — a builder that writes a fresh world from `data/<id>/`, then a second SFPUC
-  reservoir and a guide — is [track MC](docs/roadmap/README.md#track-mc--playable-minecraft-maps).
+- **Status:** a working prototype. Calaveras and Crystal Springs are built in one step from a site
+  file (crop, scale, a dam traced from public imagery) by `build_reservoir.py`; a builder that
+  needs no hand-traced dam, and a guide, are still to come in
+  [track MC](docs/roadmap/README.md#track-mc--playable-minecraft-maps).
   Start with the [experiment's README](experimental/minecraft/README.md).
 
 ## Agents: start here
