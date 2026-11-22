@@ -3,6 +3,13 @@
 The current state of the project and where to pick up. Add a short entry at the top for each pass; when this grows past a
 few screens, move older entries to `docs/archive/`. History through RP30 is in [`archive/HANDOFF-through-RP30.md`](./archive/HANDOFF-through-RP30.md).
 
+## Crystal Springs: midday by default, a still reflecting pool (2026-11-22, `task/D4-crystal-midday-pool`)
+
+[D4](./roadmap/tasks/D4-crystal-midday-pool.md) opens Crystal Springs at midday (golden hour's low
+sun shone down the pool axis and hid the temple from its viewpoint) and makes the reflecting pool
+glass-still: no ripple bends the mirror, the basin is dark through the water, and the sun reflects
+as a small disc. Next: the maintainer's look.
+
 ## Crystal Springs: the Pulgas Water Temple in the browser scene (2026-11-21, `task/D2-pulgas-temple`)
 
 [D2](./roadmap/tasks/D2-pulgas-temple.md) puts the temple into the browser's Crystal Springs
