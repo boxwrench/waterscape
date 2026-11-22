@@ -57,7 +57,10 @@ test("the explorer's Quality choices: full is high at the window's device pixels
   assert.equal(CHOICES.full.tier, 2);
   assert.equal(choiceWidth("full", 1280, 2), 2560);
   assert.equal(choiceWidth("full", 3000, 2), 3840);
+  assert.equal(choiceWidth("full", 1440, 3), 2880, "pixel ratio capped at 2");
+  assert.equal(choiceWidth("full", 390, 3, true), 576, "touch screens capped at 1.5, in 64 px blocks");
   assert.deepEqual([1536, 1152, 768].map((w) => [choiceWidth(String(w), 2560, 1), CHOICES[w].tier]), [[1536, 2], [1152, 1], [768, 0]]);
+  assert.equal(choiceWidth("1536", 900, 1), 896, "never wider than the screen");
 });
 
 test("slow watch: struggling after the settle and a full window over 60 ms, cleared by reset", () => {

@@ -254,7 +254,7 @@ try {
   const auto = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   await auto.goto(`${base}/renderer/explore.html`);
   await auto.waitForFunction(() => window.waterscapeDiagnostics?.ready, null, { timeout: 120000 });
-  const autoStart = await auto.evaluate(() => ({ ...window.waterscapeDiagnostics.quality, px: Math.round(innerWidth * devicePixelRatio) }));
+  const autoStart = await auto.evaluate(() => ({ ...window.waterscapeDiagnostics.quality, px: Math.min(3840, Math.floor((innerWidth * Math.min(devicePixelRatio, 2)) / 64) * 64) }));
   assert.equal(autoStart.auto, false, JSON.stringify(autoStart));
   assert.equal(autoStart.tier, 2, JSON.stringify(autoStart));
   await auto.waitForFunction((px) => window.waterscapeDiagnostics.width === px, autoStart.px);

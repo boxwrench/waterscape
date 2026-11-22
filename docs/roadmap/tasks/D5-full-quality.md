@@ -17,7 +17,11 @@ rates suffer.
    frame over 60 ms for 2 s); the governor stays for River Pulse and the journey's embedded view.
 2. `renderer/explore.js` / `explore.html`: the Resolution menu becomes Quality and sets tier and
    width; it opens at Full with no automatic stepping; a "Running slowly" tip suggests a lower
-   choice. The embedded view (no controls) keeps automatic quality.
+   choice, and a note under the menu says so at all times. The embedded view (no controls)
+   keeps automatic quality.
+4. No choice renders wider than the screen; widths are whole 64 px blocks (the water kernel
+   rejects others); Full caps the pixel ratio at 2, or 1.5 on touch screens as River Pulse's
+   scenes do on phones.
 3. Tests for the choices and the slow watch; `scripts/verify.mjs` checks the new default.
 
 ## Result
@@ -32,6 +36,12 @@ rates suffer.
     10 ms a frame; Balanced → medium · 1152 px, 5 ms; Performance → low · 768 px, 4.1 ms; the
     embedded view stays automatic; no errors. Median frame time by width at high, Crystal
     Springs temple view: 1152 px 6.4 ms, 1536 7.4, 1920 8.3, 2560 9.4.
+  - phone emulation (390 × 844 CSS px at 3×, touch): opens at high · 576 × 1248 px, no errors;
+    a real phone's GPU was not tried.
   - `npm test` (`scripts/verify.mjs`) not run: it needs Edge, which is not installed here.
-- Notes: a weak GPU now opens at full quality and must be lowered by hand (the tip says so);
-  the journey's live view is unchanged.
+- Notes:
+  - A weak GPU now opens at full quality and must be lowered by hand (the note and tip say so);
+    the journey's live view is unchanged.
+  - River Pulse is untouched: its scenes already render at the window's resolution (pixel ratio
+    capped at 1.25–1.5) with no quality menu; its Tuolumne dam view keeps the governor.
+  - At phone width the explorer's control and elevation panels overlap (as before this task).

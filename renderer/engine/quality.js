@@ -30,16 +30,20 @@ export function medianOf(values) {
   return sorted[sorted.length >> 1];
 }
 
-// The explorer's Quality choices: shader tier and render width ("full": the window's own
-// resolution in device pixels, up to 4K wide). It opens at full; the visitor may pick less.
+// The explorer's Quality choices: shader tier and render width. "full" is the window's own
+// resolution in device pixels (pixel ratio up to 2, or 1.5 on touch screens as River Pulse
+// does for phones; at most 4K wide). It opens at full; the visitor may pick less. No choice
+// renders wider than the screen needs.
 export const CHOICES = {
   full: { tier: 2, width: null },
   1536: { tier: 2, width: 1536 },
   1152: { tier: 1, width: 1152 },
   768: { tier: 0, width: 768 },
 };
-export function choiceWidth(value, cssWidth, pixelRatio) {
-  return CHOICES[value]?.width ?? Math.min(3840, Math.round(cssWidth * pixelRatio));
+// Widths are whole multiples of 64 pixels: the water kernel works in blocks.
+export function choiceWidth(value, cssWidth, pixelRatio, touch = false) {
+  const screen = Math.min(3840, Math.max(64, Math.floor((cssWidth * Math.min(pixelRatio, touch ? 1.5 : 2)) / 64) * 64));
+  return Math.min(CHOICES[value]?.width ?? screen, screen);
 }
 
 // Without automatic quality, watch for frames slow enough to suggest a lower choice: median

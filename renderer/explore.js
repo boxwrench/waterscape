@@ -70,7 +70,8 @@ function intro() {
 }
 $("season").addEventListener("change", () => body && intro());
 // The render width for the Quality choice (see CHOICES in engine/quality.js).
-const renderWidth = () => choiceWidth($("quality").value, innerWidth, devicePixelRatio);
+const renderWidth = () =>
+  choiceWidth($("quality").value, innerWidth, devicePixelRatio, matchMedia("(pointer: coarse)").matches);
 $("quality").onchange = () => {
   // A visitor's own choice wins over automatic quality and sets the shader tier and width.
   governor = null;
