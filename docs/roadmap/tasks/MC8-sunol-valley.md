@@ -73,8 +73,9 @@ Treatment Plant and the Sunol Valley Chloramination Facility.
 - Notes:
   - Terrain: 2 m 3DEP (1 m lidar here) averaged to the 4 m blocks in two lake windows, feathered
     over 400 m into 10 m 3DEP; fetched in 1,024 px tiles (the service fails on larger requests).
-  - Calaveras in the lidar is lower than in recent photographs (the survey dates from the dam's
-    rebuilding); the world follows the lidar, as the browser bundle does.
+  - Calaveras's lidar water (223.7 m, with the north arm at 221.5 m) covers less than the water in
+    the NAIP photograph; the survey dates were not checked. The world follows the lidar, as the
+    browser bundle does.
   - Tree density follows the browser's oak rules (as in the Calaveras world); the photographs
     show more open grass on south-facing slopes.
   - Creek lines are from OpenStreetMap (ODbL, attributed in `sites/sunol_valley.creeks.json`);
