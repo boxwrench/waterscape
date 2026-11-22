@@ -30,6 +30,42 @@ export function medianOf(values) {
   return sorted[sorted.length >> 1];
 }
 
+// The explorer's Quality choices: shader tier and render width ("full": the window's own
+// resolution in device pixels, up to 4K wide). It opens at full; the visitor may pick less.
+export const CHOICES = {
+  full: { tier: 2, width: null },
+  1536: { tier: 2, width: 1536 },
+  1152: { tier: 1, width: 1152 },
+  768: { tier: 0, width: 768 },
+};
+export function choiceWidth(value, cssWidth, pixelRatio) {
+  return CHOICES[value]?.width ?? Math.min(3840, Math.round(cssWidth * pixelRatio));
+}
+
+// Without automatic quality, watch for frames slow enough to suggest a lower choice: median
+// over STRUGGLE_MS for DOWN_WINDOW_MS, after SETTLE_MS from the start or the last reset.
+export class SlowWatch {
+  constructor() {
+    this.reset();
+  }
+
+  reset() {
+    this.samples = [];
+    this.since = null;
+    this.struggling = false;
+  }
+
+  sample(ms, now) {
+    if (this.since === null) this.since = now;
+    if (now - this.since < SETTLE_MS) return this.struggling;
+    this.samples.push({ ms, now });
+    this.samples = this.samples.filter((s) => now - s.now <= DOWN_WINDOW_MS);
+    if (now - this.samples[0].now >= DOWN_WINDOW_MS - 1)
+      this.struggling = medianOf(this.samples.map((s) => s.ms)) > STRUGGLE_MS;
+    return this.struggling;
+  }
+}
+
 export class QualityGovernor {
   constructor(level) {
     this.level = level;

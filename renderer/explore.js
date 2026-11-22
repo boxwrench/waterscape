@@ -1,6 +1,6 @@
 // The explore page: controls, input and readouts around the engine (renderer/engine/).
 import { formatElevation, formatLatLon } from "./terrain.js";
-import { QualityGovernor, TIER_NAMES, forcedTier, startingLevel } from "./engine/quality.js";
+import { CHOICES, QualityGovernor, SlowWatch, TIER_NAMES, choiceWidth, forcedTier, startingLevel } from "./engine/quality.js";
 import { loadBody, viewpoint } from "./engine/body.js";
 import { fly, viewRay } from "./engine/camera.js";
 import { createWaterscape } from "./engine/waterscape.js";
@@ -14,7 +14,10 @@ const bodyId = q.get("reservoir") || "calaveras",
 if (embedded) document.body.classList.add("embed");
 let body = null,
   ws = null,
+  // Automatic quality only in the journey's embedded view, which has no Quality control.
   governor = null,
+  forced = null,
+  slow = new SlowWatch(),
   failed = false,
   last = 0,
   hover = null,
@@ -66,13 +69,17 @@ function intro() {
     `${+$("season").value ? summerLabel() : "Spring green"} at ${body.terrain.meta.name}, from USGS lidar terrain.`;
 }
 $("season").addEventListener("change", () => body && intro());
+// The render width for the Quality choice (see CHOICES in engine/quality.js).
+const renderWidth = () => choiceWidth($("quality").value, innerWidth, devicePixelRatio);
 $("quality").onchange = () => {
-  // A visitor's own resolution choice wins over automatic quality.
+  // A visitor's own choice wins over automatic quality and sets the shader tier and width.
   governor = null;
   if (diag.quality) diag.quality.auto = false;
-  ws?.resize(+$("quality").value);
+  if (ws && forced === null) ws.state.quality = CHOICES[$("quality").value].tier;
+  slow.reset();
+  ws?.resize(renderWidth());
 };
-addEventListener("resize", () => ws?.resize(+$("quality").value));
+addEventListener("resize", () => ws?.resize(renderWidth()));
 function liveLabel() {
   return body ? `LIVE / ${body.terrain.meta.name.toUpperCase()}` : "LIVE";
 }
@@ -133,7 +140,12 @@ function updateGpu() {
   const { vendor, tier, width } = diag.quality,
     arch = ws.rt.describe().architecture;
   $("gpuChip").textContent = `${vendor}${arch ? " " + arch : ""} · ${TIER_NAMES[tier]} · ${width} px`;
-  $("gpuTip").hidden = tipDismissed() || !(vendor === "intel" || tier === 0);
+  // Slow frames suggest a lower Quality (the embedded view adapts itself); Intel, a faster GPU.
+  const slowTip = !embedded && diag.quality.struggling,
+    integrated = vendor === "intel" || (!!governor && tier === 0);
+  $("slowTip").hidden = !slowTip;
+  $("integratedTip").hidden = !integrated;
+  $("gpuTip").hidden = tipDismissed() || !(slowTip || integrated);
 }
 $("gpuTipDismiss").onclick = () => {
   try {
@@ -224,7 +236,8 @@ async function frame(now) {
           ws.resize(next.width);
         }
       }
-      Object.assign(diag.quality, { tier: state.quality, width: ws.width, struggling: !!governor?.struggling });
+      const struggling = governor ? governor.struggling : slow.sample(diag.frameMs, performance.now());
+      Object.assign(diag.quality, { tier: state.quality, width: ws.width, struggling });
       $("loading").hidden = true;
       $("status").textContent = state.playing ? liveLabel() : "PAUSED";
       const firstFrame = diag.startup.firstFrameMs === null;
@@ -288,14 +301,16 @@ try {
     engineMs: performance.now() - bodyLoaded,
     firstFrameMs: null, // milliseconds since this iframe's navigation, including module loading
   };
-  const vendor = ws.rt.describe().vendor,
-    forced = forcedTier(q.get("quality"));
-  if (forced === null) {
+  const vendor = ws.rt.describe().vendor;
+  forced = forcedTier(q.get("quality"));
+  // The explorer opens at full quality at the window's resolution; the visitor may pick less.
+  // A forced tier (?quality=low|medium|high) keeps its tier whatever width is chosen.
+  if (embedded && forced === null) {
     governor = new QualityGovernor(startingLevel(vendor));
     ws.state.quality = governor.current.tier;
     $("quality").value = String(governor.current.width);
-  } else ws.state.quality = forced;
-  diag.quality = { tier: ws.state.quality, width: +$("quality").value, auto: !!governor, vendor, struggling: false };
+  } else ws.state.quality = forced ?? CHOICES.full.tier;
+  diag.quality = { tier: ws.state.quality, width: renderWidth(), auto: !!governor, vendor, struggling: false };
   window.waterscapeLab = {
     ...ws.lab,
     state: ws.state,
@@ -334,7 +349,7 @@ try {
   $("waterLevel").textContent = formatElevation(terrain.waterLevel);
   $("dataLink").href = terrain.meta.service;
   labels();
-  ws.resize(+$("quality").value);
+  ws.resize(renderWidth());
   requestAnimationFrame(frame);
 } catch (e) {
   fail(e);

@@ -249,16 +249,22 @@ try {
     await tp.close();
   }
 
-  // Automatic quality: on by default, starts from the vendor, off after a manual resolution pick.
+  // Quality: the explorer opens at full (high tier at the window's device pixels), with no
+  // automatic quality; a lower choice lowers tier and width. The embedded view stays automatic.
   const auto = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   await auto.goto(`${base}/renderer/explore.html`);
   await auto.waitForFunction(() => window.waterscapeDiagnostics?.ready, null, { timeout: 120000 });
-  const autoStart = await auto.evaluate(() => ({ ...window.waterscapeDiagnostics.quality }));
-  assert.equal(autoStart.auto, true, JSON.stringify(autoStart));
-  assert.equal(autoStart.tier, autoStart.vendor === "nvidia" ? 2 : 1, JSON.stringify(autoStart));
+  const autoStart = await auto.evaluate(() => ({ ...window.waterscapeDiagnostics.quality, px: Math.round(innerWidth * devicePixelRatio) }));
+  assert.equal(autoStart.auto, false, JSON.stringify(autoStart));
+  assert.equal(autoStart.tier, 2, JSON.stringify(autoStart));
+  await auto.waitForFunction((px) => window.waterscapeDiagnostics.width === px, autoStart.px);
   assert.equal(typeof autoStart.struggling, "boolean");
-  await auto.selectOption("#quality", "1536");
-  assert.equal(await auto.evaluate(() => window.waterscapeDiagnostics.quality.auto), false);
+  await auto.selectOption("#quality", "1152");
+  await auto.waitForFunction(() => window.waterscapeDiagnostics.width === 1152);
+  assert.equal(await auto.evaluate(() => window.waterscapeLab.state.quality), 1);
+  await auto.goto(`${base}/renderer/explore.html?embed=1`);
+  await auto.waitForFunction(() => window.waterscapeDiagnostics?.ready, null, { timeout: 120000 });
+  assert.equal(await auto.evaluate(() => window.waterscapeDiagnostics.quality.auto), true);
   await auto.close();
   // GPU chip everywhere in 3D; the tip on Intel (the test browser's default GPU) until dismissed.
   const gpu = await browser.newPage({ viewport: { width: 1440, height: 900 } });
@@ -276,6 +282,7 @@ try {
   }));
   assert.ok(gpuState.shown, "chip visible in embed mode");
   assert.ok(gpuState.chip.includes(gpuState.vendor), JSON.stringify(gpuState));
+  // Embedded, the tip is for Intel or the cheapest automatic level.
   assert.equal(gpuState.tip, gpuState.vendor === "intel" || gpuState.tier === 0, JSON.stringify(gpuState));
   if (gpuState.tip) {
     assert.match(await gpu.textContent("#gpuTip"), /Running on integrated graphics/);

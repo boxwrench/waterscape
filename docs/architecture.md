@@ -97,7 +97,7 @@ and grass off their grounds.
 recoloured to the biome's albedo). The terrain may carry a fourth channel, `drawdown`
 (full-pool zone, 0–1), written by `pipeline/build.py` when `land.json` sets `ground.bathtub`.
 
-The page (`renderer/explore.js`) owns controls, input, readouts, the quality governor and
+The page (`renderer/explore.js`) owns controls, input, readouts, quality and
 journey messaging. It keeps `ws.settings` in sync with its controls and calls `ws.step(dt)`
 each animation frame.
 
@@ -119,9 +119,13 @@ Light comes from a six-float4 preset buffer shared by sky, land, water and caust
 ## Quality
 
 Tier 2 (high) is the full budget; medium and low shorten terrain shadows, reflection steps,
-and near-tree detail, and the governor also steps resolution. NVIDIA starts high,
-other vendors medium; frames over 33 ms step down, under 16 ms for 4 s step up once. The
-journey shows "struggling" only when the lowest level is still over 60 ms.
+and near-tree detail. The explorer opens at Full: tier 2 at the window's own resolution in
+device pixels (up to 4K wide), and only the visitor lowers it (High: tier 2 at 1536 px;
+Balanced: medium at 1152; Performance: low at 768); if the median frame stays over 60 ms it
+suggests a lower choice (`CHOICES` and `SlowWatch` in `renderer/engine/quality.js`). The
+journey's embedded view, which has no Quality control, keeps the automatic governor: NVIDIA
+starts high, other vendors medium; frames over 33 ms step down, under 16 ms for 4 s step up
+once, and it shows "struggling" only when the lowest level is still over 60 ms.
 
 ## The native host
 

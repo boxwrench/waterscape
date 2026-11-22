@@ -3,6 +3,14 @@
 The current state of the project and where to pick up. Add a short entry at the top for each pass; when this grows past a
 few screens, move older entries to `docs/archive/`. History through RP30 is in [`archive/HANDOFF-through-RP30.md`](./archive/HANDOFF-through-RP30.md).
 
+## Explorer: full quality by default (2026-11-22, `task/D5-full-quality`)
+
+[D5](./roadmap/tasks/D5-full-quality.md): the explorer opens at Full (high tier at the window's
+own resolution, up to 4K) instead of the automatic governor's 1152 px stretched to the screen;
+the Quality menu (Full, High, Balanced, Performance) lowers tier and width, and a tip suggests it
+when frames stay over 60 ms. The journey's embedded view keeps automatic quality. Next: the
+maintainer's look; `npm test` on a machine with Edge.
+
 ## Crystal Springs: midday by default, a still reflecting pool (2026-11-22, `task/D4-crystal-midday-pool`)
 
 [D4](./roadmap/tasks/D4-crystal-midday-pool.md) opens Crystal Springs at midday (golden hour's low
