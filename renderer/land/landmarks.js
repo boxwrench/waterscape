@@ -7,8 +7,8 @@
 // shadows; alpha 0.5 tags the pixels as already shaded for the water kernel (pack.js).
 import * as THREE from "../../vendor/three/three.webgpu.js";
 import {
-  attribute, positionWorld, normalWorld, cameraPosition, vec3, float, max, dot, normalize, mix,
-  smoothstep, step, fract, abs, pow, reflect, sqrt, mx_noise_float, time, Fn,
+  attribute, positionWorld, normalWorld, cameraPosition, vec2, vec3, float, max, dot, normalize, mix,
+  smoothstep, step, fract, abs, pow, reflect, sqrt, mx_noise_float, time, reflector, Fn,
 } from "../../vendor/three/three.tsl.js";
 
 const TAG = 0.5;
@@ -184,6 +184,40 @@ function waterMaterial(u, body, flow = 0) {
   );
 }
 
+// The reflecting pool: the scene mirrored in its surface (three.js's planar reflector, at full
+// resolution, barely rippled), blended with the painted turquoise basin by water's Fresnel
+// term (2% straight down, nearly all at grazing angles). Where the mirror sees no geometry it
+// shows a sky graded from the preset's fill colour; the kernel's own sky, haze and distant
+// crowns are not in it.
+function reflectingPool(u, at) {
+  const mirror = reflector({ resolutionScale: 1, depth: true, bounces: false }),
+    depth = mirror.getDepthNode();
+  mirror.target.rotateX(-Math.PI / 2);
+  mirror.target.position.copy(at);
+  const p = positionWorld,
+    t = time.mul(0.3),
+    nx = mx_noise_float(vec3(p.x.mul(1.1), p.z.mul(1.1), t)).mul(0.035),
+    nz = mx_noise_float(vec3(p.x.mul(1.1), p.z.mul(1.1), t.add(7))).mul(0.035),
+    ripple = vec2(nx, nz).mul(0.06);
+  // Only the colour is rippled: depth cannot be filtered, so a rippled depth lookup would
+  // leave blocky edges where the mirror changes from geometry to sky.
+  mirror.uvNode = mirror.uvNode.add(ripple);
+  const material = basic(
+    Fn(() => {
+      const n = normalize(vec3(nx, 1, nz)),
+        v = normalize(cameraPosition.sub(p)),
+        fres = pow(float(1).sub(max(dot(n, v), 0)), 5).mul(0.98).add(0.02),
+        up = reflect(v.negate(), n).y,
+        sky = mix(u.fill.mul(1.25).add(vec3(0.16, 0.16, 0.17)), u.fill.mul(1.9), smoothstep(0, 0.6, up)),
+        seen = mix(sky, mirror.rgb, step(depth.r, 0.99999)),
+        basin = vec3(0.06, 0.34, 0.33).mul(u.sunColor.mul(max(u.sun.y, 0)).mul(0.7).add(u.fill.mul(0.9))),
+        glint = pow(max(dot(reflect(v.negate(), n), u.sun), 0), 400).mul(6);
+      return mix(basin, seen, fres).add(u.sunColor.mul(glint));
+    })(),
+  );
+  return { material, target: mirror.target };
+}
+
 // Paving: pale concrete slabs in a grid along the axis.
 function pavingMaterial(u, f, albedo, slab) {
   const n = normalize(normalWorld),
@@ -337,7 +371,8 @@ export async function createLandmarks(terrain, structures, ground) {
   if (!list.length) return null;
   const u = ground.uniforms,
     group = new THREE.Group(),
-    meta = terrain.meta;
+    meta = terrain.meta,
+    pools = [];
   for (const lm of list) {
     if (lm.type !== "pulgas-temple") continue;
     const f = frame(lm, meta),
@@ -369,9 +404,15 @@ export async function createLandmarks(terrain, structures, ground) {
       [poolLo, poolLo + c, -ph, ph], [poolHi, poolHi + c, -ph, ph],
     ])
       group.add(new THREE.Mesh(slab(rect(f, s0, s1, t0, t1), top, 1.4), coping));
-    const water = new THREE.Mesh(slab(rect(f, poolLo + c, poolHi, -ph, ph), top - 0.12, 0.05), waterMaterial(u, [0.06, 0.34, 0.33]));
+    const surface = top - 0.12,
+      [pcx, pcz] = f.at((poolLo + c + poolHi) / 2, 0),
+      pool_ = reflectingPool(u, new THREE.Vector3(pcx, surface, pcz)),
+      still = waterMaterial(u, [0.06, 0.34, 0.33]),
+      water = new THREE.Mesh(slab(rect(f, poolLo + c, poolHi, -ph, ph), surface, 0.05), pool_.material);
     water.name = `${lm.name} reflecting pool`;
-    group.add(water);
+    group.add(water, pool_.target);
+    // The mirror re-renders the scene; far away or on the lowest tier, plain water (update()).
+    pools.push({ mesh: water, x: pcx, z: pcz, mirror: pool_.material, still });
 
     // Lavender beds either side of the path to the front steps: mounds inside a stone edge.
     const bed = forecourt.bed,
@@ -424,5 +465,12 @@ export async function createLandmarks(terrain, structures, ground) {
     canalWater.name = `${lm.name} canal`;
     group.add(canalWater);
   }
-  return { group };
+  return {
+    group,
+    update(state) {
+      // The mirror costs a second render of the scene: only within 500 m and above the lowest tier.
+      for (const pl of pools)
+        pl.mesh.material = state.quality > 0 && Math.hypot(state.x - pl.x, state.z - pl.z) < 500 ? pl.mirror : pl.still;
+    },
+  };
 }

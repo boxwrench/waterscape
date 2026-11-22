@@ -67,3 +67,14 @@ enlarged or moved.
     dams) and the bundle rebuilt, which re-fetches the terrain.
   - Cypress shapes and heights, lavender, paving and the stone colours are illustrative; the
     canal runs a little above the 10 m ground, which cannot hold its cut.
+
+## Reflections (maintainer's request after the first look)
+
+The pool now mirrors the scene: three.js's planar reflector (`reflector()` in the vendored
+three.js, full resolution, colour lightly rippled, depth unrippled so geometry and sky part
+cleanly), blended with the turquoise basin by water's Fresnel term; empty mirror pixels show a
+sky graded from the preset's fill colour. The land pass's hidden canvas is now sized with its
+render target, since the reflector sizes its own target from the canvas (it had been the
+default 300 × 150, which made the mirror blocky). The mirror renders only within 500 m and above
+the lowest quality tier. Measured here (RDNA4, high tier): 59.8 fps at the pool with the mirror,
+59.6 without, at the 60 fps cap; Calaveras and Hetch Hetchy unchanged, no errors.

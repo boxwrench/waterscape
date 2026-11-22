@@ -110,6 +110,9 @@ export async function createLandPass(rt, terrain, { biome, biomeBase, look, stru
       buffer = rt.createBuffer(w * h * 16);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
+      // The canvas is never shown, but render-to-texture helpers (the pool's mirror) size their
+      // targets from it, so keep it at the land pass's size.
+      renderer.setSize(w, h, false);
     },
     render(state) {
       // Our yaw turns the forward vector (sin yaw, ., -cos yaw); three's camera looks down -z.
@@ -119,6 +122,7 @@ export async function createLandPass(rt, terrain, { biome, biomeBase, look, stru
         trees?.update(state, season);
         treeRange = impostors ? impostors.update(state, trees.range) : (trees?.range ?? 0);
       } else treeRange = 0;
+      marks?.update(state);
       camera.position.set(state.x, state.y, state.z);
       camera.rotation.set(state.pitch, -state.yaw, 0);
       renderer.setRenderTarget(target);
