@@ -1,0 +1,122 @@
+{
+  "id": "crystal_springs",
+  "name": "Crystal Springs Reservoir - Waterscape",
+  "bundle": "data/crystal_springs",
+  "palette": "peninsula-oak-fir",
+  "crop": {
+    "note": "Scene metres from terrain.json's UTM origin (x east, z south) for the north-west corner, and the size in blocks. Covers both lakes (Lower and Upper Crystal Springs), the dam and the three browser viewpoints.",
+    "west": -3776,
+    "north": -5184,
+    "width": 1776,
+    "length": 2272
+  },
+  "metresPerBlock": 4,
+  "metresPerBlockNote": "4 m on all three axes keeps true proportions, as for Calaveras. See docs/roadmap/tasks/MC6-crystal-springs.md.",
+  "waterY": 65,
+  "seed": 88127,
+  "causeways": [
+    {
+      "name": "Highway causeway between the upper and lower lakes",
+      "centreUTM": [[557407.0, 4151754.0], [557377.0, 4151702.0], [557327.0, 4151629.0], [557287.0, 4151584.0], [557241.0, 4151536.0], [557222.0, 4151514.0]],
+      "width": 18,
+      "topElevation": 91.3,
+      "sources": {
+        "centre line, width": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer/exportImage?bbox=556767,4151084,557767,4152084&bboxSR=32610&imageSR=32610&size=1000,1000&format=jpg&bandIds=0,1,2&f=image",
+        "top elevation, width": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?bbox=556767,4151084,557767,4152084&bboxSR=32610&imageSR=32610&size=500,500&format=tiff&pixelType=F32&interpolation=RSP_BilinearInterpolation&f=image"
+      },
+      "note": "The bundle's 10 m grid and water outline run the two lakes together; the 1 m 3DEP surface has the causeway at 91.2 to 91.5 m, about 18 m wide above 88 m. Traced on the NAIP image; drawn as a road on a fill, illustrative."
+    }
+  ],
+  "landmarks": [
+    {
+      "type": "pulgas-temple",
+      "name": "Pulgas Water Temple",
+      "metresPerBlock": 1,
+      "templeMetresPerBlock": 0.5,
+      "scaleNote": "The maintainer's choice (task MC7): at the world's 4 m per block the temple would be a 3-block ring, so the forecourt, pool and cypress are built at 1 m per block, four times the land around them, and the temple itself at 0.5 m per block for its detail (twice the size of its setting; the setting moves out along the axis to make room). The complex is centred on its real middle, then slid back along its axis until it fits inside the crop (the bundle ends just east of the pool); the temple therefore stands about 35 blocks (139 m) west-southwest of its true spot, on its true axis, and the canal behind it is shorter than the real one.",
+      "templeUTM": [560369.1, 4148711.1],
+      "templeGround": 94.2,
+      "axis": [0.9616, 0.2745],
+      "pool": {"centreAlong": 38.1, "length": 38, "width": 13},
+      "cypress": {"rowOffset": 8.5, "spacing": 3.3, "height": [13, 16], "clearTrunk": 3},
+      "forecourt": {"plazaRadius": 8.5, "width": 15, "bedInner": 1.5, "bedOuter": 6.5, "bedFrom": 7.5, "bedTo": 17},
+      "canal": {"water": 3, "wall": 1, "centreUTM": [[560341.0, 4148700.0], [560221.0, 4148665.0], [560154.0, 4148648.0], [560116.0, 4148635.0]]},
+      "model": {
+        "unitMetres": 13.2,
+        "steps": {"radii": [0.50, 0.46, 0.42, 0.38], "z": [-0.378, -0.352, -0.329, -0.309, -0.293]},
+        "inlayRadius": 0.3635,
+        "columns": {"count": 10, "radius": 0.2525, "shaftRadius": 0.035, "capital": [0.092, 0.174]},
+        "entablature": {"radii": [0.202, 0.290]},
+        "architrave": {"z": [0.174, 0.198], "outerRadius": 0.293},
+        "drum": {"z": [0.197, 0.312], "outerRadius": 0.286},
+        "cornice": {"z": [0.313, 0.395], "outerRadius": 0.290},
+        "cresting": {"z": [0.317, 0.383], "radii": [0.282, 0.321], "count": 40},
+        "well": {"radii": [0.087, 0.118], "top": -0.212}
+      },
+      "blocks": {
+        "step": "polished_andesite",
+        "stepSlab": "polished_andesite_slab[type=bottom]",
+        "inlay": "terracotta",
+        "columnBase": "quartz_block",
+        "shaft": "quartz_pillar",
+        "capital": "chiseled_quartz_block",
+        "architrave": "smooth_quartz",
+        "drum": "smooth_quartz",
+        "cornice": "chiseled_quartz_block",
+        "wellWall": "quartz_bricks",
+        "wellCap": "smooth_quartz",
+        "grate": "iron_trapdoor[half=top]",
+        "baseSlab": "smooth_quartz_slab[type=bottom]",
+        "flareNorth": "quartz_stairs[facing=north,half=top]",
+        "flareSouth": "quartz_stairs[facing=south,half=top]",
+        "flareEast": "quartz_stairs[facing=east,half=top]",
+        "flareWest": "quartz_stairs[facing=west,half=top]",
+        "meander": "chiseled_quartz_block",
+        "corniceMoulding": "quartz_bricks",
+        "crestingBase": "smooth_quartz",
+        "cresting": "chiseled_quartz_block",
+        "crestingSlab": "smooth_quartz_slab[type=bottom]",
+        "paving": "smooth_stone",
+        "coping": "smooth_quartz",
+        "poolFloor": "light_blue_terracotta",
+        "bedEdge": "stone_brick_slab[type=bottom]",
+        "lavender": "allium",
+        "cypressTrunk": "pale_oak_log",
+        "cypressLeaves": "azalea_leaves",
+        "canalWall": "stone_bricks",
+        "canalFloor": "stone_bricks"
+      },
+      "sources": {
+        "temple centre, pool, cypress spacing, canal line, landing ring": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer/exportImage?bbox=560071,4148460,560571,4148960&bboxSR=32610&imageSR=32610&size=1000,1000&format=jpg&bandIds=0,1,2&f=image",
+        "ground elevations": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?bbox=560071,4148460,560571,4148960&bboxSR=32610&imageSR=32610&size=500,500&format=tiff&pixelType=F32&interpolation=RSP_BilinearInterpolation&f=image",
+        "location, ten Corinthian columns, reflecting pool lined with cypress, 800 ft canal to the reservoir": "https://en.wikipedia.org/wiki/Pulgas_Water_Temple",
+        "proportions": "https://github.com/boxwrench/water_temple (assets/temple.glb, the maintainer's Blender reconstruction; heights and radii in model units)",
+        "setting (rows of cypress, long reflecting pool; the story's photograph: turquoise pool, white coping, cypress taller than the temple with bare grey trunks, lavender either side of the front steps)":"https://www.sfpuc.gov/about-us/news/first-drop-lasting-legacy-pulgas-water-temple-honored-water-landmark"
+      },
+      "note": "Temple centre from the NAIP image (2 m from Wikipedia's coordinates). Pool: the turquoise area on NAIP, 38 by 13 m, its long axis (axis, east and north components) passing through the temple, its centre 38.1 m from the temple's. Cypress: rows about 2 m outside the pool's long sides, about 3.3 m apart (the period of the crowns on NAIP); heights illustrative. One model unit is 13.2 m: the landing's terracotta ring (model radius 0.3635) measures 4.8 m in radius on NAIP. The canal is traced on NAIP from behind the temple to its mouth (it runs within 2 degrees of the pool axis), then carried on to the nearest lake water of the world, whose shoreline (from the bundle) lies about 50 blocks west of the real mouth; it is drawn with water, although the temple's own flow was diverted in 2004. Blocks are illustrative."
+    }
+  ],
+  "dam": {
+    "name": "Lower Crystal Springs Dam",
+    "nid": "CA00127",
+    "type": "Gravity",
+    "heightFt": 149,
+    "lengthFt": 600,
+    "completed": 1888,
+    "crestUTM": [[556322.0, 4153815.0], [556328.0, 4153778.0], [556348.0, 4153728.0], [556377.0, 4153688.0], [556406.0, 4153658.0]],
+    "utmZone": 10,
+    "crestElevation": 95.6,
+    "crestWidth": 12,
+    "downstreamSlope": 0.75,
+    "basin": {
+      "centreUTM": [[556383.0, 4153745.5], [556410.0, 4153759.5]],
+      "width": 43
+    },
+    "sources": {
+      "type, height, length, completed": "https://geospatial.sec.usace.army.mil/dls/rest/services/NID/National_Inventory_of_Dams_Public_Service/FeatureServer/0/query?where=NIDID%3D%27CA00127%27&outFields=*&f=json",
+      "crest line, stilling basin": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer/exportImage?bbox=555907,4153172,556907,4154172&bboxSR=32610&imageSR=32610&size=1000,1000&format=jpg&bandIds=0,1,2&f=image",
+      "crest elevation, crest position": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?bbox=555907,4153172,556907,4154172&bboxSR=32610&imageSR=32610&size=500,500&format=tiff&pixelType=F32&interpolation=RSP_BilinearInterpolation&f=image"
+    },
+    "note": "Crest traced on the 1 m NAIP image, then moved onto the 3DEP ridge (the photo shows the crest about 10 m east of the lidar ridge, as tall structures lean in an orthophoto): 182 m against NID's 600 ft; crest elevation is the 3DEP maximum along it (95.2 to 95.7 m). The creek below the dam is at about 48 m in 3DEP, so the dam stands about 47 m against NID's 149 ft. The stilling basin at the toe is traced on the same image. Crest width and the downstream slope (0.75 horizontal to 1 vertical, a typical masonry gravity profile) are estimates; the spillway is drawn as the part of the stepped face above the basin. Illustrative, not as-built drawings."
+  }
+}

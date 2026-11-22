@@ -3,13 +3,15 @@
 # without the optional live-player proxy (a static map has no live players).
 # Replace the domain and the folder; Caddy fetches the HTTPS certificate itself once DNS points here.
 map.example.org {
-	# The contents of build/run/web (index.html at the top).
+	# The front page folder (make_front.py --out, copied with rsync -L) with one map per
+	# reservoir under /<id>/; or a single map's build/run/web.
 	root * /srv/waterscape-map
 	file_server
 
 	# BlueMap stores textures.json and the .prbm tiles gzip-compressed: serve the .gz file
-	# (204 if none) and label it so the browser unpacks it.
-	@gz path /maps/*/textures.json *.prbm
+	# (204 if none) and label it so the browser unpacks it. Suffix matches, so maps in
+	# subfolders are covered too.
+	@gz path */textures.json *.prbm
 	handle @gz {
 		try_files {path}.gz =204
 		header Content-Encoding gzip

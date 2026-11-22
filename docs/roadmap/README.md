@@ -142,10 +142,12 @@ rules are the only source; worlds are built, never hand-edited. Minecraft Java 2
 | MC0d | Look and life: Sierra biome colours (datapack), a resource pack painted from code (black bear, mountain lion, rainbow trout, hikers, granite, ponderosa pine, black oak), area-appropriate wildlife and hikers ([`pack/`](../../experimental/minecraft/pack/README.md), `plan_animals.py`) | capable | MC0b | built and checked on a test server 2026-11-18; awaiting the maintainer's look in game, then hosting the pack and going live |
 | MC0e | Web map: a world as a 3D browser map anyone can explore without Minecraft (BlueMap, lit with Chunky, a description panel and a first-person button; [`map/`](../../experimental/minecraft/map/README.md)) | capable | MC0b | built and accepted by the maintainer 2026-11-19; hosting on the maintainer's own Caddy server next |
 | MC1 | [One builder: a fresh world from `data/<id>/`](tasks/MC1-minecraft-builder.md) | capable | MC0 merged | open |
-| MC2 | A second SFPUC reservoir (Calaveras or Crystal Springs): biome palette, embankment dam profile, site settings | capable | MC1; that reservoir's dam in `structures.json` | open |
+| MC2 | [Calaveras Reservoir as a Minecraft world](tasks/MC2-calaveras.md): Diablo oak palette, dam from a site file, browser tree placement | capable | Calaveras bundle; dam traced into the site file | repaired on `task/MC2-calaveras`; web map live on the maintainer's server |
 | MC3 | "Make a playable map" section in `docs/make-a-waterscape.md`; link from the README | capable | MC1 | open |
 | MC4 | Sharing: a private, whitelisted Fabric server for a few players (setup notes from the Hetch Hetchy server) | small | MC1 | open |
 | MC5 | Rivers: a River Pulse place as a map; its data differs from reservoir bundles | capable | MC2 | later |
+| MC6 | [Crystal Springs Reservoir as a Minecraft world](tasks/MC6-crystal-springs.md): Peninsula oak and Douglas-fir palette, gravity dam from a site file, web map | capable | MC2; Crystal Springs bundle; dam traced into the site file | built on `task/MC6-crystal-springs`; web map live on the maintainer's server; in-game acceptance pending |
+| MC7 | [Pulgas Water Temple in the Crystal Springs world](tasks/MC7-pulgas-temple.md): temple from the maintainer's model at 0.5 m per block, reflecting pool, cypress and canal at 1 m per block | capable | MC6 | built on `task/MC7-pulgas-temple`; web map live on the maintainer's server; in-game acceptance pending |
 
 ## Track T — water level and timeline
 

@@ -1,0 +1,45 @@
+{
+  "id": "peninsula-oak-fir",
+  "note": "Blocks for the browser's Peninsula materials (renderer/land/ground.js, spring grass, the default season in land.json; renderer/engine/look.js). Grass is the ground; soil only on the bank and in patches; rock only where the slope rule puts it. Approximate and illustrative.",
+  "biome": "minecraft:forest",
+  "biomeColours": {
+    "note": "The datapack redefines the world's biome with these colours. Grass and oak leaves take the tint; the grass texture darkens it, so the grass colour is brighter than the browser's spring ground (#659530 to #95b345 in sRGB). Spruce leaves (Douglas-fir) keep their fixed colour. Green-tinted water for land.json's 'green' optics; a pale marine-layer fog.",
+    "effects": {
+      "grass_color": "#94bb4c",
+      "foliage_color": "#4d6a2a",
+      "dry_foliage_color": "#8a8a52",
+      "water_color": "#3c6f62"
+    },
+    "attributes": {
+      "minecraft:visual/sky_color": "#86b4e4",
+      "minecraft:visual/fog_color": "#e2e6e8",
+      "minecraft:visual/water_fog_color": "#1d4a40"
+    }
+  },
+  "ground": {
+    "grass": ["grass_block"],
+    "soil": ["coarse_dirt", "rooted_dirt"],
+    "rock": ["stone", "andesite", "tuff", "stone", "andesite"],
+    "bed": ["gravel", "mud", "coarse_dirt"],
+    "under": "dirt"
+  },
+  "plants": {
+    "note": "Green grass and a few ferns on top of grass blocks.",
+    "share": 0.3,
+    "blocks": ["short_grass", "short_grass", "short_grass", "fern"]
+  },
+  "trees": {
+    "note": "Species and weights follow land.json and biome.json (coast-live 0.9, douglas-fir 0.1, grouped in stands). Heights in metres; crowns use oakSite's radius. Douglas-fir is drawn as a cone.",
+    "coast-live": {"log": "dark_oak_log", "leaves": "dark_oak_leaves", "height": [8, 14]},
+    "douglas-fir": {"log": "spruce_log", "leaves": "spruce_leaves", "height": [24, 40], "shape": "cone"}
+  },
+  "causeway": {"road": "gray_concrete", "edge": "cobblestone"},
+  "dam": {
+    "crest": "smooth_stone",
+    "crestEdge": "smooth_stone",
+    "riprap": ["stone_bricks"],
+    "face": "stone_bricks",
+    "spillway": "smooth_stone",
+    "spillwayWall": "stone_bricks"
+  }
+}

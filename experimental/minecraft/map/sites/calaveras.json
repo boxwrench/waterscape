@@ -1,0 +1,13 @@
+{
+  "id": "calaveras",
+  "start": [700, 800],
+  "sky": "#78a8e8",
+  "facts": ["New dam", "Listed capacity"],
+  "data": "Dam traced on USGS NAIP imagery; its facts from the National Inventory of Dams.",
+  "illustrative": "Lake bed, oak shapes, the dam's faces and the spillway's walls are illustrative.",
+  "art": {"columns": 72, "maxExaggeration": 3.0, "margin": 0.3},
+  "viewpoints": {
+    "overview": "720:65:820:1150:0:0.8:0:0:perspective",
+    "first_person": "520:80:420:0:0:1.45:0:0:free"
+  }
+}

@@ -5,10 +5,15 @@ Read the repository root [AGENTS.md](../../AGENTS.md),
 [README](README.md) before changing the experiment. These instructions supplement the root
 instructions and the user's request.
 
+0. **Start from a task file.** Every new world or reservoir has one in `docs/roadmap/tasks/`
+   (Calaveras: [MC2](../../docs/roadmap/tasks/MC2-calaveras.md)). If none exists, or its
+   **Needs** are not met, stop and report. A missing dam, palette or fact is a stop, not a
+   reason to build without it.
 1. **Inspect inputs first.** Identify the reservoir, requested landmarks and bounding box.
    Read `data/<id>/terrain.json`, `source.json`, `land.json`, biome metadata and any structure
    metadata. Distinguish measured terrain from authored or procedural setting. Do not assume
-   every reservoir includes Hetch Hetchy's dam, biome, drawdown or detail tiles.
+   every reservoir includes Hetch Hetchy's dam, biome, drawdown or detail tiles. Look at
+   `aerial.jpg` and `poster.jpg`: they are what the world has to resemble.
 2. **Preserve geography.** Record map projection, coordinate conventions, horizontal and vertical
    scales, world height range, clipping, water level and known landmark coordinates. Compare real
    and block distances. Improve distant visibility through appropriate rendering settings before
@@ -16,7 +21,10 @@ instructions and the user's request.
 3. **Use Waterscape first.** Decode the terrain channels using the current repository's
    `pipeline/dem.py` and `renderer/terrain.js`; the fourth drawdown channel is optional despite
    some metadata descriptions saying three channels. Translate biome and tree rules into an
-   explicitly approximate block palette. ESA WorldCover or imagery can be an optional comparison,
+   explicitly approximate block palette, kept as data in `palettes/<biome>.json`. Translate
+   faithfully: what is the base material in the browser stays the base in Minecraft (in
+   `ground.js` that is grass; soil is only the bank and small patches). Keep the browser's
+   spacing rules in metres (`OAK_CELL` is 9 m) and convert to blocks only when placing. ESA WorldCover or imagery can be an optional comparison,
    not a mandatory dependency or an exact record of every tree or surface.
 4. **Keep assumptions visible.** The lidar terrain does not establish underwater bathymetry.
    Label synthetic lake bottoms, dam cross-sections, tree models and artistic materials. Do not
@@ -39,6 +47,8 @@ instructions and the user's request.
    palette, water and heightmaps. Open a copy in the target version when feasible; capture fixed
    in-game viewpoints, test travel and performance, and report what was actually observed.
    An overhead raster is not a Minecraft screenshot. Label any untested step or compatibility.
+   The visual gate is a side-by-side: the overhead render beside the same crop of `aerial.jpg`,
+   judged against the task's pass criteria. Valid NBT is not a pass.
 8. **Make the workflow reusable.** Put portable code, tests and reservoir-specific configuration
    in this experiment rather than copying Hetch Hetchy constants. Record dependencies and
    versions; retain the source links and settings used for each output. Update the README when
