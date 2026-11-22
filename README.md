@@ -11,6 +11,8 @@ status for each resource.
 An [experimental Minecraft Java workflow](experimental/minecraft/README.md) explores converting
 Waterscape terrain and reservoir settings into playable block landscapes.
 
+Working on this with a coding agent? Start at [Agents: start here](#agents-start-here).
+
 | Experience | What it shows | Status |
 |---|---|---|
 | [Reservoirs](https://boxwrench.github.io/waterscape/) | Calaveras, San Antonio, Crystal Springs, San Andreas and Hetch Hetchy (with O'Shaughnessy Dam): lidar landscapes, sourced context, modeled water optics and aerial maps | Live journey and WebGPU explorer |
@@ -119,6 +121,21 @@ Store edition) cannot join.
   get there — a builder that writes a fresh world from `data/<id>/`, then a second SFPUC
   reservoir and a guide — is [track MC](docs/roadmap/README.md#track-mc--playable-minecraft-maps).
   Start with the [experiment's README](experimental/minecraft/README.md).
+
+## Agents: start here
+
+1. **Read [AGENTS.md](AGENTS.md)** (setup, the checks with their passing output, and the rules:
+   one task per branch, never push or merge, never invent a number), then
+   [docs/HANDOFF.md](docs/HANDOFF.md) for the current state.
+2. **Find your task file** in [`docs/roadmap/tasks/`](docs/roadmap/tasks/) (the
+   [roadmap](docs/roadmap/README.md) lists them by track). Its **Needs** line says what must exist
+   first. If there is no task file for what you were asked, or a need is missing, stop and report
+   rather than work around it.
+3. **Read the guide for your area:** [Making Water Visible](docs/making-water-visible.md) before
+   adding a data source, scientific claim or visual binding; [docs/river-pulse/](docs/river-pulse/README.md)
+   for any River Pulse work; the Minecraft README's
+   [agent section](experimental/minecraft/README.md#agents-start-here) for playable maps.
+4. **Run every check the task lists**, read the output, and append a **Result** to the task file.
 
 ## Run locally
 
