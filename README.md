@@ -103,10 +103,10 @@ Edition**: the lidar terrain, shoreline, dam and river, the biome's rock and tre
 mapped roads and buildings from OpenStreetMap, all in ordinary blocks. Three are built so far:
 Hetch Hetchy (a [demo world](experimental/minecraft/demo/README.md) of O'Shaughnessy Dam, the
 canyon below it and Kolana Rock), Calaveras, and Crystal Springs with the Pulgas Water Temple. Each
-is also a 3D web map you can explore in a browser, gathered under the **HetchyCraft** front page
+is also a 3D web map you can explore in a browser, gathered under the **[HetchyCraft](https://hetchycraft.title22.org/)** front page
 ([how it is made](experimental/minecraft/map/README.md)).
 
-![HetchyCraft: real reservoirs rebuilt block by block from public data, with a voxel model of Hetch Hetchy](previews/hetchycraft-front.png)
+[![HetchyCraft: real reservoirs rebuilt block by block from public data, with a voxel model of Hetch Hetchy](previews/hetchycraft-front.png)](https://hetchycraft.title22.org/)
 
 **Play it on the server:** in Minecraft Java 26.3 choose Multiplayer → Add Server and enter
 `dedication-care.tun.ply.gg`. The server is whitelisted: try to join once, then ask the maintainer
