@@ -7,6 +7,7 @@ import {
   sin, time, instanceIndex, instanceColor, If, Discard, uv,
 } from "../../vendor/three/three.tsl.js";
 import { oaksNear, standPick } from "./oak-placement.js";
+import { inClearing } from "./clearings.js";
 import { landLook, pickSpecies, speciesThresholds } from "../engine/look.js";
 
 // Near-oak range (m) per quality tier; the kernel fades its crowns in just inside this.
@@ -34,7 +35,7 @@ async function loadVariant(biomeBase, v) {
   return { ...v, branches: part(v.parts.branches), leaves: part(v.parts.leaves) };
 }
 
-export async function createTrees(terrain, biome, biomeBase, ground, look = landLook(null)) {
+export async function createTrees(terrain, biome, biomeBase, ground, look = landLook(null), clearings = []) {
   const baked = biome.trees?.baked ?? [];
   if (!baked.length) return null;
   // Species and variation order come from the full-detail metadata, regardless of which
@@ -124,6 +125,7 @@ export async function createTrees(terrain, biome, biomeBase, ground, look = land
   function rebuild(x, z, tier) {
     for (const m of meshes) m.b.count = m.l.count = 0;
     for (const site of oaksNear(terrain, x, z, range, look.cover, look.bare)) {
+      if (inClearing(clearings, site.x, site.z, site.radius * 0.5)) continue;
       const s = species[pickSpecies(thresholds, standPick(site.x, site.z, site.pick, look.stands))],
         list = bySpecies[s],
         full = list[Math.floor(site.turn * 997) % list.length],

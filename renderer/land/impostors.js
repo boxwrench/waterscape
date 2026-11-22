@@ -11,13 +11,14 @@ import {
   If, Discard, select, uv,
 } from "../../vendor/three/three.tsl.js";
 import { OAK_CELL } from "./oak-placement.js";
+import { clearingNode } from "./clearings.js";
 import { landLook, speciesThresholds } from "../engine/look.js";
 
 // Impostor range (m) per quality tier.
 export const IMPOSTOR_RANGE = [250, 900, 1500];
 const TAU = Math.PI * 2;
 
-export function createImpostors(terrain, biome, biomeBase, ground, speciesOrder, look = landLook(null)) {
+export function createImpostors(terrain, biome, biomeBase, ground, speciesOrder, look = landLook(null), clearings = []) {
   const imp = biome.trees?.impostors,
     tex = biome.trees?.textures;
   if (!imp?.rows?.length || !tex?.impostorAlbedo) return null;
@@ -119,7 +120,7 @@ export function createImpostors(terrain, biome, biomeBase, ground, speciesOrder,
         .mul(float(1).sub(sm(0.25, 0.42, float(1).sub(float(6).div(len))).mul(look.bare)))
         .mul(sm(10, 35, g.y)),
       d = vec2(x, z).sub(p.cam).length(),
-      drawn = hash(cx, cz).lessThanEqual(density).and(d.greaterThanEqual(p.inner)).and(d.lessThan(p.outer)),
+      drawn = hash(cx, cz).lessThanEqual(density).and(d.greaterThanEqual(p.inner)).and(d.lessThan(p.outer)).and(clearingNode(clearings, x, z, 3).lessThan(0.5)),
       radius = hash(cx.add(11), cz.add(5)).mul(3.2).add(3.4),
       pick = hash(cx.add(5), cz.add(91)),
       turn = hash(cx.sub(7), cz.add(3)),

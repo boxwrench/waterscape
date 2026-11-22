@@ -9,6 +9,7 @@ import { createGrass } from "./grass.js";
 import { createTrees } from "./trees.js";
 import { createImpostors } from "./impostors.js";
 import { createStructures } from "./structures.js";
+import { createLandmarks, landmarkClearings } from "./landmarks.js";
 
 const NEAR = 1,
   FAR = 40000,
@@ -33,18 +34,23 @@ export async function createLandPass(rt, terrain, { biome, biomeBase, look, stru
   const ground = createGroundMaterial(terrain, biomeBase, biome, look, detail),
     scene = new THREE.Scene();
   scene.add(new THREE.Mesh(geometry, ground.material));
-  const grass = createGrass(terrain, ground.terrainTex, ground.lightTex, ground.uniforms, look);
+  // Landmarks keep their grounds free of oaks and grass (clearings.js).
+  const clearings = landmarkClearings(structures, terrain.meta, terrain);
+  const grass = createGrass(terrain, ground.terrainTex, ground.lightTex, ground.uniforms, look, clearings.grass);
   scene.add(grass.mesh);
   let grassTier = -1;
   // Oak meshes near the camera (none if the biome has no baked trees).
-  const trees = await createTrees(terrain, biome, biomeBase, ground, look);
+  const trees = await createTrees(terrain, biome, biomeBase, ground, look, clearings.trees);
   if (trees) scene.add(trees.group);
   // Photographed oaks from the mesh range out to the impostor range.
-  const impostors = trees ? createImpostors(terrain, biome, biomeBase, ground, trees.species, look) : null;
+  const impostors = trees ? createImpostors(terrain, biome, biomeBase, ground, trees.species, look, clearings.trees) : null;
   if (impostors) scene.add(impostors.mesh);
   // Dams (data/<id>/structures.json), always shown.
   const built = await createStructures(terrain, structures, ground);
   if (built) scene.add(built.group);
+  // Landmarks (structures.json "landmarks", landmarks.js): the Pulgas Water Temple.
+  const marks = await createLandmarks(terrain, structures, ground);
+  if (marks) scene.add(marks.group);
   let treeRange = 0,
     treesOn = true;
   let season = 1;

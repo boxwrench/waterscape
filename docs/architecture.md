@@ -90,6 +90,9 @@ origin at the water's centroid; `terrain.json` records the UTM zone and origin.
 
 `renderer/land/structures.js` builds a body's `structures.json`: gravity dams swept along their
 crest, outlet plumes and a wet stain on the face, and still river ribbons below a dam.
+`renderer/land/landmarks.js` draws its landmarks (the Pulgas Water Temple from a baked mesh, its
+pool, cypress, paving and canal), and `renderer/land/clearings.js` keeps oak meshes, impostors
+and grass off their grounds.
 `renderer/land/granite.js` shades granite biomes' rock from photographs (triplanar, untiled,
 recoloured to the biome's albedo). The terrain may carry a fourth channel, `drawdown`
 (full-pool zone, 0–1), written by `pipeline/build.py` when `land.json` sets `ground.bathtub`.

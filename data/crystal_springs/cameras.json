@@ -26,6 +26,15 @@
       "pitch": -0.42,
       "speed": 4,
       "label": "Shoreline"
+    },
+    "temple": {
+      "x": 3224,
+      "z": 3193,
+      "above": 1.7,
+      "yaw": -1.85,
+      "pitch": -0.02,
+      "speed": 4,
+      "label": "Pulgas Water Temple"
     }
   },
   "flyover": {

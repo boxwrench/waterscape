@@ -1,0 +1,77 @@
+{
+  "landmarks": [
+    {
+      "type": "pulgas-temple",
+      "name": "Pulgas Water Temple",
+      "mesh": "pulgas-temple.mesh.gz",
+      "unitMetres": 13.2,
+      "radius": 6.6,
+      "centreUTM": [
+        560369.1,
+        4148711.1
+      ],
+      "utmZone": 10,
+      "ground": 94.2,
+      "axis": [
+        0.9616,
+        0.2745
+      ],
+      "pool": {
+        "centreAlong": 38.1,
+        "length": 38,
+        "width": 13,
+        "coping": 0.6
+      },
+      "cypress": {
+        "rowOffset": 8.5,
+        "spacing": 3.3,
+        "height": [
+          13,
+          16
+        ],
+        "clearTrunk": 3,
+        "crownRadius": 1.1
+      },
+      "forecourt": {
+        "plazaRadius": 8.5,
+        "width": 15,
+        "bed": {
+          "from": 7.5,
+          "to": 17,
+          "inner": 1.5,
+          "outer": 6.5
+        }
+      },
+      "canal": {
+        "centreUTM": [
+          [
+            560341.0,
+            4148700.0
+          ],
+          [
+            560221.0,
+            4148665.0
+          ],
+          [
+            560154.0,
+            4148648.0
+          ],
+          [
+            560116.0,
+            4148635.0
+          ]
+        ],
+        "width": 3,
+        "wall": 0.6
+      },
+      "sources": {
+        "temple centre, pool, cypress spacing, canal line, landing ring (scale)": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer/exportImage?bbox=560071,4148460,560571,4148960&bboxSR=32610&imageSR=32610&size=1000,1000&format=jpg&bandIds=0,1,2&f=image",
+        "ground elevation": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?bbox=560071,4148460,560571,4148960&bboxSR=32610&imageSR=32610&size=500,500&format=tiff&pixelType=F32&interpolation=RSP_BilinearInterpolation&f=image",
+        "location, ten Corinthian columns, reflecting pool lined with cypress, canal to the reservoir": "https://en.wikipedia.org/wiki/Pulgas_Water_Temple",
+        "temple geometry": "https://github.com/boxwrench/water_temple (lod/Pulgas-Water-Temple-lod86k-s90.blend, the maintainer's Blender reconstruction, converted by pipeline/structure_mesh.py)",
+        "setting (rows of cypress, long reflecting pool)": "https://www.sfpuc.gov/about-us/news/first-drop-lasting-legacy-pulgas-water-temple-honored-water-landmark"
+      },
+      "note": "Temple centre from NAIP (2 m from Wikipedia's coordinates); its model is scaled at 13.2 m per model unit, the landing's terracotta ring (model radius 0.3635) measuring 4.8 m in radius on NAIP; radius is its lowest step (model 0.5). Pool: the turquoise area on NAIP, 38 by 13 m, its long axis (axis: east and north components) through the temple, its centre 38.1 m along it. Cypress: rows about 2 m outside the pool's long sides, 3.3 m apart (the crowns' period on NAIP); heights, crown radius and the 3 m bare trunk are illustrative, from photographs. Canal: traced on NAIP from behind the temple to its mouth, about 5 m across its walls; where the bundle's shoreline lies beyond the mouth the renderer carries it on to the water. Forecourt, plaza and lavender beds: illustrative, from photographs and the paved area on NAIP. Ground elevation: 3DEP at the temple centre."
+    }
+  ]
+}

@@ -18,7 +18,8 @@ export async function loadBody(id, onProgress = () => {}) {
       json(`../biomes/${terrain.meta.biome}/biome.json`),
     ]),
     // Dams and other structures (renderer/land/structures.js), where land.json lists them.
-    structures = land.structures ? await json("structures.json") : null,
+    // `base` lets landmarks.js find files next to structures.json (meshes).
+    structures = land.structures ? { ...(await json("structures.json")), base: base.href } : null,
     // 1 m relief tiles (pipeline/detail.py), where land.json lists them.
     detail = land.detail?.length ? await json("detail.json").then((d) => ({
       ...d,

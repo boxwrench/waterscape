@@ -3,6 +3,18 @@
 The current state of the project and where to pick up. Add a short entry at the top for each pass; when this grows past a
 few screens, move older entries to `docs/archive/`. History through RP30 is in [`archive/HANDOFF-through-RP30.md`](./archive/HANDOFF-through-RP30.md).
 
+## Crystal Springs: the Pulgas Water Temple in the browser scene (2026-11-21, `task/D2-pulgas-temple`)
+
+[D2](./roadmap/tasks/D2-pulgas-temple.md) puts the temple into the browser's Crystal Springs
+scene at its true place and scale, unlike the enlarged Minecraft version: the maintainer's Blender
+model (86k triangles, converted with baked occlusion by `pipeline/structure_mesh.py`), the
+reflecting pool with coping, cypress rows, the forecourt with lavender beds and the canal to the
+reservoir, from a new `landmarks` entry in `data/crystal_springs/structures.json`
+(`renderer/land/landmarks.js`). Oak meshes, impostors and grass keep off the grounds
+(`renderer/land/clearings.js`); the kernel's distant crowns beyond 1.5 km do not (clearing them
+needs the bundle rebuilt with the landmark's footprint, which would re-fetch the terrain). A
+"Pulgas Water Temple" viewpoint is in `cameras.json`. Next: the maintainer's look.
+
 ## Minecraft: Calaveras, Crystal Springs, the Pulgas Water Temple and HetchyCraft (2026-11-21, `task/MC7-pulgas-temple`)
 
 Two more reservoirs are playable Minecraft worlds, built in one step by
