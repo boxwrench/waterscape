@@ -99,6 +99,7 @@ exact files and checks; "capable" needs design and visual judgment; "human" and 
 | ID | Task | Who | Needs | Status |
 |---|---|---|---|---|
 | D1 | [Put reservoir context around the water experience](tasks/D1-reservoir-context.md) | capable | P1 | complete on task/D1; awaiting review |
+| D2 | [Pulgas Water Temple in the Crystal Springs scene](tasks/D2-pulgas-temple.md): the maintainer's model at its true place and scale, reflecting pool, cypress, canal | capable | W2 | built on `task/D2-pulgas-temple`; awaiting the maintainer's look |
 
 ## Track B — water at the bank
 

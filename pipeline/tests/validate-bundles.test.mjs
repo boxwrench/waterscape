@@ -132,3 +132,35 @@ test("water depth needs positive numbers and a source", async () => {
   ]);
   await rm(path.dirname(dir), { recursive: true });
 });
+
+const landmark = {
+  type: "pulgas-temple", name: "Temple", mesh: "temple.mesh.gz", centreUTM: [1, 2], axis: [1, 0],
+  pool: {}, cypress: {}, forecourt: {}, canal: { centreUTM: [[0, 0], [1, 1]] },
+  sources: { place: "https://example.gov/" },
+};
+
+test("a landmark with its mesh and sources has no errors", async () => {
+  const dir = await bundle({ "land.json": { structures: true } });
+  await writeFile(path.join(dir, "structures.json"), JSON.stringify({ landmarks: [landmark] }));
+  await writeFile(path.join(dir, "temple.mesh.gz"), "");
+  assert.deepEqual(await validateBundle(dir), []);
+  await rm(path.dirname(dir), { recursive: true });
+});
+
+test("a landmark's missing mesh, bad axis and plain source are reported", async () => {
+  const dir = await bundle({ "land.json": { structures: true } });
+  await writeFile(path.join(dir, "structures.json"),
+    JSON.stringify({ landmarks: [{ ...landmark, axis: [0, 0], sources: { place: "example.gov" } }] }));
+  assert.deepEqual(await validateBundle(dir), [
+    "test: landmark Temple: axis must be a non-zero [east, north]",
+    "test: landmark Temple: missing mesh temple.mesh.gz",
+    "test: landmark Temple: sources must be https URLs",
+  ]);
+  await rm(path.dirname(dir), { recursive: true });
+});
+
+test("structures listed in land.json need structures.json", async () => {
+  const dir = await bundle({ "land.json": { structures: true } });
+  assert.deepEqual(await validateBundle(dir), ["test: land.json lists structures but structures.json is missing or not JSON"]);
+  await rm(path.dirname(dir), { recursive: true });
+});

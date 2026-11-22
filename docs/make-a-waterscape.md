@@ -136,7 +136,7 @@ The rest of the look is optional (`renderer/engine/look.js`; Crystal Springs use
 | `ground.rock` | Lowers the slope at which bare rock shows (0–0.4; domes and slabs) |
 | `ground.bathtub` | Height (m above the surveyed water) of the bare bleached drawdown band; the build stores the full-pool zone as a fourth terrain channel so it stops at dams |
 | `air.haze` | Multiplies the preset haze (clear high-Sierra air 0.5) |
-| `structures` | `true` loads `structures.json` (dams, outlets, rivers below them) |
+| `structures` | `true` loads `structures.json` (dams, outlets, rivers below them, landmarks) |
 
 These are Setting or illustrative choices, not measurements; record where they came from
 (`fog.note`, the biome's sources) and keep [Making Water Visible](making-water-visible.md) in step.
@@ -149,6 +149,16 @@ from under the concrete and keeps trees off it; the renderer sweeps a generic gr
 profile along the crest. A river below a dam lists `centreUTM`, `width` and `surface` per
 point (traced from NAIP, surface from 3DEP); the build cuts its channel and clears trees
 within `clearTrees` metres. Concrete is `data/structures/`.
+
+A **landmark** (Crystal Springs' Pulgas Water Temple is the example) lists its `centreUTM`, the
+`axis` its layout runs along (east and north components), a `mesh` file next to
+`structures.json`, its layout (`pool`, `cypress`, `forecourt`, `canal` with a traced
+`centreUTM` line) and the URL behind each measurement. The mesh comes from a Blender model,
+converted by `pipeline/structure_mesh.py` (run inside Blender; it bakes ambient occlusion) at
+the model's measured metres per unit. The renderer draws it at its true place and scale
+(`renderer/land/landmarks.js`) and keeps oak meshes, impostors and grass off its grounds
+(`renderer/land/clearings.js`); the kernel's distant crowns, beyond the impostor range, still
+cover the grounds, since no build step clears them yet.
 
 **Granite biomes.** A biome whose `ground` has `joints`, `slab` and `canyon` layers (each with
 its photo's linear `mean` colour) gets photographed rock sampled triplanar and untiled, in

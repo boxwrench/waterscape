@@ -71,6 +71,28 @@ export async function validateBundle(dir) {
     await stat(path.join(dir, aerial.file ?? "")).catch(() => errors.push(`${id}: aerial.json names a missing image`));
     if (!/^https:\/\//.test(aerial.source ?? "")) errors.push(`${id}: aerial.json source must be an https URL`);
   }
+  // Structures (renderer/land/structures.js, landmarks.js), where land.json asks for them:
+  // landmarks need a place, an axis, their mesh file, their layout and https sources.
+  if (land.structures) {
+    const structures = await readFile(path.join(dir, "structures.json"), "utf8").then(JSON.parse, () => null);
+    if (!structures) errors.push(`${id}: land.json lists structures but structures.json is missing or not JSON`);
+    for (const [i, lm] of (structures?.landmarks ?? []).entries()) {
+      const where = `${id}: landmark ${lm.name ?? i}`,
+        pair = (v) => Array.isArray(v) && v.length === 2 && v.every(Number.isFinite);
+      if (lm.type !== "pulgas-temple") errors.push(`${where}: unknown type ${lm.type}`);
+      if (!pair(lm.centreUTM)) errors.push(`${where}: centreUTM must be [east, north]`);
+      if (!pair(lm.axis) || !Math.hypot(...lm.axis)) errors.push(`${where}: axis must be a non-zero [east, north]`);
+      if (!lm.mesh) errors.push(`${where}: no mesh`);
+      else await stat(path.join(dir, lm.mesh)).catch(() => errors.push(`${where}: missing mesh ${lm.mesh}`));
+      for (const key of ["pool", "cypress", "forecourt", "canal"])
+        if (!lm[key]) errors.push(`${where}: lacks ${key}`);
+      if (!(lm.canal?.centreUTM?.length >= 2) || !lm.canal.centreUTM.every(pair))
+        errors.push(`${where}: canal needs at least two [east, north] points`);
+      const sources = Object.values(lm.sources ?? {});
+      if (!sources.length || sources.some((u) => !/^https:\/\//.test(u)))
+        errors.push(`${where}: sources must be https URLs`);
+    }
+  }
   const biomeFile = path.join(path.dirname(dir), "biomes", source.biome ?? "", "biome.json");
   await stat(biomeFile).catch(() =>
     errors.push(`${id}: biome ${source.biome} has no data/biomes/${source.biome}/biome.json`),

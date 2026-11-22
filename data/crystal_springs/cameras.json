@@ -10,13 +10,13 @@
       "label": "Northwest ridge"
     },
     "ridge": {
-      "x": 345,
-      "z": 3596,
-      "above": 3.0,
-      "yaw": -0.212,
-      "pitch": -0.056,
-      "speed": 40,
-      "label": "South ridge"
+      "x": 3224,
+      "z": 3193,
+      "above": 1.7,
+      "yaw": -1.85,
+      "pitch": -0.02,
+      "speed": 4,
+      "label": "Pulgas Water Temple"
     },
     "shore": {
       "x": -2145.5,

@@ -7,6 +7,7 @@ import {
   Fn, uniform, attribute, instanceIndex, positionLocal, modelPosition, texture, varying, vec2, vec3, vec4, float, int,
   mix, smoothstep, dot, max, normalize, fract, sin, cos, mx_noise_float, time, uv, select, If, Discard,
 } from "../../vendor/three/three.tsl.js";
+import { clearingNode } from "./clearings.js";
 
 // Clumps per square metre, with a shorter range and wider cards on lower tiers.
 export const GRASS_TIERS = [
@@ -41,7 +42,7 @@ function tuftGeometry(cards, segments) {
   return g;
 }
 
-export function createGrass(terrain, terrainTex, lightTex, lightUniforms, look = landLook(null)) {
+export function createGrass(terrain, terrainTex, lightTex, lightUniforms, look = landLook(null), clearings = []) {
   const [summerBase, summerTip, summerBright] = look.summer.blade;
   const geometries = [tuftGeometry(6, 3), tuftGeometry(3, 2), tuftGeometry(2, 1)],
     mask = new THREE.TextureLoader().load(new URL("../../data/biomes/diablo-oak/grass/fluffy-mask.jpg", import.meta.url).href),
@@ -88,7 +89,7 @@ export function createGrass(terrain, terrainTex, lightTex, lightUniforms, look =
       onLand = smoothstep(4, 7, g.x).mul(smoothstep(1, 4, g.y)),
       a = attribute("aBlade", "vec4"),
       tuftHeight = hash(worldCell.add(2.7), kf).mul(0.45).add(0.3).mul(mix(float(0.75), float(1.15), clump)),
-      height = tuftHeight.mul(a.w).mul(onLand).mul(select(keep.and(inside), float(1), float(0))),
+      height = tuftHeight.mul(a.w).mul(onLand).mul(select(keep.and(inside), float(1), float(0))).mul(float(1).sub(clearingNode(clearings, x, z))),
       width = hash(worldCell.add(9.4), kf).mul(0.35).add(0.7).mul(u.widthScale),
       // The tuft's yaw; each blade fans out from its centre and leans outward (grass is rarely
       // upright), with a little extra lean of its own.
