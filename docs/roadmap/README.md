@@ -152,7 +152,7 @@ rules are the only source; worlds are built, never hand-edited. Minecraft Java 2
 | MC5 | Rivers: a River Pulse place as a map; its data differs from reservoir bundles | capable | MC2 | later |
 | MC6 | [Crystal Springs Reservoir as a Minecraft world](tasks/MC6-crystal-springs.md): Peninsula oak and Douglas-fir palette, gravity dam from a site file, web map | capable | MC2; Crystal Springs bundle; dam traced into the site file | built on `task/MC6-crystal-springs`; web map live on the maintainer's server; in-game acceptance pending |
 | MC7 | [Pulgas Water Temple in the Crystal Springs world](tasks/MC7-pulgas-temple.md): temple from the maintainer's model at 0.5 m per block, reflecting pool, cypress and canal at 1 m per block | capable | MC6 | built on `task/MC7-pulgas-temple`; web map live on the maintainer's server; in-game acceptance pending |
-| MC8 | [Sunol Valley: San Antonio and Calaveras in one Minecraft world](tasks/MC8-sunol-valley.md): lidar at both lakes, Alameda Creek between them, both dams, placeholders for the Sunol Water Temple and the treatment plant | capable | MC2; San Antonio and Calaveras bundles | built on `task/MC8-sunol-valley`; review save installed; in-game look and the chloramination facility's location pending |
+| MC8 | [Sunol Valley: San Antonio and Calaveras in one Minecraft world](tasks/MC8-sunol-valley.md): lidar at both lakes, Alameda Creek between them, both dams, placeholders for the Sunol Water Temple, the treatment plant and the chloramination facility, roads and trails | capable | MC2; San Antonio and Calaveras bundles | built on `task/MC8-sunol-valley`; rebuilt after the first in-game look (roads, the facility, empty outside the map); second look pending |
 
 ## Track T — water level and timeline
 

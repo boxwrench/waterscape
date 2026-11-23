@@ -48,9 +48,13 @@ Treatment Plant and the Sunol Valley Chloramination Facility.
 - Sunol Valley Water Treatment Plant: 28 acres about 3 miles south of Calaveras Road and I-680
   (CEQA SCH 2007082014, https://ceqanet.lci.ca.gov/2007082014/8); footprint traced on NAIP.
 - Sunol Valley Chloramination Facility: 5555 Calaveras Rd, Sunol (SFPUC bid WD-2893,
-  https://webapps.sfpuc.org/bids/BidDetail.aspx?bidid=4464); no footprint found, location to be
-  confirmed with the maintainer.
-- Creeks: OpenStreetMap ways named Alameda Creek, Calaveras Creek and San Antonio Creek.
+  https://webapps.sfpuc.org/bids/BidDetail.aspx?bidid=4464); located from an aerial screenshot
+  supplied by the maintainer (2026-11-22; not committed), matched to NAIP by Calaveras Road, the
+  bridge over Alameda Creek and the excavating yard; footprint traced on NAIP.
+- Creeks: OpenStreetMap ways named Alameda Creek, Calaveras Creek and San Antonio Creek (tagged
+  `source=NHD`: imports of the USGS National Hydrography Dataset).
+- Roads and trails: OpenStreetMap highway ways (maintainer request after the first look, to help
+  find the way round).
 
 ## Result
 - Status: natural features and two of three placeholders built; the maintainer's in-game look
@@ -81,3 +85,38 @@ Treatment Plant and the Sunol Valley Chloramination Facility.
   - Creek lines are from OpenStreetMap (ODbL, attributed in `sites/sunol_valley.creeks.json`);
     USGS NHD is the public-domain alternative.
   - The terrain grid and lidar cache are in `experimental/minecraft/build/` (not committed).
+
+## Follow-up after the first in-game look (2026-11-22)
+- Maintainer's report: the land rose abruptly in a straight line with white, wintry ground beyond;
+  asked for roads and trails to help navigate; supplied an aerial screenshot of the
+  chloramination facility.
+- Cause of the wall: the save's overworld kept the game's normal generator, so walking past the
+  built area grew vanilla terrain (mountains, snow) against it. `make_header` now gives every
+  build a flat generator with no layers: outside the map is empty. Creeks stop a block short of
+  the edge so no water pours into the void.
+- Roads: `fetch_roads.py` (OpenStreetMap, ODbL, `sites/sunol_valley.roads.json`, 1,854 ways);
+  `build_reservoir.py` `build_roads` lays asphalt (`gray_concrete`), gravel tracks and dirt
+  trails (`dirt_path`) at estimated widths, keeps off lakes, dams and landmarks, crosses creeks
+  on a deck a block above the water. Kinds and widths in the site file, blocks in the palette
+  (used only by sites that list roads).
+- The chloramination facility: four footprint parts traced on NAIP (the blue-roofed building, the
+  building east of it, two equipment pads); a part may now name its own roof block.
+- Checks:
+  - Sunol build: 55,277 chunks (601 decoded and compared), 1,485,961 trees, lake leaks 0, creek
+    spills 0 (17,838 creek cells), roads 292,497 cells (freeway 40,314, road 114,187, service
+    36,722, track 78,706, trail 22,568) with 91 creek decks, in 2 min 59 s.
+  - A vanilla 26.3 server opened a copy and generated 1,286 chunks west, north and east of the map
+    on request (`forceload`): every one is air only.
+  - Calaveras and Crystal Springs rebuilt from the previous commit and from this one: region files
+    identical; Calaveras's overview identical; Crystal Springs's overview differs in 136 pixels,
+    its causeway now drawn in its road colour instead of the missing-colour magenta.
+    `world_gen_settings.dat` changes for every new build (the empty outside).
+  - Overhead render beside the NAIP image around the facility: the facility, Calaveras Road, the
+    bridge and the creek line up.
+  - `node --test "pipeline/tests/*.test.mjs"` → `ℹ fail 0`; `node scripts/check-doc-links.mjs` →
+    `Documentation links valid (148 Markdown files).`
+  - Review save "Sunol Valley - Waterscape 2" ("Sunol Valley - Waterscape 2 (roads)" in the list)
+    installed beside the first; not yet opened in the game client.
+- Notes: Alameda Creek has two NHD lines near the facility: the river (the tree-lined channel in
+  NAIP) and a stream about 60 m west along a mostly dry gravel wash; both are built as water.
+  Saves built before this follow-up still grow vanilla terrain past their edges.

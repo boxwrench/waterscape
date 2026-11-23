@@ -93,6 +93,8 @@ SPILL, SPILL_WALL = _add(D['spillway']), _add(D['spillwayWall'])
 # Causeways (roads on fill across the water), only for sites that list them.
 CW = PAL.get('causeway', {})
 ROAD, ROAD_EDGE = (_add(CW['road']), _add(CW['edge'])) if SITE.get('causeways') else (None, None)
+# Roads and trails (site "roads", fetch_roads.py), only for sites that list them.
+ROAD_BLOCKS = {k: _add(PAL['roads'][k]) for k in ('paved', 'unpaved', 'trail', 'bridge')} if SITE.get('roads') else {}
 # Landmarks (site file "landmarks", landmarks.py): their blocks, which may carry block-state
 # properties as name[key=value,...].
 LANDMARKS = SITE.get('landmarks', [])
@@ -563,7 +565,8 @@ def build_creeks(meta, ground, surface, wet, avoid, extras):
         run = None
         for x, z in zip(px, pz):
             xi, zi = int(x), int(z)
-            if not (span <= xi < W - span and span <= zi < H - span) or keep_off[zi, xi]:
+            # A block short of the world's edge: past it is void, which water would pour into.
+            if not (span < xi < W - 1 - span and span < zi < H - 1 - span) or keep_off[zi, xi]:
                 run = None
                 continue
             run = int(ground0[zi, xi]) if run is None else min(run, int(ground0[zi, xi]))
@@ -600,6 +603,61 @@ def creek_leaks(ground, wet, channel, level):
         nb_need = shifted(need, dz, dx, np.iinfo(np.int16).min)
         bad += int((~channel & ~wet & (ground < nb_need)).sum())
     return bad
+
+
+def build_roads(meta, ground, surface, wet, avoid, extras, creek):
+    """Roads and trails from the site's "roads" entry and its roads file (fetch_roads.py:
+    OpenStreetMap centre lines). Each line's kind (by its highway class) gives a width (metres, at
+    least a block) and a block (paved, unpaved or trail; a paved kind tagged with an unpaved
+    surface takes the unpaved block); earlier kinds win where lines overlap. The road block
+    replaces the top of the ground, which keeps its height. Roads keep off lakes and `avoid` (dams
+    and landmarks) and cross creek channels on a deck a block above the water (the road block if
+    paved, else planks: gravel would fall). Returns the cells to keep clear and counts."""
+    clear = np.zeros(ground.shape, bool)
+    if not SITE.get('roads'):
+        return clear, {}
+    R = SITE['roads']
+    lines = json.loads(SITE_PATH.with_name(f'{SITE["id"]}.roads.json').read_text())['lines']
+    kind_of = {h: k for k, kind in R['kinds'].items() for h in kind['highway']}
+    rank = {k: i for i, k in enumerate(R['kinds'])}
+    unpaved = set(R['unpavedSurfaces'])
+    H, W = ground.shape
+    best = np.full(ground.shape, len(rank), np.int16)
+    block = np.zeros(ground.shape, np.uint8)
+    for line in lines:
+        k = kind_of.get(line['highway'])
+        pts = to_blocks(meta, line['utm'])
+        if k is None or len(pts) < 2:
+            continue
+        kind = R['kinds'][k]
+        use = 'unpaved' if kind['block'] == 'paved' and line.get('surface') in unpaved else kind['block']
+        cum = np.concatenate([[0], np.cumsum(np.hypot(*np.diff(pts, axis=0).T))])
+        s = np.arange(0, cum[-1] + 0.25, 0.25)
+        px, pz = np.interp(s, cum, pts[:, 0]), np.interp(s, cum, pts[:, 1])
+        radius = max(1, round(kind['width'] / SCALE)) / 2 + 0.2
+        span = int(math.ceil(radius))
+        x0, z0 = np.floor(px).astype(int), np.floor(pz).astype(int)
+        for oz in range(-span, span + 1):
+            for ox in range(-span, span + 1):
+                cx_, cz_ = x0 + ox, z0 + oz
+                ok = ((cx_ + .5 - px) ** 2 + (cz_ + .5 - pz) ** 2 <= radius * radius) & \
+                     (cx_ >= 0) & (cx_ < W) & (cz_ >= 0) & (cz_ < H)
+                cx_, cz_ = cx_[ok], cz_[ok]
+                win = best[cz_, cx_] >= rank[k]
+                best[cz_[win], cx_[win]] = rank[k]
+                block[cz_[win], cx_[win]] = ROAD_BLOCKS[use]
+    road = (best < len(rank)) & ~wet & ~avoid
+    channel, level = creek if creek is not None else (np.zeros(ground.shape, bool), None)
+    paint = road & ~channel
+    surface[paint] = block[paint]
+    deck = road & channel
+    for z, x in zip(*np.nonzero(deck)):
+        b = block[z, x] if block[z, x] == ROAD_BLOCKS['paved'] else ROAD_BLOCKS['bridge']
+        extras[x // 16, z // 16][int(level[z, x]) + 1, z % 16, x % 16] = b
+    clear |= ndimage.binary_dilation(road, iterations=1)
+    counts = {k: int((road & (best == i)).sum()) for k, i in rank.items()}
+    return clear, dict(cells=counts, creek_decks=int(deck.sum()),
+                       lines_used=sum(1 for l in lines if l['highway'] in kind_of))
 
 
 def leak_check(ground, wet, water_y):
@@ -749,6 +807,12 @@ def make_header(template, out, spawn, datapack):
     settings['data']['seed'] = Long(SEED)
     settings['data']['generate_structures'] = Byte(0)
     settings['data']['bonus_chest'] = Byte(0)
+    # Outside the built area, nothing: the game would otherwise grow its own terrain (mountains,
+    # snow) against the edge of the map. A flat generator with no layers makes empty chunks.
+    settings['data']['dimensions']['minecraft:overworld']['generator'] = Compound({
+        'type': String('minecraft:flat'),
+        'settings': Compound({'biome': String(PAL['biome']), 'layers': List[Compound]([]),
+                              'features': Byte(0), 'lakes': Byte(0), 'structure_overrides': List[String]([])})})
     settings.save(support / 'world_gen_settings.dat')
     clocks = Compound({'minecraft:overworld': Compound({'total_ticks': Long(6000)})})
     nbtlib.File({'DataVersion': Int(VERSION), 'data': clocks}, gzipped=True).save(support / 'world_clocks.dat')
@@ -836,7 +900,9 @@ def preview(path, ground, surface, wet, trees, extras):
             'light_blue_terracotta': (113, 108, 137), 'azalea_leaves': (90, 117, 44), 'pale_oak_log': (88, 77, 71),
             'polished_andesite': (132, 134, 133), 'terracotta': (152, 94, 67), 'allium': (165, 110, 200),
             'stone_brick_slab[type=bottom]': (122, 121, 122), 'polished_andesite_slab[type=bottom]': (132, 134, 133),
-            'smooth_quartz_slab[type=bottom]': (236, 230, 223), 'quartz_stairs': (236, 230, 223), 'iron_trapdoor': (200, 200, 200)}
+            'smooth_quartz_slab[type=bottom]': (236, 230, 223), 'quartz_stairs': (236, 230, 223), 'iron_trapdoor': (200, 200, 200),
+            'gray_concrete': (55, 58, 62), 'dirt_path': (148, 122, 65), 'spruce_planks': (115, 85, 49),
+            'light_blue_concrete': (36, 137, 199)}
     lut = np.array([tint.get(n, tint.get(n.split('[')[0], colours.get(i, (200, 0, 200)))) for i, n in enumerate(NAMES)], np.float32)
     rgb = lut[surface].copy()
     top = ground.astype(np.float32).copy()
@@ -872,16 +938,22 @@ def main():
                          for i, l in enumerate(lk.lakes)}, '| water joined to the nearest lake:', lk.joined, flush=True)
     surface, rock = ground_cover(X, Z, h, shore, valley, wet, macro, None if len(lk.lakes) == 1 else lk.bank_h)
     clear, extras, dam_counts = build_dam(meta, ground, surface, wet, rng, lk.lakes)
+    road_avoid = clear.copy()
     clear |= build_causeways(meta, ground, surface, wet)
     ctx = SimpleNamespace(ground=ground, surface=surface, wet=wet, extras=extras, block=NAMES.index,
                           grass=GRASS[0], water=WATER, water_y=WATER_Y, water_level=meta['waterLevel'],
                           scale=SCALE, vscale=VSCALE, to_blocks=lambda utm: to_blocks(meta, utm), polyline=polyline_frame)
     landmark_clear, landmark_info = landmarks.build(SITE, ctx)
     clear |= landmark_clear
+    road_avoid |= landmark_clear
     if landmark_info:
         print('landmarks:', landmark_info, flush=True)
     creek_clear, creek_info, creek_cells = build_creeks(meta, ground, surface, wet, clear, extras)
     clear |= creek_clear
+    road_clear, road_info = build_roads(meta, ground, surface, wet, road_avoid, extras, creek_cells)
+    clear |= road_clear
+    if road_info:
+        print('roads:', road_info, flush=True)
     leaks = leak_check(ground, wet, lk.water_y)
     print('dam:', dam_counts, '| lake leaks (must be 0):', leaks, flush=True)
     if leaks:
@@ -948,8 +1020,12 @@ def main():
                                  for lm in LANDMARKS if lm['type'] != 'footprint']
                               + [f'{lm["name"]}: a placeholder on its footprint; heights illustrative.' for lm in LANDMARKS if lm['type'] == 'footprint']
                               + (['Creeks from OpenStreetMap centre lines: water at the lowest ground met downstream, the channel cut a block under it, banks raised to hold it.']
-                                 if SITE.get('creeks') else []),
+                                 if SITE.get('creeks') else [])
+                              + (['Roads and trails from OpenStreetMap centre lines, laid on the ground at estimated widths; creek crossings on a deck.']
+                                 if SITE.get('roads') else [])
+                              + ['Outside the built area the world is empty (a flat generator with no layers).'],
             'dam': dam_counts, 'landmarks': landmark_info, **({'creeks': creek_info} if creek_info else {}),
+            **({'roads': road_info} if road_info else {}),
             **({'vertical_metres_per_block': VSCALE, 'lakes': {l.name: dict(level_m=l.level, water_y=l.y) for l in lk.lakes}} if SITE.get('lakes') else {}), 'tree_counts': dict(zip(SPECIES, counts)),
             'viewpoints_xyz_yaw_pitch': views, 'verified_chunks': checked, 'written_chunks': written}
     (args.out / 'waterscape-build.json').write_text(json.dumps(info, indent=2) + '\n', encoding='utf-8')

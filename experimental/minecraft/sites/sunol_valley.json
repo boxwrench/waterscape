@@ -195,6 +195,71 @@
     }
   ],
   "creeksNote": "Widths are estimates (metres); centre lines in sunol_valley.creeks.json (fetch_creeks.py, OpenStreetMap).",
+  "roads": {
+    "kinds": {
+      "freeway": {
+        "highway": [
+          "motorway",
+          "trunk"
+        ],
+        "width": 24,
+        "block": "paved"
+      },
+      "road": {
+        "highway": [
+          "motorway_link",
+          "trunk_link",
+          "primary",
+          "primary_link",
+          "secondary",
+          "secondary_link",
+          "tertiary",
+          "tertiary_link",
+          "unclassified",
+          "residential"
+        ],
+        "width": 8,
+        "block": "paved"
+      },
+      "service": {
+        "highway": [
+          "service"
+        ],
+        "width": 4,
+        "block": "paved"
+      },
+      "track": {
+        "highway": [
+          "track"
+        ],
+        "width": 4,
+        "block": "unpaved"
+      },
+      "trail": {
+        "highway": [
+          "path",
+          "footway",
+          "bridleway",
+          "cycleway"
+        ],
+        "width": 2,
+        "block": "trail"
+      }
+    },
+    "unpavedSurfaces": [
+      "unpaved",
+      "gravel",
+      "fine_gravel",
+      "dirt",
+      "ground",
+      "earth",
+      "compacted",
+      "grass",
+      "sand",
+      "mud"
+    ],
+    "note": "Centre lines in sunol_valley.roads.json (fetch_roads.py, OpenStreetMap). Widths are estimates in metres (at least a block); a paved class with an unpaved surface tag takes the unpaved block. Earlier kinds win where lines overlap. Roads keep off lakes, dams and landmarks and cross creeks on a deck a block above the water."
+  },
   "landmarks": [
     {
       "type": "footprint",
@@ -365,14 +430,112 @@
         "footprints": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer/exportImage?bbox=600700,4154400,601500,4155450&bboxSR=32610&imageSR=32610&size=800,1050&format=jpg&bandIds=0,1,2&f=image"
       },
       "note": "Placeholder: the main structures traced on the 1 m NAIP image (the washwater ponds to the south are left as ground). Heights illustrative."
-    }
-  ],
-  "pendingStructures": [
+    },
     {
+      "type": "footprint",
       "name": "Sunol Valley Chloramination Facility",
-      "address": "5555 Calaveras Rd, Sunol",
-      "source": "https://webapps.sfpuc.org/bids/BidDetail.aspx?bidid=4464",
-      "note": "No footprint found; location to be confirmed by the maintainer."
+      "blocks": {
+        "wall": "light_gray_concrete",
+        "roof": "smooth_stone",
+        "blueRoof": "light_blue_concrete"
+      },
+      "parts": [
+        {
+          "name": "blue-roofed building",
+          "polygonUTM": [
+            [
+              600574.0,
+              4157455.0
+            ],
+            [
+              600600.0,
+              4157456.0
+            ],
+            [
+              600618.0,
+              4157376.0
+            ],
+            [
+              600592.0,
+              4157370.0
+            ]
+          ],
+          "heightMetres": 8,
+          "roof": "blueRoof"
+        },
+        {
+          "name": "building to the east",
+          "polygonUTM": [
+            [
+              600640.0,
+              4157455.0
+            ],
+            [
+              600656.0,
+              4157454.0
+            ],
+            [
+              600660.0,
+              4157419.0
+            ],
+            [
+              600642.0,
+              4157419.0
+            ]
+          ],
+          "heightMetres": 6
+        },
+        {
+          "name": "equipment pad, north",
+          "polygonUTM": [
+            [
+              600602.0,
+              4157490.0
+            ],
+            [
+              600638.0,
+              4157490.0
+            ],
+            [
+              600638.0,
+              4157470.0
+            ],
+            [
+              600602.0,
+              4157470.0
+            ]
+          ],
+          "heightMetres": 3
+        },
+        {
+          "name": "equipment pad, south-east",
+          "polygonUTM": [
+            [
+              600649.0,
+              4157406.0
+            ],
+            [
+              600670.0,
+              4157408.0
+            ],
+            [
+              600680.0,
+              4157380.0
+            ],
+            [
+              600650.0,
+              4157372.0
+            ]
+          ],
+          "heightMetres": 3
+        }
+      ],
+      "sources": {
+        "address": "https://webapps.sfpuc.org/bids/BidDetail.aspx?bidid=4464",
+        "identification": "Aerial screenshot supplied by the maintainer (2026-11-22) showing the facility beside Calaveras Road, east of Alameda Creek; matched to the NAIP image by the road, the creek bridge and the excavating yard.",
+        "footprints": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer/exportImage?bbox=599700,4156600,601100,4157900&bboxSR=32610&imageSR=32610&size=1400,1300&format=jpg&bandIds=0,1,2&f=image"
+      },
+      "note": "Placeholder: the compound inside the oval drive traced on the 1 m NAIP image (the blue-roofed building, the building east of it and two equipment pads). Heights illustrative."
     }
   ]
 }

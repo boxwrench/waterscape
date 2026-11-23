@@ -339,14 +339,16 @@ def contained(water, g, wet, ctx):
 def footprint(lm, ctx):
     """A placeholder on a real footprint: each part (a UTM polygon, or a circle with its centre and
     radius) stands on a level pad at its footprint's median ground, solid "wall" blocks up to the
-    part's height (metres, illustrative) under a "roof" layer. Returns the cells to keep clear of
-    trees and plants (the footprints and a block round them) and a summary."""
+    part's height (metres, illustrative) under a "roof" layer (a part may name another of the
+    landmark's blocks as its "roof"). Returns the cells to keep clear of trees and plants (the
+    footprints and a block round them) and a summary."""
     from PIL import Image, ImageDraw
     H, W = ctx.ground.shape
-    wall, roof = ctx.block(lm['blocks']['wall']), ctx.block(lm['blocks']['roof'])
+    wall = ctx.block(lm['blocks']['wall'])
     clear = np.zeros((H, W), bool)
     parts = []
     for part in lm['parts']:
+        roof = ctx.block(lm['blocks'][part.get('roof', 'roof')])
         img = Image.new('1', (W, H), 0)
         draw = ImageDraw.Draw(img)
         if 'circleUTM' in part:

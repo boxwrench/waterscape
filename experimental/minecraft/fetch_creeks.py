@@ -41,11 +41,8 @@ def simplify(points, tolerance):
     return simplify(points[:index + 1], tolerance)[:-1] + simplify(points[index:], tolerance)
 
 
-def main():
-    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument('--site', type=Path, required=True)
-    args = p.parse_args()
-    site = json.loads(args.site.read_text())
+def site_bbox(site):
+    """The site's terrain area in degrees (south, west, north, east), slightly generous."""
     t, scale = site['terrain'], site['metresPerBlock']
     west, north = t['westUTM'], t['northUTM']
     east, south = west + site['crop']['width'] * scale, north - site['crop']['length'] * scale
@@ -61,7 +58,17 @@ def main():
         corners.append((lat, lon))
     s, w = min(c[0] for c in corners) - .005, min(c[1] for c in corners) - .005
     n_, e_ = max(c[0] for c in corners) + .005, max(c[1] for c in corners) + .005
-    names = '|'.join(c['name'] for c in site['creeks'])
+    return s, w, n_, e_
+
+
+def main():
+    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    p.add_argument('--site', type=Path, required=True)
+    args = p.parse_args()
+    site = json.loads(args.site.read_text())
+    scale = site['metresPerBlock']
+    s, w, n_, e_ = site_bbox(site)
+    names ='|'.join(c['name'] for c in site['creeks'])
     query = f'[out:json][timeout:120];way["waterway"~"river|stream"]["name"~"^({names})$"]({s:.4f},{w:.4f},{n_:.4f},{e_:.4f});out geom tags;'
     req = urllib.request.Request(OVERPASS, data=urllib.parse.urlencode({'data': query}).encode(),
                                  headers={'User-Agent': 'waterscape-builder/1.0'})

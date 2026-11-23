@@ -12,9 +12,12 @@ both lakes at their own levels (Calaveras's north arm is flattened 2.2 m lower i
 is joined to it); `build_reservoir.py` now takes several lakes and dams, a vertical scale, creeks
 (Alameda, Calaveras and San Antonio creeks, cut a block deep and held in) and footprint
 placeholders (`landmarks.py`), while Calaveras and Crystal Springs still build byte for byte the
-same. Review save "Sunol Valley - Waterscape" installed. Next: the maintainer's in-game look; the
-chloramination facility once its location is confirmed; creek lines from USGS NHD instead of
-OpenStreetMap if wanted; hosting as a second world on the server.
+same. After the first in-game look: roads and trails from OpenStreetMap (`fetch_roads.py`; asphalt,
+gravel tracks, dirt trails, plank decks over creeks), the chloramination facility (located from
+the maintainer's aerial screenshot, traced on NAIP), and the world is now empty outside the built
+area (every build: a flat generator with no layers; the game had grown snowy vanilla terrain
+against the map's edge). Next: the maintainer's look at the rebuilt save; hosting as a second
+world on the server. The creek lines in OpenStreetMap are themselves USGS NHD imports.
 
 ## Explorer: full quality by default (2026-11-22, `task/D5-full-quality`)
 

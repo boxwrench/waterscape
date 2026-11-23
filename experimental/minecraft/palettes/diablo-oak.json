@@ -41,5 +41,12 @@
     "face": "grass_block",
     "spillway": "smooth_stone",
     "spillwayWall": "light_gray_concrete"
+  },
+  "roads": {
+    "note": "Only for sites that list roads. Asphalt, gravel tracks, dirt trails; creek crossings on a plank deck (gravel would fall).",
+    "paved": "gray_concrete",
+    "unpaved": "gravel",
+    "trail": "dirt_path",
+    "bridge": "spruce_planks"
   }
 }
