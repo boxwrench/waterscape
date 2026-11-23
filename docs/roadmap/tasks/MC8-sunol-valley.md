@@ -137,3 +137,37 @@ Treatment Plant and the Sunol Valley Chloramination Facility.
     yet opened in the game client.
 - Notes: the temple placeholder is now 12 blocks tall on its 3-block footprint; building it at its
   own finer scale (as MC7 did for the Pulgas temple) would fix its proportions.
+
+## Follow-up: the structures in detail (2026-11-23)
+- Maintainer's request, with aerial screenshots of each site and a photograph of the walk up to the
+  temple (not committed; recorded as the source of identification, layout and roof colours):
+  fill the treatment plant's basins with dark blue-green water and add detail to its major
+  structures (skip the construction site); detail the chloramination facility's major
+  structures; add the Sunol Yard buildings by Temple Road; the temple in detail and the new
+  Alameda Creek Watershed Center.
+- Positions traced on the newer 0.6 m USGS NAIP Imagery service (the 1 m NAIPPlus image still
+  showed the watershed center under construction); the treatment plant traced in its own frame
+  (143.5 degrees). Names: SFPUC pages (watershed center
+  https://www.sfpuc.gov/learning/come-visit/alameda-creek-watershed-center, Sunol Yard
+  https://sfgov.org/arts/sites/default/files/020816_Sunol_Yard_Req_for_Review.pdf).
+- `landmarks.py`: footprint parts may be rectangles (centre, length, width, bearing) and have a
+  kind: building (window bands, parapets, rooftop solar panels), canopy (an open shed), paving,
+  path, basin (water a block under its rim, two deep on a dark floor, divided by walls into a
+  grid; containment checked) and trees (a planted row); a later part never covers an earlier
+  building or basin. New type `round-temple`: stepped base, twelve columns, entablature, stepped
+  red roof and a green finial, at 1.2 m per block (so the columns stand apart), on a plaza at
+  least a block round its steps.
+- Built: the treatment plant (21 parts: 10 basins and grids of water, the reservoir with a
+  parapet, the annex, three blue-roofed sheds, the tank, four buildings), the chloramination
+  facility (5 parts), the Sunol Yard (10 buildings on a paved yard), the watershed center
+  (solar roof, round pond, paths, the walk) with redbuds (cherry) and poplars (birch) along the
+  end of Temple Road, and the temple (12 columns, plaza 8 blocks in radius, top at y 36).
+- Checks: lake leaks 0, creek spills 0, basin containment passed; 55,277 chunks (601 decoded and
+  compared); overhead renders beside the NAIP image at all four sites line up; isometric renders
+  of the temple and the plant read from the saved world. Crystal Springs rebuilt: region files
+  and overview identical. Review save "Sunol Valley - Waterscape 4" ("… 4 (structures)")
+  installed; not yet opened in the game client.
+- Notes: water colour is the palette's biome water (#3b6e78) over a deepslate floor, so it reads
+  dark blue-green; Minecraft cannot colour some water differently without another biome. The
+  temple's plaza is drawn about twice its real radius to hold the larger temple; it covers the
+  south half of the walk.

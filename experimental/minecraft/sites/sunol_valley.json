@@ -269,88 +269,475 @@
   "landmarks": [
     {
       "type": "footprint",
-      "name": "Sunol Water Temple",
+      "name": "Alameda Creek Watershed Center and the walk to the temple",
       "blocks": {
-        "wall": "quartz_block",
-        "roof": "smooth_quartz"
+        "wall": "white_concrete",
+        "roof": "white_concrete",
+        "solar": "daylight_detector",
+        "band": "gray_stained_glass",
+        "paving": "smooth_sandstone",
+        "lawn": "grass_block",
+        "rim": "smooth_sandstone",
+        "floor": "deepslate_tiles",
+        "redbudLog": "cherry_log",
+        "redbudLeaves": "cherry_leaves",
+        "poplarLog": "birch_log",
+        "poplarLeaves": "birch_leaves"
+      },
+      "trees": {
+        "redbud": {
+          "log": "redbudLog",
+          "leaves": "redbudLeaves",
+          "heightMetres": 5,
+          "radiusMetres": 2.5,
+          "shape": "ball"
+        },
+        "poplar": {
+          "log": "poplarLog",
+          "leaves": "poplarLeaves",
+          "heightMetres": 20,
+          "radiusMetres": 2,
+          "shape": "column"
+        }
       },
       "parts": [
         {
-          "name": "temple",
+          "name": "the walk",
+          "kind": "paving",
+          "rectUTM": {
+            "centre": [
+              598413.0,
+              4160440.4
+            ],
+            "length": 34,
+            "width": 16,
+            "bearing": 16
+          },
+          "level": true
+        },
+        {
+          "name": "the walk's lawn",
+          "kind": "paving",
+          "surface": "lawn",
+          "rectUTM": {
+            "centre": [
+              598413.0,
+              4160440.4
+            ],
+            "length": 26,
+            "width": 8,
+            "bearing": 16
+          }
+        },
+        {
+          "name": "path to the pond",
+          "kind": "path",
+          "widthMetres": 3,
+          "lineUTM": [
+            [
+              598418.0,
+              4160410.0
+            ],
+            [
+              598462.0,
+              4160423.0
+            ]
+          ]
+        },
+        {
+          "name": "path to the car park",
+          "kind": "path",
+          "widthMetres": 3,
+          "lineUTM": [
+            [
+              598470.0,
+              4160436.0
+            ],
+            [
+              598466.0,
+              4160455.0
+            ]
+          ]
+        },
+        {
+          "name": "watershed center",
           "polygonUTM": [
             [
-              598395.2,
-              4160407.7
+              598487.5,
+              4160427.5
             ],
             [
-              598395.5,
-              4160410.5
+              598517.0,
+              4160414.5
             ],
             [
-              598397.1,
-              4160412.9
+              598552.0,
+              4160392.0
             ],
             [
-              598399.6,
-              4160414.3
+              598545.0,
+              4160377.5
             ],
             [
-              598402.4,
-              4160414.4
+              598535.0,
+              4160381.2
             ],
             [
-              598405.0,
-              4160413.1
+              598513.2,
+              4160405.0
             ],
             [
-              598406.7,
-              4160410.8
-            ],
-            [
-              598407.1,
-              4160408.0
-            ],
-            [
-              598406.1,
-              4160405.3
-            ],
-            [
-              598404.1,
-              4160403.4
-            ],
-            [
-              598401.3,
-              4160402.6
-            ],
-            [
-              598398.5,
-              4160403.2
-            ],
-            [
-              598396.3,
-              4160405.1
-            ],
-            [
-              598395.2,
-              4160407.7
+              598485.5,
+              4160418.2
             ]
           ],
-          "heightMetres": 12
+          "heightMetres": 6,
+          "band": "band",
+          "roofTop": "solar"
+        },
+        {
+          "name": "round pond",
+          "kind": "basin",
+          "circleUTM": [
+            598471.2,
+            4160426.2
+          ],
+          "radiusMetres": 9.5,
+          "wall": "rim"
+        },
+        {
+          "name": "redbuds along Temple Road",
+          "kind": "trees",
+          "tree": "redbud",
+          "lineUTM": [
+            [
+              598420.0,
+              4160462.0
+            ],
+            [
+              598450.0,
+              4160555.0
+            ],
+            [
+              598480.0,
+              4160650.0
+            ]
+          ],
+          "spacingMetres": 8,
+          "offsetsMetres": [
+            -8,
+            8
+          ]
+        },
+        {
+          "name": "poplars along Temple Road",
+          "kind": "trees",
+          "tree": "poplar",
+          "lineUTM": [
+            [
+              598420.0,
+              4160462.0
+            ],
+            [
+              598450.0,
+              4160555.0
+            ],
+            [
+              598480.0,
+              4160650.0
+            ]
+          ],
+          "spacingMetres": 30,
+          "offsetsMetres": [
+            -14,
+            14
+          ]
         }
       ],
       "sources": {
-        "footprint": "https://www.openstreetmap.org/way/1002107868 ((c) OpenStreetMap contributors, ODbL)"
+        "name": "https://www.sfpuc.gov/learning/come-visit/alameda-creek-watershed-center",
+        "footprints": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=598330.0,4160330.0,598580.0,4160480.0&bboxSR=32610&imageSR=32610&size=500,300&format=jpg&bandIds=0,1,2&f=image",
+        "Temple Road": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=598250,4160250,598650,4160650&bboxSR=32610&imageSR=32610&size=800,800&format=jpg&bandIds=0,1,2&f=image",
+        "details": "Aerial screenshots supplied by the maintainer (2026-11-23; not committed): identification, layout and roof colours. Also the maintainer's photograph of the walk up to the temple (redbuds in flower, poplars) and a newspaper close-up the maintainer linked: https://bloximages.chicago2.vip.townnews.com/independentnews.com/content/tncms/assets/v3/editorial/0/e2/0e2e3d53-ffa4-5971-96b2-5d3bf54fc695/54fa13ac4ffbe.image.jpg"
       },
-      "note": "Placeholder: the OpenStreetMap footprint (about 12 m round, three blocks across). Height illustrative."
+      "note": "Placeholder: the center's building (solar panels on its roof), its round pond, two garden paths and the walk north of the temple traced on the 0.6 m NAIP image; redbuds (cherry) and poplars (birch) along the end of Temple Road from the photographs, positions illustrative. Heights illustrative."
+    },
+    {
+      "type": "round-temple",
+      "name": "Sunol Water Temple",
+      "centreUTM": [
+        598401.2,
+        4160408.5
+      ],
+      "diameterMetres": 12,
+      "metresPerBlock": 1.2,
+      "steps": 2,
+      "plazaRadiusMetres": 16,
+      "columns": 12,
+      "columnHeightMetres": 12,
+      "roofLayers": 3,
+      "blocks": {
+        "plaza": "smooth_sandstone",
+        "step": "smooth_stone",
+        "floor": "polished_diorite",
+        "column": "quartz_pillar",
+        "entablature": "smooth_quartz",
+        "cornice": "quartz_block",
+        "roof": "red_terracotta",
+        "finial": "oxidized_copper",
+        "finialTop": "lightning_rod"
+      },
+      "sources": {
+        "footprint": "https://www.openstreetmap.org/way/1002107868 ((c) OpenStreetMap contributors, ODbL)",
+        "plaza": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=598330.0,4160330.0,598580.0,4160480.0&bboxSR=32610&imageSR=32610&size=500,300&format=jpg&bandIds=0,1,2&f=image",
+        "about": "https://sfpuc.gov/learning/come-visit/sunol-water-temple",
+        "details": "The maintainer's photographs (2026-11-23): twelve columns round a stepped base, a white entablature, a red tile roof and a green finial."
+      },
+      "metresPerBlockNote": "The temple at 1.2 m per block (10 blocks across on its 12 m footprint, so its twelve columns stand apart), its plaza at the land's 4 m per block but at least a block round the steps (so drawn larger than its real 16 m radius). Proportions illustrative.",
+      "note": "Centred on its real middle; the column height (about the diameter) and the roof from the photographs, illustrative."
     },
     {
       "type": "footprint",
       "name": "Sunol Valley Water Treatment Plant",
       "blocks": {
         "wall": "light_gray_concrete",
-        "roof": "smooth_stone"
+        "roof": "smooth_stone",
+        "paving": "smooth_stone",
+        "white": "white_concrete",
+        "blueRoof": "light_blue_concrete",
+        "tankRoof": "oxidized_cut_copper",
+        "floor": "deepslate_tiles",
+        "band": "gray_stained_glass"
       },
       "parts": [
+        {
+          "name": "process platform",
+          "kind": "paving",
+          "rectUTM": {
+            "centre": [
+              601018.3,
+              4154942.5
+            ],
+            "length": 238,
+            "width": 136,
+            "bearing": 143.5
+          },
+          "level": true
+        },
+        {
+          "name": "flocculation and sedimentation basins (north-west)",
+          "kind": "basin",
+          "rectUTM": {
+            "centre": [
+              600989.4,
+              4154995.1
+            ],
+            "length": 45,
+            "width": 68,
+            "bearing": 143.5
+          },
+          "grid": [
+            4,
+            5
+          ]
+        },
+        {
+          "name": "filters (north row)",
+          "kind": "basin",
+          "rectUTM": {
+            "centre": [
+              601049.2,
+              4154967.2
+            ],
+            "length": 61,
+            "width": 25,
+            "bearing": 143.5
+          },
+          "grid": [
+            1,
+            4
+          ]
+        },
+        {
+          "name": "filters (south rows)",
+          "kind": "basin",
+          "rectUTM": {
+            "centre": [
+              601016.6,
+              4154943.2
+            ],
+            "length": 61,
+            "width": 50,
+            "bearing": 143.5
+          },
+          "grid": [
+            1,
+            7
+          ]
+        },
+        {
+          "name": "basin 1",
+          "kind": "basin",
+          "rectUTM": {
+            "centre": [
+              601089.2,
+              4154933.4
+            ],
+            "length": 37,
+            "width": 19,
+            "bearing": 143.5
+          }
+        },
+        {
+          "name": "basin 2",
+          "kind": "basin",
+          "rectUTM": {
+            "centre": [
+              601070.6,
+              4154919.0
+            ],
+            "length": 38,
+            "width": 20,
+            "bearing": 143.5
+          }
+        },
+        {
+          "name": "basin 3",
+          "kind": "basin",
+          "rectUTM": {
+            "centre": [
+              601054.6,
+              4154902.8
+            ],
+            "length": 39,
+            "width": 17,
+            "bearing": 143.5
+          }
+        },
+        {
+          "name": "basin 4",
+          "kind": "basin",
+          "rectUTM": {
+            "centre": [
+              601038.6,
+              4154889.1
+            ],
+            "length": 42,
+            "width": 15,
+            "bearing": 143.5
+          }
+        },
+        {
+          "name": "channels",
+          "kind": "basin",
+          "rectUTM": {
+            "centre": [
+              601087.7,
+              4154880.7
+            ],
+            "length": 34,
+            "width": 82,
+            "bearing": 143.5
+          },
+          "grid": [
+            4,
+            1
+          ]
+        },
+        {
+          "name": "square basins (north-east)",
+          "kind": "basin",
+          "rectUTM": {
+            "centre": [
+              601126.4,
+              4154873.8
+            ],
+            "length": 17,
+            "width": 40,
+            "bearing": 143.5
+          },
+          "grid": [
+            2,
+            5
+          ]
+        },
+        {
+          "name": "west building",
+          "rectUTM": {
+            "centre": [
+              600965.2,
+              4155029.5
+            ],
+            "length": 31,
+            "width": 60,
+            "bearing": 143.5
+          },
+          "heightMetres": 9,
+          "band": "band",
+          "parapet": "wall"
+        },
+        {
+          "name": "row of chemical tanks",
+          "rectUTM": {
+            "centre": [
+              600989.4,
+              4154913.6
+            ],
+            "length": 60,
+            "width": 5,
+            "bearing": 143.5
+          },
+          "heightMetres": 5,
+          "wall": "white",
+          "roof": "white"
+        },
+        {
+          "name": "south building",
+          "rectUTM": {
+            "centre": [
+              601024.8,
+              4154849.7
+            ],
+            "length": 65,
+            "width": 32,
+            "bearing": 143.5
+          },
+          "heightMetres": 8,
+          "band": "band",
+          "parapet": "wall"
+        },
+        {
+          "name": "white-roofed building",
+          "rectUTM": {
+            "centre": [
+              601100.8,
+              4154846.2
+            ],
+            "length": 15,
+            "width": 20,
+            "bearing": 143.5
+          },
+          "heightMetres": 6,
+          "wall": "white",
+          "roof": "white"
+        },
+        {
+          "name": "washwater basins",
+          "kind": "basin",
+          "rectUTM": {
+            "centre": [
+              601154.2,
+              4154837.4
+            ],
+            "length": 62,
+            "width": 52,
+            "bearing": 169
+          },
+          "grid": [
+            2,
+            2
+          ]
+        },
         {
           "name": "treated water reservoir",
           "circleUTM": [
@@ -358,190 +745,560 @@
             4155237.0
           ],
           "radiusMetres": 52,
-          "heightMetres": 8
+          "heightMetres": 8,
+          "parapet": "wall"
         },
         {
-          "name": "buildings by the reservoir",
+          "name": "reservoir annex",
           "polygonUTM": [
             [
               600918.0,
-              4155188.0
+              4155178.0
             ],
             [
-              600958.0,
-              4155218.0
+              600941.2,
+              4155207.5
             ],
             [
-              601012.0,
-              4155160.0
+              600981.0,
+              4155187.0
             ],
+            [
+              600958.5,
+              4155157.0
+            ]
+          ],
+          "heightMetres": 8,
+          "band": "band"
+        },
+        {
+          "name": "blue-roofed shed (east)",
+          "kind": "canopy",
+          "polygonUTM": [
             [
               600970.0,
-              4155128.0
+              4155168.8
+            ],
+            [
+              600987.5,
+              4155180.0
+            ],
+            [
+              601013.8,
+              4155150.0
+            ],
+            [
+              600996.2,
+              4155133.8
             ]
           ],
-          "heightMetres": 8
+          "heightMetres": 7,
+          "roof": "blueRoof",
+          "surface": "paving"
         },
         {
-          "name": "treatment block",
+          "name": "blue-roofed shed (west)",
+          "kind": "canopy",
           "polygonUTM": [
             [
-              600932.0,
-              4155020.0
+              600939.5,
+              4155143.0
             ],
             [
-              601000.0,
-              4155052.0
+              600957.5,
+              4155156.2
             ],
             [
-              601145.0,
-              4154902.0
+              600971.2,
+              4155137.5
             ],
             [
-              601045.0,
-              4154815.0
-            ],
-            [
-              600965.0,
-              4154890.0
+              600953.0,
+              4155123.8
             ]
           ],
-          "heightMetres": 6
+          "heightMetres": 7,
+          "roof": "blueRoof",
+          "surface": "paving"
         },
         {
-          "name": "clearwell block",
+          "name": "blue-roofed canopy by the plant",
+          "kind": "canopy",
           "polygonUTM": [
             [
-              601125.0,
-              4154860.0
+              600932.5,
+              4155053.8
             ],
             [
-              601170.0,
-              4154875.0
+              600953.8,
+              4155075.0
             ],
             [
-              601188.0,
-              4154805.0
+              600963.8,
+              4155066.2
             ],
             [
-              601140.0,
-              4154795.0
+              600942.5,
+              4155043.8
             ]
           ],
-          "heightMetres": 4
+          "heightMetres": 6,
+          "roof": "blueRoof",
+          "surface": "paving"
+        },
+        {
+          "name": "water tank",
+          "circleUTM": [
+            600882.5,
+            4155117.0
+          ],
+          "radiusMetres": 7.5,
+          "heightMetres": 10,
+          "wall": "white",
+          "roof": "tankRoof"
         }
       ],
       "sources": {
         "location": "https://ceqanet.lci.ca.gov/2007082014/8",
-        "footprints": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer/exportImage?bbox=600700,4154400,601500,4155450&bboxSR=32610&imageSR=32610&size=800,1050&format=jpg&bandIds=0,1,2&f=image"
+        "footprints (main plant)": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=600920.0,4154780.0,601200.0,4155080.0&bboxSR=32610&imageSR=32610&size=560,600&format=jpg&bandIds=0,1,2&f=image",
+        "footprints (reservoir, sheds, tank)": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=600860.0,4155040.0,601040.0,4155210.0&bboxSR=32610&imageSR=32610&size=360,340&format=jpg&bandIds=0,1,2&f=image",
+        "overview": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=600640.0,4154680.0,601260.0,4155340.0&bboxSR=32610&imageSR=32610&size=1240,1320&format=jpg&bandIds=0,1,2&f=image",
+        "details": "Aerial screenshots supplied by the maintainer (2026-11-23; not committed): identification, layout and roof colours."
       },
-      "note": "Placeholder: the main structures traced on the 1 m NAIP image (the washwater ponds to the south are left as ground). Heights illustrative."
+      "note": "Detailed placeholder: the main structures traced on the 0.6 m NAIP image (the process area in its own frame, 143.5 degrees); open basins filled with water over a dark floor (the maintainer's choice; not all are full in the photographs); the construction site north-east of the plant left out. Heights illustrative."
     },
     {
       "type": "footprint",
       "name": "Sunol Valley Chloramination Facility",
       "blocks": {
         "wall": "light_gray_concrete",
+        "hallWall": "gray_concrete",
         "roof": "smooth_stone",
-        "blueRoof": "light_blue_concrete"
+        "blueRoof": "light_blue_concrete",
+        "band": "gray_stained_glass"
       },
       "parts": [
         {
-          "name": "blue-roofed building",
+          "name": "blue-roofed hall (north, larger)",
           "polygonUTM": [
             [
-              600574.0,
+              600573.6,
+              4157450.0
+            ],
+            [
+              600599.0,
               4157455.0
             ],
             [
-              600600.0,
-              4157456.0
+              600612.0,
+              4157397.0
             ],
             [
-              600618.0,
-              4157376.0
-            ],
-            [
-              600592.0,
-              4157370.0
+              600587.0,
+              4157392.0
             ]
           ],
-          "heightMetres": 8,
+          "heightMetres": 9,
+          "wall": "hallWall",
           "roof": "blueRoof"
         },
         {
-          "name": "building to the east",
+          "name": "blue-roofed hall (south)",
           "polygonUTM": [
             [
-              600640.0,
-              4157455.0
+              600587.6,
+              4157391.0
             ],
             [
-              600656.0,
-              4157454.0
+              600612.4,
+              4157396.0
             ],
             [
-              600660.0,
-              4157419.0
+              600618.0,
+              4157374.4
             ],
             [
-              600642.0,
+              600593.0,
+              4157369.6
+            ]
+          ],
+          "heightMetres": 8,
+          "wall": "hallWall",
+          "roof": "blueRoof"
+        },
+        {
+          "name": "two-storey front building",
+          "polygonUTM": [
+            [
+              600600.0,
+              4157440.0
+            ],
+            [
+              600609.0,
+              4157441.6
+            ],
+            [
+              600616.0,
+              4157409.0
+            ],
+            [
+              600607.0,
+              4157407.0
+            ]
+          ],
+          "heightMetres": 6,
+          "band": "band"
+        },
+        {
+          "name": "flat-roofed building by Calaveras Road",
+          "polygonUTM": [
+            [
+              600639.6,
+              4157450.0
+            ],
+            [
+              600653.0,
+              4157452.4
+            ],
+            [
+              600657.0,
+              4157420.4
+            ],
+            [
+              600644.0,
               4157419.0
             ]
           ],
-          "heightMetres": 6
+          "heightMetres": 7,
+          "band": "band",
+          "parapet": "wall"
         },
         {
-          "name": "equipment pad, north",
+          "name": "small building, south-east",
           "polygonUTM": [
             [
-              600602.0,
-              4157490.0
-            ],
-            [
-              600638.0,
-              4157490.0
-            ],
-            [
-              600638.0,
-              4157470.0
-            ],
-            [
-              600602.0,
-              4157470.0
-            ]
-          ],
-          "heightMetres": 3
-        },
-        {
-          "name": "equipment pad, south-east",
-          "polygonUTM": [
-            [
-              600649.0,
-              4157406.0
+              600652.0,
+              4157400.0
             ],
             [
               600670.0,
-              4157408.0
+              4157400.0
             ],
             [
-              600680.0,
+              600670.0,
               4157380.0
             ],
             [
-              600650.0,
-              4157372.0
+              600652.0,
+              4157380.0
             ]
           ],
-          "heightMetres": 3
+          "heightMetres": 4
         }
       ],
       "sources": {
         "address": "https://webapps.sfpuc.org/bids/BidDetail.aspx?bidid=4464",
         "identification": "Aerial screenshot supplied by the maintainer (2026-11-22) showing the facility beside Calaveras Road, east of Alameda Creek; matched to the NAIP image by the road, the creek bridge and the excavating yard.",
-        "footprints": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer/exportImage?bbox=599700,4156600,601100,4157900&bboxSR=32610&imageSR=32610&size=1400,1300&format=jpg&bandIds=0,1,2&f=image"
+        "footprints": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=600550.0,4157350.0,600700.0,4157500.0&bboxSR=32610&imageSR=32610&size=300,300&format=jpg&bandIds=0,1,2&f=image",
+        "details": "Aerial screenshots supplied by the maintainer (2026-11-23; not committed): identification, layout and roof colours."
       },
-      "note": "Placeholder: the compound inside the oval drive traced on the 1 m NAIP image (the blue-roofed building, the building east of it and two equipment pads). Heights illustrative."
+      "note": "Detailed placeholder: the blue-roofed hall in its two sections, the front building and the two flat-roofed buildings traced on the 0.6 m NAIP image; small equipment left out. Heights illustrative."
+    },
+    {
+      "type": "footprint",
+      "name": "Sunol Yard (SFPUC)",
+      "blocks": {
+        "wall": "light_gray_concrete",
+        "roof": "white_concrete",
+        "asphalt": "gray_concrete",
+        "band": "gray_stained_glass"
+      },
+      "parts": [
+        {
+          "name": "yard",
+          "kind": "paving",
+          "surface": "asphalt",
+          "level": true,
+          "polygonUTM": [
+            [
+              598490.0,
+              4161070.0
+            ],
+            [
+              598545.0,
+              4161056.2
+            ],
+            [
+              598530.0,
+              4160997.5
+            ],
+            [
+              598516.2,
+              4160962.5
+            ],
+            [
+              598497.5,
+              4160941.2
+            ],
+            [
+              598415.0,
+              4160950.0
+            ],
+            [
+              598422.5,
+              4160977.5
+            ],
+            [
+              598440.0,
+              4161010.0
+            ],
+            [
+              598460.0,
+              4161042.5
+            ],
+            [
+              598480.0,
+              4161050.0
+            ]
+          ]
+        },
+        {
+          "name": "building 1",
+          "polygonUTM": [
+            [
+              598505.0,
+              4161066.2
+            ],
+            [
+              598535.5,
+              4161058.0
+            ],
+            [
+              598527.5,
+              4161033.8
+            ],
+            [
+              598499.5,
+              4161042.5
+            ]
+          ],
+          "heightMetres": 8,
+          "band": "band"
+        },
+        {
+          "name": "building 2",
+          "polygonUTM": [
+            [
+              598552.5,
+              4161050.0
+            ],
+            [
+              598578.8,
+              4161045.0
+            ],
+            [
+              598575.0,
+              4161028.8
+            ],
+            [
+              598548.8,
+              4161033.8
+            ]
+          ],
+          "heightMetres": 8,
+          "band": "band"
+        },
+        {
+          "name": "building 3",
+          "polygonUTM": [
+            [
+              598550.0,
+              4161026.2
+            ],
+            [
+              598583.8,
+              4161017.5
+            ],
+            [
+              598581.2,
+              4161008.8
+            ],
+            [
+              598547.5,
+              4161017.5
+            ]
+          ],
+          "heightMetres": 7,
+          "band": "band"
+        },
+        {
+          "name": "building 4",
+          "polygonUTM": [
+            [
+              598547.5,
+              4161017.5
+            ],
+            [
+              598567.5,
+              4161013.8
+            ],
+            [
+              598565.0,
+              4161000.0
+            ],
+            [
+              598545.5,
+              4161003.8
+            ]
+          ],
+          "heightMetres": 7,
+          "band": "band"
+        },
+        {
+          "name": "building 5",
+          "polygonUTM": [
+            [
+              598536.2,
+              4160986.2
+            ],
+            [
+              598557.0,
+              4160981.2
+            ],
+            [
+              598552.5,
+              4160961.2
+            ],
+            [
+              598532.5,
+              4160966.2
+            ]
+          ],
+          "heightMetres": 7,
+          "band": "band"
+        },
+        {
+          "name": "building 6",
+          "polygonUTM": [
+            [
+              598528.8,
+              4160960.5
+            ],
+            [
+              598548.8,
+              4160955.5
+            ],
+            [
+              598545.0,
+              4160938.8
+            ],
+            [
+              598525.0,
+              4160943.8
+            ]
+          ],
+          "heightMetres": 7,
+          "band": "band"
+        },
+        {
+          "name": "building 7",
+          "polygonUTM": [
+            [
+              598420.0,
+              4160946.2
+            ],
+            [
+              598442.5,
+              4160941.2
+            ],
+            [
+              598437.5,
+              4160921.2
+            ],
+            [
+              598416.2,
+              4160926.2
+            ]
+          ],
+          "heightMetres": 7,
+          "band": "band"
+        },
+        {
+          "name": "building 8",
+          "polygonUTM": [
+            [
+              598446.2,
+              4160940.0
+            ],
+            [
+              598470.0,
+              4160933.8
+            ],
+            [
+              598466.2,
+              4160912.5
+            ],
+            [
+              598442.5,
+              4160917.5
+            ]
+          ],
+          "heightMetres": 7,
+          "band": "band"
+        },
+        {
+          "name": "building 9",
+          "polygonUTM": [
+            [
+              598478.8,
+              4160926.2
+            ],
+            [
+              598498.0,
+              4160921.2
+            ],
+            [
+              598495.0,
+              4160901.2
+            ],
+            [
+              598475.0,
+              4160906.2
+            ]
+          ],
+          "heightMetres": 7,
+          "band": "band"
+        },
+        {
+          "name": "building 10",
+          "polygonUTM": [
+            [
+              598505.0,
+              4160917.5
+            ],
+            [
+              598528.8,
+              4160911.2
+            ],
+            [
+              598525.0,
+              4160891.2
+            ],
+            [
+              598501.2,
+              4160897.5
+            ]
+          ],
+          "heightMetres": 7,
+          "band": "band"
+        }
+      ],
+      "sources": {
+        "name and setting": "https://sfgov.org/arts/sites/default/files/020816_Sunol_Yard_Req_for_Review.pdf",
+        "footprints": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=598380.0,4160860.0,598620.0,4161080.0&bboxSR=32610&imageSR=32610&size=480,440&format=jpg&bandIds=0,1,2&f=image",
+        "details": "Aerial screenshots supplied by the maintainer (2026-11-23; not committed): identification, layout and roof colours."
+      },
+      "note": "Placeholder: the ten buildings and the paved yard east of Temple Road traced on the 0.6 m NAIP image; trailers and small sheds left out. Heights illustrative."
     }
   ]
 }

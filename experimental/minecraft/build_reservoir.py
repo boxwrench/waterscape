@@ -911,7 +911,11 @@ def preview(path, ground, surface, wet, trees, extras):
             'stone_brick_slab[type=bottom]': (122, 121, 122), 'polished_andesite_slab[type=bottom]': (132, 134, 133),
             'smooth_quartz_slab[type=bottom]': (236, 230, 223), 'quartz_stairs': (236, 230, 223), 'iron_trapdoor': (200, 200, 200),
             'gray_concrete': (55, 58, 62), 'dirt_path': (148, 122, 65), 'spruce_planks': (115, 85, 49),
-            'light_blue_concrete': (36, 137, 199)}
+            'light_blue_concrete': (36, 137, 199), 'white_concrete': (207, 213, 214), 'smooth_sandstone': (223, 214, 170),
+            'daylight_detector': (70, 78, 96), 'cherry_leaves': (228, 170, 200), 'birch_leaves': (128, 167, 85),
+            'red_terracotta': (143, 61, 46), 'polished_diorite': (192, 193, 194), 'oxidized_cut_copper': (79, 153, 126),
+            'oxidized_copper': (82, 162, 132), 'gray_stained_glass': (76, 76, 76), 'deepslate_tiles': (54, 54, 55),
+            'lightning_rod': (200, 120, 90), 'birch_log': (216, 215, 210), 'cherry_log': (54, 33, 44)}
     lut = np.array([tint.get(n, tint.get(n.split('[')[0], colours.get(i, (200, 0, 200)))) for i, n in enumerate(NAMES)], np.float32)
     rgb = lut[surface].copy()
     top = ground.astype(np.float32).copy()
@@ -951,7 +955,8 @@ def main():
     clear |= build_causeways(meta, ground, surface, wet)
     ctx = SimpleNamespace(ground=ground, surface=surface, wet=wet, extras=extras, block=NAMES.index,
                           grass=GRASS[0], water=WATER, water_y=WATER_Y, water_level=meta['waterLevel'],
-                          scale=SCALE, vscale=VSCALE, building_vscale=BUILDING_VSCALE, to_blocks=lambda utm: to_blocks(meta, utm), polyline=polyline_frame)
+                          scale=SCALE, vscale=VSCALE, building_vscale=BUILDING_VSCALE, tree_vscale=TREE_VSCALE,
+                          crown_scale=CROWN_SCALE, to_blocks=lambda utm: to_blocks(meta, utm), polyline=polyline_frame)
     landmark_clear, landmark_info = landmarks.build(SITE, ctx)
     clear |= landmark_clear
     road_avoid |= landmark_clear

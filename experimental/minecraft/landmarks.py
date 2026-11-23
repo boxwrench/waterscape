@@ -2,8 +2,9 @@
 
 Used by build_reservoir.py. Each landmark lists its blocks (registered in the builder's block
 table before the world is built), its measurements with their sources, and a type that picks the
-function here. Types: "pulgas-temple" (task MC7) and "footprint" (a placeholder on a real
-footprint, task MC8).
+function here. Types: "pulgas-temple" (task MC7), "footprint" (placeholders on real footprints,
+task MC8: buildings, sheds, paving, paths, open basins of water, rows of trees) and
+"round-temple" (the Sunol Water Temple, task MC8).
 """
 
 import math
@@ -23,9 +24,10 @@ def build(site, ctx):
     clear = np.zeros(ctx.ground.shape, bool)
     summary = {}
     for lm in site.get('landmarks', []):
-        if lm['type'] not in ('pulgas-temple', 'footprint'):
+        kinds = {'pulgas-temple': pulgas_temple, 'footprint': footprint, 'round-temple': round_temple}
+        if lm['type'] not in kinds:
             raise ValueError(f'Unknown landmark type {lm["type"]}')
-        cells, info = (pulgas_temple if lm['type'] == 'pulgas-temple' else footprint)(lm, ctx)
+        cells, info = kinds[lm['type']](lm, ctx)
         clear |= cells
         summary[lm['name']] = info
     return clear, summary
@@ -336,38 +338,233 @@ def contained(water, g, wet, ctx):
     return bad
 
 
-def footprint(lm, ctx):
-    """A placeholder on a real footprint: each part (a UTM polygon, or a circle with its centre and
-    radius) stands on a level pad at its footprint's median ground, solid "wall" blocks up to the
-    part's height (metres, illustrative) under a "roof" layer (a part may name another of the
-    landmark's blocks as its "roof"). Returns the cells to keep clear of trees and plants (the
-    footprints and a block round them) and a summary."""
+def part_cells(part, ctx):
+    """A part's footprint cells: a UTM polygon, a circle (centre and radius) or a rectangle
+    (centre, length along a bearing, width). For a rectangle also its frame, to place dividers:
+    (centre, along and across per metre, in blocks; length, width)."""
     from PIL import Image, ImageDraw
     H, W = ctx.ground.shape
-    wall = ctx.block(lm['blocks']['wall'])
-    clear = np.zeros((H, W), bool)
-    parts = []
+    img = Image.new('1', (W, H), 0)
+    draw = ImageDraw.Draw(img)
+    frame = None
+    if 'circleUTM' in part:
+        (cx, cz), = ctx.to_blocks([part['circleUTM']])
+        r = part['radiusMetres'] / ctx.scale
+        draw.ellipse([cx - r, cz - r, cx + r, cz + r], fill=1)
+    elif 'rectUTM' in part:
+        rect = part['rectUTM']
+        c, b = np.array(rect['centre'], float), math.radians(rect['bearing'])
+        a, n = np.array([math.sin(b), math.cos(b)]), np.array([-math.cos(b), math.sin(b)])
+        L, Wd = rect['length'], rect['width']
+        corners = [c + a * sa * L / 2 + n * sn * Wd / 2 for sa, sn in ((-1, -1), (1, -1), (1, 1), (-1, 1))]
+        draw.polygon([tuple(p) for p in ctx.to_blocks(corners)], fill=1)
+        cb, ab, nb = ctx.to_blocks([c, c + a, c + n])
+        frame = (cb, ab - cb, nb - cb, L, Wd)
+    elif 'lineUTM' in part:   # a path: cells within half its width of the line
+        pts = ctx.to_blocks(part['lineUTM'])
+        half = max(1, round(part['widthMetres'] / ctx.scale)) / 2 + 0.2
+        for (ax, az), (bx, bz) in zip(pts[:-1], pts[1:]):
+            for s in np.linspace(0, 1, max(2, int(math.hypot(bx - ax, bz - az) * 4))):
+                x, z = ax + (bx - ax) * s, az + (bz - az) * s
+                draw.ellipse([x - half, z - half, x + half, z + half], fill=1)
+    else:
+        draw.polygon([tuple(p) for p in ctx.to_blocks(part['polygonUTM'])], fill=1)
+    return np.array(img, bool), frame
+
+
+def perimeter(cells):
+    """Cells of a footprint with a 4-neighbour outside it."""
+    return cells & ~ndimage.binary_erosion(cells)
+
+
+def footprint(lm, ctx):
+    """A placeholder on a real footprint, made of parts laid in order (a later part over an
+    earlier one's paving, but never over its buildings or basins). Each part's "kind":
+      building (default): solid "wall" blocks up to its height (metres, illustrative, at the
+        site's building scale) under a "roof" layer, on a level pad at its footprint's median
+        ground; optional "band" (a window row every three blocks round the outside), "parapet"
+        (a ring on the roof's edge) and "roofTop" (on the roof inside the edge: solar panels).
+      canopy: an open shed, posts round the edge under a roof.
+      paving: the ground's top block ("surface", by default "paving"), levelled if "level".
+      path: a line ("lineUTM", "widthMetres") of the same.
+      basin: an open tank, water a block under its rim (two deep, on a "floor"), divided into a
+        "grid" of cells (rectangles: [along, across]) by walls.
+      trees: a row of planted trees along "lineUTM" every "spacingMetres", at each of
+        "offsetsMetres" to the side, of the landmark's "trees" entry named by "tree".
+    A part's block keys ("wall", "roof", ...) name entries of the landmark's "blocks"; by default
+    each key names itself. Returns the cells to keep clear of trees and plants (the footprints and
+    a block round them) and a summary."""
+    clear = np.zeros(ctx.ground.shape, bool)
+    taken = np.zeros(ctx.ground.shape, bool)
+    parts, water = [], {}
+    B = lambda part, key: ctx.block(lm['blocks'][part.get(key, key)])
     for part in lm['parts']:
-        roof = ctx.block(lm['blocks'][part.get('roof', 'roof')])
-        img = Image.new('1', (W, H), 0)
-        draw = ImageDraw.Draw(img)
-        if 'circleUTM' in part:
-            (cx, cz), = ctx.to_blocks([part['circleUTM']])
-            r = part['radiusMetres'] / ctx.scale
-            draw.ellipse([cx - r, cz - r, cx + r, cz + r], fill=1)
-        else:
-            draw.polygon([tuple(p) for p in ctx.to_blocks(part['polygonUTM'])], fill=1)
-        cells = np.array(img, bool) & ~ctx.wet
+        kind = part.get('kind', 'building')
+        if kind == 'trees':
+            parts.append(dict(name=part.get('name', ''), kind=kind, trees=planted_row(lm, part, ctx)))
+            continue
+        cells, frame = part_cells(part, ctx)
+        cells &= ~ctx.wet & ~taken   # an earlier building or basin keeps its cells
         if not cells.any():
             raise ValueError(f'{lm["name"]}: a part falls outside the world or on water')
-        pad = int(np.median(ctx.ground[cells]))
-        top = pad + max(1, round(part['heightMetres'] / ctx.building_vscale))
-        ctx.ground[cells] = pad
-        ctx.surface[cells] = wall
-        for z, x in zip(*np.nonzero(cells)):
-            for y in range(pad + 1, top):
-                put(ctx, int(x), int(z), y, wall)
-            put(ctx, int(x), int(z), top, roof)
+        info = dict(name=part.get('name', ''), kind=kind, cells=int(cells.sum()))
+        if kind in ('paving', 'path'):
+            if part.get('level'):
+                ctx.ground[cells] = int(np.median(ctx.ground[cells]))
+            ctx.surface[cells] = ctx.block(lm['blocks'][part.get('surface', 'paving')])
+        elif kind == 'basin':
+            pad = int(np.median(ctx.ground[cells]))
+            walls = perimeter(cells)
+            if frame is not None and 'grid' in part:
+                walls |= dividers(cells, frame, part['grid'], ctx.scale)
+            inner = cells & ~walls
+            ctx.ground[cells] = pad
+            ctx.surface[walls] = B(part, 'wall')
+            for z, x in zip(*np.nonzero(walls)):
+                put(ctx, int(x), int(z), pad + 1, B(part, 'wall'))
+            ctx.ground[inner] = pad - 2
+            ctx.surface[inner] = B(part, 'floor')
+            for z, x in zip(*np.nonzero(inner)):
+                for y in (pad - 1, pad):
+                    put(ctx, int(x), int(z), y, ctx.water)
+                water[int(x), int(z)] = pad
+            info.update(pad_y=pad, water_y=pad, water_cells=int(inner.sum()))
+        else:   # building or canopy
+            pad = int(np.median(ctx.ground[cells]))
+            top = pad + max(1, round(part['heightMetres'] / ctx.building_vscale))
+            wall, roof = B(part, 'wall'), B(part, 'roof')
+            edge = perimeter(cells)
+            ctx.ground[cells] = pad
+            ctx.surface[cells] = wall if kind == 'building' else B(part, 'surface') if 'surface' in part else ctx.surface[cells]
+            zs, xs = np.nonzero(cells)
+            for z, x in zip(zs, xs):
+                x, z = int(x), int(z)
+                if kind == 'building' or (edge[z, x] and (x + z) % 3 == 0):   # a canopy's posts
+                    for y in range(pad + 1, top):
+                        put(ctx, x, z, y, wall)
+                put(ctx, x, z, top, roof)
+                if kind == 'building' and edge[z, x]:
+                    if 'band' in part:
+                        for y in range(pad + 2, top - 1, 3):
+                            put(ctx, x, z, y, B(part, 'band'))
+                    if 'parapet' in part:
+                        put(ctx, x, z, top + 1, B(part, 'parapet'))
+                elif kind == 'building' and 'roofTop' in part:
+                    put(ctx, x, z, top + 1, B(part, 'roofTop'))
+            info.update(pad_y=pad, top_y=top)
+        if kind not in ('paving', 'path'):
+            taken |= cells
         clear |= ndimage.binary_dilation(cells, iterations=1)
-        parts.append(dict(name=part.get('name', ''), cells=int(cells.sum()), pad_y=pad, top_y=top))
+        parts.append(info)
+    leaks = contained(water, ctx.ground, ctx.wet, ctx)
+    if leaks:
+        H, W = ctx.ground.shape
+        bad = [(x, z, y) for (x, z), y in water.items() for ox, oz in ((1, 0), (-1, 0), (0, 1), (0, -1))
+               if (x + ox, z + oz) not in water and ctx.ground[min(z + oz, H - 1), min(x + ox, W - 1)] < y]
+        raise ValueError(f'{lm["name"]}: {leaks} basin water cells could run out, at {bad[:5]}')
     return clear, parts
+
+
+def dividers(cells, frame, grid, scale):
+    """Walls splitting a rectangle's cells into grid[0] x grid[1] (along x across) compartments."""
+    (cb, ab, nb, L, Wd) = frame
+    zs, xs = np.nonzero(cells)
+    p = np.stack([xs + .5, zs + .5], 1) - cb
+    along, across = p @ ab / (ab @ ab), p @ nb / (nb @ nb)
+    hit = np.zeros(len(zs), bool)
+    for coord, size, n in ((along, L, grid[0]), (across, Wd, grid[1])):
+        for k in range(1, n):
+            hit |= np.abs(coord - (-size / 2 + k * size / n)) < scale / 2
+    out = np.zeros_like(cells)
+    out[zs[hit], xs[hit]] = True
+    return out
+
+
+def planted_row(lm, part, ctx):
+    """Trees every spacingMetres along a line, at each side offset, on the ground: a ball crown
+    (most of the top half) or a column (from a quarter up). Heights at the site's tree scale,
+    crowns at its crown scale. Returns how many were planted."""
+    spec = lm['trees'][part['tree']]
+    log, leaves = ctx.block(lm['blocks'][spec['log']]), ctx.block(lm['blocks'][spec['leaves']])
+    H, W = ctx.ground.shape
+    pts = np.array(part['lineUTM'], float)
+    seg = np.concatenate([[0], np.cumsum(np.hypot(*np.diff(pts, axis=0).T))])
+    planted = 0
+    for s in np.arange(part['spacingMetres'] / 2, seg[-1], part['spacingMetres']):
+        i = min(np.searchsorted(seg, s, side='right') - 1, len(pts) - 2)
+        d = (pts[i + 1] - pts[i]) / (seg[i + 1] - seg[i])
+        base = pts[i] + d * (s - seg[i])
+        for off in part['offsetsMetres']:
+            (x, z), = ctx.to_blocks([base + np.array([-d[1], d[0]]) * off])
+            x, z = int(x), int(z)
+            if not (1 <= x < W - 1 and 1 <= z < H - 1) or ctx.wet[z, x]:
+                continue
+            g = int(ctx.ground[z, x])
+            height = max(3, round(spec['heightMetres'] / ctx.tree_vscale))
+            r = max(1.0, spec['radiusMetres'] / ctx.crown_scale)
+            top = g + height
+            low = top - max(2, round(height * 0.45)) if spec.get('shape', 'ball') == 'ball' else g + max(2, round(height * 0.25))
+            for y in range(low, top + 1):
+                rr = r - .6 if y in (low, top) else r
+                span = int(math.floor(rr))
+                for oz in range(-span, span + 1):
+                    for ox in range(-span, span + 1):
+                        if ox * ox + oz * oz <= rr * rr and 0 <= x + ox < W and 0 <= z + oz < H:
+                            put(ctx, x + ox, z + oz, y, leaves, keep=True)
+            for y in range(g + 1, top):
+                put(ctx, x, z, y, log)
+            planted += 1
+    return planted
+
+
+def round_temple(lm, ctx):
+    """A round temple on a stepped base in a circular plaza, at its own finer scale
+    ("metresPerBlock", for its parts; illustrative proportions) and centred on its real middle:
+    steps, a floor, a ring of columns, a two-block entablature (the second a full ceiling), a
+    stepped conical roof and a finial. The plaza is drawn at the land's scale, but at least a
+    block round the base. Returns the plaza cells (and a block round) and a summary."""
+    B = {key: ctx.block(name) for key, name in lm['blocks'].items()}
+    (cx, cz), = ctx.to_blocks([lm['centreUTM']])
+    k = 1 / lm['metresPerBlock']
+    R = lm['diameterMetres'] / 2 * k
+    steps = lm['steps']
+    plaza_r = max(lm['plazaRadiusMetres'] / ctx.scale, R + steps + 1)
+    H, W = ctx.ground.shape
+    span = int(math.ceil(plaza_r)) + 2
+    x0, z0 = int(cx) - span, int(cz) - span
+    zz, xx = np.mgrid[z0:z0 + 2 * span + 1, x0:x0 + 2 * span + 1]
+    d = np.hypot(xx + .5 - cx, zz + .5 - cz)
+    sl = np.s_[z0:z0 + 2 * span + 1, x0:x0 + 2 * span + 1]
+    plaza = d <= plaza_r
+    pad = int(np.median(ctx.ground[sl][plaza]))
+    ctx.ground[sl][plaza] = pad
+    ctx.surface[sl][plaza] = B['plaza']
+    def ring(lo, hi, y, block):
+        for z, x in zip(*np.nonzero((d >= lo) & (d <= hi))):
+            put(ctx, int(x) + x0, int(z) + z0, y, block)
+    for s in range(steps):
+        ring(0, R + steps - s + .3, pad + 1 + s, B['step'])
+    floor = pad + steps
+    ring(0, R + .3, floor, B['floor'])
+    col_h = max(2, round(lm['columnHeightMetres'] * k))
+    cols = set()
+    for i in range(lm['columns']):
+        t = 2 * math.pi * (i + .5) / lm['columns']
+        cols.add((int(math.floor(cx + (R - .5) * math.cos(t))), int(math.floor(cz + (R - .5) * math.sin(t)))))
+    for x, z in cols:
+        for y in range(floor + 1, floor + 1 + col_h):
+            put(ctx, x, z, y, B['column'])
+    y1 = floor + 1 + col_h
+    ring(R - 1.3, R + .5, y1, B['entablature'])
+    ring(0, R + .5, y1 + 1, B['entablature'])
+    ring(R + .2, R + 1.1, y1 + 1, B['cornice'])
+    layers = lm['roofLayers']
+    for i in range(layers):
+        ring(0, (R + .6) * (1 - i / layers), y1 + 2 + i, B['roof'])
+    top = y1 + 2 + layers
+    put(ctx, int(math.floor(cx)), int(math.floor(cz)), top, B['finial'])
+    put(ctx, int(math.floor(cx)), int(math.floor(cz)), top + 1, B['finialTop'])
+    clear = np.zeros(ctx.ground.shape, bool)
+    clear[sl] = ndimage.binary_dilation(plaza, iterations=1)
+    return clear, dict(centre_block=(round(float(cx), 1), round(float(cz), 1)), plaza_radius_blocks=round(plaza_r, 1),
+                       colonnade_radius_blocks=round(R, 1), columns=len(cols), plaza_y=pad, floor_y=floor, top_y=top + 1)

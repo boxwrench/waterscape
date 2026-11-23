@@ -19,7 +19,9 @@ area (every build: a flat generator with no layers; the game had grown snowy van
 against the map's edge). Next: the maintainer's look at the rebuilt save; hosting as a second
 world on the server. The creek lines in OpenStreetMap are themselves USGS NHD imports. Then
 trees (1.6 m per block up) and buildings (1 m) made taller than the land for play (site
-`objectScale`; other sites unchanged); review save "Sunol Valley - Waterscape 3".
+`objectScale`; other sites unchanged); review save "Sunol Valley - Waterscape 3". Then the structures in detail (the treatment
+plant's basins full of water, the chloramination facility, the Sunol Yard, the temple at 1.2 m per
+block, the Alameda Creek Watershed Center): review save "Sunol Valley - Waterscape 4".
 
 ## Explorer: full quality by default (2026-11-22, `task/D5-full-quality`)
 
