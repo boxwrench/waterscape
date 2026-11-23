@@ -17,7 +17,9 @@ gravel tracks, dirt trails, plank decks over creeks), the chloramination facilit
 the maintainer's aerial screenshot, traced on NAIP), and the world is now empty outside the built
 area (every build: a flat generator with no layers; the game had grown snowy vanilla terrain
 against the map's edge). Next: the maintainer's look at the rebuilt save; hosting as a second
-world on the server. The creek lines in OpenStreetMap are themselves USGS NHD imports.
+world on the server. The creek lines in OpenStreetMap are themselves USGS NHD imports. Then
+trees (1.6 m per block up) and buildings (1 m) made taller than the land for play (site
+`objectScale`; other sites unchanged); review save "Sunol Valley - Waterscape 3".
 
 ## Explorer: full quality by default (2026-11-22, `task/D5-full-quality`)
 

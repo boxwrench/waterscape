@@ -120,3 +120,20 @@ Treatment Plant and the Sunol Valley Chloramination Facility.
 - Notes: Alameda Creek has two NHD lines near the facility: the river (the tree-lined channel in
   NAIP) and a stream about 60 m west along a mostly dry gravel wash; both are built as water.
   Saves built before this follow-up still grow vanilla terrain past their edges.
+
+## Follow-up: taller trees and buildings (2026-11-23)
+- Maintainer's report: tree and building heights look compressed against the player (at 3 m per
+  block a player stands about 5.5 m tall). Chosen: a middle ground, exaggerated for play.
+- Site `objectScale` (default: the land's scale, so other sites are unchanged): trees 1.6 m per
+  block in height, crowns 3 m per block across, deep crowns (nearly half the tree's height, the
+  bottom layer narrower); buildings 1 m per block in height on their real footprints.
+- Checks:
+  - Sunol build: oaks 4 to 10 blocks (were 2 to 5), the treatment plant 4 to 8 blocks, the
+    chloramination facility 3 to 8, the temple 12; lake leaks 0, creek spills 0, 601 chunks
+    decoded and compared; a side-view slice through the facility before and after.
+  - Crystal Springs rebuilt (it has trees and a landmark): region files and overview identical
+    to the previous follow-up's build.
+  - Review save "Sunol Valley - Waterscape 3" ("… 3 (taller trees)" in the list) installed; not
+    yet opened in the game client.
+- Notes: the temple placeholder is now 12 blocks tall on its 3-block footprint; building it at its
+  own finer scale (as MC7 did for the Pulgas temple) would fix its proportions.

@@ -361,7 +361,7 @@ def footprint(lm, ctx):
         if not cells.any():
             raise ValueError(f'{lm["name"]}: a part falls outside the world or on water')
         pad = int(np.median(ctx.ground[cells]))
-        top = pad + max(1, round(part['heightMetres'] / ctx.vscale))
+        top = pad + max(1, round(part['heightMetres'] / ctx.building_vscale))
         ctx.ground[cells] = pad
         ctx.surface[cells] = wall
         for z, x in zip(*np.nonzero(cells)):

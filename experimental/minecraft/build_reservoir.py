@@ -61,6 +61,12 @@ SCALE = SITE['metresPerBlock']
 # that turns a slope in metres into one in blocks.
 VSCALE = SITE.get('metresPerBlockVertical', SCALE)
 K = VSCALE / SCALE
+# Trees and buildings may stand taller than the land's scale, for play (site "objectScale"): tree
+# heights, crown widths and building heights each in metres per block; by default the land's.
+OBJ = SITE.get('objectScale', {})
+TREE_VSCALE = OBJ.get('treeMetresPerBlock', VSCALE)
+CROWN_SCALE = OBJ.get('crownMetresPerBlock', SCALE)
+BUILDING_VSCALE = OBJ.get('buildingMetresPerBlock', VSCALE)
 WATER_Y = SITE['waterY']
 # Dams: one ("dam") or several ("dams", each naming its "lake" when the site has several).
 DAMS = SITE.get('dams') or [SITE['dam']]
@@ -730,8 +736,8 @@ def place_trees(sites, ground, wet, clear, viewpoints):
             continue
         spec = PAL['trees'][SPECIES[kind]]
         lo, hi = spec['height']
-        height = max(3, int(round((lo + (hi - lo) * tu) / VSCALE)))
-        r = r_m / SCALE
+        height = max(3, int(round((lo + (hi - lo) * tu) / TREE_VSCALE)))
+        r = r_m / CROWN_SCALE
         g = int(ground[zi, xi])
         top = g + height
         leaves, log = LEAVES[kind], LOGS[kind]
@@ -755,10 +761,13 @@ def place_trees(sites, ground, wet, clear, viewpoints):
             counts[kind] += 1
             continue
         layers = 3 if height >= 4 else 2
+        if 'treeMetresPerBlock' in OBJ:   # a taller tree: the crown fills nearly half its height
+            layers = max(layers, int(round(height * 0.45)))
         for i, y in enumerate(range(top - layers + 1, top + 1)):
             # Widest layer at the crown's own radius, so a block crown covers about the area of
-            # the browser's (3.4 to 6.6 m radius, 1 to 9 blocks at 4 m); the top layer smaller.
-            rr = (r - .6) if y == top else r
+            # the browser's (3.4 to 6.6 m radius, 1 to 9 blocks at 4 m); the top layer smaller,
+            # and the bottom one too in a deep crown (rounder).
+            rr = (r - .6) if y == top or (layers > 3 and i == 0) else r
             span = int(math.floor(rr))
             for oz in range(-span, span + 1):
                 for ox in range(-span, span + 1):
@@ -942,7 +951,7 @@ def main():
     clear |= build_causeways(meta, ground, surface, wet)
     ctx = SimpleNamespace(ground=ground, surface=surface, wet=wet, extras=extras, block=NAMES.index,
                           grass=GRASS[0], water=WATER, water_y=WATER_Y, water_level=meta['waterLevel'],
-                          scale=SCALE, vscale=VSCALE, to_blocks=lambda utm: to_blocks(meta, utm), polyline=polyline_frame)
+                          scale=SCALE, vscale=VSCALE, building_vscale=BUILDING_VSCALE, to_blocks=lambda utm: to_blocks(meta, utm), polyline=polyline_frame)
     landmark_clear, landmark_info = landmarks.build(SITE, ctx)
     clear |= landmark_clear
     road_avoid |= landmark_clear
@@ -1023,7 +1032,9 @@ def main():
                                  if SITE.get('creeks') else [])
                               + (['Roads and trails from OpenStreetMap centre lines, laid on the ground at estimated widths; creek crossings on a deck.']
                                  if SITE.get('roads') else [])
-                              + ['Outside the built area the world is empty (a flat generator with no layers).'],
+                              + ['Outside the built area the world is empty (a flat generator with no layers).']
+                              + ([f'Exaggerated for play: trees {TREE_VSCALE} m per block in height and {CROWN_SCALE} m across, buildings {BUILDING_VSCALE} m per block in height (the land is {SCALE} m across, {VSCALE} m up).']
+                                 if OBJ else []),
             'dam': dam_counts, 'landmarks': landmark_info, **({'creeks': creek_info} if creek_info else {}),
             **({'roads': road_info} if road_info else {}),
             **({'vertical_metres_per_block': VSCALE, 'lakes': {l.name: dict(level_m=l.level, water_y=l.y) for l in lk.lakes}} if SITE.get('lakes') else {}), 'tree_counts': dict(zip(SPECIES, counts)),

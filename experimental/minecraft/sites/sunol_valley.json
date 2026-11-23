@@ -13,6 +13,12 @@
   "metresPerBlock": 4,
   "metresPerBlockVertical": 3,
   "metresPerBlockNote": "4 m across, 3 m up (hills 1.33x taller): the maintainer's choice (task MC8), so Calaveras stands 27 blocks above San Antonio.",
+  "objectScale": {
+    "treeMetresPerBlock": 1.6,
+    "crownMetresPerBlock": 3,
+    "buildingMetresPerBlock": 1,
+    "note": "Exaggerated for play (the maintainer's choice after the first look): at the land's 3 m per block a player stands about 5.5 m tall against 4-block oaks and 3-block buildings. Trees 1.6 m per block in height (6 to 16 m oaks: 4 to 10 blocks), crowns 3 m per block across (wider would merge neighbours into one canopy), buildings 1 m per block in height on their real footprints."
+  },
   "waterY": 40,
   "waterYNote": "San Antonio's surface; every other height follows from 3 m per block.",
   "seed": 26498,
