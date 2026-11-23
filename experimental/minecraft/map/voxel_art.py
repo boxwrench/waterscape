@@ -23,9 +23,10 @@ def hexrgb(h):
     return np.array([int(h[i:i + 2], 16) for i in (0, 2, 4)], float)
 
 
-def load_grid(rid):
-    """Height above the water (m), signed shore distance (m, negative on water), valley strength."""
-    folder = REPO / 'data' / rid
+def load_grid(rid, folder=None):
+    """Height above the water (m), signed shore distance (m, negative on water), valley strength.
+    From data/<rid>/, or another folder in the same format (a world spanning several bundles)."""
+    folder = REPO / folder if folder else REPO / 'data' / rid
     meta = json.loads((folder / 'terrain.json').read_text())
     order = ('height', 'shoreDistance', 'valley')
     raw = np.frombuffer(gzip.decompress((folder / 'terrain.bin.gz').read_bytes()), '<u2')
@@ -45,9 +46,8 @@ def dam_lines(rid, meta):
         lines += [d['crestUTM'] for d in json.loads(s.read_text()).get('dams', [])]
     site = MC / 'sites' / f'{rid}.json'
     if site.exists():
-        dam = json.loads(site.read_text()).get('dam')
-        if dam:
-            lines.append(dam['crestUTM'])
+        s = json.loads(site.read_text())
+        lines += [d['crestUTM'] for d in ([s['dam']] if s.get('dam') else s.get('dams', []))]
     e0, n0 = meta['originUTM']
     return [np.array([[e - e0, n0 - n] for e, n in line]) for line in lines]
 
@@ -85,12 +85,14 @@ def hash2(a, b, seed=0):
     return ((v ^ (v >> 16)) & 0xFFFF) / 65535.0
 
 
-def columns(rid, n=64, target_relief=15, margin=0.3, min_aspect=0.6, max_exag=3.0, rotation=None):
+def columns(rid, n=64, target_relief=15, margin=0.3, min_aspect=0.6, max_exag=3.0, rotation=None, terrain=None):
     """Grid of block columns: heights (blocks), kind per column, tree heights, palette.
 
     The crop is the lake's bounding box plus a margin, at least min_aspect as deep as it is wide;
-    n columns along its long side. rotation: quarter turns of the view (default: dam at the back)."""
-    meta, g = load_grid(rid)
+    n columns along its long side. rotation: quarter turns of the view (default: dam at the back).
+    terrain: another folder with the grid (default data/<rid>/); with several lakes ("lakes" in
+    its terrain.json) each lake's water stands at its own height."""
+    meta, g = load_grid(rid, terrain)
     water = g['shoreDistance'] < 0
     rows, cols = np.nonzero(water)
     H, W = water.shape
@@ -122,6 +124,9 @@ def columns(rid, n=64, target_relief=15, margin=0.3, min_aspect=0.6, max_exag=3.
     real_slope = np.hypot(rx, rz)
     k = np.round(h / m_per_block * exag).astype(int)
     k[wet] = 0
+    if len(meta.get('lakes', [])) > 1:   # each lake at its own level above the first
+        hw = block(np.where(water, g['height'], np.nan), lambda t: np.nanmedian(t) if np.isfinite(t).any() else 0)
+        k[wet] = np.round(np.maximum(hw[wet], 0) / m_per_block * exag).astype(int)
     k[(~wet) & (k <= 0) & (h > 0)] = 1
 
     pal = palette(rid, meta)
@@ -158,7 +163,7 @@ def columns(rid, n=64, target_relief=15, margin=0.3, min_aspect=0.6, max_exag=3.
 def from_site(rid, art):
     """columns() with the settings in sites/<id>.json "art" (all optional)."""
     return columns(rid, n=art.get('columns', 64), margin=art.get('margin', 0.3),
-                   max_exag=art.get('maxExaggeration', 3.0), rotation=art.get('rotation'))
+                   max_exag=art.get('maxExaggeration', 3.0), rotation=art.get('rotation'), terrain=art.get('terrain'))
 
 
 def best_rotation(kind):

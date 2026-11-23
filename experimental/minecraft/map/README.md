@@ -74,14 +74,24 @@ The map shows blocks only: no animals, hikers or players, and simpler lighting t
    links that move the camera there (Crystal Springs: the Pulgas Water Temple and the dam).
 4. Render again and host.
 
+A world spanning several reservoirs (Sunol Valley, task
+[MC8](../../../docs/roadmap/tasks/MC8-sunol-valley.md)) has no `data/` folder of its own: its site
+file carries a `"story"` (name, place, headline, and `"from"`: the bundles whose `story.json`
+facts it shows, each labelled with its reservoir, e.g. `"Calaveras: Listed capacity"`), and its
+`"art"` names the world's terrain grid (`"terrain"`: `experimental/minecraft/build/sunol_valley`,
+made by `make_valley_terrain.py`), where each lake stands at its own level. The panel and the card
+link each bundle's sources.
+
 ## Front page: several reservoirs on one site
 
 `make_front.py` builds a title page that links to each rendered map, with the maps in subfolders
-(`/hetch_hetchy/`, `/calaveras/`, `/crystal_springs/`):
+(`/hetch_hetchy/`, `/sunol_valley/`, `/crystal_springs/`; Sunol Valley replaced the Calaveras map,
+and `--redirect` keeps the old `/calaveras/` address working):
 
 ```
 python make_front.py --out build-site --map hetch_hetchy=build/run/web \
-  --map calaveras=build-calaveras/run/web --map crystal_springs=build-crystal_springs/run/web --serve 8200
+  --map sunol_valley=build-sunol_valley/run/web --map crystal_springs=build-crystal_springs/run/web \
+  --redirect calaveras=sunol_valley --serve 8200
 ```
 
 Each card shows the reservoir's name, place, headline and the facts its `sites/<id>.json` lists

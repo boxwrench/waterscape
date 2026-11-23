@@ -23,6 +23,7 @@ import shutil
 from pathlib import Path
 
 import voxel_art
+from make_site import load_story
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[2]
@@ -40,6 +41,9 @@ def card(rid, site, story):
     wanted = site.get('facts') or [f['label'] for f in story.get('facts', []) if f.get('featured')]
     chips = ''.join(f'<li><span>{esc(w)}</span> {esc(facts[w])}</li>' for w in wanted if w in facts)
     name = esc(story['name'])
+    links = story['sources']
+    sources = (f'<a href="{links[0]}">Sources for these facts</a>' if len(links) == 1 else
+               'Sources for these facts: ' + ', '.join(f'<a href="{u}">{esc(u.split("/")[-2].replace("_", " ").title())}</a>' for u in links))
     return f'''
       <article class="card">
         <div class="art">
@@ -52,7 +56,7 @@ def card(rid, site, story):
           <p class="place">{esc(story.get('place', ''))}</p>
           <p>{esc(story['headline'])}</p>
           <ul class="facts">{chips}</ul>
-          <p class="src"><a href="{REPO_URL}/blob/main/data/{rid}/story.json">Sources for these facts</a></p>
+          <p class="src">{sources}</p>
           <a class="btn" href="./{rid}/">Explore in 3D</a>
         </div>
       </article>'''
@@ -229,6 +233,8 @@ def main():
     ap.add_argument('--hero', help='reservoir drawn large at the top (default: the first --map)')
     ap.add_argument('--local', type=Path, default=HERE / 'front.local.json',
                     help='personal links not kept in the repository (default: front.local.json, optional)')
+    ap.add_argument('--redirect', action='append', default=[], metavar='OLD=NEW',
+                    help='an old map folder that now forwards to another (a map replaced by a larger one)')
     ap.add_argument('--serve', type=int, metavar='PORT', help='afterwards, serve the folder locally')
     a = ap.parse_args()
     if not a.map:
@@ -249,7 +255,7 @@ def main():
     cards, names = [], {}
     for rid, web in maps:
         site = json.loads((HERE / 'sites' / f'{rid}.json').read_text())
-        story = json.loads((REPO / 'data' / rid / 'story.json').read_text())
+        story = load_story(site)
         cols = voxel_art.from_site(rid, site.get('art', {}))
         voxel_art.render(cols, 620).save(out / 'front' / f'{rid}.webp', quality=88, method=6)
         (out / 'front' / f'{rid}.json').write_text(json.dumps(voxel_art.export(cols), separators=(',', ':')))
@@ -277,6 +283,21 @@ def main():
               'Drag a model to turn it!']
     ids = [rid for rid, _ in maps]
     (out / 'index.html').write_text(page(cards, ids, hero_id, names[hero_id], splash, local))
+    for r in a.redirect:
+        old_id, new_id = r.split('=', 1)
+        if new_id not in ids:
+            raise SystemExit(f'--redirect {r}: {new_id} is not on the page')
+        folder = out / old_id
+        if folder.is_symlink() or folder.is_file():
+            folder.unlink()
+        elif folder.is_dir():
+            shutil.rmtree(folder)
+        folder.mkdir()
+        (folder / 'index.html').write_text(
+            f'<!doctype html><meta charset="utf-8"><title>{esc(names[new_id])}</title>'
+            f'<meta http-equiv="refresh" content="0; url=../{new_id}/">'
+            f'<p>This map is now part of <a href="../{new_id}/">{esc(names[new_id])}</a>.</p>\n')
+        print(f'./{old_id}/ -> ./{new_id}/')
     print(f'Front page: {out / "index.html"}')
     if a.serve:
         serve(out, a.serve)

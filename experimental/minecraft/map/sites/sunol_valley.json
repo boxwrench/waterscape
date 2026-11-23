@@ -1,0 +1,30 @@
+{
+  "id": "sunol_valley",
+  "story": {
+    "name": "Sunol Valley",
+    "place": "Alameda County, from the Sunol Water Temple east to San Antonio and Calaveras reservoirs",
+    "headline": "Two Hetch Hetchy system reservoirs in one world, Calaveras high above San Antonio, with Alameda Creek, the treatment plant and the Water Temple between them.",
+    "from": ["san_antonio", "calaveras"]
+  },
+  "start": [1100, 2300],
+  "sky": "#78a8e8",
+  "facts": ["Calaveras: Listed capacity", "San Antonio: Original capacity", "Calaveras: New dam"],
+  "data": "Terrain from USGS 3DEP (lidar at both lakes); roads, trails and creek lines from OpenStreetMap; dams and buildings traced on USGS NAIP imagery; dam facts from the National Inventory of Dams.",
+  "illustrative": "Lake beds, oak shapes, the dams' faces and the buildings are illustrative. Hills are 1.33 times their real height, trees and buildings taller than the land for play, and the Water Temple is built at 1.2 m per block.",
+  "osm": true,
+  "art": {"columns": 72, "maxExaggeration": 3.0, "margin": 0.15, "terrain": "experimental/minecraft/build/sunol_valley",
+          "terrainNote": "The world's own terrain grid (make_valley_terrain.py; not committed): both lakes at their own levels."},
+  "viewpoints": {
+    "overview": "1100:70:2300:3600:0:0.8:0:0:perspective",
+    "first_person": "79:24:1078:0:3.14:1.45:0:0:free"
+  },
+  "places": [
+    {"label": "Sunol Water Temple", "view": "75:20:1098:60:0:0.9:0:0:perspective"},
+    {"label": "Alameda Creek Watershed Center", "view": "104:20:1099:80:0:0.9:0:0:perspective"},
+    {"label": "Sunol Yard", "view": "100:20:952:120:0:0.9:0:0:perspective"},
+    {"label": "Chloramination facility", "view": "623:25:1845:90:0:0.9:0:0:perspective"},
+    {"label": "Treatment plant", "view": "735:40:2420:260:0:0.9:0:0:perspective"},
+    {"label": "Turner Dam (San Antonio)", "view": "900:42:1421:300:0:0.9:0:0:perspective"},
+    {"label": "Calaveras Dam", "view": "1550:70:3575:300:0:0.9:0:0:perspective"}
+  ]
+}

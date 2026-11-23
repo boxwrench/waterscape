@@ -63,7 +63,12 @@
     var body = el("div", "ws-body");
     body.appendChild(el("p", "", site.headline + " Here it is rebuilt in Minecraft from public elevation and map data."));
     var facts = el("p", "ws-facts", site.facts.join(". ") + ". (");
-    facts.appendChild(link(site.sources, "sources")); facts.appendChild(document.createTextNode(")"));
+    // One story file, or (a world spanning several reservoirs) one per reservoir.
+    [].concat(site.sources).forEach(function (url, i, all) {
+      if (i) facts.appendChild(document.createTextNode(", "));
+      facts.appendChild(link(url, all.length > 1 ? url.split("/").slice(-2)[0].replace(/_/g, " ") + " sources" : "sources"));
+    });
+    facts.appendChild(document.createTextNode(")"));
     body.appendChild(facts);
     // Places worth a visit (site file "places"): each link moves the camera there.
     if (site.places && site.places.length) {
