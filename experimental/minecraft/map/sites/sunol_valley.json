@@ -16,10 +16,10 @@
           "terrainNote": "The world's own terrain grid (make_valley_terrain.py; not committed): both lakes at their own levels."},
   "viewpoints": {
     "overview": "1100:70:2300:3600:0:0.8:0:0:perspective",
-    "first_person": "79:24:1078:0:3.14:1.45:0:0:free"
+    "first_person": "84.5:24:1066:0:-2.84:1.45:0:0:free"
   },
   "places": [
-    {"label": "Sunol Water Temple", "view": "75:20:1098:60:0:0.9:0:0:perspective"},
+    {"label": "Sunol Water Temple", "view": "84.5:24:1066:0:-2.84:1.45:0:0:free"},
     {"label": "Alameda Creek Watershed Center", "view": "104:20:1099:80:0:0.9:0:0:perspective"},
     {"label": "Sunol Yard", "view": "100:20:952:120:0:0.9:0:0:perspective"},
     {"label": "Chloramination facility", "view": "623:25:1845:90:0:0.9:0:0:perspective"},
