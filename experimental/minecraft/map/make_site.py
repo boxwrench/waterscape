@@ -4,7 +4,9 @@
         --conf-out <bluemap config>/maps/<id>.conf --json-out <webroot>/waterscape-site.json
 
 - The panel text comes from the reservoir's own bundle, data/<id>/story.json (name, headline,
-  facts), so every number shown already has its source recorded there.
+  facts), so every number shown already has its source recorded there. A world spanning several
+  bundles has its own "story" in the site file (name, place, headline) and takes its facts from
+  those bundles' story files ("from"), each fact labelled with its reservoir.
 - The render area is the rectangle of chunks the original world holds (read from the region
   file headers). Lighting the edge chunks on a server makes the game start generating chunks
   just outside; the mask keeps those off the map.
@@ -40,6 +42,22 @@ def chunk_extent(world):
     return min(xs) * 16, max(xs) * 16 + 15, min(zs) * 16, max(zs) * 16 + 15
 
 
+def load_story(site):
+    """The story for a site: data/<id>/story.json, or the site file's own "story" with the facts of
+    the bundles it lists in "from". Adds "sources": the story files' addresses."""
+    if 'story' not in site:
+        story = json.loads((REPO / 'data' / site['id'] / 'story.json').read_text())
+        return {**story, 'sources': [f"{REPO_URL}/blob/main/data/{site['id']}/story.json"]}
+    story = {k: v for k, v in site['story'].items() if k != 'from'}
+    story['facts'], story['sources'] = [], []
+    for rid in site['story']['from']:
+        part = json.loads((REPO / 'data' / rid / 'story.json').read_text())
+        short = part['name'].replace(' Reservoir', '')
+        story['facts'] += [{**f, 'label': f"{short}: {f['label']}"} for f in part.get('facts', [])]
+        story['sources'].append(f"{REPO_URL}/blob/main/data/{rid}/story.json")
+    return story
+
+
 def panel(site, story):
     wanted = site.get('facts') or [f['label'] for f in story.get('facts', []) if f.get('featured')]
     facts = {f['label']: f['value'] for f in story.get('facts', [])}
@@ -51,7 +69,7 @@ def panel(site, story):
         'name': story['name'],
         'headline': story['headline'],
         'facts': [f'{w}: {facts[w]}' for w in wanted],
-        'sources': f"{REPO_URL}/blob/main/data/{site['id']}/story.json",
+        'sources': story['sources'][0] if len(story['sources']) == 1 else story['sources'],
         'illustrative': site.get('illustrative', ''),
         'data': site.get('data', ''),
         'osm': site.get('osm', False),
@@ -71,7 +89,7 @@ def main():
     a = ap.parse_args()
 
     site = json.loads(a.site.read_text())
-    story = json.loads((REPO / 'data' / site['id'] / 'story.json').read_text())
+    story = load_story(site)
     x0, x1, z0, z1 = chunk_extent(a.world)
     sx, sz = site.get('start', [(x0 + x1) // 2, (z0 + z1) // 2])
     conf = (HERE / 'bluemap' / 'map.conf.template').read_text()

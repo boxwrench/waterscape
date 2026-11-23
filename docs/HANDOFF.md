@@ -3,6 +3,26 @@
 The current state of the project and where to pick up. Add a short entry at the top for each pass; when this grows past a
 few screens, move older entries to `docs/archive/`. History through RP30 is in [`archive/HANDOFF-through-RP30.md`](./archive/HANDOFF-through-RP30.md).
 
+## Minecraft: Sunol Valley, two reservoirs in one world (2026-11-22, `task/MC8-sunol-valley`)
+
+[MC8](./roadmap/tasks/MC8-sunol-valley.md) builds one world from the Sunol Water Temple east across
+the Sunol Valley to San Antonio and Calaveras, 4 m per block across and 3 m up (Calaveras 27 blocks
+above San Antonio). `make_valley_terrain.py` blends 1 m lidar at the lakes into 10 m 3DEP and finds
+both lakes at their own levels (Calaveras's north arm is flattened 2.2 m lower in another survey and
+is joined to it); `build_reservoir.py` now takes several lakes and dams, a vertical scale, creeks
+(Alameda, Calaveras and San Antonio creeks, cut a block deep and held in) and footprint
+placeholders (`landmarks.py`), while Calaveras and Crystal Springs still build byte for byte the
+same. After the first in-game look: roads and trails from OpenStreetMap (`fetch_roads.py`; asphalt,
+gravel tracks, dirt trails, plank decks over creeks), the chloramination facility (located from
+the maintainer's aerial screenshot, traced on NAIP), and the world is now empty outside the built
+area (every build: a flat generator with no layers; the game had grown snowy vanilla terrain
+against the map's edge). Next: the maintainer's look at the rebuilt save; hosting as a second
+world on the server. The creek lines in OpenStreetMap are themselves USGS NHD imports. Then
+trees (1.6 m per block up) and buildings (1 m) made taller than the land for play (site
+`objectScale`; other sites unchanged); review save "Sunol Valley - Waterscape 3". Then the structures in detail (the treatment
+plant's basins full of water, the chloramination facility, the Sunol Yard, the temple at 1.2 m per
+block, the Alameda Creek Watershed Center): review save "Sunol Valley - Waterscape 4".
+
 ## Explorer: full quality by default (2026-11-22, `task/D5-full-quality`)
 
 [D5](./roadmap/tasks/D5-full-quality.md): the explorer opens at Full (high tier at the window's

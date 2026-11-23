@@ -1,0 +1,173 @@
+# MC8: Sunol Valley: San Antonio and Calaveras reservoirs in one Minecraft world
+
+**Who:** capable · **Needs:** the San Antonio and Calaveras bundles, MC2's builder
+(`build_reservoir.py`) and palette (`diablo-oak`) · **Branch:** `task/MC8-sunol-valley`
+
+## Goal
+
+One playable Java 26.3 world from the Sunol Water Temple (its western edge) east across the Sunol
+Valley to both reservoirs, with Alameda Creek between them. Natural features first: terrain, the
+two lakes at their own levels, the creeks, oak woodland and grass, both dams. Then placeholders
+(plain structures on the real footprints) for the Sunol Water Temple, the Sunol Valley Water
+Treatment Plant and the Sunol Valley Chloramination Facility.
+
+## Maintainer decisions (2026-11-22)
+
+- 4 m per block across; 3 m per block up (hills 1.33× taller), so Calaveras stands 27 blocks
+  above San Antonio (82 m: 223.7 against 141.7 m in the bundles).
+- Lidar detail at the reservoirs; generally accurate GIS terrain elsewhere.
+- Natural features first, placeholders for the three structures.
+- Hosting later: the same server, as a second world (a datapack dimension), after the
+  maintainer's in-game look.
+
+## Stop rules
+
+- Terrain from USGS 3DEP (URLs recorded): 1 to 2 m lidar windows around both lakes, 10 m
+  elsewhere, blended. Lake outlines and levels from the lidar's flattened water at each bundle's
+  anchor. Lake beds are synthetic (each bundle's `land.json` bank slope and depth cap).
+- Dams from the NID records and traced on NAIP; creek lines from OpenStreetMap; footprints from
+  OpenStreetMap or traced on NAIP. Heights of placeholders are illustrative and marked so.
+- Calaveras and Crystal Springs must still build byte for byte the same.
+- Never edit a live or open world; build into a new folder.
+
+## Steps
+
+1. `make_valley_terrain.py`: fetch and blend the terrain into a bundle-format grid at 4 m with
+   both lakes (`build/sunol_valley/`, not committed; the script records its sources).
+2. `build_reservoir.py`: several lakes with their own levels, several dams, a vertical scale;
+   creeks; footprint placeholders. `sites/sunol_valley.json` holds the crop, lakes, dams, creeks
+   and structures with their sources.
+3. Build, check (leaks, creek containment, NBT audit), overhead render beside the aerial,
+   install a review save; the maintainer's look.
+
+## Sources gathered
+
+- Turner Dam (San Antonio): NID CA00132, earth, 193 ft, 2,160 ft long, 1964:
+  https://geospatial.sec.usace.army.mil/dls/rest/services/NID/National_Inventory_of_Dams_Public_Service/FeatureServer/0/query?where=NIDID%3D%27CA00132%27&outFields=NAME,NIDID,PRIMARY_DAM_TYPE,NID_HEIGHT,DAM_LENGTH,YEAR_COMPLETED&f=json
+- Sunol Water Temple: OpenStreetMap way 1002107868 (a round footprint about 12 m across).
+- Sunol Valley Water Treatment Plant: 28 acres about 3 miles south of Calaveras Road and I-680
+  (CEQA SCH 2007082014, https://ceqanet.lci.ca.gov/2007082014/8); footprint traced on NAIP.
+- Sunol Valley Chloramination Facility: 5555 Calaveras Rd, Sunol (SFPUC bid WD-2893,
+  https://webapps.sfpuc.org/bids/BidDetail.aspx?bidid=4464); located from an aerial screenshot
+  supplied by the maintainer (2026-11-22; not committed), matched to NAIP by Calaveras Road, the
+  bridge over Alameda Creek and the excavating yard; footprint traced on NAIP.
+- Creeks: OpenStreetMap ways named Alameda Creek, Calaveras Creek and San Antonio Creek (tagged
+  `source=NHD`: imports of the USGS National Hydrography Dataset).
+- Roads and trails: OpenStreetMap highway ways (maintainer request after the first look, to help
+  find the way round).
+
+## Result
+- Status: natural features and two of three placeholders built; the maintainer's in-game look
+  pending; the chloramination facility waits for its location.
+- Commit: see the branch (this Result is in the same commit).
+- Checks:
+  - `make_valley_terrain.py`: San Antonio 204,833 cells at 141.7 m and Calaveras 210,844 at
+    223.7 m from the lidar, each matching its bundle; Calaveras's north arm (65,815 cells,
+    flattened at 221.5 m in another 3DEP survey) joined to it; heights 7.8 to 824.2 m.
+  - `build_reservoir.py --site sites/sunol_valley.json`: 55,277 chunks (601 decoded and
+    compared), 1,552,071 trees, lakes at y 40 and y 67, lake leaks 0, creek spills 0 (17,846
+    creek cells, deepest cut 6 blocks, banks raised at most 3 blocks), in 2 min 41 s.
+  - Calaveras and Crystal Springs rebuilt with the changed builder: region files and overview
+    images byte for byte identical to builds from the previous code.
+  - Overhead render beside the NAIP image of the same area: lakes, dams, the treatment plant
+    and the valley line up; Calaveras now reaches its dam as in the photograph.
+  - `node --test "pipeline/tests/*.test.mjs"` → `ℹ fail 0`; `node scripts/check-doc-links.mjs` →
+    `Documentation links valid (148 Markdown files).`
+  - Not yet opened in the game client.
+- Notes:
+  - Terrain: 2 m 3DEP (1 m lidar here) averaged to the 4 m blocks in two lake windows, feathered
+    over 400 m into 10 m 3DEP; fetched in 1,024 px tiles (the service fails on larger requests).
+  - Calaveras's lidar water (223.7 m, with the north arm at 221.5 m) covers less than the water in
+    the NAIP photograph; the survey dates were not checked. The world follows the lidar, as the
+    browser bundle does.
+  - Tree density follows the browser's oak rules (as in the Calaveras world); the photographs
+    show more open grass on south-facing slopes.
+  - Creek lines are from OpenStreetMap (ODbL, attributed in `sites/sunol_valley.creeks.json`);
+    USGS NHD is the public-domain alternative.
+  - The terrain grid and lidar cache are in `experimental/minecraft/build/` (not committed).
+
+## Follow-up after the first in-game look (2026-11-22)
+- Maintainer's report: the land rose abruptly in a straight line with white, wintry ground beyond;
+  asked for roads and trails to help navigate; supplied an aerial screenshot of the
+  chloramination facility.
+- Cause of the wall: the save's overworld kept the game's normal generator, so walking past the
+  built area grew vanilla terrain (mountains, snow) against it. `make_header` now gives every
+  build a flat generator with no layers: outside the map is empty. Creeks stop a block short of
+  the edge so no water pours into the void.
+- Roads: `fetch_roads.py` (OpenStreetMap, ODbL, `sites/sunol_valley.roads.json`, 1,854 ways);
+  `build_reservoir.py` `build_roads` lays asphalt (`gray_concrete`), gravel tracks and dirt
+  trails (`dirt_path`) at estimated widths, keeps off lakes, dams and landmarks, crosses creeks
+  on a deck a block above the water. Kinds and widths in the site file, blocks in the palette
+  (used only by sites that list roads).
+- The chloramination facility: four footprint parts traced on NAIP (the blue-roofed building, the
+  building east of it, two equipment pads); a part may now name its own roof block.
+- Checks:
+  - Sunol build: 55,277 chunks (601 decoded and compared), 1,485,961 trees, lake leaks 0, creek
+    spills 0 (17,838 creek cells), roads 292,497 cells (freeway 40,314, road 114,187, service
+    36,722, track 78,706, trail 22,568) with 91 creek decks, in 2 min 59 s.
+  - A vanilla 26.3 server opened a copy and generated 1,286 chunks west, north and east of the map
+    on request (`forceload`): every one is air only.
+  - Calaveras and Crystal Springs rebuilt from the previous commit and from this one: region files
+    identical; Calaveras's overview identical; Crystal Springs's overview differs in 136 pixels,
+    its causeway now drawn in its road colour instead of the missing-colour magenta.
+    `world_gen_settings.dat` changes for every new build (the empty outside).
+  - Overhead render beside the NAIP image around the facility: the facility, Calaveras Road, the
+    bridge and the creek line up.
+  - `node --test "pipeline/tests/*.test.mjs"` → `ℹ fail 0`; `node scripts/check-doc-links.mjs` →
+    `Documentation links valid (148 Markdown files).`
+  - Review save "Sunol Valley - Waterscape 2" ("Sunol Valley - Waterscape 2 (roads)" in the list)
+    installed beside the first; not yet opened in the game client.
+- Notes: Alameda Creek has two NHD lines near the facility: the river (the tree-lined channel in
+  NAIP) and a stream about 60 m west along a mostly dry gravel wash; both are built as water.
+  Saves built before this follow-up still grow vanilla terrain past their edges.
+
+## Follow-up: taller trees and buildings (2026-11-23)
+- Maintainer's report: tree and building heights look compressed against the player (at 3 m per
+  block a player stands about 5.5 m tall). Chosen: a middle ground, exaggerated for play.
+- Site `objectScale` (default: the land's scale, so other sites are unchanged): trees 1.6 m per
+  block in height, crowns 3 m per block across, deep crowns (nearly half the tree's height, the
+  bottom layer narrower); buildings 1 m per block in height on their real footprints.
+- Checks:
+  - Sunol build: oaks 4 to 10 blocks (were 2 to 5), the treatment plant 4 to 8 blocks, the
+    chloramination facility 3 to 8, the temple 12; lake leaks 0, creek spills 0, 601 chunks
+    decoded and compared; a side-view slice through the facility before and after.
+  - Crystal Springs rebuilt (it has trees and a landmark): region files and overview identical
+    to the previous follow-up's build.
+  - Review save "Sunol Valley - Waterscape 3" ("… 3 (taller trees)" in the list) installed; not
+    yet opened in the game client.
+- Notes: the temple placeholder is now 12 blocks tall on its 3-block footprint; building it at its
+  own finer scale (as MC7 did for the Pulgas temple) would fix its proportions.
+
+## Follow-up: the structures in detail (2026-11-23)
+- Maintainer's request, with aerial screenshots of each site and a photograph of the walk up to the
+  temple (not committed; recorded as the source of identification, layout and roof colours):
+  fill the treatment plant's basins with dark blue-green water and add detail to its major
+  structures (skip the construction site); detail the chloramination facility's major
+  structures; add the Sunol Yard buildings by Temple Road; the temple in detail and the new
+  Alameda Creek Watershed Center.
+- Positions traced on the newer 0.6 m USGS NAIP Imagery service (the 1 m NAIPPlus image still
+  showed the watershed center under construction); the treatment plant traced in its own frame
+  (143.5 degrees). Names: SFPUC pages (watershed center
+  https://www.sfpuc.gov/learning/come-visit/alameda-creek-watershed-center, Sunol Yard
+  https://sfgov.org/arts/sites/default/files/020816_Sunol_Yard_Req_for_Review.pdf).
+- `landmarks.py`: footprint parts may be rectangles (centre, length, width, bearing) and have a
+  kind: building (window bands, parapets, rooftop solar panels), canopy (an open shed), paving,
+  path, basin (water a block under its rim, two deep on a dark floor, divided by walls into a
+  grid; containment checked) and trees (a planted row); a later part never covers an earlier
+  building or basin. New type `round-temple`: stepped base, twelve columns, entablature, stepped
+  red roof and a green finial, at 1.2 m per block (so the columns stand apart), on a plaza at
+  least a block round its steps.
+- Built: the treatment plant (21 parts: 10 basins and grids of water, the reservoir with a
+  parapet, the annex, three blue-roofed sheds, the tank, four buildings), the chloramination
+  facility (5 parts), the Sunol Yard (10 buildings on a paved yard), the watershed center
+  (solar roof, round pond, paths, the walk) with redbuds (cherry) and poplars (birch) along the
+  end of Temple Road, and the temple (12 columns, plaza 8 blocks in radius, top at y 36).
+- Checks: lake leaks 0, creek spills 0, basin containment passed; 55,277 chunks (601 decoded and
+  compared); overhead renders beside the NAIP image at all four sites line up; isometric renders
+  of the temple and the plant read from the saved world. Crystal Springs rebuilt: region files
+  and overview identical. Review save "Sunol Valley - Waterscape 4" ("… 4 (structures)")
+  installed; not yet opened in the game client.
+- Notes: water colour is the palette's biome water (#3b6e78) over a deepslate floor, so it reads
+  dark blue-green; Minecraft cannot colour some water differently without another biome. The
+  temple's plaza is drawn about twice its real radius to hold the larger temple; it covers the
+  south half of the walk.
