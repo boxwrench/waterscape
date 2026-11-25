@@ -180,6 +180,8 @@ async function go(){
   function resize(v){
     const w=v.canvas.clientWidth,h=v.canvas.clientHeight;
     if(!w||!h)return;
+    if(v.width===w && v.height===h)return;
+    v.width=w;v.height=h;
     v.renderer.setSize(w,h,false);v.camera.aspect=w/h;v.camera.updateProjectionMatrix();
   }
   mode.addEventListener('change',()=>{document.body.dataset.mode=mode.value;views.forEach(resize);});
