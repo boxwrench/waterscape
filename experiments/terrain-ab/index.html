@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Waterscape Hetch Hetchy terrain A/B</title>
+<style>
+*{box-sizing:border-box}body{background:#0c171f;color:#f1f4f1;font:14px system-ui;margin:0}
+header{padding:15px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+h1{margin:0;font-size:20px}p{margin:4px 0;color:#a9bfc5}
+main{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px;height:calc(100vh - 140px);min-height:430px}
+.panel{position:relative;min-width:0;border:1px solid #4b686c;border-radius:8px;overflow:hidden}
+canvas{width:100%;height:100%;display:block}
+.note{position:absolute;top:12px;left:12px;background:#0c171fdd;padding:10px;border-radius:6px;pointer-events:none}
+.note small{display:block;color:#bacdcf;margin-top:3px}
+select,button{padding:8px 12px;background:#314a50;color:white;border:1px solid #7999a0;border-radius:5px}
+footer{font-size:12px;padding:3px 18px;color:#b4c9ce}
+body[data-mode=a] main,body[data-mode=b] main{grid-template-columns:1fr}
+body[data-mode=a] #view-b,body[data-mode=b] #view-a{display:none}
+@media(max-width:800px){main{grid-template-columns:1fr;height:1000px}}
+</style></head>
+<body data-mode="split">
+<header><div><h1>Hetch Hetchy · terrain A/B</h1>
+<p>Same real 3DEP heights, shoreline, dam and camera. Two terrain rendering pipelines.</p></div>
+<div><select id="mode" aria-label="Compare mode"><option value="split">Side by side</option><option value="a">A only</option><option value="b">B only</option></select>
+<button id="reset">Reset view</button></div></header>
+<main>
+<section id="view-a" class="panel"><canvas id="canvas-a"></canvas><div class="note"><b>A · Standard Three.js</b><small id="stat-a">Loading…</small></div></section>
+<section id="view-b" class="panel"><canvas id="canvas-b"></canvas><div class="note"><b>B · Procedural Terrains 2.0</b><small id="stat-b">Loading…</small></div></section>
+</main>
+<footer id="status">Loading actual Waterscape data. The dam is an approximate engineering-style model, not as-built geometry.</footer>
+<script type="module" src="./main.js"></script></body></html>

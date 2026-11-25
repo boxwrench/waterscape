@@ -1,0 +1,15 @@
+{
+  "name": "hetch-hetchy-terrain-ab",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --config vite.config.mjs"
+  },
+  "dependencies": {
+    "three": "0.185.1",
+    "procedural-terrains": "2.0.0"
+  },
+  "devDependencies": {
+    "vite": "^7.3.0"
+  }
+}
